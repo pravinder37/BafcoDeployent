@@ -1,0 +1,150 @@
+<template>
+    <lightning-layout multiple-rows>
+        <lightning-layout-item size="3">
+            <c-b-a-f-c-o-sales-order-list display-selected-quote-item={selectedDatalist} quantity-data={quantityDatalist} active-section={activeTab}></c-b-a-f-c-o-sales-order-list>
+        </lightning-layout-item>
+        <lightning-layout-item size="9">
+            <lightning-layout multiple-rows class="customFont">
+                <lightning-layout-item size="4" style=" padding-top: 27px;">
+                    <span style="font-size: 24px; margin-top: 10px; font-weight: 900;">Create Order</span>
+                </lightning-layout-item>
+                <lightning-layout-item size="4">
+                    <lightning-layout style="padding-top: 12px;">
+                        <lightning-layout-item size="4" class="slds-m-top_small " if:true={accountAvgMargin}>
+                            <span style="font-size: 18px; color: #FF9800; padding-right: 36px " class="slds-align_absolute-center">{accountAvgMargin}%</span>
+                            <p style="font-size: 11px; color: #5A5A5A; ">Avg. Margin</p>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="4" class="slds-m-top_small " if:true={accountBestMargin}>
+                            <span style="font-size: 18px;color: #4CAF50; padding-right: 36px" class="slds-align_absolute-center">{accountBestMargin}%</span>
+                                <p style="font-size: 11px; color: #5A5A5A; ">Best Margin</p>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="6" class="slds-m-top_small " if:true={accountAvgCreditDays}>
+                            <span style="font-size: 18px;color: #4CAF50; padding-right: 77px" class="slds-align_absolute-center">{accountAvgCreditDays}</span>
+                                <p style="font-size: 11px; color: #5A5A5A; ">Avg. Credit Days</p>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                </lightning-layout-item> 
+                <lightning-layout-item size="12" if:true={quoteObj} style="padding-top: 4%;">
+                    <lightning-layout>
+                        <lightning-layout-item size="2">
+                            <span class="labelCss">Quotation number</span>
+                            <p class="labelDataCss">{quoteObj.quoteNumber}</p>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="2">
+                            <span>Company</span>
+                            <p class="labelDataCss">{quoteObj.company}</p>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="2">
+                            <span>Business Type</span>
+                            <p class="labelDataCss">{quoteObj.businessType}</p>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="2">
+                            <span>Mode</span>
+                            <p class="labelDataCss">{quoteObj.mode}</p>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="2">
+                            <span>Contact Mobile</span>
+                            <p class="labelDataCss">{quoteObj.contactMobile}</p>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="2">
+                            <span>Contact Email</span>
+                            <p class="labelDataCss">{quoteObj.contactEmail}</p>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                </lightning-layout-item>
+                <lightning-layout-item size="12">
+                    <lightning-tabset>
+                        <template for:each={salesOrderList} for:item="map">
+                            <lightning-tab label={map.key} key={map.key} value={map.key} onactive={handleTabActive}>
+                                <lightning-layout multiple-rows style="margin: 1% 1% 1% 0%; background: #F7F7F7;">
+                                    <lightning-layout-item size="3" style="padding-left: 2%;padding-top: 1%;">
+                                        <span class="labelCss">Regular Routing</span>
+                                        <p if:true={map.value.Regular_Routing__c} class="labelDataCss">{map.value.Regular_Routing__c}</p>
+                                        <p if:false={map.value.Regular_Routing__c} class="labelDataCss">-</p>
+                                    </lightning-layout-item>
+                                    <lightning-layout-item size="3" style="padding-left: 2%;padding-top: 1%;">
+                                        <span class="labelCss">Kind of shipment</span>
+                                        <p if:true={map.value.Kind_Of_Shipment__c} class="labelDataCss">{map.value.Kind_Of_Shipment__c}</p>
+                                        <p if:false={map.value.Kind_Of_Shipment__c} class="labelDataCss">-</p>
+                                    </lightning-layout-item>
+                                    <lightning-layout-item size="3" style="padding-left: 2%;padding-top: 1%;">
+                                        <span class="labelCss">Service type</span>
+                                        <p if:true={map.value.Service_Type__c} class="labelDataCss">{map.value.Service_Type__c}</p>
+                                        <p if:false={map.value.Service_Type__c} class="labelDataCss">-</p>
+                                    </lightning-layout-item>
+                                    <lightning-layout-item size="3" style="padding-left: 2%;padding-top: 1%;">
+                                        <span class="labelCss">Port of loading</span>
+                                        <p if:true={map.value.Port_of_loading__c} class="labelDataCss">{map.value.Port_of_loading__r.Name}</p>
+                                        <p if:false={map.value.Port_of_loading__c} class="labelDataCss">-</p>
+                                    </lightning-layout-item>
+                                    <lightning-layout-item size="3" style="padding-left: 2%;padding-top: 1%;">
+                                        <span class="labelCss">Port of Destination</span>
+                                        <p if:true={map.value.Port_of_Destination__c} class="labelDataCss">{map.value.Port_of_Destination__r.Name}</p>
+                                        <p if:false={map.value.Port_of_Destination__c} class="labelDataCss">-</p>
+                                    </lightning-layout-item>
+                                    <lightning-layout-item size="3" style="padding-left: 2%;padding-top: 1%;">
+                                        <span class="labelCss">Shipping line</span>
+                                        <p if:true={map.value.Shipping_Line__c} class="labelDataCss">{map.value.Shipping_Line__r.Name}</p>
+                                        <p if:false={map.value.Shipping_Line__c} class="labelDataCss">-</p>
+                                    </lightning-layout-item>
+                                    <lightning-layout-item size="3" style="padding-left: 2%;padding-top: 1%;">
+                                        <span class="labelCss">Commodity</span>
+                                        <p if:true={map.value.Commodity__c} class="labelDataCss">{map.value.Commodity__r.Name}</p>
+                                        <p if:false={map.value.Commodity__c} class="labelDataCss">-</p>
+                                    </lightning-layout-item>
+                                    <lightning-layout-item size="3" style="padding-left: 2%;padding-top: 1%;"> 
+                                        <span class="labelCss">Cargo weight</span>
+                                        <p if:true={map.value.Cargo_Weight__c} class="labelDataCss">{map.value.Cargo_Weight__c}</p>
+                                        <p if:false={map.value.Cargo_Weight__c} class="labelDataCss">-</p>
+                                    </lightning-layout-item>
+                                    <lightning-layout-item size="3" style="padding-left: 2%;padding-top: 1%;">
+                                        <span class="labelCss">Remarks</span>
+                                        <p if:true={map.value.Remarks__c} class="labelDataCss">{map.value.Remarks__c}</p>
+                                        <p if:false={map.value.Remarks__c} class="labelDataCss">-</p>
+                                    </lightning-layout-item>
+                                </lightning-layout>
+                            </lightning-tab>
+                        </template>
+                    </lightning-tabset>
+                </lightning-layout-item>
+                <lightning-layout-item size="12">
+                    <lightning-layout multiple-rows>
+                        <template for:each={equipList} for:item="equip">
+                            <lightning-layout-item size="12" key={equip}>
+                                <img src={containerPng}><span class="labelDataCss" style="margin-left: 1%;">{equip.key}</span><span><!--lightning-input type="number" value={equip.Qty} style="width: 8%; padding-left:8px" label="Quantity" data-equip={equip.key} onchange={handleQuantityChanged}></lightning-input--></span>
+                                <lightning-layout multiple-rows >
+                                    <template for:each={equip.value} for:item="shipLine">                                    
+                                        <lightning-layout-item key={shipLine} size="3" style="background: #EEF5FF;padding: 1%;margin: 1%;">
+                                            <lightning-layout>
+                                                <lightning-layout-item size="6">
+                                                    <span class="labelDataCss"><lightning-input type="checkbox" 
+                                                        label={shipLine.shipName} 
+                                                        data-equip={equip.key}
+                                                        data-shipline={shipLine.shipName}
+                                                        data-sellingtotal={shipLine.sellingRate}                                                
+                                                        checked={shipLine.checkBoxSelected}
+                                                        onchange={handleCheckBoxClicked}></lightning-input></span>
+                                                    <p><span>Selling : </span><span style="background: white;color: #4CAF50; padding: 4px 2px 4px 2px">${shipLine.sellingRate}</span></p>
+                                                </lightning-layout-item>
+                                                <lightning-layout-item size="6" style="padding-left: 10%;">
+                                                    <lightning-input type="number" 
+                                                                    label="Qty"
+                                                                    data-equip={equip.key}
+                                                                    data-shipline={shipLine.shipName}
+                                                                    data-sellingtotal={shipLine.sellingRate}    
+                                                                    style="max-width: 60%;"
+                                                                    value={shipLine.Qty} 
+                                                                    onchange={handleItemQuantitychange}></lightning-input>
+                                                </lightning-layout-item>
+                                            </lightning-layout>                                            
+                                        </lightning-layout-item>                                    
+                                    </template>
+                                </lightning-layout>
+                            </lightning-layout-item>
+                        </template>
+                    </lightning-layout>
+                </lightning-layout-item>          
+            </lightning-layout>
+        </lightning-layout-item>
+    </lightning-layout>
+</template>

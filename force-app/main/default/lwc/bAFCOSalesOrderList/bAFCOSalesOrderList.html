@@ -1,0 +1,54 @@
+<template>
+    <lightning-spinner variant="brand" size="large" if:true={isLoading}> </lightning-spinner>
+    <div class="slds-m-left_large slds-m-top_large customFont">
+        <lightning-layout vertical-align="stretch" multiple-rows >
+            <lightning-layout-item size="12">
+                <b style="font-size: larger;">Selected for Order Creation</b>
+            </lightning-layout-item>
+            <lightning-layout-item size="12">
+                <lightning-accordion active-section-name={activeSection}>
+                    <template for:each={displaySelectedQuoteItem} for:item="item">
+                        <lightning-accordion-section name={item.routeName} label={item.routeName} key={item.routeId}>
+                            <template for:each={item.equipment} for:item="equip">
+                                <span key={equip} if:true={equip.displayKey}>{equip.key}</span>
+                                <lightning-layout key={equip} multiple-rows>
+                                <template for:each={equip.value} for:item="shipLine">
+                                    <lightning-layout multiple-rows key={shipLine} style="padding: 5px 0px 5px 10px;margin:2% 0% 10%;" class="slds-border_top slds-border_bottom slds-border_left slds-border_right" if:true={shipLine.checkBoxSelected}>
+                                        <lightning-layout-item size="6" >
+                                            <lightning-layout multiple-rows >
+                                                <lightning-layout-item size="12" >
+                                                    <span>{shipLine.shipName}</span>
+                                                </lightning-layout-item>
+                                                <lightning-layout-item size="12" >
+                                                    <span>Selling :</span><span style="color: #4CAF50;"> ${shipLine.sellingTotal}</span>
+                                                </lightning-layout-item> 
+                                            </lightning-layout> 
+                                        </lightning-layout-item >
+                                        <lightning-layout-item size="6" style="padding-left: 10px;"  >Qty: <p>{shipLine.Qty}</p></lightning-layout-item>
+                                    </lightning-layout>                                               
+                                </template>
+                            </lightning-layout>
+                            </template>
+                        </lightning-accordion-section>
+                    </template>
+                </lightning-accordion>
+            </lightning-layout-item>            
+        </lightning-layout>
+            <lightning-layout>
+                <lightning-layout-item size="6">
+                    <lightning-input name="Validity"
+                                             label="Validity"
+                                            value={validity}
+                                            data-field='dateField'
+                                            type="date"
+                                            onchange={handleValidityChange}></lightning-input>
+                </lightning-layout-item>
+                <lightning-layout-item size="6" style="padding-top: 24px;padding-left: 9px;">
+                    <button class="slds-button slds-button_brand"  onclick={hideCreateOrder}>Create Order</button>
+                </lightning-layout-item>
+            </lightning-layout>
+            <div class="slds-form-element__help" id="form-error-01" style="color: rgb(194, 57, 52);" if:true={errorMsg}>
+                {errorMsg}
+            </div>
+    </div>
+</template>

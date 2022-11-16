@@ -1,0 +1,97 @@
+<template>
+    <lightning-layout multiple-rows class="customFont">
+        <lightning-layout-item size="12" large-device-size="10" medium-device-size="10" small-device-size="12">
+            <p 
+                style="font-size: 24px; margin-top: 12px; font-weight: 900; "
+                class="customFont">
+                Create Enquiry
+            </p>
+        </lightning-layout-item>        
+    </lightning-layout>
+    <lightning-layout>
+        <lightning-layout-item size='2' class="customFont">
+            <label class="slds-form-element__label customFont">
+                <b>Business Type</b>
+            </label>                    
+            <lightning-combobox label="" 
+                            variant="label-hidden"
+                            required
+                            options={pickListvalues}
+                            value={businessTypeSelected} 
+                            onchange={handleBusinessTypeChange}
+                            aria-describedby="form-error-01"
+                            class={quoteTypeErrorClass}
+                            style="font-weight: 600;line-height: 30px;letter-spacing: 0em;text-align: left;font-size: 12px;"
+                            placeholder="Select"></lightning-combobox>
+                            <div class="slds-form-element__help" id="form-error-01" style="color: rgb(194, 57, 52);" if:true={quoteTypeErrorMsg}>
+                                {quoteTypeErrorMsg}
+                            </div>
+        </lightning-layout-item>
+    </lightning-layout>
+    <div if:true={leadEnquiryList}>
+        <lightning-layout multiple-rows>
+            <lightning-layout-item size="12">
+                <lightning-accordion>
+                    <template for:each={leadEnquiryList} for:item="lead">
+                        <lightning-accordion-section label={lead.routeName} key={lead.routeName} value={lead.routeName} style="font-weight: 500;" class="customFont">
+                            <c-b-a-f-c-o-lead-enquiry-entry-intake 
+                            copy-from-above={lead.copyFromAbove}
+                            lead-index={lead.leadIndex}
+                            routing-regular={lead.routingRegular}
+                            shipment-kind={lead.shipmentKind}
+                            service-type={lead.serviceType}
+                            inco-term={lead.incoTerm}
+                            inco-term-name={lead.incoTermName}
+                            port-loading-name={lead.portLoadingName}
+                            port-loading={lead.portLoading}
+                            port-destination-name={lead.portDestinationName}
+                            port-destination={lead.portDestination}
+                            shipping-line={lead.shippingLine}
+                            shipping-line-name={lead.shippingLineName}
+                            commodity={lead.commodity}
+                            commodity-name={lead.commodityName}
+                            show-pickup-place-field={lead.showPickupPlaceField}
+                            place-of-pickup={lead.placeOfPickup}
+                            place-of-discharge={lead.placeOfDischarge}
+                            show-discharge-place-field={lead.showDischargePlaceField}
+                            cargo-weights={lead.cargoWeights}
+                            dangerous-goods={lead.dangerousGoods}
+                            show-d-g-class-field={lead.showDGClassField}
+                            dg-class={lead.dgClass}
+                            remarks={lead.remarks}
+                            lead-enquiry-list={leadEnquiryList}
+                            place-of-pickup-name={lead.placeOfPickupName}
+                            place-of-discharge-name={lead.placeOfDischargeName}
+                            container-record={lead.containerRecord}
+                            onupdate={handleEnquiryListUpdate}
+                            oncontainertypeupdate={handleContainerTypeUpdate}
+                            oncontainerqtyupdate={handleContainerQTYUpdate}
+                            onremovecontainertype={handleContainerTypeRemove}
+                            onaddcontainertype={handleAddContainerType}
+                            oncopycontainertype={handleCopyContainerData}
+                            onaddemptycontainertype={handleaddEmptycontainertype}
+                            onresetform={handleResetFormClicked}
+                            account-id={quoteId}
+                             ></c-b-a-f-c-o-lead-enquiry-entry-intake>                
+                        </lightning-accordion-section>
+                    </template> 
+                </lightning-accordion>
+            </lightning-layout-item>
+            <lightning-layout-item size="12" large-device-size="12" medium-device-size="12" small-device-size="12" if:false={dontShowAddNewRoute} class="addNewRouteCss">
+                <lightning-button   variant="brand" 
+                                label="Add New Route" 
+                                title="Add new Route"                                    
+                                onclick={addRouteEnquiry}></lightning-button>
+            </lightning-layout-item>
+        </lightning-layout>
+    </div>
+    <lightning-layout class="slds-align_absolute-center slds-m-around_large">
+        <lightning-layout-item>
+            <lightning-button 
+                            variant="brand"
+                            label="Submit to Commercial team" 
+                            title="submit commercial team"
+                            onclick={handleSubmit}></lightning-button>
+        </lightning-layout-item>
+    </lightning-layout>
+</template>
