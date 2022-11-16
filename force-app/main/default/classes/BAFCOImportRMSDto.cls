@@ -1,0 +1,109 @@
+public class BAFCOImportRMSDto {
+    public BAFCOImportRMSDto(){
+        additionalChargeList = new List<BAFCOImportRMSDto.AdditionalCharge>();
+    }
+    @AuraEnabled
+    public Decimal seaFreightSellRate { get; set; }
+    @AuraEnabled
+    public Decimal total { get; set; }
+    @AuraEnabled
+    public String quotationItemId { get; set; }
+    @AuraEnabled
+    public Decimal offSet { get; set; }
+    @AuraEnabled
+    public String currencyCode { get; set; }
+    @AuraEnabled
+    public serviceChargeList serviceChargeList { get; set; }
+    @AuraEnabled
+    public List<AdditionalCharge> additionalChargeList { get; set; }
+    public Class AdditionalCharge{ 
+        @AuraEnabled
+        public String name { get; set; }
+        @AuraEnabled
+        public Decimal value { get; set; }
+    }
+    public class serviceChargeList{
+        @AuraEnabled
+        public Decimal offSet { get; set; }
+        @AuraEnabled
+        public String currencyCode { get; set; }
+        @AuraEnabled
+        public BAFCOImportRMSDto.destinChargeObj destinChargeObj { get; set; }
+        @AuraEnabled
+        public BAFCOImportRMSDto.originChargesObj originChargesObj { get; set; }
+        @AuraEnabled
+        public BAFCOImportRMSDto.servichargesObj servichargesObj { get; set; }
+    }
+    public class destinChargeObj{
+        @AuraEnabled
+        public Decimal destinBayanCharges { get; set; }
+        @AuraEnabled
+        public Decimal destinCustomClearanceCharges { get; set; }
+        @AuraEnabled
+        public Decimal destinDOCharges { get; set; }
+        @AuraEnabled
+        public Decimal destinDTHCCharges { get; set; }
+        @AuraEnabled
+        public Decimal destinFasahCharges { get; set; }
+        @AuraEnabled
+        public Decimal destinGatePassCharges { get; set; }
+        @AuraEnabled
+        public Decimal destinLOLOCharges { get; set; }
+        @AuraEnabled
+        public Decimal destinTransPortationCharges { get; set; }
+        @AuraEnabled
+        public Decimal destinTotalCharges { get; set; }
+        @AuraEnabled
+        public Boolean DestinTotalChanged { get; set; }
+    }
+    public class originChargesObj{
+        @AuraEnabled Public decimal bayan{get; set;}
+        @AuraEnabled Public decimal blFees{get; set;}
+        @AuraEnabled Public decimal originCustomClearance{get; set;}
+        @AuraEnabled Public decimal exportServiceFees{get; set;}
+        @AuraEnabled Public decimal fasahFees{get; set;}
+        @AuraEnabled Public decimal inspection{get; set;}
+        @AuraEnabled Public decimal insuranceCharges{get; set;}
+        @AuraEnabled Public decimal liftOnLiftOff{get; set;}
+        @AuraEnabled Public decimal OriginDetention{get; set;}
+        @AuraEnabled Public decimal OriginLoadingCharges{get; set;}
+        @AuraEnabled Public decimal pickUpCharges{get; set;}
+        @AuraEnabled Public decimal ReeferControlPlugInCharge{get; set;}
+        @AuraEnabled Public decimal tabadul{get; set;}
+        @AuraEnabled Public decimal trapulinCharges{get; set;}
+        @AuraEnabled Public decimal truckIdlingCharges{get; set;}
+        @AuraEnabled Public decimal transportationCharges{get; set;}
+        @AuraEnabled Public decimal vgm{get; set;}
+        @AuraEnabled Public decimal xray{get; set;}
+        @AuraEnabled Public decimal lashingCharges{get; set;}
+        @AuraEnabled Public decimal fuelSurcharge{get; set;}
+        @AuraEnabled Public decimal TotalOrigincharges{get; set;}
+        @AuraEnabled Public String directionValue{get; set;}
+        @AuraEnabled Public String loadingChargeId{get; set;}
+        @AuraEnabled Public Boolean originTotalChanged{get; set;}
+        @AuraEnabled Public String loadingChargeName{get; set;}
+    }
+    public class servichargesObj{
+        @AuraEnabled public decimal BAF  {get; set;}
+        @AuraEnabled public decimal bunkerCharges {get; set;}
+        @AuraEnabled public decimal cleaningCharges {get; set;}
+        @AuraEnabled public decimal CMC {get; set;}
+        @AuraEnabled public decimal carriageCongestionSurcharge {get; set;}
+        @AuraEnabled public decimal carrierSecurityFees {get; set;}
+        @AuraEnabled public decimal dgSurcharge {get; set;}
+        @AuraEnabled public decimal DTHC {get; set;}
+        @AuraEnabled public decimal equipmentImbalance {get; set;}
+        @AuraEnabled public decimal inlandFuelCharges {get; set;}
+        @AuraEnabled public decimal inlandHandlingfees {get; set;}
+        @AuraEnabled public decimal inlandHaulage {get; set;}
+        @AuraEnabled public decimal ISPS {get; set;}
+        @AuraEnabled public decimal lowerSulphurSurcharge {get; set;}
+        @AuraEnabled public decimal operationalRecovery {get; set;}
+        @AuraEnabled public decimal OTHC {get; set;}
+        @AuraEnabled public decimal overWeightCharge {get; set;}
+        @AuraEnabled public decimal sealCharges {get; set;}
+        @AuraEnabled public decimal warRiskSurcharges {get; set;}
+        @AuraEnabled public decimal totalSl {get; set;}
+        @AuraEnabled public boolean shippTotalChanged  {get; set;}
+    }
+}

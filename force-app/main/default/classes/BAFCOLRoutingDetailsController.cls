@@ -1,0 +1,821 @@
+public class BAFCOLRoutingDetailsController {
+    public static final Id RMS_EXPORT_RECORDTYPE_Id = Schema.SObjectType.RMS__c.getRecordTypeInfosByName()
+        .get('Export')
+        .getRecordTypeId();
+    public static final Id RMS_IMPORT_RECORDTYPE_Id = Schema.SObjectType.RMS__c.getRecordTypeInfosByName()
+        .get('Import')
+        .getRecordTypeId();
+    public static final Id ENQUIRY_EXPORT_RECORDTYPE_Id = Schema.SObjectType.Enquiry__c.getRecordTypeInfosByName()
+        .get('Export')
+        .getRecordTypeId();
+    public static final Id ENQUIRY_IMPORT_RECORDTYPE_Id = Schema.SObjectType.Enquiry__c.getRecordTypeInfosByName()
+        .get('Import')
+        .getRecordTypeId();
+    public static final Id QUOTE_EXPORT_RECORDTYPE_Id = Schema.SObjectType.quotation__c.getRecordTypeInfosByName()
+        .get('Export')
+        .getRecordTypeId();
+    public static final Id QUOTE_IMPORT_RECORDTYPE_Id = Schema.SObjectType.quotation__c.getRecordTypeInfosByName()
+        .get('Import')
+        .getRecordTypeId();
+    @AuraEnabled
+    public static List<BAFCORoutingDetailsDto> getEnqueryDetails(String enquiryID) {
+        List<BAFCORoutingDetailsDto> routingDetailsList = new List<BAFCORoutingDetailsDto>();
+        Integer index = 1;
+        for(Route__c enqObj : [SELECT Regular_Routing_Lookup__r.name,Port_of_loading__c,Place_of_Discharge__c,Place_of_Pickup__c,Id,Enquiry__r.Lead__c, Regular_Routing__c,INCO_Term__r.name, Kind_Of_Shipment__c, Service_Type__c, Port_of_loading__r.Name, 
+                               Port_of_Destination__r.Name, Shipping_Line__r.name, Commodity__r.Name, Cargo_Weight__c, Remarks__c, 
+                               Name,Enquiry__r.Account__r.Average_Margin__c,Enquiry__r.Account__r.Best_Margin__c,Enquiry__r.Account__r.Average_Credit_Days__c,Enquiry__r.Business_Type__c  
+                               FROM Route__c WHERE Enquiry__c=:enquiryID]){
+                                   BAFCORoutingDetailsDto enqDtoObj = new BAFCORoutingDetailsDto();
+                                   enqDtoObj.routeName = 'Route '+ index;
+                                   enqDtoObj.routingRegular = enqObj.Regular_Routing_Lookup__c != null ? enqObj.Regular_Routing_Lookup__r.Name : '-';
+                                   enqDtoObj.shipmentKind = enqObj.Kind_Of_Shipment__c != null ? enqObj.Kind_Of_Shipment__c : '-';
+                                   enqDtoObj.serviceType = enqObj.Service_Type__c != null ? enqObj.Service_Type__c : '-';
+                                   enqDtoObj.portDestination = enqObj.Port_of_Destination__r.Name != null ? enqObj.Port_of_Destination__r.Name :'-';
+                                   enqDtoObj.portLoading = enqObj.Port_of_loading__r.name != null ? enqObj.Port_of_loading__r.name : '-';
+                                   enqDtoObj.portLoadingId =enqObj.Port_of_loading__c != null ? enqObj.Port_of_loading__c : '-';
+                                   enqDtoObj.commodity = enqObj.Commodity__r.Name != null ? enqObj.Commodity__r.name : '-';
+                                   enqDtoObj.cargoWeights = enqObj.Cargo_Weight__c != null ? enqObj.Cargo_Weight__c : 0 ;
+                                   enqDtoObj.remarks = enqObj.Remarks__c != null ? enqObj.Remarks__c : '-';
+                                   enqDtoObj.routeId = enqObj.Id;
+                                   enqDtoObj.shippingLine = enqObj.Shipping_Line__r.name != null ? enqObj.Shipping_Line__r.name : '-';
+                                   enqDtoObj.incoTerm = enqObj.INCO_Term__r.name != null ? enqObj.INCO_Term__r.name : '-'; 
+                                   enqDtoObj.incoTermId = enqObj.INCO_Term__c != null ? enqObj.INCO_Term__c : null; 
+                                   enqDtoObj.leadId =  enqObj.Enquiry__r.Lead__c != null ? enqObj.Enquiry__r.Lead__c : enqObj.Enquiry__r.Account__c != null ? enqObj.Enquiry__r.Account__c : '' ;
+                                   enqDtoObj.accountAvgMargin = enqObj.Enquiry__r.Account__r.Average_Margin__c != null ? enqObj.Enquiry__r.Account__r.Average_Margin__c : 0 ;
+                                   enqDtoObj.accountBestMargin = enqObj.Enquiry__r.Account__r.Best_Margin__c !=null ? enqObj.Enquiry__r.Account__r.Best_Margin__c : 0;
+                                   enqDtoObj.accountAvgCreditDays = enqObj.Enquiry__r.Account__r.Average_Credit_Days__c != null ?enqObj.Enquiry__r.Account__r.Average_Credit_Days__c : 0 ;
+                                   enqDtoObj.placeOfPickup = enqObj.Place_of_Pickup__c;
+                                   enqDtoObj.placeOfDischarge = enqObj.Place_of_Discharge__c;
+                                   enqDtoObj.businessType = enqObj.Enquiry__r.Business_Type__c !=  null ? enqObj.Enquiry__r.Business_Type__c : '-';
+                                   index++;
+                                   routingDetailsList.add(enqDtoObj);
+                               }
+        return routingDetailsList;
+    }
+    @AuraEnabled
+    public static Map<String,List<BAFCORMSDto>> getRMSDetails(String portLoading, String portDestination, String commodity,String routeId,String enquiryId) {
+        Map<String,List<BAFCORMSDto>> shipLineToEquipMap = new Map<String,List<BAFCORMSDto>>();
+        List<String> routeEquipmentList = new List<String>();
+        List<String> rmsEquipmentList = new List<String>();
+        Map<String,Decimal> routeEquipmentoquantityMap = new Map<String,Decimal>();
+        Map<String,String>  quoteItemToIdMap = new Map<String,String>();
+        String QuoteId = '';
+        Date todaysDate = System.today();
+        for(Route_Equipment__c routeEquip : [Select Equipment_Type__r.name,Quantity__c  FROM Route_Equipment__c WHERE Route__c=:routeId]){
+            routeEquipmentList.add(routeEquip.Equipment_Type__r.name);
+            routeEquipmentoquantityMap.put(routeEquip.Equipment_Type__r.name,routeEquip.Quantity__c);
+        }
+        for(RMS__c rmsObj : [Select Equipment_Type__c  FROM RMS__c WHERE Port_Of_Loading__r.Name =: portLoading 
+                             AND Port_Of_Discharge__r.Name =: portDestination
+                             AND Validity__c >=: todaysDate AND recordtypeId =: RMS_EXPORT_RECORDTYPE_Id]){
+                                 rmsEquipmentList.add(rmsObj.Equipment_Type__c) ;                     
+                             }
+        
+        // to get Previously generated Quote
+        List<Quotation__c> quoteList = [SELECT Id FROM Quotation__c where Enquiry__c  =: enquiryId limit 1];
+        if(quoteList.size() > 0) QuoteId = quoteList[0].Id;
+        
+        // to getquoteItemItem so as to update on Generate quoteItem
+        if(!String.isBlank(QuoteId)){
+            for(Quotation_Item__c item : [Select Equipment_Type__r.name,Shipping_Line__c,id from Quotation_Item__c  where Quotation__c =: QuoteId
+                                          AND Equipment_Type__r.name != null AND Shipping_Line__c != null ]){
+                                              String key = item.Shipping_Line__c+'-'+item.Equipment_Type__r.name;
+                                              quoteItemToIdMap.put(key,item.Id);
+                                          }
+        }
+        system.debug('rmsEquipmentList '+rmsEquipmentList);
+        system.debug('quoteItemToId '+quoteItemToIdMap);
+        if(rmsEquipmentList.size() > 0){
+            for(Route_Equipment__c routeEquip : [Select Equipment_Type__r.name,Quantity__c  FROM Route_Equipment__c WHERE Route__c=:routeId and id in : rmsEquipmentList]){
+                routeEquipmentoquantityMap.put(routeEquip.Equipment_Type__r.name,routeEquip.Quantity__c);
+            }        
+        }
+        
+        for(RMS__c rmsObj : [Select Validity__c, Id,Sea_Freight__c, Equipment_Type__c,Shipping_Line__c,Shipping_Line__r.Name,Equipment_Type__r.name  
+                             FROM RMS__c WHERE Port_Of_Loading__r.Name =: portLoading 
+                             AND Port_Of_Discharge__r.Name =: portDestination
+                             AND Shipping_Line__r.Name != null
+                             AND Equipment_Type__r.name != null
+                             AND Validity__c >=: todaysDate
+                             AND recordtypeId =: RMS_EXPORT_RECORDTYPE_Id
+                            ]){
+                                if(!shipLineToEquipMap.containsKey(rmsObj.Shipping_Line__r.Name)){
+                                    shipLineToEquipMap.put(rmsObj.Shipping_Line__r.Name, new List<BAFCORMSDto>());
+                                }
+                                BAFCORMSDto rmsDto = new BAFCORMSDto();                                
+                                if(routeEquipmentoquantityMap.containsKey(rmsObj.Equipment_Type__r.name)){
+                                    rmsDto.quantity = routeEquipmentoquantityMap.get(rmsObj.Equipment_Type__r.name);
+                                }
+                                rmsDto.equipmentName = rmsObj.Equipment_Type__r.name;
+                                rmsDto.equipmentId = rmsObj.Equipment_Type__c;
+                                rmsDto.seaFreight = rmsObj.Sea_Freight__c ; 
+                                rmsDto.rmsID = rmsObj.id;
+                                rmsDto.quotationId = QuoteId;
+                                String key = rmsObj.Shipping_Line__r.Name+'-'+rmsObj.Equipment_Type__r.name;
+                                if(quoteItemToIdMap.containsKey(key)){
+                                    //rmsDto.quotationItemId = quoteItemToIdMap.get(key);  
+                                }
+                                Date d = rmsObj.Validity__c != null ? rmsObj.Validity__c : null;
+                                if(d != null)
+                                    rmsDto.validity = DateTime.newInstance(d.year(),d.month(),d.day()).format('dd-MMM-YYYY') +', '+system.today().daysBetween(d) +' Days';
+                                shipLineToEquipMap.get(rmsObj.Shipping_Line__r.Name).add(rmsDto);
+                            }
+        for(String equip : routeEquipmentList){
+            for(String key : shipLineToEquipMap.keySet()){
+                Boolean found = false;
+                for(BAFCORMSDto dto : shipLineToEquipMap.get(key)){
+                    if(dto.equipmentName == equip){
+                        found = true;
+                        break;
+                    }
+                }
+                if(!found){
+                    BAFCORMSDto rmsDto = new BAFCORMSDto();
+                    rmsDto.equipmentName = equip;
+                    rmsDto.equipmentId  = '';
+                    rmsDto.rmsID = '';
+                    shipLineToEquipMap.get(key).add(rmsDto);
+                }
+            }
+        }
+        return shipLineToEquipMap;
+    }
+    @AuraEnabled(cacheable=true)
+    public static List<sObject> search(String searchTerm, string myObject, String filter) {
+        String myQuery = null;
+        if(filter != null && filter != ''){
+            myQuery = 'Select Id, Name from '+myObject+' Where Name Like  \'%' + searchTerm + '%\' AND '+filter+' LIMIT  5';
+        }
+        else {
+            if(searchTerm == null || searchTerm == ''){
+                myQuery = 'Select Id, Name from '+myObject+' Where LastViewedDate != NULL ORDER BY LastViewedDate DESC LIMIT  5';
+            }
+            else {
+                myQuery = 'Select Id, Name from '+myObject+' Where Name Like  \'%' + searchTerm + '%\' LIMIT  5';
+            }
+        }
+        system.debug('myQuery '+myQuery);
+        List<sObject> lookUpList = database.query(myQuery);
+        return lookUpList;
+    }
+    @AuraEnabled
+    public static String submitRoutingList(List<BAFCORoutingDetailsDto> routingList, String businessType, String quoteId) {
+        system.debug('routingList '+routingList);
+        List<Route__c> routeList = new List<Route__c>();
+        Enquiry__c enquiryObj = new Enquiry__c();
+        if(businessType != '' && quoteId != ''){
+            String objectAPIName = '';
+            String keyPrefix = '';
+            keyPrefix = quoteId.substring(0,3);
+            for( Schema.SObjectType obj : Schema.getGlobalDescribe().Values() ){
+                String prefix = obj.getDescribe().getKeyPrefix();
+                if(prefix == keyPrefix){
+                    objectAPIName = obj.getDescribe().getName();
+                    break;
+                }
+            }
+            system.debug('objectAPIName '+objectAPIName);
+            if(objectAPIName == 'Lead__c'){
+                Lead__c leadObj = [Select id,Name from Lead__c where Id =: quoteId];                
+                enquiryObj.Name = leadObj.Name +' - '+String.valueOf(date.today()).split(' ')[0];
+                enquiryObj.Lead__c = leadObj.Id;
+            }
+            else if(objectAPIName == 'Account'){
+                Account acc = [Select id,name from Account where id=: quoteId];
+                enquiryObj.Name = acc.Name +' - '+String.valueOf(date.today()).split(' ')[0];
+                enquiryObj.Account__c = quoteId;
+            }
+            enquiryObj.Business_Type__c = businessType;
+            if(businessType == 'Export') enquiryObj.RecordTypeId = ENQUIRY_EXPORT_RECORDTYPE_Id;
+            else if(businessType == 'Import') enquiryObj.RecordTypeId = ENQUIRY_IMPORT_RECORDTYPE_Id;
+            try{
+                Insert enquiryObj;
+                system.debug('enquiryObj '+enquiryObj);
+            }
+            catch(Exception e){
+                System.debug('Excepiton '+e.getMessage());
+            }
+            Map<String,String> routeIndexToIdMap =  new Map<String,String>();
+            List<Route_Equipment__c> routeEquipList = new List<Route_Equipment__c>();
+            for(BAFCORoutingDetailsDto dto : routingList){
+                Route__c routeObj = new Route__c();
+                routeObj.Cargo_Weight__c = dto.cargoWeights;
+                if(!String.isBlank(dto.commodity)) routeObj.Commodity__c =dto.commodity;
+                routeObj.Kind_Of_Shipment__c = dto.shipmentKind;
+                routeObj.Regular_Routing__c = dto.routingRegular;
+                String ObjectName = '';
+                if(objectAPIName == 'Account') routeObj.Regular_Routing_Lookup__c = dto.routingRegular != '' ? dto.routingRegular : null;
+                if(!String.isBlank(dto.shippingLine)) routeObj.Shipping_Line__c = dto.shippingLine;
+                routeObj.Service_Type__c = dto.serviceType;
+                if(!String.isBlank(dto.portLoading)) routeObj.Port_of_loading__c = dto.portLoading;
+                if(!String.isBlank(dto.portDestination)) routeObj.Port_of_Destination__c = dto.portDestination;
+                routeObj.Remarks__c = dto.remarks;
+                routeObj.Dangerous_Goods__c = dto.dangerousGoods;
+                routeObj.Index__c = String.valueOf(dto.leadIndex);
+                if(!String.isBlank(dto.incoTerm)) routeObj.INCO_Term__c = dto.incoTerm  ;
+                routeObj.Enquiry__c = enquiryObj.id;
+                routeObj.DG_Class__c = dto.dgClass;
+                if(!String.isBlank(dto.placeOfPickup)) routeObj.Place_of_Pickup__c = dto.placeOfPickup;
+                if(!String.isBlank(dto.placeOfDischarge)) routeObj.Place_of_Discharge__c = dto.placeOfDischarge;
+                routeList.add(routeObj);
+            }
+            if(routeList.size() > 0){
+                insert routeList;
+            }        
+            for(Route__c obj : routeList){
+                routeIndexToIdMap.put(obj.Index__c, obj.Id);
+            }
+            for(BAFCORoutingDetailsDto dto : routingList){
+                for(BAFCORoutingDetailsDto.containerRecord contr : dto.containerRecord){
+                    Route_Equipment__c routeQuipobj = new Route_Equipment__c();
+                    if(!String.isBlank(contr.containerType)) routeQuipobj.Equipment_Type__c = contr.containerType;
+                    routeQuipobj.Quantity__c = contr.quantity;
+                    routeQuipobj.Route__c = routeIndexToIdMap.get(dto.leadIndex);
+                    routeEquipList.add(routeQuipobj);
+                }
+            }
+            if(routeEquipList.size() > 0){
+                Insert routeEquipList;
+            }
+        }
+        return enquiryObj.id;
+    }
+    @AuraEnabled
+    public static BAFCOIncoChargesDto getIncoCharges(String rmsId, String incoTerm){
+        BAFCOIncoChargesDto incoChargeDto = new BAFCOIncoChargesDto();
+        if(rmsId != '' && incoTerm != ''){
+            for(INCO_Charge__c obj : [Select Loading_Charges__c,Total__c,Bayan__c,/*Destination_Customs_Clearance__c,Destination_Loading_Charges__c,*/Fasah_fee__c,Inspection__c,
+                                      Lift_on_Lift_off__c,Origin_Customs_clearance__c,Origin_Loading_Charges__c,Port_Shuttling__c,
+                                      Tabadul__c,Xray__c
+                                      FROM INCO_Charge__c WHERE RMS__c =: rmsId AND INCO_Term__r.Name =: incoTerm]){
+                                          system.debug(obj.Bayan__c == null);
+                                          if((obj.Bayan__c == null || obj.Bayan__c < 1) 
+                                             //&& (obj.Destination_Customs_Clearance__c == null || obj.Destination_Customs_Clearance__c < 1) 
+                                             //&& (obj.Destination_Loading_Charges__c == null || obj.Destination_Loading_Charges__c < 1)
+                                             && (obj.Fasah_fee__c == null || obj.Fasah_fee__c < 1)
+                                             && (obj.Inspection__c == null || obj.Inspection__c < 1)
+                                             && (obj.Lift_on_Lift_off__c == null || obj.Lift_on_Lift_off__c < 1)
+                                             && (obj.Origin_Customs_clearance__c == null || obj.Origin_Customs_clearance__c < 1 )
+                                             && (obj.Origin_Loading_Charges__c == null || obj.Origin_Loading_Charges__c < 1)
+                                             && (obj.Port_Shuttling__c == null || obj.Port_Shuttling__c < 1)
+                                             && (obj.Tabadul__c == null || obj.Tabadul__c < 1)
+                                             && (obj.Xray__c == null || obj.Xray__c < 1)
+                                             && (obj.Loading_Charges__c == null || obj.Loading_Charges__c < 1)
+                                            ){
+                                                incoChargeDto.total = obj.Total__c;
+                                            }
+                                          else{
+                                              incoChargeDto.bayan = obj.Bayan__c;
+                                              //incoChargeDto.destinationCustomsClearance =obj.Destination_Customs_Clearance__c;
+                                              //incoChargeDto.destinationLoadingCharges = obj.Destination_Loading_Charges__c;
+                                              incoChargeDto.fasahFee = obj.Fasah_fee__c;
+                                              incoChargeDto.inspection = obj.Inspection__c;
+                                              incoChargeDto.liftOnLiftOff = obj.Lift_on_Lift_off__c;
+                                              incoChargeDto.originCustomsclearance = obj.Origin_Customs_clearance__c;
+                                              incoChargeDto.originLoadingCharges = obj.Origin_Loading_Charges__c;
+                                              incoChargeDto.portShuttling = obj.Port_Shuttling__c;
+                                              incoChargeDto.tabadul = obj.Tabadul__c;
+                                              incoChargeDto.xray = obj.Xray__c;
+                                              incoChargeDto.total = obj.Total__c;
+                                              incoChargeDto.loadingCharge = obj.Loading_Charges__c;
+                                          }
+                                      }
+            
+        }
+        return incoChargeDto;
+    }
+    @AuraEnabled(cacheable=true)
+    public static List<SObJectResult> getAdditionalCharges(String value){
+        List<SObJectResult> sObjectResultList = new List<SObJectResult>();
+        String newSearchText = '%'+value+'%';
+        list<Additional_Charge__c> additionalChargeList = [SELECT Name, Id FROM Additional_Charge__c Where Name Like :newSearchText ];
+        for(Additional_Charge__c so : additionalChargeList) {
+            sObjectResultList.add(new SObjectResult(so.name, so.Id));
+        }
+        return sObjectResultList;
+    }
+    @AuraEnabled
+    public static String genrateQuotation(String routeId, String rmsId, String enquiryId,String quotationId, BAFCOGenerteQuoteDto dto, String incoTerm, Boolean cameReviseCompt, Boolean sameRoute, String quoteRemarks, Decimal additionalChargeTotal){
+        List<BAFCOGenerteQuoteDto.AdditionalCharge> additionalChargeList = dto.additionalChargeList;
+        shippingLineChargesDTO shipLineDto = BAFCOshippingLineChargesController.getShippingCharges(rmsId);
+        RMS__c rmsObj = [SELECT Id, Port_Of_Loading__c, Port_Of_Discharge__c, Equipment_Type__c FROM RMS__c where id =: rmsId Limit 1];
+        BAFCOIncoChargesDto incoDto = getIncoCharges(rmsId,incoTerm);
+        Quotation__c quoteObj = new Quotation__c();
+        system.debug('sameRoute '+sameRoute);
+        if(quotationId == ''  || quotationId == null || (cameReviseCompt  == true && sameRoute == true)){
+            Enquiry__c enqObj  = [SELECT Id,No_of_Quotes__c,Lead__c,RecordtypeId,(Select id,name,Name__c from Quotations__r order by createdDate) Lead__c FROM Enquiry__c where id =: enquiryId];            
+            quoteObj.Enquiry__c = enquiryId;
+            quoteObj.Leadc__c = enqObj.Lead__c;
+            if(enqObj.recordtypeId == ENQUIRY_EXPORT_RECORDTYPE_Id) quoteObj.recordtypeId = QUOTE_EXPORT_RECORDTYPE_Id;
+            else if(enqObj.recordtypeId == ENQUIRY_IMPORT_RECORDTYPE_Id) quoteObj.recordtypeId = QUOTE_IMPORT_RECORDTYPE_Id;
+            integer year =  Date.Today().Year();
+            string s1=string.valueof(year).right(2);
+            Integer Year1= Integer.valueof(s1);
+            Decimal quoteNumber = enqObj.No_of_Quotes__c + 1;
+            List<Quotation__c> quoteList = enqObj.Quotations__r; 
+            if(quoteList.size() > 0){
+                if(cameReviseCompt == true){
+                    String fullName = quoteList[0].Name__c;
+                    String lastName = fullName.Substring(fullName.lastIndexOf('/')+1,fullName.length());
+                    quoteObj.Name__c = 'Quote/'+Year1+'/'+lastName+'-'+quoteList.size();
+                }
+                else{
+                    Integer  quoteSize = quoteList.size();
+                    quoteObj.Name__c = 'Quote/'+Year1+'/'+quoteSize;
+                }
+            }
+            else{
+                quoteObj.Name__c = 'Quote/'+Year1+'/'+1;
+            }
+            quoteObj.remarks__c = quoteRemarks;
+            Insert quoteObj;
+        }
+        
+        Quotation_Item__c quoteItemObj = new Quotation_Item__c();
+        quoteItemObj.Route__c = routeId;
+        quoteItemObj.RMS__c = rmsId;
+        if(rmsObj != null){
+            quoteItemObj.Port_of_Discharge__c = rmsObj.Port_Of_Discharge__c;
+            quoteItemObj.Port_of_Loading__c = rmsObj.Port_Of_Loading__c;
+            quoteItemObj.Equipment_Type__c = rmsObj.Equipment_Type__c;
+        }
+        quoteItemObj.Total_Additional__c = additionalChargeTotal;
+        quoteItemObj.CurrencyIsoCode = dto.currencyCode;
+        system.debug('quotationId '+quotationId);
+        if(quotationId == '' || quotationId == null || (cameReviseCompt  == true && sameRoute == true)){
+            String initialquoteName = [Select Name from Quotation__c where id=: quoteObj.id limit 1].Name;
+            quoteItemObj.Name = initialquoteName + ' - 1';
+            quoteItemObj.Quotation__c = quoteObj.id;
+        }
+        else{
+            List<Quotation_Item__c> quoteList = [Select id,Quotation__r.name from Quotation_Item__c where Quotation__c =: quotationId];
+            quoteItemObj.Quotation__c = quotationId;
+            if(quoteList.size() > 0){
+                quoteItemObj.Name = quoteList[0].Quotation__r.name + ' - '+quoteList.size() + 1;
+            }
+            quoteObj.id = quotationId;
+            Enquiry__c enqObj  = [SELECT Id,No_of_Quotes__c,Lead__c,recordtypeId,(Select id,name,Name__c from Quotations__r order by createdDate) Lead__c FROM Enquiry__c where id =: enquiryId];
+            if(enqObj.recordtypeId == ENQUIRY_EXPORT_RECORDTYPE_Id) quoteObj.recordtypeId = QUOTE_EXPORT_RECORDTYPE_Id;
+            else if(enqObj.recordtypeId == ENQUIRY_IMPORT_RECORDTYPE_Id) quoteObj.recordtypeId = QUOTE_IMPORT_RECORDTYPE_Id;
+            
+            integer year =  Date.Today().Year();
+            string s1=string.valueof(year).right(2);
+            Integer Year1= Integer.valueof(s1);
+            Decimal quoteNumber = enqObj.No_of_Quotes__c + 1;
+            List<Quotation__c> quoteList2 = enqObj.Quotations__r; 
+            if(quoteList2.size() > 0){
+                if(cameReviseCompt == true){
+                    String fullName = quoteList2[0].Name__c;
+                    String lastName = fullName.Substring(fullName.lastIndexOf('/')+1,fullName.length());
+                    quoteObj.Name__c = 'Quote/'+Year1+'/'+lastName+'-'+quoteList.size();
+                }
+                else{
+                    Integer  quoteSize = quoteList2.size();
+                    quoteObj.Name__c = 'Quote/'+Year1+'/'+quoteSize;
+                }
+            }
+            quoteObj.remarks__c = quoteRemarks;
+            update quoteObj;
+        }
+        if(dto.serviceChargeList != null){
+            if(dto.serviceChargeList.servichargesObj != null){
+                BAFCOImportRMSDto.servichargesObj servObj = dto.serviceChargeList.servichargesObj;
+                if(servObj.shippTotalChanged == false){
+                    quoteItemObj.BAF__c = servObj.BAF!= null ? servObj.BAF : null;
+                    quoteItemObj.Bunker_surcharge__c = servObj.bunkerCharges!= null ? servObj.bunkerCharges : null;
+                    quoteItemObj.Cleaning_charges__c = servObj.cleaningCharges!= null ? servObj.cleaningCharges : null;
+                    quoteItemObj.CMC__c = servObj.CMC != null ? servObj.CMC : null;
+                    quoteItemObj.Carriage_Congestion_Surcharge__c = servObj.carriageCongestionSurcharge!= null ? servObj.carriageCongestionSurcharge : null;
+                    quoteItemObj.Carrier_Security_Fees__c = servObj.carrierSecurityFees!= null ? servObj.carrierSecurityFees :null;
+                    quoteItemObj.DG_Surcharge__c = servObj.dgSurcharge!= null ? servObj.dgSurcharge : null;
+                    quoteItemObj.DTHC__c = servObj.DTHC!= null ? servObj.DTHC : null;
+                    quoteItemObj.EIC__c = servObj.equipmentImbalance!= null ? servObj.equipmentImbalance : null;
+                    quoteItemObj.Inland_Fuel_Surcharge__c = servObj.inlandFuelCharges!= null ? servObj.inlandFuelCharges :null;
+                    quoteItemObj.Inland_Handling_Fees__c = servObj.inlandHandlingfees!= null ? servObj.inlandHandlingfees :null;
+                    quoteItemObj.Inland_haulage__c = servObj.inlandHaulage!= null ? servObj.inlandHaulage : null;
+                    quoteItemObj.ISPS__c = servObj.ISPS!= null ? servObj.ISPS : null;
+                    quoteItemObj.Low_Sulphur_Surcharge__c = servObj.lowerSulphurSurcharge!= null ? servObj.lowerSulphurSurcharge : null;
+                    quoteItemObj.Operational_Recovery_Surcharge__c = servObj.operationalRecovery!= null ? servObj.operationalRecovery : null;
+                    quoteItemObj.OTHC__c = servObj.OTHC!= null ? servObj.OTHC : null;
+                    quoteItemObj.Overweight_surcharge__c = servObj.overWeightCharge!= null ? servObj.overWeightCharge : null;
+                    quoteItemObj.Seal_Charges__c = servObj.sealCharges!= null ? servObj.sealCharges : null;
+                    quoteItemObj.War_Risk_Surcharge__c = servObj.warRiskSurcharges!= null ? servObj.warRiskSurcharges : null;                  
+                }
+                quoteItemObj.Total_SL__c = servObj.totalSl!= null ? servObj.totalSl : null;
+            }
+            if(dto.serviceChargeList.originChargesObj != null){
+                BAFCOImportRMSDto.originChargesObj originObj = dto.serviceChargeList.originChargesObj;
+                if(originObj.originTotalChanged == false){
+                    quoteItemObj.Bayan__c = originObj.bayan != null ? originObj.bayan : null;
+                    quoteItemObj.BL_Fees__c = originObj.blFees != null ? originObj.blFees : null;
+                    quoteItemObj.Origin_Customs_clearance__c = originObj.originCustomClearance != null ? originObj.originCustomClearance : null;
+                    quoteItemObj.Export_Service_Fees__c = originObj.exportServiceFees != null ? originObj.exportServiceFees : null;
+                    quoteItemObj.Fasah_fee__c = originObj.fasahFees != null ? originObj.fasahFees : null;
+                    quoteItemObj.Inspection__c = originObj.inspection != null ? originObj.inspection : null;
+                    quoteItemObj.Insurance_charges__c = originObj.insuranceCharges != null ? originObj.insuranceCharges : null;
+                    quoteItemObj.Lift_on_Lift_off__c = originObj.liftOnLiftOff != null ? originObj.liftOnLiftOff : null;
+                    quoteItemObj.Origin_Detention_Demurrage_Charges__c = originObj.OriginDetention != null ? originObj.OriginDetention : null;
+                    quoteItemObj.Origin_Loading_Charges__c = originObj.OriginLoadingCharges != null ? originObj.OriginLoadingCharges : null;
+                    quoteItemObj.Pickup_Charges__c = originObj.pickUpCharges != null ? originObj.pickUpCharges : null;
+                    quoteItemObj.Reefer_cntr_plug_in_charges__c = originObj.ReeferControlPlugInCharge != null ? originObj.ReeferControlPlugInCharge : null;
+                    quoteItemObj.Tabadul__c = originObj.tabadul != null ? originObj.tabadul : null;
+                    quoteItemObj.Tarpauline_charge__c = originObj.trapulinCharges != null ? originObj.trapulinCharges : null;
+                    quoteItemObj.Truck_idling_charges__c = originObj.truckIdlingCharges != null ? originObj.truckIdlingCharges : null;
+                    // quoteItemObj.t = originObj.transportationCharges != null ? originObj.transportationCharges : null;
+                    quoteItemObj.VGM__c = originObj.vgm != null ? originObj.vgm : null;
+                    quoteItemObj.Xray__c = originObj.xray != null ? originObj.xray : null;
+                    quoteItemObj.Fuel_Surcharge__c = originObj.fuelSurcharge != null ? originObj.fuelSurcharge : null;
+                    quoteItemObj.Lashing_Charges__c = originObj.lashingCharges != null ? originObj.lashingCharges : null;
+                }
+                quoteItemObj.Total_INCO__c = originObj.TotalOrigincharges != null ? originObj.TotalOrigincharges : null;
+                //quoteItemObj.d = originObj.directionValue != null ? originObj.directionValue : null;
+                //quoteItemObj.lo = originObj.loadingChargeId != null ? originObj.loadingChargeId : null;
+            }
+            if(dto.serviceChargeList.destinChargeObj != null){
+                BAFCOImportRMSDto.destinChargeObj destinObj = dto.serviceChargeList.destinChargeObj;
+                if(destinObj.DestinTotalChanged == false){
+                    quoteItemObj.Bayan_Charges__c = destinObj.destinBayanCharges != null ? destinObj.destinBayanCharges : null; 
+                    quoteItemObj.Destination_Customs_Clearance__c = destinObj.destinCustomClearanceCharges != null ? destinObj.destinCustomClearanceCharges : null; 
+                    quoteItemObj.DO_charges__c = destinObj.destinDOCharges != null ? destinObj.destinDOCharges : null; 
+                    quoteItemObj.Fasah_Charges__c = destinObj.destinFasahCharges != null ? destinObj.destinFasahCharges : null; 
+                    quoteItemObj.Gate_pass_charges__c = destinObj.destinGatePassCharges != null ? destinObj.destinGatePassCharges : null; 
+                    quoteItemObj.LOLO_Charges__c = destinObj.destinLOLOCharges != null ? destinObj.destinLOLOCharges : null; 
+                    //quoteItemObj = destinObj.destinTransPortationCharges != null ? destinObj.destinTransPortationCharges : null; 
+                }
+                quoteItemObj.Total_Dest__c = destinObj.destinTotalCharges != null ? destinObj.destinTotalCharges : null; 
+            }
+        }
+        
+        for(BAFCOGenerteQuoteDto.AdditionalCharge dto2 : additionalChargeList){
+            if(dto2.name == 'Bayan cancellation charge'){
+                quoteItemObj.Bayan_cancellation_charge__c = dto2.value;
+            }
+            if(dto2.name == 'Cleaning charges'){
+                quoteItemObj.Cleaning_charges__c = dto2.value;
+            }
+            if(dto2.name == 'Container Lashing Charges'){
+                //quoteItemObj.Container_Lashing_Charges__c = dto2.value;
+            }
+            if(dto2.name == 'Container movement charges'){
+                quoteItemObj.Container_movement_charges__c = dto2.value;
+            }
+            if(dto2.name == 'Container stripping'){
+                quoteItemObj.Container_stripping__c = dto2.value;
+            }
+            if(dto2.name == 'Free time certificate charges'){
+                quoteItemObj.Free_time_certificate_charges__c = dto2.value;
+            }
+            if(dto2.name == 'Fumigation'){
+                quoteItemObj.Fumigation__c= dto2.value;
+            }
+            if(dto2.name == 'Inspection'){
+                quoteItemObj.Inspection__c = dto2.value;
+            }
+            if(dto2.name == 'Insurance charges'){
+                quoteItemObj.Insurance_charges__c = dto2.value;
+            }
+            if(dto2.name == 'Ministry clearnce charge for OOG cargo'){
+                quoteItemObj.Ministry_clearnce_charge_for_OOG_cargo__c = dto2.value;
+            }
+            if(dto2.name == 'Miscellaneous'){
+                quoteItemObj.Miscellaneous__c = dto2.value;
+            }
+            if(dto2.name == 'MOT fine charges'){
+                quoteItemObj.MOT_fine_charges__c = dto2.value;
+            }
+            if(dto2.name == 'Non Palletized Surcharge'){
+                quoteItemObj.Non_Palletized_Surcharge__c = dto2.value;
+            }
+            if(dto2.name == 'Pest control'){
+                quoteItemObj.Pest_control__c = dto2.value;
+            }
+            if(dto2.name == 'Re palletization'){
+                quoteItemObj.Re_palletization__c = dto2.value;
+            }
+            if(dto2.name == 'Reefer cntr plug-in charges'){
+                quoteItemObj.Reefer_cntr_plug_in_charges__c = dto2.value;
+            }
+            if(dto2.name == 'Reefer PTI charges'){
+                quoteItemObj.Reefer_PTI_charges__c = dto2.value;
+            }
+            if(dto2.name == 'Reefer steam wash'){
+                quoteItemObj.Reefer_steam_wash__c = dto2.value;
+            }
+            if(dto2.name == 'Stuffing Charges'){
+                quoteItemObj.Stuffing_Charges__c = dto2.value;
+            }
+            if(dto2.name == 'Sweeping/Cleaning'){
+                quoteItemObj.SweepingCleaning__c = dto2.value;
+            }
+            /*if(dto.name == 'Tarpauline charge'){
+quoteItemObj. = dto.value;
+}*/
+            if(dto2.name == 'Truck Head charges'){
+                quoteItemObj.Truck_Head_charges__c = dto2.value;
+            }
+            if(dto2.name == 'Truck idling charges'){
+                quoteItemObj.Truck_idling_charges__c = dto2.value;
+            }
+            if(dto2.name == 'Vessel certificate charges'){
+                quoteItemObj.Vessel_certificate_charges__c = dto2.value;
+            }
+            if(dto2.name == 'Wrapping/packing charges'){
+                quoteItemObj.Wrappingpacking_charges__c = dto2.value;
+            }
+        }
+        quoteItemObj.Total__c = dto.total;
+        quoteItemObj.Total_Additional__c = additionalChargeTotal;
+        quoteItemObj.Sea_Freight__c = dto.seaFreightSellRate;  
+        try{
+            upsert quoteItemObj;
+        }
+        Catch(Exception e){
+            System.debug('Exception '+e.getMessage());
+        }
+        
+        return quoteObj.Id;
+    }
+    @AuraEnabled
+    public static string addRates(
+        BAFCORMSDto rmsDetail,
+        String routeId,
+        shippingLineChargesDTO shippingChargeDto,
+        BAFCOIncoChargesDto incocharges,
+        Boolean totalShippChanged,
+        Boolean totalIncoChanged,
+        String equipmentType,
+        String shippingLine,
+        String leadId,
+        Boolean destinTotalChanged,
+        BAFCODestinationChargeDto destinCharges
+    ){
+        
+        Route__c routeObj =[SELECT INCO_Term__c ,Id, Port_of_Destination__c, Port_of_loading__c, Shipping_Line__c, Commodity__c FROM Route__c where id =:routeId];
+        
+        String equipId = [SELECT Max_Weight__c, Name, Id FROM Equipment_Type__c where Name =: equipmentType].id;
+        String shippingLineId = [SELECT Name, Id FROM Shipping_Line__c where Name =: shippingLine limit 1].id;
+        
+        String objectAPIName = '';
+        String businesstype = '';
+        String keyPrefix = '';
+        if(leadId != '') {
+            keyPrefix = leadId.substring(0,3);
+            for( Schema.SObjectType obj : Schema.getGlobalDescribe().Values() ){
+                String prefix = obj.getDescribe().getKeyPrefix();
+                if(prefix == keyPrefix){
+                    objectAPIName = obj.getDescribe().getName();
+                    break;
+                }
+            }
+            
+            
+            if(objectAPIName == 'Lead__c' )
+                businesstype = [SELECT Id, Business_Type__c FROM Lead__c where id =: leadId limit 1].Business_Type__c;
+        }
+        system.debug('incocharges '+incocharges);
+        Id ExportRecordTypeId = Schema.SObjectType.RMS__c.getRecordTypeInfosByName()
+            .get('Export')
+            .getRecordTypeId();
+        
+        Id ImportRecordTypeId = Schema.SObjectType.RMS__c.getRecordTypeInfosByName()
+            .get('Import')
+            .getRecordTypeId();
+        
+        RMS__c rmsobj = new RMS__c();
+        rmsobj.Port_Of_Loading__c = routeObj.Port_of_loading__c;
+        rmsObj.Port_Of_Discharge__c = routeObj.Port_of_Destination__c;
+        rmsObj.Commodity__c = routeObj.Commodity__c;
+        rmsObj.Shipping_Line__c = shippingLineId;
+        rmsObj.Rate_Type__c = rmsDetail.rateType;
+        rmsObj.Validity__c = Date.valueOf(rmsDetail.validity);
+        rmsObj.Sea_Freight__c = rmsDetail.seaFreight;
+        rmsObj.Business_Type__c = businesstype;
+        rmsObj.Equipment_Type__c = equipId;
+        rmsObj.Business_Type__c = rmsDetail.businessType;
+        rmsObj.All_in_Rate__c = rmsDetail.allInRate;
+        rmsObj.FOB_All_In__c = rmsDetail.FOBAllIn;
+        rmsObj.Ex_Works_All_In__c = rmsDetail.ExWorksIn;
+        rmsObj.Free_time__c = rmsDetail.FreeTime != null ? Decimal.valueOf(rmsDetail.FreeTime) : 0;
+        rmsObj.Remarks__c = rmsDetail.remarks;
+        rmsObj.Agent__c = rmsDetail.agentName != '' ? rmsDetail.agentName : null; 
+        rmsObj.INCO_Term__c = rmsDetail.incoTermId != null ? rmsDetail.incoTermId : null;
+        if(rmsObj.Business_Type__c == 'Export') rmsObj.RecordTypeId = ExportRecordTypeId;
+        else if(rmsObj.Business_Type__c == 'Import')rmsObj.RecordTypeId = ImportRecordTypeId;
+        
+        Insert rmsObj;
+        
+        Shipping_Line_Charge__c sLine = new Shipping_Line_Charge__c();
+        if(!totalShippChanged){
+            sLine.BAF__c = shippingChargeDto.BAF;
+            sLine.Bunker_surcharge__c = shippingChargeDto.BunkerSurcharge;
+            sLine.CMC__c = shippingChargeDto.CMC;
+            sLine.DTHC__c = shippingChargeDto.DTHC;
+            sLine.EIC__c = shippingChargeDto.EIC;
+            sLine.ISPS__c = shippingChargeDto.ISPS;
+            sline.OTHC__c = shippingChargeDto.OTHC;            
+            sline.Seal_Charges__c = shippingChargeDto.sealCharges;
+            
+            sline.Carriage_Congestion_Surcharge__c = shippingChargeDto.carriageCongestionSurcharg;
+            sline.Carrier_Security_Fees__c = shippingChargeDto.carrierSecurityFees;
+            sline.Cleaning_Charges__c = shippingChargeDto.cleaningCharges;
+            sline.DG_Surcharge__c = shippingChargeDto.DGSurcharge;
+            sline.Inland_Fuel_Surcharge__c = shippingChargeDto.inlandFuelSurcharge;
+            sline.Inland_Handling_Fees__c = shippingChargeDto.inlandHandlingFees;
+            sline.Inland_haulage__c = shippingChargeDto.inlandhaulage;
+            sline.Low_Sulphur_Surcharge__c = shippingChargeDto.lowSulphurSurcharge;
+            sline.Operational_Recovery_Surcharge__c = shippingChargeDto.operationalRecoverySurcharge;
+            sline.Overweight_surcharge__c = shippingChargeDto.overweightsurcharge;
+            sline.War_Risk_Surcharge__c = shippingChargeDto.warRiskSurcharge;
+            
+        }
+        sline.RMS__c = rmsObj.id;        
+        sLine.Total__c = shippingChargeDto.Total;
+        sLine.CurrencyIsoCode= shippingChargeDto.currencyCode;
+        sLine.Offset_Value__c = shippingChargeDto.offSet;
+        
+        if(rmsObj.All_in_Rate__c == false && rmsObj.FOB_All_In__c == false && rmsObj.Ex_Works_All_In__c == false) Insert sLine;
+        
+        INCO_Charge__c iObj = new INCO_Charge__c();
+        if(!totalIncoChanged){
+            iObj.Bayan__c = incoCharges.bayan;
+            iobj.Fasah_fee__c = incoCharges.fasahFee;
+            iObj.Inspection__c = incoCharges.inspection;
+            iObj.Lift_on_Lift_off__c = incoCharges.liftOnLiftOff;
+            iObj.Origin_Customs_clearance__c = incoCharges.originCustomsclearance;
+            iobj.Origin_Loading_Charges__c = incoCharges.originLoadingCharges;
+            iObj.Port_Shuttling__c = incoCharges.portShuttling;
+            iObj.Tabadul__c = incoCharges.tabadul;
+            iObj.Xray__c = incoCharges.xray;
+            iObj.Loading_Charges__c = incoCharges.loadingCharge;
+            if(!String.isBlank(incoCharges.loadingChargeId)) iObj.Loading_Charge_Name__c = incoCharges.loadingChargeId;
+            
+            iObj.BL_Fees__c = incoCharges.bLFees;
+            iObj.Export_Service_Fees__c = incoCharges.exportServiceFees;
+            iObj.Fuel_Surcharge__c = incoCharges.fuelSurcharge;
+            iObj.Insurance_Charges__c = incoCharges.insuranceCharges;
+            iObj.Lashing_Charges__c = incoCharges.lashingCharges;
+            iObj.Origin_Detention_Demurrage_Charges__c = incoCharges.originDetentionDemurrageCharges;
+            iObj.OTHC__c = incoCharges.OTHC;
+            iObj.Pickup_Charges__c = incoCharges.pickupCharges;
+            iObj.Reefer_Plugin_Charges__c = incoCharges.reeferPluginCharges;
+            iObj.Tarpaulin_Charges__c = incoCharges.tarpaulinCharges;
+            iObj.Truck_idling_Charges__c = incoCharges.truckidlingCharges;
+            iObj.VGM__c = incoCharges.vGM;
+            
+        }
+        iObj.Total__c = incoCharges.total;
+        iObj.RMS__c = rmsObj.id;        
+        iObj.INCO_Term__c = routeObj.INCO_Term__c;
+        iObj.CurrencyIsoCode = incoCharges.currencyCode;
+        iObj.Offset_Value__c = incoCharges.offSet;
+        
+        if(rmsObj.All_in_Rate__c == false && rmsObj.Ex_Works_All_In__c == false && rmsObj.FOB_All_In__c == false)  Insert iObj;
+        system.debug(iObj);
+        Destination_Charges__c desti = new Destination_Charges__c();
+        if(!destinTotalChanged){
+            desti.Bayan_Charges__c = destinCharges.bayanCharges;
+            desti.Custom_Clearance__c = destinCharges.customClearance;
+            desti.DO_charges__c = destinCharges.doCharges;
+            desti.DTHC__c = destinCharges.DTHC;
+            desti.Fasah_Charges__c = destinCharges.fasahCharges;
+            desti.Gate_pass_charges__c = destinCharges.gatePassCharges;
+            desti.LOLO_Charges__c = destinCharges.LOLOCharges;
+            desti.Transportation__c = destinCharges.transportation;
+        }
+        desti.Total__c = destinCharges.total;
+        desti.CurrencyIsoCode = destinCharges.currencyCode;
+        desti.RMS__c = rmsObj.id;
+        desti.Offset_Value__c = destinCharges.offSet;
+        insert desti;
+         List<Rate_Procurement__c> procumentList  = new  List<Rate_Procurement__c>();
+        if(rmsObj.RecordTypeId == ExportRecordTypeId){
+             procumentList = [Select id from Rate_Procurement__c where 
+                                                   Port_of_Loading__c =:rmsobj.Port_Of_Loading__c AND 
+                                                   Port_of_Discharge__c =:rmsObj.Port_Of_Discharge__c AND 
+                                                   Shipping_Line__c =: rmsObj.Shipping_Line__c AND 
+                                                   Equipment_Type__c =: rmsObj.Equipment_Type__c limit 1];
+        }
+        else if(rmsObj.RecordTypeId == ImportRecordTypeId){
+            system.debug('came in import');
+             procumentList = [Select id from Rate_Procurement__c where 
+                                                   Port_of_Loading__c =:rmsobj.Port_Of_Loading__c AND 
+                                                   Port_of_Discharge__c =:rmsObj.Port_Of_Discharge__c AND 
+                                                   Shipping_Line__c =: rmsObj.Shipping_Line__c AND 
+                              					   Agent__c =:rmsObj.Agent__c AND 
+                                                   Equipment_Type__c =: rmsObj.Equipment_Type__c limit 1];
+        }
+        system.debug('procumentList '+procumentList);
+        system.debug('rmsObj '+rmsObj);
+        if(procumentList.size() > 0){
+            Id ReceivedRecordtypeId = Schema.SObjectType.Rate_Procurement__c.getRecordTypeInfosByName()
+            .get('Received')
+            .getRecordTypeId();
+            Rate_Procurement__c proobj = procumentList[0];
+            proobj.RMS__c = rmsObj.id;
+            proobj.RecordTypeId = ReceivedRecordtypeId;
+            update proobj;
+        }
+        return rmsObj.id;
+    }
+    @AuraEnabled
+    public static List<Shipping_Line__c> getShipline(){
+        return [Select Id, Name from Shipping_Line__c];
+    }
+    @AuraEnabled
+    public static List<Route_Equipment__c> getRouteEquipType( String routeId){
+        return [Select Id, Equipment_Type__r.name from Route_Equipment__c where Route__c =:routeId ];
+    }
+    @AuraEnabled
+    public static List<template__c> getTemplatesData(){
+        return [SELECT Field4_Value__c, Field10_Value__c, Field1_Name__c, Field7_Value__c, Field3_Name__c, Field5_Value__c, Field8_Value__c, Field2_Name__c, Field2_Value__c, Field6_Value__c, Field4_Name__c, Field10_Name__c, Field9_Value__c, Field9_Name__c, Field5_Name__c, Field1_Value__c, Field3_Value__c, Field8_Name__c, Field6_Name__c, Field7_Name__c, Name, Id FROM template__c];
+    }
+    @AuraEnabled
+    public static void submitTemplatesData(template__c templateObj){
+        if(templateObj != null){
+            insert templateObj;
+        }
+    }
+    @AuraEnabled
+    public static List<Loading_Charge__c>  getLoadingCharges(String pickupPlace, String portLoading, String directionValue){
+        List<Loading_Charge__c>  loadingChargeList = new List<Loading_Charge__c>();
+        if(!String.isBlank(pickupPlace) && !String.isBlank(portLoading) && !String.isBlank(directionValue)){
+            loadingChargeList = [SELECT Id, Loading_Charge__c FROM Loading_Charge__c
+                                 WHERE Direction__c =: directionValue AND Place_of_Pickup__c =: pickupPlace AND Port_of_Loading__c =: portLoading limit 1];
+        }
+        return loadingChargeList;
+    }
+    @AuraEnabled
+    public static void updateValidityDate( String quoteId, string validityDate){
+        Quotation__c quoteObj = new Quotation__c();
+        system.debug('validityDate '+validityDate);
+        quoteObj.Id = quoteId;
+        if(validityDate != null) quoteObj.Quotation_Validity__c = date.valueOf(validityDate);
+        update quoteObj;
+    }
+    @AuraEnabled
+    public static List<Exchange_Rate__c> getExchangeRate(){
+        return [SELECT Id, Currency_Code__c, Exchange_Rate__c, Offset_Value__c, Final_Rate__c FROM Exchange_Rate__c];
+    }
+    @AuraEnabled
+    public static Regular_Routing__c getRegularRouteData(String rgID){
+        if(rgID != null){
+            return [Select Dangerous_Goods__c,DG_Class__c,Commodity__c,Commodity__r.Name,id, name,Service_Type__c,
+                    INCO_Term__c,INCO_Term__r.Name,Port_of_Loading__c,Port_of_Loading__r.Name,Port_of_Destination__c,
+                    Port_of_Destination__r.Name,Place_of_Pickup__c, Place_of_Discharge__c,Place_of_Pickup__r.Name, Place_of_Discharge__r.Name,
+                    Shipping_Line__c,Shipping_Line__r.Name from Regular_Routing__c where id=:rgID];
+        }
+        return null;
+    }
+    @AuraEnabled
+    public static List<Regular_Routing__c> getAllRegularRoute(String AccountId){
+        return [Select id,Name from Regular_Routing__c where Account__c =: AccountId ];
+    }
+    @AuraEnabled
+    public static Rate_Procurement__c createRateProcument(String portLoading,String commodity,String shippingLine,String portDischarge,decimal quantity,String enquiryId,String routeId,String agentName){
+        String PortOfDischargeId = [Select id ,name from Port__c where name =:portDischarge limit 1].Id;
+        String portLoadingId = [Select id ,name from Port__c where name =:portLoading limit 1].Id;
+        String agentNameId = null;
+        system.debug('agentName '+agentName);
+        if(agentName !='') agentNameId = [Select id ,name from Agent__c where name =:agentName limit 1].Id;
+        system.debug(agentNameId);
+        Rate_Procurement__c procuObj = new Rate_Procurement__c();
+        Id PENDING = Schema.SObjectType.Rate_Procurement__c.getRecordTypeInfosByName()
+            .get('Pending')
+            .getRecordTypeId();
+        List<Route_Equipment__c> routeEquipMentList = getRouteEquipType(routeId);
+        if(routeEquipMentList.size() > 0){
+            String equipmentName = routeEquipMentList[0].Equipment_Type__r.name;
+            String equipId = [Select Id from Equipment_Type__c where name =:equipmentName Limit 1].Id;
+            procuObj.Equipment_Type__c = equipId;
+        }
+        procuObj.Port_of_Loading__c = portLoadingId;
+        procuObj.Port_of_Discharge__c = PortOfDischargeId;
+        procuObj.Quantity__c = quantity;
+        procuObj.Shipping_Line__c = shippingLine != '' ? shippingLine : null;
+        procuObj.Enquiry__c = enquiryId;
+        procuObj.Agent__c = agentNameId != null ?  agentNameId : null;
+        procuObj.RecordTypeId = PENDING;
+        insert procuObj;
+        Task tsk = new Task();
+        tsk.Subject = 'Follow up with Shipping Line for Rate Request';
+        tsk.Status = 'Open';
+        tsk.OwnerId = UserInfo.getUserId();
+        tsk.WhatId = procuObj.Id;
+        tsk.IsReminderSet = true;
+        tsk.ActivityDate = Date.valueOf(DateTime.now().addDays(1));
+        insert tsk;
+        
+        return procuObj;        
+    }
+    public class SObjectResult {
+        @AuraEnabled
+        public String recName;
+        @AuraEnabled
+        public Id recId;
+        
+        public SObJectResult(String recNameTemp, Id recIdTemp) {
+            recName = recNameTemp;
+            recId = recIdTemp;
+        }
+    }
+}
