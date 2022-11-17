@@ -777,6 +777,7 @@ quoteItemObj. = dto.value;
         String agentNameId = null;
         system.debug('agentName '+agentName);
         if(agentName !='') agentNameId = [Select id ,name from Agent__c where name =:agentName limit 1].Id;
+        else agentNameId = [Select id ,name from Agent__c limit 1].Id;
         system.debug(agentNameId);
         Rate_Procurement__c procuObj = new Rate_Procurement__c();
         Id PENDING = Schema.SObjectType.Rate_Procurement__c.getRecordTypeInfosByName()

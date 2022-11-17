@@ -135,5 +135,37 @@ public class BAFCOOrderCreationDto {
         public Decimal xRay { get; set; }
         @AuraEnabled
         public Boolean checkBoxSelected { get; set; }
+        
+        @AuraEnabled public Decimal bayanCharges{ get; set; }
+        @AuraEnabled public Decimal blFees{ get; set; }
+        @AuraEnabled public Decimal carriageCongestionSurcharge{ get; set; }
+        @AuraEnabled public Decimal dgSurcharge{ get; set; }
+        @AuraEnabled public Decimal exportServiceFees{ get; set; }
+        @AuraEnabled public Decimal fasahCharges{ get; set; }
+        @AuraEnabled public Decimal fuelSurcharges{ get; set; }
+        @AuraEnabled public Decimal gatePassCharges{ get; set; }
+        @AuraEnabled public Decimal inlandFuelSurcharges{ get; set; }
+        @AuraEnabled public Decimal inlandHandlingFees{ get; set; }
+        @AuraEnabled public Decimal inlandHaulage{ get; set; }
+        @AuraEnabled public Decimal lowSulpherSurcharge{ get; set; }
+        @AuraEnabled public Decimal operationalRecoverySurcharge{ get; set; }
+        @AuraEnabled public Decimal lashingCharges{ get; set; }
+        @AuraEnabled public Decimal originDetentionCharges{ get; set; }
+        @AuraEnabled public Decimal overWeightSurcharge{ get; set; }
+        @AuraEnabled public Decimal pickupCharges{ get; set; }
+        @AuraEnabled public Decimal totalDestination{ get; set; }
+        @AuraEnabled public Decimal vgm{ get; set; }
+        @AuraEnabled public Decimal warRiskCharges{ get; set; }
+        @AuraEnabled public Decimal totalAdditional{ get; set; }
+        @AuraEnabled public String remarksAdditionalCharges{ get; set; }
+        @AuraEnabled public String remarksDesinationCharges{ get; set; }
+        @AuraEnabled public String remarksoriginCharges{ get; set; }
+        @AuraEnabled public String remarksSLCharges{ get; set; }
+        
+        @AuraEnabled public Decimal containerLashingCharges{ get; set; }
+        @AuraEnabled public Decimal dOcharges{ get; set; }
+        @AuraEnabled public Decimal lOLOCharges{ get; set; }
+        @AuraEnabled public Decimal carrierSecurityFees{ get; set; }
+        
     }
 }

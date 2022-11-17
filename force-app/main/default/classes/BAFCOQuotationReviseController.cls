@@ -314,13 +314,4 @@ public class BAFCOQuotationReviseController {
         }
         return shipLineToEquipMap;
     }
-    /*@AuraEnabled
-public static Map<String,List<BAFCOLinitemDto>> getprevQuoteDetail(String enquiryId, String portLoading, String portDestination, String commodity){
-Map<String,List<BAFCOLinitemDto>> shipLineToEquipMap = new Map<String,List<BAFCOLinitemDto>>();
-List<Quotation__c> quoteList = [SELECT Id,createdDate FROM Quotation__c where Enquiry__c  =: enquiryId order by createdDate DESC limit 1 ];
-if(quoteList.size() > 0){
-// shipLineToEquipMap = getQuoteLineItemDetails(quoteList[0].id,portLoading,portDestination,commodity);
-}
-return shipLineToEquipMap;
-}*/
 }
