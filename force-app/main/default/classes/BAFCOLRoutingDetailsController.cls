@@ -774,11 +774,8 @@ quoteItemObj. = dto.value;
     public static Rate_Procurement__c createRateProcument(String portLoading,String commodity,String shippingLine,String portDischarge,decimal quantity,String enquiryId,String routeId,String agentName){
         String PortOfDischargeId = [Select id ,name from Port__c where name =:portDischarge limit 1].Id;
         String portLoadingId = [Select id ,name from Port__c where name =:portLoading limit 1].Id;
-        String agentNameId = null;
         system.debug('agentName '+agentName);
-        if(agentName !='') agentNameId = [Select id ,name from Agent__c where name =:agentName limit 1].Id;
-        else agentNameId = [Select id ,name from Agent__c limit 1].Id;
-        system.debug(agentNameId);
+        system.debug('shippingLine '+shippingLine);
         Rate_Procurement__c procuObj = new Rate_Procurement__c();
         Id PENDING = Schema.SObjectType.Rate_Procurement__c.getRecordTypeInfosByName()
             .get('Pending')
@@ -794,7 +791,7 @@ quoteItemObj. = dto.value;
         procuObj.Quantity__c = quantity;
         procuObj.Shipping_Line__c = shippingLine != '' ? shippingLine : null;
         procuObj.Enquiry__c = enquiryId;
-        procuObj.Agent__c = agentNameId != null ?  agentNameId : null;
+        procuObj.Agent__c = agentName != '' ?  agentName : null;
         procuObj.RecordTypeId = PENDING;
         insert procuObj;
         Task tsk = new Task();

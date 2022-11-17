@@ -29,6 +29,7 @@ public class BAFCOSalesOrderController {
         for(Route_Equipment__c re : [Select quantity__c, Equipment_Type__r.name from Route_Equipment__c where route__c =:routeId ]){
             mapequipNameToQty.put(re.Equipment_Type__r.name,re.Quantity__c);
         }
+        system.debug('mapequipNameToQty '+mapequipNameToQty);
         Integer index = 1;
         for(Quotation_Item__c item : [Select BAF__c,Bayan__c,Bayan_cancellation_charge__c,Bunker_surcharge__c,Cleaning_charges__c,
                                       /*Container_Lashing_Charges__c,*/CMC__c,Container_movement_charges__c,Container_stripping__c,
@@ -41,7 +42,7 @@ public class BAFCOSalesOrderController {
                                       Reefer_steam_wash__c,RMS__c,Route__c,Sea_Freight__c,Seal_Charges__c,Stuffing_Charges__c,
                                       SweepingCleaning__c,Tabadul__c,Tarpauline_charge__c,Total_INCO__c,Total_SL__c,Truck_Head_charges__c,
                                       Truck_idling_charges__c,Vessel_certificate_charges__c,Wrappingpacking_charges__c,Xray__c,
-                                      Quotation__r.Leadc__c,Quotation__r.Enquiry__c,Quotation__r.Account__c,Total__c,
+                                      Quotation__r.Leadc__c,Quotation__r.Enquiry__c,Quotation__r.Account__c,Total__c,Agent_Name__c,
                                       Remarks_SL_Charges__c,Remarks_Origin_Charges__c,Remarks_Destination_Charges__c,Remarks_Additional_Charges__c,Total_Additional__c,War_Risk_Surcharge__c,VGM__c,Total_Dest__c,Pickup_Charges__c,Overweight_surcharge__c,Origin_Detention_Demurrage_Charges__c,Lashing_Charges__c,Operational_Recovery_Surcharge__c,Low_Sulphur_Surcharge__c,Inland_haulage__c,Inland_Handling_Fees__c,Inland_Fuel_Surcharge__c,Gate_pass_charges__c,Fuel_Surcharge__c,Fasah_Charges__c,Export_Service_Fees__c,DG_Surcharge__c,Carriage_Congestion_Surcharge__c,BL_Fees__c,Bayan_Charges__c,
                                       Container_Lashing_Charges__c,DO_charges__c,LOLO_Charges__c,Carrier_Security_Fees__c,
                                       Shipping_Line__c,Equipment_Type__r.Name 
@@ -56,8 +57,10 @@ public class BAFCOSalesOrderController {
                                                       equipLineToShipData.put(equipName,new List<EquipData>());
                                                   }
                                                   EquipData dto = new EquipData();
+                                                  system.debug('here '+mapequipNameToQty.get(item.Equipment_Type__r.Name));
                                                   dto.Qty = mapequipNameToQty.get(item.Equipment_Type__r.Name);
-                                                  dto.shipName = item.Shipping_Line__c;
+                                                  system.debug(' dto.Qty '+ dto.Qty);
+                                                  dto.shipName = item.Shipping_Line__c+( item.Agent_Name__c != null ? (' - '+item.Agent_Name__c) : '');
                                                   dto.sellingRate = item.Total__c;
                                                   dto.checkBoxSelected = false;
                                                   dto.accountId = item.Quotation__r.Account__c;
