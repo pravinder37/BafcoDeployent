@@ -314,6 +314,8 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
         this.displayDestinCharges = true;
         this.serviceChargeList = {};
         this.total = 0;
+        this.displayAdditionalCharge = false
+        this.additionalChargeTotal = null
     }
     handleshippingLineActive(e){
         this.margin = 0;        
@@ -539,7 +541,9 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
     }
     handleAdditionalChange(event){
         let index = event.target.dataset.recordId;
-        this.additionalChargeList[index].value = parseInt(event.target.value);
+        this.additionalChargeList.forEach(elem=>{
+            if(elem.index == index) elem.value = parseInt(event.target.value);
+        })
         this.updateTabsData();
         this.handleUpdateCalculation();
     }
@@ -775,6 +779,8 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                      this.quotationItemId = elem.value[0].quotationItemId != undefined ? elem.value[0].quotationItemId : '';                     
                     if(elem.value[0].additionalChargeList.length > 0){
                         this.additionalChargeList = elem.value[0].additionalChargeList;
+                        if(this.additionalChargeList.length > 0) this.displayAdditionalCharge = true
+                        else this.displayAdditionalCharge = false
                     }
                     this.total = elem.value[0].total;
                     this.serviceChargeList = elem.value[0].serviceChargeList;

@@ -626,7 +626,7 @@
                                                                         onclick={removeAdditionalCharge}></lightning-button-icon>                                                
                                                                 </lightning-layout-item>
                                                             </template>
-                                                            <lightning-layout-item class="shipLineValueCSS" size="12">
+                                                            <lightning-layout-item class="shipLineValueCSS" size="12" if:true={additionalChargeTotal}>
                                                                 <lightning-input 
                                                                     type="number"
                                                                     variant="label-inline"
