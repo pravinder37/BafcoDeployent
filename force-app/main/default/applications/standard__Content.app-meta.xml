@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata">
+    <defaultLandingTab>standard-home</defaultLandingTab>
+    <isNavAutoTempTabsDisabled>false</isNavAutoTempTabsDisabled>
+    <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>
+    <isNavTabPersistenceDisabled>false</isNavTabPersistenceDisabled>
+    <tabs>standard-Chatter</tabs>
+    <tabs>standard-Workspace</tabs>
+    <tabs>standard-ContentSearch</tabs>
+    <tabs>standard-ContentSubscriptions</tabs>
+    <tabs>MobileLanding</tabs>
+    <tabs>INCO_Charge__c</tabs>
+    <tabs>INCO_Term__c</tabs>
+    <tabs>Port__c</tabs>
+    <tabs>Place__c</tabs>
+    <tabs>Shipping_Line__c</tabs>
+    <tabs>Equipment_Type__c</tabs>
+    <tabs>Commodity__c</tabs>
+    <tabs>RMS__c</tabs>
+    <tabs>Shipping_Line_Charge__c</tabs>
+    <tabs>Additional_Charge__c</tabs>
+    <tabs>Loading_Charge__c</tabs>
+    <tabs>Quotation__c</tabs>
+    <tabs>Quotation_Item__c</tabs>
+    <tabs>Route__c</tabs>
+    <tabs>Route_Equipment__c</tabs>
+    <tabs>template__c</tabs>
+    <tabs>Order__c</tabs>
+    <tabs>Agent__c</tabs>
+    <tabs>Exchange_Rate__c</tabs>
+    <tabs>Destination_Charges__c</tabs>
+    <tabs>Regular_Routing__c</tabs>
+    <tabs>Rate_Procurement__c</tabs>
+</CustomApplication>

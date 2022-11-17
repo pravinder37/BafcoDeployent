@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>Exchange_Rate_Api_Key</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Exchange Rate Api  Key</shortDescription>
+        <value>glNQjeQvh4c9eWz3MAro7YdoxME9nxju</value>
+    </labels>
+</CustomLabels>

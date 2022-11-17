@@ -4,26 +4,4 @@
     <active>true</active>
     <compactLayoutAssignment>RMS_Compact_Layout</compactLayoutAssignment>
     <label>Import</label>
-    <picklistValues>
-        <picklist>Business_Type__c</picklist>
-        <values>
-            <fullName>Export</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Import</fullName>
-            <default>false</default>
-        </values>
-    </picklistValues>
-    <picklistValues>
-        <picklist>Rate_Type__c</picklist>
-        <values>
-            <fullName>Contract</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Spot</fullName>
-            <default>false</default>
-        </values>
-    </picklistValues>
 </RecordType>
