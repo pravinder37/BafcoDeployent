@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>Jeddah</fullName>
+        <default>false</default>
+        <label>Jeddah</label>
+    </customValue>
+    <customValue>
+        <fullName>Riyadh</fullName>
+        <default>false</default>
+        <label>Riyadh</label>
+    </customValue>
+    <customValue>
+        <fullName>Dammam</fullName>
+        <default>false</default>
+        <label>Dammam</label>
+    </customValue>
+    <customValue>
+        <fullName>Jubail</fullName>
+        <default>false</default>
+        <label>Jubail</label>
+    </customValue>
+    <masterLabel>Branch</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

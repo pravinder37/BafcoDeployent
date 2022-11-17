@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>Sea</fullName>
+        <default>false</default>
+        <label>Sea</label>
+    </customValue>
+    <customValue>
+        <fullName>Land</fullName>
+        <default>false</default>
+        <label>Land</label>
+    </customValue>
+    <customValue>
+        <fullName>Air</fullName>
+        <default>false</default>
+        <label>Air</label>
+    </customValue>
+    <masterLabel>Modes</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>
