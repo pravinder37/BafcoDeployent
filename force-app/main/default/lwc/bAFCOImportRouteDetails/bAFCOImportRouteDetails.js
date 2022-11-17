@@ -282,6 +282,9 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
         this.DestinTotalChanged= false;
         this.displayDestinCharges = true;
         this.serviceChargeList = {};
+        this.displayAdditionalCharge = false;
+        this.additionalChargeList= [];
+        this.additionalChargeTotal = null;
     }
     
     @api handleShowaddAgentModel(){
@@ -325,34 +328,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
         this.shippingTabSelected = templist[elem].key;
         let data =templist[elem].data;
         this.shippingEquipTabSelected = data[elem].equipmentName;
-        this.seaFreight = data[elem].seaFreight;
-        this.validity = data[elem].validity;
-        this.equipmentId = data[elem].equipmentId;
-        this.buyingRate = data[elem].seaFreight;
-        this.daysLeft = data[elem].validity;
-        this.quantity = data[elem].quantity;
-        this.quotationItemId = data[elem].quotationItemId != undefined ?  data[elem].quotationItemId : '';  
-        
-        setTimeout(() => {
-            let equiTab = this.template.querySelectorAll('lightning-tabset')[1];
-            equiTab.activeTabValue = this.shippingTabSelected;
-        }, 1);   
-        this.assignTabsData();
-
-        let keyName = this.agentTabSelected+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected;  
-            this.toHoldData.forEach(elem => {
-                if(elem.key == keyName){
-                    if(elem.value[0].savedClicked  != undefined){
-                        if(elem.value[0].savedClicked == true){
-                            this.quotationSaved = true;
-                        }
-                        else{
-                            this.quotationSaved = false;
-                        }
-                    }
-                }
-            });
-        this.handleUpdateCalculation();
+       this.processData();
     }
     handleShipLineActive(e){   
         this.resetCalculation();     
@@ -370,34 +346,8 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
         })
         let elem  = 0;
         this.shippingEquipTabSelected  =  data[elem].equipmentName;
-        this.seaFreight = data[elem].seaFreight;
-        this.validity = data[elem].validity;
-        this.equipmentId = data[elem].equipmentId;
-        this.buyingRate = data[elem].seaFreight;
-        this.daysLeft = data[elem].validity;
-        this.quantity = data[elem].quantity;
-        this.quotationItemId = data[elem].quotationItemId != undefined ?  dedicatedRoutingObj[elem].quotationItemId : '';
-       /* setTimeout(() => {
-            let equiTab = this.template.querySelector("[data-field='EquipTabField']");
-            equiTab.activeTabValue = this.shippingEquipTabSelected;
-        }, 1); */  
-        // ERROR MIGHT COME WHILE EQUIP TAB SWITCH //
-        this.getServiceCharges(); //
-        this.assignTabsData();
-         let keyName = this.agentTabSelected+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected ;  
-            this.toHoldData.forEach(elem => {
-                if(elem.key == keyName){
-                    if(elem.value[0].savedClicked  != undefined){
-                        if(elem.value[0].savedClicked == true){
-                            this.quotationSaved = true;
-                        }
-                        else{
-                            this.quotationSaved = false;
-                        }
-                    }
-                }
-            });
-        this.handleUpdateCalculation();
+        this.processData();
+        
     }
     handleEquipmentNameActive(e){
         this.resetCalculation();
@@ -407,52 +357,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
        if(profitButton != undefined){
         profitButton.style = "background:#FF9800;height: 50px;border-radius: 4px;"
        }
-        let dedicatedRoutingObj = this.routingListMap[this.agentTabSelected];
-        let templist =[];
-        for(let key in dedicatedRoutingObj){
-            templist.push({key:key, data: dedicatedRoutingObj[key]})
-        }
-        let data = [];
-        templist.forEach(elem=>{
-            if(elem.key == this.shippingTabSelected){
-                data= elem.data
-            }
-        })
-        data.forEach(elem =>{
-            if(elem.equipmentName == tabSelected){
-                if(elem.equipmentId != ''){
-                    this.seaFreight = elem.seaFreight;
-                    this.validity = elem.validity;
-                    this.equipmentId = elem.equipmentId;
-                    this.equipNotfound = false ;
-                    this.quantity = elem.quantity;
-                    this.quotationItemId =elem.quotationItemId;
-                    this.rmsId = elem.rmsID;
-                }
-                else{
-                    this.shippingEquipTabSelected = tabSelected;
-                    this.equipNotfound = true ; 
-                }
-            }
-        })
-        this.isLoading = true;
-        this.getServiceCharges();
-        this.assignTabsData();
-
-         let keyName = this.agentTabSelected+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected;  
-            this.toHoldData.forEach(elem => {
-                if(elem.key == keyName){
-                    if(elem.value[0].savedClicked  != undefined){
-                        if(elem.value[0].savedClicked == true){
-                            this.quotationSaved = true;
-                        }
-                        else{
-                            this.quotationSaved = false;
-                        }
-                    }
-                }
-            });
-        this.handleUpdateCalculation();
+       this.processData();
     }
     handleShowServiceCharge(){
         console.log('handleShowServiceCharge ',this.rmsId)
@@ -485,6 +390,8 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                      this.quotationItemId = elem.value[0].quotationItemId != undefined ? elem.value[0].quotationItemId : '';
                      if(elem.value[0].additionalChargeList.length > 0){
                         this.additionalChargeList = elem.value[0].additionalChargeList;
+                        if(this.additionalChargeList.length > 0 ) this.displayAdditionalCharge = true
+                        else this.displayAdditionalCharge = false
                      }
                     this.total = elem.value[0].total;
                     this.serviceChargeList = elem.value[0].serviceChargeList;
@@ -1360,5 +1267,52 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
     }
     handleCloseProcurement(){
         this.showProcument = false;
+    }
+    processData(){
+        let dedicatedRoutingObj = this.routingListMap[this.agentTabSelected];
+        let templist =[];
+        for(let key in dedicatedRoutingObj){
+            templist.push({key:key, data: dedicatedRoutingObj[key]})
+        }
+        let data = [];
+        templist.forEach(elem=>{
+            if(elem.key == this.shippingTabSelected){
+                data= elem.data
+            }
+        })
+        data.forEach(elem =>{
+            if(elem.equipmentName == this.shippingEquipTabSelected){
+                if(elem.equipmentId != ''){
+                    this.seaFreight = elem.seaFreight;
+                    this.validity = elem.validity;
+                    this.equipmentId = elem.equipmentId;
+                    this.equipNotfound = false ;
+                    this.quantity = elem.quantity;
+                    this.quotationItemId =elem.quotationItemId;
+                    this.rmsId = elem.rmsID;
+                }
+                else{
+                    this.equipNotfound = true ; 
+                }
+            }
+        })
+        this.isLoading = true;
+        this.getServiceCharges();
+        this.assignTabsData();
+
+         let keyName = this.agentTabSelected+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected;  
+            this.toHoldData.forEach(elem => {
+                if(elem.key == keyName){
+                    if(elem.value[0].savedClicked  != undefined){
+                        if(elem.value[0].savedClicked == true){
+                            this.quotationSaved = true;
+                        }
+                        else{
+                            this.quotationSaved = false;
+                        }
+                    }
+                }
+            });
+        this.handleUpdateCalculation();
     }
 }

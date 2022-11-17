@@ -94,7 +94,7 @@ export default class
         fieldApiName : DIRECTION_FIELD
     })directionPickListValue({ data, error }){
             if(data){
-                console.log(` DIRECTION_FIELD values are `, data.values);
+                //console.log(` DIRECTION_FIELD values are `, data.values);
                 this.DirectionOptions = data.values;
                 this.directionValue = this.DirectionOptions[0].value;
                 this.getLoadingCharges();
@@ -210,7 +210,7 @@ export default class
         fieldApiName : RATE_TYPE_FIELD
     })wiredPickListValue({ data, error }){
             if(data){
-                console.log(` Picklist values are `, data.values);
+                //console.log(` Picklist values are `, data.values);
                 this.rateTypeOption = data.values;
             }
             if(error){
@@ -225,7 +225,7 @@ export default class
             fieldApiName : BUSINESS_TYPE_FIELD
         })wiredBussinessPickListValue({ data, error }){
                 if(data){
-                    console.log(` business Picklist values are `, data.values);
+                    //console.log(` business Picklist values are `, data.values);
                     this.pickListvaluesBusinessType = data.values;
                 }
                 if(error){
@@ -347,7 +347,7 @@ export default class
         this.rmsDetail.allInRate = this.allInRate;
         this.rmsDetail.FOBAllIn = this.FOBAllIn;
         this.rmsDetail.ExWorksIn = this.ExWorksIn;
-        console.log('rms  '+JSON.stringify(this.rmsDetail,null,2))
+        //console.log('rms  '+JSON.stringify(this.rmsDetail,null,2))
     }
     handleRemarksChange(e){
         this.remarks = e.target.value;
@@ -397,10 +397,6 @@ export default class
         else this.incoChargeTotalChange = false;
     }
     submitDetails(){
-        console.log('inco : '+JSON.stringify(this.incoCharges,null,2))
-        console.log('rmsDetail : '+JSON.stringify(this.rmsDetail,null,2))
-        console.log('shippingChargeDto : '+JSON.stringify(this.shipp,null,2))
-        console.log('destinCharges : '+JSON.stringify(this.destinCharges,null,2))
         addRates({
             rmsDetail: this.rmsDetail,
             routeId : this.routeId,
@@ -554,7 +550,7 @@ export default class
     getRouteEquipType(){
         getRouteEquipType({routeId : this.routeId})
         .then(result =>{
-            console.log('getRouteEquipType '+JSON.stringify(result,null,2));
+            //console.log('getRouteEquipType '+JSON.stringify(result,null,2));
             let temp = [];
             result.forEach(element => {
                 temp.push({
@@ -577,9 +573,6 @@ export default class
         this.getLoadingCharges();
     }
     getLoadingCharges(){
-        console.log('placeof Pickup '+this.pickupPlace);
-        console.log('portLoading '+this.portLoading);
-        console.log('direction  '+this.directionValue);
         if(this.pickupPlace != undefined && this.portLoadingId != undefined && this.directionValue != undefined){
             getLoadingCharges({
                 pickupPlace:this.pickupPlace,
@@ -652,7 +645,7 @@ export default class
         getExchangeRate()
         .then(result=>{
             let templist = [];
-            console.log('getExchangeRate res',JSON.stringify(result,null,2))
+            //console.log('getExchangeRate res',JSON.stringify(result,null,2))
             if(result != null){
                 result.forEach(elem => {
                     templist.push({

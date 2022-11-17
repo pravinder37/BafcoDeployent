@@ -50,6 +50,7 @@ export default class BAFCORateProcurement extends LightningElement {
       this.procurementShippingLine = e.target.value;
   }
     handleCopyClicked(){
+        console.log('agent '+this.agentName);
        this.getRouteEquipType();
     }
     handleCreateFollowUpClicked(){
@@ -76,7 +77,7 @@ export default class BAFCORateProcurement extends LightningElement {
     getRouteEquipType(){
         getRouteEquipType({routeId : this.routeId})
         .then(result =>{
-            console.log('getRouteEquipType '+JSON.stringify(result,null,2));
+            //console.log('getRouteEquipType '+JSON.stringify(result,null,2));
             let temp = [];
             result.forEach(element => {
                 temp.push({
