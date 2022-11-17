@@ -144,6 +144,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
     @track destinationChargeList = {}
 
     @track showProcument = false;
+    @track tempShippingTab
 
     connectedCallback(){     
         if(this.routeId){
@@ -305,7 +306,8 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
     handleAddShipLine(e){
         this.addShippinglineModel = false;
         let temp = e.detail;
-        this.shippingTabSelected = temp ;
+        //this.shippingTabSelected = temp ;
+        this.tempShippingTab = temp;
         this.showAddRatesModel = true;
     }
     handleCloseAddRates(){
