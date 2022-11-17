@@ -6,7 +6,6 @@ import getClassification from '@salesforce/apex/BAFCOshippingLineChargesControll
 import getDestintionCharges from '@salesforce/apex/BAFCOshippingLineChargesController.getDestintionCharges';
 import updateValidityDate from '@salesforce/apex/BAFCOLRoutingDetailsController.updateValidityDate';
 import { NavigationMixin } from 'lightning/navigation';
-//import getprevQuoteDetail from '@salesforce/apex/BAFCOQuotationReviseController.getprevQuoteDetail';
 export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(LightningElement) {
     @api routeName;
     @api routingRegular;
@@ -53,9 +52,6 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
     @track quotationItemId = '';
 
     @track incoChargList = [];
-    @track prevQuoteList = [];
-    @track prevQuoteMap = [];
-    @track prevQuoteDisplayList = {};
 
     @track showAdditionalChargeModal = false;
     @track additionalChargeList = [];
@@ -320,7 +316,6 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
         this.total = 0;
     }
     handleshippingLineActive(e){
-        this.prevQuoteDisplayList = [];
         this.margin = 0;        
         this.resetCalculation();    
         this.shippingEquipTabSelected = '';    
@@ -328,51 +323,9 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
         let dedicatedRoutingObj = this.routingListMap[this.shippingTabSelected]; 
         let elem  = 0;
         this.shippingEquipTabSelected  =   this.seaFreight = dedicatedRoutingObj[elem].equipmentName;
-        this.seaFreight = dedicatedRoutingObj[elem].seaFreight;
-        this.validity = dedicatedRoutingObj[elem].validity;
-        this.equipmentId = dedicatedRoutingObj[elem].equipmentId;
-        this.buyingRate = dedicatedRoutingObj[elem].seaFreight;
-        this.daysLeft = dedicatedRoutingObj[elem].validity;
-        this.quantity = dedicatedRoutingObj[elem].quantity;
-        this.quotationItemId = dedicatedRoutingObj[elem].quotationItemId != undefined ?  dedicatedRoutingObj[elem].quotationItemId : '';
-
-        console.log('prevQuoteDisplayList came '+Object.keys(this.prevQuoteMap).length)
-        if(Object.keys(this.prevQuoteMap).length > 0){
-        let dedicatedObj = this.prevQuoteMap[this.shippingTabSelected];
-            if(dedicatedObj != undefined){
-                dedicatedObj.forEach(elem=>{
-                    if(elem.equipmentName == this.shippingEquipTabSelected){
-                        this.prevQuoteDisplayList = elem;
-                    }
-                })
-                console.log('prevQuoteDisplayList '+JSON.stringify(this.prevQuoteDisplayList,null,2))
-            }
-        }
-        
-
-        setTimeout(() => {
-            let equiTab = this.template.querySelectorAll('lightning-tabset')[1];
-            equiTab.activeTabValue = this.shippingEquipTabSelected;
-        }, 1);   
-        this.assignTabsData();
-
-        let keyName = this.shippingTabSelected+'-'+this.shippingEquipTabSelected;  
-            this.toHoldData.forEach(elem => {
-                if(elem.key == keyName){
-                    if(elem.value[0].savedClicked  != undefined){
-                        if(elem.value[0].savedClicked == true){
-                            this.quotationSaved = true;
-                        }
-                        else{
-                            this.quotationSaved = false;
-                        }
-                    }
-                }
-            });
-        this.handleUpdateCalculation();
+        this.processData();
     }
-    handleEquipmentActive(e){
-       this.prevQuoteDisplayList = [];   
+    handleEquipmentActive(e){   
        this.resetCalculation();
        let profitButton =  this.template.querySelector('.profitButton');
        if(profitButton != undefined){
@@ -380,44 +333,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
        }
         let tabSelected = e.target.value;
         this.shippingEquipTabSelected = tabSelected;
-        let dedicatedRoutingObj = this.routingListMap[this.shippingTabSelected];
-        dedicatedRoutingObj.forEach(elem =>{
-            if(elem.equipmentName == tabSelected){
-                if(elem.equipmentId != ''){
-                    this.seaFreight = elem.seaFreight;
-                    this.validity = elem.validity;
-                    this.equipmentId = elem.equipmentId;
-                    this.equipNotfound = false ;
-                    this.quantity = elem.quantity;
-                    this.quotationItemId =elem.quotationItemId;
-                    this.rmsId = elem.rmsID
-                }
-                else{
-                    this.shippingEquipTabSelected = tabSelected;
-                    this.equipNotfound = true ; 
-                }
-            }
-        })
-        //this.getIncoCharges();
-        this.isLoading = true;
-        this.getServiceCharges();
-        this.assignTabsData();
-
-        let keyName = this.shippingTabSelected+'-'+this.shippingEquipTabSelected;  
-            this.toHoldData.forEach(elem => {
-                if(elem.key == keyName){
-                    if(elem.value[0].savedClicked  != undefined){
-                        if(elem.value[0].savedClicked == true){
-                            this.quotationSaved = true;
-                        }
-                        else{
-                            this.quotationSaved = false;
-                        }
-                    }
-                }
-            });
-            this.handleUpdateCalculation();
-            
+        this.processData();
     }
     handleBuyingRate(){
         this.buyingRate = 0 ; 
@@ -1000,36 +916,6 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
         })
         }
     }
-    getprevQuoteDetail(){
-        getprevQuoteDetail({
-            enquiryId : this.enquiryId,
-            portLoading : this.portLoading,
-            portDestination : this.portDestination,
-            commodity : this.commodity
-        })
-        .then(result=>{
-            console.log('getprevQuoteDetail result' , JSON.stringify(result,null,2));
-            if(result != null){
-                this.prevQuoteMap = result;
-                let conts = result;
-                for(let key in conts){
-                    this.prevQuoteList.push({value:conts[key], key:key});
-                }
-                let dedicatedObj = this.prevQuoteMap[this.shippingTabSelected];
-                if(dedicatedObj != undefined){
-                    dedicatedObj.forEach(elem=>{
-                        if(elem.equipmentName == this.shippingEquipTabSelected){
-                            this.prevQuoteDisplayList = elem;;
-                        }
-                    })
-                    console.log('prevQuoteDisplayList '+JSON.stringify(this.prevQuoteDisplayList,null,2))
-                }
-            }
-        })
-        .catch(error=>{
-            console.log('getprevQuoteDetail erroor' , JSON.stringify(error))
-        })
-    }
     handleCloseErrorPopup(){
         this.showErrorPopup = false;
     }
@@ -1386,5 +1272,44 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
     }
     handleCloseProcurement(){
         this.showProcument = false;
+    }
+    processData(){
+        let dedicatedRoutingObj = this.routingListMap[this.shippingTabSelected];
+        dedicatedRoutingObj.forEach(elem =>{
+            if(elem.equipmentName == this.shippingEquipTabSelected){
+                if(elem.equipmentId != ''){
+                    this.seaFreight = elem.seaFreight;
+                    this.validity = elem.validity;
+                    this.equipmentId = elem.equipmentId;
+                    this.equipNotfound = false ;
+                    this.quantity = elem.quantity;
+                    this.quotationItemId =elem.quotationItemId;
+                    this.rmsId = elem.rmsID
+                }
+                else{
+                    this.shippingEquipTabSelected = this.shippingEquipTabSelected;
+                    this.equipNotfound = true ; 
+                }
+            }
+        })
+        //this.getIncoCharges();
+        this.isLoading = true;
+        this.getServiceCharges();
+        this.assignTabsData();
+
+        let keyName = this.shippingTabSelected+'-'+this.shippingEquipTabSelected;  
+            this.toHoldData.forEach(elem => {
+                if(elem.key == keyName){
+                    if(elem.value[0].savedClicked  != undefined){
+                        if(elem.value[0].savedClicked == true){
+                            this.quotationSaved = true;
+                        }
+                        else{
+                            this.quotationSaved = false;
+                        }
+                    }
+                }
+            });
+            this.handleUpdateCalculation();
     }
 }
