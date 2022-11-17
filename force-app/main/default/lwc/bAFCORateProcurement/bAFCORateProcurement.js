@@ -1,6 +1,5 @@
 import { LightningElement,api,track} from 'lwc';
 import createRateProcument from '@salesforce/apex/BAFCOLRoutingDetailsController.createRateProcument';
-import getShipline from '@salesforce/apex/BAFCOLRoutingDetailsController.getShipline';
 import getRouteEquipType from '@salesforce/apex/BAFCOLRoutingDetailsController.getRouteEquipType';
 export default class BAFCORateProcurement extends LightningElement {
     disableWhatsApp = false;
@@ -12,50 +11,27 @@ export default class BAFCORateProcurement extends LightningElement {
     @api quantity = '';
     @api routeId;
     @api enquiryId;
-    @api agentName = '';
+    @api cameFromImport = false;
+    @track agentName = '';
     @track procurementShippingLine = '';
-    @track shiplineOption= [];
-    @track shiplineOption2=[];
     @track equipmentType = '';
     @track pickListvalues=[];
-    connectedCallback(){
-      this.getShipline();
-    }
     hideModalBox(){
         this.dispatchEvent(new CustomEvent('close'));
     }
-    getShipline(){
-      getShipline()
-      .then(result =>{
-          //this.shiplineOption = result;            
-          let templist = [];
-         result.forEach(m => {
-          templist.push({
-              label: m.Name, value: m.Id
-          })
-         });
-          //this.shiplineOption = templist;
-          let middleIndex = Math.ceil(templist.length / 2);
-          let firstHalf = templist.splice(0, middleIndex);   
-          let secondHalf = templist.splice(-middleIndex);
-          this.shiplineOption = firstHalf;
-          this.shiplineOption2 = secondHalf;
-
-      })
-      .catch(error =>{
-          console.log('get shippLine Error '+JSON.stringify(error,null,2))
-      });
-  }
   handleprocurementShippingLineChange(e){
-      this.procurementShippingLine = e.target.value;
+      this.procurementShippingLine = e.detail.Id;
+  }
+  handleShippRemoved(e){
+    this.procurementShippingLine = '';
   }
     handleCopyClicked(){
-        console.log('agent '+this.agentName);
        this.getRouteEquipType();
     }
     handleCreateFollowUpClicked(){
       //  this.disableFollowUp = true;
       console.log('agentName '+this.agentName)
+      console.log('this.procurementShippingLine '+this.procurementShippingLine)
       createRateProcument({
         portLoading: this.portLoading,
         commodity : this.commodity,
@@ -119,5 +95,11 @@ export default class BAFCORateProcurement extends LightningElement {
         .catch(error =>{
             console.log('get equip Error '+JSON.stringify(error))
         })
+    }
+    handleAgentChange(e){
+        this.agentName = e.detail.Id
+    }
+    handleAgentRemoved(e){
+        this.agentName = '';
     }
 }

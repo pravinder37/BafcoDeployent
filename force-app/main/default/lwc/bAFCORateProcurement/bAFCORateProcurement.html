@@ -16,21 +16,29 @@
            <!-- modal body start -->
            <div class="slds-modal__content slds-p-around_medium customFont " id="modal-content-id-1" >
             <lightning-layout multiple-rows>
-               <lightning-layout-item size="12" style="padding-left: 11%;">
-                  <lightning-layout multiple-rows>
-                     <lightning-layout-item size="6"><lightning-radio-group name="radioGroup"
-                        options={shiplineOption}
-                        value={procurementShippingLine}
-                        onchange={handleprocurementShippingLineChange}
-                        type="radio"></lightning-radio-group></lightning-layout-item>
-                    <lightning-layout-item size="6"> <lightning-radio-group name="radioGroup"
-                        options={shiplineOption2}
-                        value={procurementShippingLine}
-                        onchange={handleprocurementShippingLineChange}
-                        type="radio"></lightning-radio-group></lightning-layout-item>
-                  </lightning-layout>
+               <lightning-layout-item size="12" style="padding-right: 35%;">
+                  <label class="slds-form-element__label">
+                     <p style="padding-left: 22px">Shipping Line </p>
+                 </label>
+                 <c-b-a-f-c-o-custom-look-up-component
+                                 obj-name="Shipping_Line__c"
+                                 search-placeholder="Search Shipline" 
+                                 icon-name="standard:account"
+                                 onlookupselected={handleprocurementShippingLineChange}
+                                 onlookupremoved={handleShippRemoved}></c-b-a-f-c-o-custom-look-up-component>
               </lightning-layout-item>
-              <lightning-layout-item size="12" style="padding: 4% 0% 5% 18%;">
+              <lightning-layout-item size="12" style="padding: 2% 35% 0% 0%;" if:true={cameFromImport}>
+               <label class="slds-form-element__label">
+                  <p style="padding-left: 22px">Agent </p>
+              </label>
+              <c-b-a-f-c-o-custom-look-up-component
+                              obj-name="Agent__c"
+                              search-placeholder="Search Agent" 
+                              icon-name="standard:account"
+                              onlookupselected={handleAgentChange}
+                              onlookupremoved={handleAgentRemoved}></c-b-a-f-c-o-custom-look-up-component>
+           </lightning-layout-item>
+              <lightning-layout-item size="12" style="padding: 4% 0% 5% 3%;">
                <lightning-layout-item size="6">
                   <lightning-button variant="brand"
                               label="Copy content for Email/Whatsapp" 
