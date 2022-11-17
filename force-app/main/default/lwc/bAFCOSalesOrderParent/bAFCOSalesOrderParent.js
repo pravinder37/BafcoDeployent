@@ -240,6 +240,36 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                             vesselCertificate: shipValue.vesselCertificate,
                             wrappingPacking: shipValue.wrappingPacking,
                             xRay: shipValue.xRay,
+                            bayanCharges : shipValue.bayanCharges,
+                            blFees : shipValue.blFees,
+                            carriageCongestionSurcharge : shipValue.carriageCongestionSurcharge,
+                            dgSurcharge : shipValue.dgSurcharge,
+                            exportServiceFees : shipValue.exportServiceFees,
+                            fasahCharges : shipValue.fasahCharges,
+                            fuelSurcharges : shipValue.fuelSurcharges,
+                            gatePassCharges : shipValue.gatePassCharges,
+                            inlandFuelSurcharges : shipValue.inlandFuelSurcharges,
+                            inlandHandlingFees : shipValue.inlandHandlingFees,
+                            inlandHaulage : shipValue.inlandHaulage,
+                            lowSulpherSurcharge : shipValue.lowSulpherSurcharge,
+                            operationalRecoverySurcharge : shipValue.operationalRecoverySurcharge,
+                            lashingCharges : shipValue.lashingCharges,
+                            originDetentionCharges : shipValue.originDetentionCharges,
+                            overWeightSurcharge : shipValue.overWeightSurcharge,
+                            pickupCharges : shipValue.pickupCharges,
+                            totalDestination : shipValue.totalDestination,
+                            vgm : shipValue.vgm,
+                            warRiskCharges : shipValue.warRiskCharges,
+                            totalAdditional : shipValue.totalAdditional,
+                            remarksAdditionalCharges : shipValue.remarksAdditionalCharges,
+                            remarksDesinationCharges : shipValue.remarksDesinationCharges,
+                            remarksoriginCharges : shipValue.remarksoriginCharges,
+                            remarksSLCharges : shipValue.remarksSLCharges,
+                            containerLashingCharges : shipValue.containerLashingCharges,
+                            dOcharges : shipValue.dOcharges,
+                            lOLOCharges : shipValue.lOLOCharges,
+                            carrierSecurityFees : shipValue.carrierSecurityFees,
+
                         })
                         elem.equipment.push({
                             key:equip,
@@ -313,6 +343,35 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 vesselCertificate: shipValue.vesselCertificate,
                                 wrappingPacking: shipValue.wrappingPacking,
                                 xRay: shipValue.xRay,
+                                bayanCharges : shipValue.bayanCharges,
+                                blFees : shipValue.blFees,
+                                carriageCongestionSurcharge : shipValue.carriageCongestionSurcharge,
+                                dgSurcharge : shipValue.dgSurcharge,
+                                exportServiceFees : shipValue.exportServiceFees,
+                                fasahCharges : shipValue.fasahCharges,
+                                fuelSurcharges : shipValue.fuelSurcharges,
+                                gatePassCharges : shipValue.gatePassCharges,
+                                inlandFuelSurcharges : shipValue.inlandFuelSurcharges,
+                                inlandHandlingFees : shipValue.inlandHandlingFees,
+                                inlandHaulage : shipValue.inlandHaulage,
+                                lowSulpherSurcharge : shipValue.lowSulpherSurcharge,
+                                operationalRecoverySurcharge : shipValue.operationalRecoverySurcharge,
+                                lashingCharges : shipValue.lashingCharges,
+                                originDetentionCharges : shipValue.originDetentionCharges,
+                                overWeightSurcharge : shipValue.overWeightSurcharge,
+                                pickupCharges : shipValue.pickupCharges,
+                                totalDestination : shipValue.totalDestination,
+                                vgm : shipValue.vgm,
+                                warRiskCharges : shipValue.warRiskCharges,
+                                totalAdditional : shipValue.totalAdditional,
+                                remarksAdditionalCharges : shipValue.remarksAdditionalCharges,
+                                remarksDesinationCharges : shipValue.remarksDesinationCharges,
+                                remarksoriginCharges : shipValue.remarksoriginCharges,
+                                remarksSLCharges : shipValue.remarksSLCharges,
+                                containerLashingCharges : shipValue.containerLashingCharges,
+                                dOcharges : shipValue.dOcharges,
+                                lOLOCharges : shipValue.lOLOCharges,
+                                carrierSecurityFees : shipValue.carrierSecurityFees,
                             })
                             elem.equipment.push({
                                 key:equip,
@@ -384,6 +443,35 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 tempList[shipIndex].vesselCertificate =  shipValue.vesselCertificate
                                 tempList[shipIndex].wrappingPacking =  shipValue.wrappingPacking
                                 tempList[shipIndex].xRay =  shipValue.xRay
+                                tempList[shipIndex].bayanCharges = shipValue.bayanCharges
+                                tempList[shipIndex].blFees = shipValue.blFees
+                                tempList[shipIndex].carriageCongestionSurcharge = shipValue.carriageCongestionSurcharge
+                                tempList[shipIndex].dgSurcharge = shipValue.dgSurcharge
+                                tempList[shipIndex].exportServiceFees = shipValue.exportServiceFees
+                                tempList[shipIndex].fasahCharges = shipValue.fasahCharges
+                                tempList[shipIndex].fuelSurcharges = shipValue.fuelSurcharges
+                                tempList[shipIndex].gatePassCharges = shipValue.gatePassCharges
+                                tempList[shipIndex].inlandFuelSurcharges = shipValue.inlandFuelSurcharges
+                                tempList[shipIndex].inlandHandlingFees = shipValue.inlandHandlingFees
+                                tempList[shipIndex].inlandHaulage = shipValue.inlandHaulage
+                                tempList[shipIndex].lowSulpherSurcharge = shipValue.lowSulpherSurcharge
+                                tempList[shipIndex].operationalRecoverySurcharge = shipValue.operationalRecoverySurcharge
+                                tempList[shipIndex].lashingCharges = shipValue.lashingCharges
+                                tempList[shipIndex].originDetentionCharges = shipValue.originDetentionCharges
+                                tempList[shipIndex].overWeightSurcharge = shipValue.overWeightSurcharge
+                                tempList[shipIndex].pickupCharges = shipValue.pickupCharges
+                                tempList[shipIndex].totalDestination = shipValue.totalDestination
+                                tempList[shipIndex].vgm = shipValue.vgm
+                                tempList[shipIndex].warRiskCharges = shipValue.warRiskCharges
+                                tempList[shipIndex].totalAdditional = shipValue.totalAdditional
+                                tempList[shipIndex].remarksAdditionalCharges = shipValue.remarksAdditionalCharges
+                                tempList[shipIndex].remarksDesinationCharges = shipValue.remarksDesinationCharges
+                                tempList[shipIndex].remarksoriginCharges = shipValue.remarksoriginCharges
+                                tempList[shipIndex].remarksSLCharges = shipValue.remarksSLCharges
+                                tempList[shipIndex].containerLashingCharges = shipValue.containerLashingCharges
+                                tempList[shipIndex].dOcharges= shipValue.dOcharges
+                                tempList[shipIndex].lOLOCharges = shipValue.lOLOCharges
+                                tempList[shipIndex].carrierSecurityFees = shipValue.carrierSecurityFees
                             }
                             else{
                                 tempList.push({
@@ -448,6 +536,35 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                     vesselCertificate: shipValue.vesselCertificate,
                                     wrappingPacking: shipValue.wrappingPacking,
                                     xRay: shipValue.xRay,
+                                    bayanCharges : shipValue.bayanCharges,
+                                    blFees : shipValue.blFees,
+                                    carriageCongestionSurcharge : shipValue.carriageCongestionSurcharge,
+                                    dgSurcharge : shipValue.dgSurcharge,
+                                    exportServiceFees : shipValue.exportServiceFees,
+                                    fasahCharges : shipValue.fasahCharges,
+                                    fuelSurcharges : shipValue.fuelSurcharges,
+                                    gatePassCharges : shipValue.gatePassCharges,
+                                    inlandFuelSurcharges : shipValue.inlandFuelSurcharges,
+                                    inlandHandlingFees : shipValue.inlandHandlingFees,
+                                    inlandHaulage : shipValue.inlandHaulage,
+                                    lowSulpherSurcharge : shipValue.lowSulpherSurcharge,
+                                    operationalRecoverySurcharge : shipValue.operationalRecoverySurcharge,
+                                    lashingCharges : shipValue.lashingCharges,
+                                    originDetentionCharges : shipValue.originDetentionCharges,
+                                    overWeightSurcharge : shipValue.overWeightSurcharge,
+                                    pickupCharges : shipValue.pickupCharges,
+                                    totalDestination : shipValue.totalDestination,
+                                    vgm : shipValue.vgm,
+                                    warRiskCharges : shipValue.warRiskCharges,
+                                    totalAdditional : shipValue.totalAdditional,
+                                    remarksAdditionalCharges : shipValue.remarksAdditionalCharges,
+                                    remarksDesinationCharges : shipValue.remarksDesinationCharges,
+                                    remarksoriginCharges : shipValue.remarksoriginCharges,
+                                    remarksSLCharges : shipValue.remarksSLCharges,
+                                    containerLashingCharges : shipValue.containerLashingCharges,
+                                    dOcharges : shipValue.dOcharges,
+                                    lOLOCharges : shipValue.lOLOCharges,
+                                    carrierSecurityFees : shipValue.carrierSecurityFees,
                                 })
                             }
                             elem.equipment[index].value = tempList
