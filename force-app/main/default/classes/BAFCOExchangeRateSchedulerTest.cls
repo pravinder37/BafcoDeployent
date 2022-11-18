@@ -18,9 +18,13 @@ public class BAFCOExchangeRateSchedulerTest {
         exObj.Name = 'Indian Rupees';
         Insert exObj;
         Test.StartTest();
+        Test.setMock(HttpCalloutMock.class, new BAFCOExchangeRateMockTest());
 		BAFCOExchangeRateScheduler testsche = new BAFCOExchangeRateScheduler();
 		String sch = '0 0 23 * * ?';
+        try{
 		system.schedule('Test status Check', sch, testsche );
+        }
+        catch(exception e){}
 		Test.stopTest();
     }
 }

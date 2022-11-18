@@ -8,6 +8,7 @@ public class BAFCOSalesOrderControllerTest {
         
         Account acc = new Account();
         acc.name = 'test';
+        acc.branch__c ='Jeddah';
         insert acc;
         
         Port__c port = new Port__c();
@@ -40,8 +41,8 @@ public class BAFCOSalesOrderControllerTest {
         insert route;
         
         Route_Equipment__c rEquip = new Route_Equipment__c();
-        rEquip.Name = 'Test';
         rEquip.Route__c = route.id;
+        rEquip.Equipment_Type__c = equip.id;
         Insert rEquip;
         
         RMS__c rmsObj = new RMS__c();
@@ -87,9 +88,10 @@ public class BAFCOSalesOrderControllerTest {
     }
     testmethod static void createOrderTest(){
         test.startTest();
+        String dd = String.valueOF(System.today());
         List<BAFCOOrderCreationDto> dtoList = getOrderCreationDto();
         system.debug('dtoList '+dtoList);
-        BAFCOSalesOrderController.createOrder(dtoList);        
+        BAFCOSalesOrderController.createOrder(dtoList,dd);        
         test.stopTest();
     }
     static List<BAFCOOrderCreationDto> getOrderCreationDto(){

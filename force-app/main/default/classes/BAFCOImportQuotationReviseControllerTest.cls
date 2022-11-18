@@ -1,6 +1,6 @@
 @isTest
-public class BAFCOQuotationReviseControllerTest {
-@TestSetup
+public class BAFCOImportQuotationReviseControllerTest {
+	@TestSetup
     static void setup() {
         Lead__c ld = new Lead__c();
         ld.Business_Type__c = 'Import';
@@ -143,29 +143,17 @@ public class BAFCOQuotationReviseControllerTest {
         Insert quoteItem;
         
     }
-    static testmethod void getquoteDetailsTest(){
+    testmethod static void getquoteListTest(){
         string quoteId = getQuoteId();
         test.startTest();
-        BAFCOQuotationReviseController.getquoteDetails(quoteId);
-        test.stopTest();
-    }
-    static testmethod void getquoteListTest(){
-        string quoteId = getQuoteId();
-        test.startTest();
-        BAFCOQuotationReviseController.getquoteList(quoteId);
-        test.stopTest();
-    }
-    static testmethod void getQuoteLineItemRouteTest(){
-        string quoteId = getQuoteId();
-        test.startTest();
-        BAFCOQuotationReviseController.getQuoteLineItemRoute(quoteId);
+        BAFCOImportQuotationReviseController.getquoteList(quoteId);
         test.stopTest();
     }
     static testmethod void getQuoteLineItemDetailsTest(){
         string quoteId = getQuoteId();
         string routeId = getrouteId();
         test.startTest();
-        BAFCOQuotationReviseController.getQuoteLineItemDetails(quoteId,'PortName','PortName','Test',routeId);
+        BAFCOImportQuotationReviseController.getQuoteLineItemDetails(quoteId,'PortName','PortName','Test',routeId);
         test.stopTest();
     }
     static string getQuoteId(){

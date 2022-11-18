@@ -1,6 +1,6 @@
-@isTest
-public class BAFCOQuotationReviseControllerTest {
-@TestSetup
+@istest
+public class QuotationItemTriggerHandlerTest {
+    @TestSetup
     static void setup() {
         Lead__c ld = new Lead__c();
         ld.Business_Type__c = 'Import';
@@ -10,14 +10,10 @@ public class BAFCOQuotationReviseControllerTest {
         acc.name = 'test';
         acc.Branch__c = 'Jeddah';
         insert acc;
-        
-        Contact cont = new Contact();
-        cont.AccountId = acc.id;
-        cont.LastName = 'test';
-        cont.MobilePhone = '0000000000';
-        cont.Email = 'test@email.com';
-        cont.Leadc__c = ld.Id;
-        insert cont;
+        Enquiry__c enq = new Enquiry__c();
+        enq.Name = 'Test';
+        enq.Lead__c = ld.id;
+        insert enq;
         
         Port__c port = new Port__c();
         port.City__c = 'Test';
@@ -36,23 +32,6 @@ public class BAFCOQuotationReviseControllerTest {
         Equipment_Type__c equip = new Equipment_Type__c();
         equip.Name='EquipName';
         Insert equip;
-        
-        Enquiry__c enq = new Enquiry__c();
-        enq.Name = 'Test';
-        enq.Lead__c = ld.id;
-        insert enq;
-        
-        Route__c route = new Route__c();
-        route.Enquiry__c = enq.id;
-        route.Port_of_Destination__c = port.id;
-        route.Port_of_loading__c =port.id;
-        route.Commodity__c = comd.id;
-        insert route;
-        
-        Route_Equipment__c rEquip = new Route_Equipment__c();
-        rEquip.Route__c = route.id;
-        Insert rEquip;
-        
         RMS__c rmsObj = new RMS__c();
         rmsObj.Name ='Test';
         rmsObj.Port_Of_Discharge__c = port.Id;
@@ -63,31 +42,13 @@ public class BAFCOQuotationReviseControllerTest {
         rmsObj.Validity__c = System.today().addDays(5);
         rmsObj.Sea_Freight__c = 1000;
         insert rmsObj;
-        INCO_Charge__c incharge = new INCO_Charge__c();
-        incharge.RMS__c = rmsObj.Id;
-        incharge.Origin_Loading_Charges__c = 10;
-        incharge.Bayan__c = 10;
-        //incharge.Destination_Customs_Clearance__c = 10;
-        //incharge.Destination_Loading_Charges__c = 10;
-        incharge.Xray__c = 10;
-        incharge.Total__c = 10;
-        incharge.Tabadul__c = 10;
-        incharge.Port_Shuttling__c = 10;
-        incharge.Origin_Customs_clearance__c = 10;
-        incharge.Loading_Charges__c = 10;
-        incharge.Lift_on_Lift_off__c = 10;
-        incharge.Inspection__c = 10;
-        incharge.Fasah_fee__c = 10;
-        insert incharge;
-        Shipping_Line_Charge__c scCharge = new Shipping_Line_Charge__c();
-        scCharge.Total__c = 1;
-        scCharge.RMS__c = rmsObj.Id;
-        Insert scCharge;
-        Destination_Charges__c DestiCharge = new Destination_Charges__c();
-        DestiCharge.Total__c = 1;
-        DestiCharge.RMS__c = rmsObj.Id;
-        Insert DestiCharge;
         
+        Route__c route = new Route__c();
+        route.Enquiry__c = enq.id;
+        route.Port_of_Destination__c = port.id;
+        route.Port_of_loading__c =port.id;
+        route.Commodity__c = comd.id;
+        insert route;
         integer year =  Date.Today().Year();
         string s1=string.valueof(year).right(2);
         Integer Year1= Integer.valueof(s1);
@@ -141,37 +102,41 @@ public class BAFCOQuotationReviseControllerTest {
         quoteItem.Vessel_certificate_charges__c = 10;        
         quoteItem.Wrappingpacking_charges__c = 10;
         Insert quoteItem;
+    }
+    testmethod static void updateTriggerTest(){
+        Quotation_Item__c quoteItem = [Select id from Quotation_Item__c limit 1];
+        quoteItem.Bunker_surcharge__c = 10;
+        quoteItem.CMC__c = 10;
+        quoteItem.Carriage_Congestion_Surcharge__c = 10;
+        quoteItem.Carrier_Security_Fees__c = 10;
+        quoteItem.DG_Surcharge__c = 10;
+        quoteItem.DTHC__c = 10;
+        quoteItem.EIC__c = 10;
+        quoteItem.Inland_Fuel_Surcharge__c = 10;
+        quoteItem.Inland_Handling_Fees__c = 10;
+        quoteItem.Inland_haulage__c = 10;
+        quoteItem.BAF__c = 10;
+        quoteItem.ISPS__c = 10;
+        quoteItem.Low_Sulphur_Surcharge__c = 10;
+        quoteItem.Operational_Recovery_Surcharge__c = 10;
+        quoteItem.Overweight_surcharge__c = 10;
+        quoteItem.Seal_Charges__c = 10;
+        quoteItem.War_Risk_Surcharge__c = 10;
+        quoteItem.BL_Fees__c = 10;
+        quoteItem.Export_Service_Fees__c = 10;
+        quoteItem.Fuel_Surcharge__c = 10;
+        quoteItem.Lashing_Charges__c = 10;
+        quoteItem.Origin_Detention_Demurrage_Charges__c = 10;
+        quoteItem.Pickup_Charges__c = 10;
+        quoteItem.Tarpauline_charge__c = 10;
+        quoteItem.VGM__c = 10;
+        quoteItem.Bayan_Charges__c = 10;
+        quoteItem.DO_charges__c = 10;
+        quoteItem.Fasah_Charges__c = 10;
+        quoteItem.Gate_pass_charges__c = 10;
+        quoteItem.LOLO_Charges__c = 10;
+        quoteItem.OTHC__c = 10;
+        update quoteItem;
         
-    }
-    static testmethod void getquoteDetailsTest(){
-        string quoteId = getQuoteId();
-        test.startTest();
-        BAFCOQuotationReviseController.getquoteDetails(quoteId);
-        test.stopTest();
-    }
-    static testmethod void getquoteListTest(){
-        string quoteId = getQuoteId();
-        test.startTest();
-        BAFCOQuotationReviseController.getquoteList(quoteId);
-        test.stopTest();
-    }
-    static testmethod void getQuoteLineItemRouteTest(){
-        string quoteId = getQuoteId();
-        test.startTest();
-        BAFCOQuotationReviseController.getQuoteLineItemRoute(quoteId);
-        test.stopTest();
-    }
-    static testmethod void getQuoteLineItemDetailsTest(){
-        string quoteId = getQuoteId();
-        string routeId = getrouteId();
-        test.startTest();
-        BAFCOQuotationReviseController.getQuoteLineItemDetails(quoteId,'PortName','PortName','Test',routeId);
-        test.stopTest();
-    }
-    static string getQuoteId(){
-        return [Select id from Quotation__c limit 1].Id;
-    }
-    static string getrouteId(){
-        return [Select id from Route__c limit 1].Id;
     }
 }

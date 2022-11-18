@@ -24,21 +24,42 @@ public class BAFCOLRoutingDetailsControllerTest {
         equip.Name='EquipName';
         Insert equip;
         
+        Account acc = new Account();
+        acc.Branch__c = 'Jeddah';
+        acc.Average_Credit_Days__c = 2;
+        acc.Average_Margin__c =2;
+        acc.Best_Margin__c = 1;
+        acc.name = 'test';
+        insert acc;
+        Regular_Routing__c regObj = new Regular_Routing__c();
+        regObj.Account__c = acc.id;
+        regObj.Name = 'test';
+        insert regObj;
+        
         Enquiry__c enq = new Enquiry__c();
         enq.Name = 'Test';
+        enq.Account__c = acc.id;
+        enq.Business_Type__c = 'Export';
         insert enq;
-        
+        place__c  placeObj = new place__c();
+        placeObj.Name = 'test';
+        insert placeObj;
         Route__c route = new Route__c();
         route.Enquiry__c = enq.id;
         route.Port_of_Destination__c = port.id;
         route.Port_of_loading__c =port.id;
         route.Commodity__c = comd.id;
+        route.Place_of_Discharge__c = placeObj.id;
+        route.Place_of_Pickup__c = placeObj.id;
         insert route;
         
         Route_Equipment__c rEquip = new Route_Equipment__c();
-        rEquip.Name = 'Test';
         rEquip.Route__c = route.id;
+        rEquip.Equipment_Type__c = equip.id;
         Insert rEquip;
+        Agent__c agentObj = new Agent__c();
+        agentObj.name =  'test';
+        insert agentObj;
         
         RMS__c rmsObj = new RMS__c();
         rmsObj.Name ='Test';
@@ -66,6 +87,9 @@ public class BAFCOLRoutingDetailsControllerTest {
         quoteItem.Equipment_Type__c = equip.id;
         Insert quoteItem;
         
+        Exchange_Rate__c exc = new Exchange_Rate__c ();
+        exc.Currency_Code__c = 'INR';
+        insert exc;
         Route_Equipment__c routeEquip = new Route_Equipment__c();
         routeEquip.Route__c = route.Id;
         routeEquip.Equipment_Type__c = equip.Id;
@@ -280,24 +304,43 @@ public class BAFCOLRoutingDetailsControllerTest {
         
         BAFCOIncoChargesDto incoChargeList = new BAFCOIncoChargesDto();
         incoChargeList.bayan=12;
+        BAFCOImportRMSDto.destinChargeObj destiObj = new BAFCOImportRMSDto.destinChargeObj();
+        destiObj.destinBayanCharges = 1;
+        destiObj.DestinTotalChanged = false;
+        BAFCOImportRMSDto.originChargesObj originObj = new BAFCOImportRMSDto.originChargesObj();
+        originObj.bayan = 1;
+        originObj.originTotalChanged = false;
+        BAFCOImportRMSDto.servichargesObj servObj = new BAFCOImportRMSDto.servichargesObj();
+        servObj.BAF = 1;
+        servObj.shippTotalChanged = false;
+        BAFCOGenerteQuoteDto.serviceChargeList servList1 = new BAFCOGenerteQuoteDto.serviceChargeList();
+        servList1.destinChargeObj = destiObj;
+        servList1.originChargesObj = originObj;
+        servList1.servichargesObj = servObj;
         
         BAFCOGenerteQuoteDto dto1 = new BAFCOGenerteQuoteDto();
         dto1.seaFreightSellRate = 121;
         dto1.total = 121;
         dto1.incoChargList = incoChargeList;
         dto1.additionalChargeList = addList;
-        
+        dto1.serviceChargeList = servList1;
+        String validityDate = String.valueOf(System.today());
         test.startTest();
-        BAFCOLRoutingDetailsController.genrateQuotation(routeId, rmsId, enquiryId, quotationId, dto1, incoTerm,false,false);
-        BAFCOLRoutingDetailsController.genrateQuotation(routeId, rmsId, enquiryId, quotationId, dto1, incoTerm,true,true);
+        String QuoteId = BAFCOLRoutingDetailsController.genrateQuotation(routeId, rmsId, enquiryId, quotationId, dto1, incoTerm,false,false,'test',1);
+        BAFCOLRoutingDetailsController.genrateQuotation(routeId, rmsId, enquiryId, quotationId, dto1, incoTerm,true,true,'test',1);
+        BAFCOLRoutingDetailsController.updateValidityDate(QuoteId, validityDate);
         test.stopTest();
     }
     testMethod static void addRatesTest(){
         BAFCORMSDto rmsDetail = new BAFCORMSDto();
         rmsDetail.validity = '2022-07-22';
+        rmsDetail.allInRate = false;
+        rmsDetail.FOBAllIn = false;
+        rmsDetail.ExWorksIn = false;
         String routeId = [Select id from Route__c limit 1].Id;
         shippingLineChargesDTO shippingChargeDto = new shippingLineChargesDTO();
         BAFCOIncoChargesDto incocharges = new BAFCOIncoChargesDto();
+        BAFCODestinationChargeDto destiObj =new BAFCODestinationChargeDto();
         Boolean totalShippChanged = false;
         Boolean totalIncoChanged = false;
         String equipmentType = 'EquipName';
@@ -305,7 +348,7 @@ public class BAFCOLRoutingDetailsControllerTest {
         String leadId = [Select id from Lead__c limit 1].Id;
         
         test.startTest();
-        BAFCOLRoutingDetailsController.addRates(rmsDetail, routeId, shippingChargeDto, incocharges, totalShippChanged, totalIncoChanged, equipmentType, shippingLine, leadId);
+        BAFCOLRoutingDetailsController.addRates(rmsDetail, routeId, shippingChargeDto, incocharges, totalShippChanged, totalIncoChanged, equipmentType, shippingLine, leadId,false,destiObj);
         test.stopTest();
     }
     testMethod static void getShiplineTest(){
@@ -339,6 +382,33 @@ public class BAFCOLRoutingDetailsControllerTest {
         String directionValue = '';
         test.startTest();
         BAFCOLRoutingDetailsController.getLoadingCharges(pickupPlace, portLoading, directionValue);
+        test.stopTest();
+    }
+    testMethod static void getAllRegularRouteTest(){
+       Account acc = [Select id from account limit 1];
+        test.startTest();
+        BAFCOLRoutingDetailsController.getAllRegularRoute(acc.id);
+        test.stopTest();
+    }
+    testMethod static void getRegularRouteDataTest(){
+       Regular_Routing__c acc = [Select id from Regular_Routing__c limit 1];
+        test.startTest();
+        BAFCOLRoutingDetailsController.getRegularRouteData(acc.id);
+        test.stopTest();
+    }
+    testMethod static void getExchangeRateTest(){
+        test.startTest();
+        BAFCOLRoutingDetailsController.getExchangeRate();
+        test.stopTest();
+    }
+    testMethod static void createRateProcumentTest(){
+        Port__c portObj = [Select id,name from Port__c limit 1];
+        Enquiry__c enquiryId = [Select id from Enquiry__c limit 1];
+        Route__c roue = [Select id from Route__c limit 1];
+        Agent__c agent = [Select id from Agent__c limit 1];
+        Shipping_Line__c shipLine = [Select id from Shipping_Line__c limit 1];
+         test.startTest();
+        BAFCOLRoutingDetailsController.createRateProcument(portObj.name, 'commodity', shipLine.id, portObj.name, 1, enquiryId.id, roue.id, agent.id);
         test.stopTest();
     }
 }

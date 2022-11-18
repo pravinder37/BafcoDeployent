@@ -16,7 +16,10 @@ public class BAFCOshippingLineChargesControllerTest {
         shipLine.BAF__c =12 ;
         shipLine.RMS__c = rmsObj.id;
         insert shipLine;
-        
+        Destination_Charges__c destiobj = new Destination_Charges__c();
+        destiObj.Bayan_Charges__c = 1;
+        destiObj.RMS__c = rmsObj.id;
+        insert destiObj;
         INCO_Charge__c inco = new INCO_Charge__c();
         inco.Bayan__c = 12;
         inco.RMS__c  = rmsObj.id;
@@ -26,7 +29,8 @@ public class BAFCOshippingLineChargesControllerTest {
         String rmsRecordId = [Select id from RMS__c limit 1].Id;
         test.startTest();
         try{
-            BAFCOshippingLineChargesController.getShippingCharges(rmsRecordId);
+            BAFCOshippingLineChargesController.getRMSDetail(rmsRecordId);
+            BAFCOshippingLineChargesController.getRMSDetail(null);
         }
         catch(Exception e){
             system.debug('getShippingChargesTest '+e);
