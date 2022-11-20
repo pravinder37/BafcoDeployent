@@ -28,7 +28,7 @@ export default class
     @track rateType = '';
     @track rateTypeOption =[];
     @track seaFreight = '';
-    @track emptyEquipType = false;
+    @track emptyEquipType = true;
     @track pickListvalues =[];
     @api businessType = '';
     @track todaysDate = '';
