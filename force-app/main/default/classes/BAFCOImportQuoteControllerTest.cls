@@ -9,6 +9,7 @@ public class BAFCOImportQuoteControllerTest {
         Port__c port = new Port__c();
         port.City__c = 'Test';
         port.Name ='PortName';
+        port.Sector__c = 'Africa';
         Insert port;
         
         Commodity__c comd = new Commodity__c();
@@ -31,6 +32,13 @@ public class BAFCOImportQuoteControllerTest {
         acc.Best_Margin__c = 1;
         acc.name = 'test';
         insert acc;
+        opportunity opty = new Opportunity();
+        opty.AccountId = acc.id;
+        opty.StageName = 'Qualification';
+        opty.CloseDate = system.today();
+        opty.Name ='testopty';
+        opty.Business_Type__c = 'Export';
+        insert opty;
         Regular_Routing__c regObj = new Regular_Routing__c();
         regObj.Account__c = acc.id;
         regObj.Name = 'test';
@@ -45,7 +53,7 @@ public class BAFCOImportQuoteControllerTest {
         placeObj.Name = 'test';
         insert placeObj;
         Route__c route = new Route__c();
-        route.Enquiry__c = enq.id;
+        route.Opportunity_Enquiry__c = opty.id;
         route.Port_of_Destination__c = port.id;
         route.Port_of_loading__c =port.id;
         route.Commodity__c = comd.id;
@@ -79,7 +87,7 @@ public class BAFCOImportQuoteControllerTest {
         Integer Year1= Integer.valueof(s1);
         Quotation__c quoteObj = new Quotation__c();
         quoteObj.Name__c= 'Quote/'+Year1+'/'+1;
-        quoteObj.Enquiry__c = enq.id;
+        quoteObj.Opportunity__c = opty.id;
         quoteObj.Leadc__c = ld.id;
         Insert quoteObj;
         
@@ -132,7 +140,7 @@ public class BAFCOImportQuoteControllerTest {
     testmethod static void generateQuote(){
         String routeId = [Select id from Route__c limit 1].Id;
         String rmsId = [Select id from RMS__c limit 1].Id;
-        String enquiryId = [Select id from Enquiry__c limit 1].Id;
+        String enquiryId = [Select id from opportunity limit 1].Id;
         String quotationId = [Select id from Quotation__c limit 1].Id;
         String agentId = [Select id from Agent__c limit 1].Id;
         String incoTerm = 'IncoTerm';
@@ -268,7 +276,7 @@ public class BAFCOImportQuoteControllerTest {
         String portLoading = 'PortName';
         String portDestination = 'PortName';
         String commodity = 'CommodityName';
-        String enquiryId = [Select id from Enquiry__c limit 1].Id;
+        String enquiryId =''/* [Select id from Enquiry__c limit 1].Id*/;
         String routeId = [Select id from Route__c limit 1].Id;
         test.startTest();
         BAFCOImportQuoteController.getImportRMSDetails(portLoading, portDestination, commodity, routeId, enquiryId);

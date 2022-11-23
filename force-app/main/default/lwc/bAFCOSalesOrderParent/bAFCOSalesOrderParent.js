@@ -269,6 +269,7 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                             dOcharges : shipValue.dOcharges,
                             lOLOCharges : shipValue.lOLOCharges,
                             carrierSecurityFees : shipValue.carrierSecurityFees,
+                            recordtypeId : shipValue.recordtypeId
 
                         })
                         elem.equipment.push({
@@ -372,6 +373,7 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 dOcharges : shipValue.dOcharges,
                                 lOLOCharges : shipValue.lOLOCharges,
                                 carrierSecurityFees : shipValue.carrierSecurityFees,
+                                recordtypeId : shipValue.recordtypeId
                             })
                             elem.equipment.push({
                                 key:equip,
@@ -472,6 +474,7 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 tempList[shipIndex].dOcharges= shipValue.dOcharges
                                 tempList[shipIndex].lOLOCharges = shipValue.lOLOCharges
                                 tempList[shipIndex].carrierSecurityFees = shipValue.carrierSecurityFees
+                                tempList[shipIndex].recordtypeId = shipValue.recordtypeId
                             }
                             else{
                                 tempList.push({
@@ -565,6 +568,7 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                     dOcharges : shipValue.dOcharges,
                                     lOLOCharges : shipValue.lOLOCharges,
                                     carrierSecurityFees : shipValue.carrierSecurityFees,
+                                    recordtypeId : shipValue.recordtypeId
                                 })
                             }
                             elem.equipment[index].value = tempList

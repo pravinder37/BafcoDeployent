@@ -3,58 +3,12 @@ public class BAFCOLeadDetailsController {
     public static BAFCOLeadDetailsDto getLeadDetails(String leadId) {
         system.debug('leadId '+leadId);
         BAFCOLeadDetailsDto leadDetailsDto = new BAFCOLeadDetailsDto();
-        
-        String objectAPIName = '';
-        String keyPrefix = '';
-        keyPrefix = leadId.substring(0,3);
-        for( Schema.SObjectType obj : Schema.getGlobalDescribe().Values() ){
-            String prefix = obj.getDescribe().getKeyPrefix();
-            if(prefix == keyPrefix){
-                objectAPIName = obj.getDescribe().getName();
-                break;
-            }
-        }
-        system.debug('objectAPIName '+objectAPIName);
-        if(objectAPIName == 'Lead__c'){
-            List<Lead__c> leadList = BAFCOLeadDetailsHelper.getLeadDetails(leadId);
-            List<contact> contactList = BAFCOLeadDetailsHelper.getContactDetails(leadId);
-            system.debug('leadList '+leadList);
-            if(leadList.size() > 0){
-                leadDetailsDto =  executeMapForleadDetails(leadList,contactList);
-            }
-        }
-        else if(objectAPIName == 'Account'){
-            List<Account> accList = BAFCOLeadDetailsHelper.getAccountDetails(leadId);
-            List<contact> contactList = BAFCOLeadDetailsHelper.getAccountContactDetails(leadId);
-            system.debug('accList '+accList);
-            if(accList.size() > 0){
-                leadDetailsDto =  executeMapForAccountDetails(accList,contactList);
-            }
+        List<Account> accList = [Select id,Name,owner.name,CreatedDate,Business_Type__c,Modes__c From Account Where id =: leadId limit 1];
+        List<contact> contactList = [Select MobilePhone,Email from Contact where AccountId =: leadId order by createddate limit 1];
+        if(accList.size() > 0){
+            leadDetailsDto =  executeMapForAccountDetails(accList,contactList);
         }
         system.debug('leadDetailsDto '+leadDetailsDto);
-        return leadDetailsDto;
-    }
-    private static BAFCOLeadDetailsDto executeMapForleadDetails(List<Lead__c> leadList,List<Contact> contactList){
-        BAFCOLeadDetailsDto leadDetailsDto = new BAFCOLeadDetailsDto();
-        for(Lead__c leadObj : leadList){
-            leadDetailsDto.leadName = leadObj.Name != null  ? leadObj.Name : '-';
-            leadDetailsDto.owner = leadObj.Owner.Name != null ? leadObj.Owner.Name : '-';
-            //leadDetailsDto.contactMobile = leadObj.MobilePhone;
-            //leadDetailsDto.contactEmail = leadObj.Email;
-            leadDetailsDto.createdDate =  leadObj.CreatedDate.format('dd-MMM-YYYY');
-            
-            leadDetailsDto.leadId = leadObj.Id;
-            leadDetailsDto.businessType =leadObj.Business_Type__c != null ? leadObj.Business_Type__c : '-';
-            leadDetailsDto.modes = leadObj.Modes__c !=null ? leadObj.Modes__c : '-';
-            if(contactList.size() > 0 ){
-                leadDetailsDto.contactMobile = contactList[0].MobilePhone != null ? contactList[0].MobilePhone : '-';
-                leadDetailsDto.contactEmail = contactList[0].Email != null ? contactList[0].Email : '-';
-            }
-            else{
-                leadDetailsDto.contactMobile = '-';
-                leadDetailsDto.contactEmail = '-';
-            }
-        }
         return leadDetailsDto;
     }
     public static BAFCOLeadDetailsDto executeMapForAccountDetails(List<Account> accList, List<Contact> contactList){
@@ -65,8 +19,8 @@ public class BAFCOLeadDetailsController {
             leadDetailsDto.createdDate =  leadObj.CreatedDate.format('dd-MMM-YYYY');
             
             leadDetailsDto.leadId = leadObj.Id;
-            //leadDetailsDto.businessType =leadObj.Business_Type__c != null ? leadObj.Business_Type__c : '-';
-            //leadDetailsDto.modes = leadObj.Modes__c !=null ? leadObj.Modes__c : '-';
+            leadDetailsDto.businessType =leadObj.Business_Type__c != null ? leadObj.Business_Type__c : '-';
+            leadDetailsDto.modes = leadObj.Modes__c !=null ? leadObj.Modes__c : '-';
             if(contactList.size() > 0 ){
                 leadDetailsDto.contactMobile = contactList[0].MobilePhone != null ? contactList[0].MobilePhone : '-';
                 leadDetailsDto.contactEmail = contactList[0].Email != null ? contactList[0].Email : '-';

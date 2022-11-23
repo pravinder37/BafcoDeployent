@@ -4,6 +4,7 @@ public class BAFCOshippingLineChargesControllerTest {
     static void setup() {
         Port__c port = new Port__c();
         port.City__c = 'Test';
+        port.Sector__c='Africa';
         Insert port;
         
         RMS__c rmsObj = new RMS__c();

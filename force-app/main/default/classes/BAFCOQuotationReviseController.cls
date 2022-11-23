@@ -4,23 +4,24 @@ public class BAFCOQuotationReviseController {
         .getRecordTypeId();
     @AuraEnabled
     public static BAFCOReviseQuoteDto getquoteDetails(String quoteId){
-        Quotation__c quoteObj = [SELECT Name__c,Enquiry__c, Leadc__c,Enquiry__r.Account__r.Average_margin__c,
-                                 Enquiry__r.Account__r.Best_Margin__c,Enquiry__r.Account__r.Average_credit_days__c,
-                                 Enquiry__r.Business_Type__c, Account__r.Name,Enquiry__r.Lead__r.Modes__c,
-                                 Enquiry__r.Account__r.Name, 
+        Quotation__c quoteObj = [SELECT Name__c,Opportunity__c,Opportunity__r.Account.Average_margin__c,
+                                 Opportunity__r.Account.Best_Margin__c,Opportunity__r.Account.Average_credit_days__c,
+                                 Opportunity__r.Business_Type__c, Opportunity__r.Account.Modes__c,Opportunity__r.AccountId,
+                                 Opportunity__r.Account.Name, 
                                  Name, Id FROM Quotation__c where id =: quoteId];        
         BAFCOReviseQuoteDto dto = new BAFCOReviseQuoteDto();
         dto.quoteNumber = quoteObj.Name__c;
-        dto.enquiryId = quoteObj.Enquiry__c;
-        dto.company = quoteObj.Enquiry__r.Account__r.Name;
-        dto.accountAvgMargin = quoteObj.Enquiry__r.Account__r.Average_margin__c;
-        dto.accountBestMargin = quoteObj.Enquiry__r.Account__r.Best_Margin__c;
-        dto.accountAvgCreditDays = quoteObj.Enquiry__r.Account__r.Average_credit_days__c;
-        dto.businessType = quoteObj.Enquiry__r.Business_Type__c;
-        dto.mode = quoteObj.Enquiry__r.Lead__r.Modes__c;
-        if(quoteObj.Enquiry__r.Lead__c != null){
-            dto.leadId = quoteObj.Enquiry__r.Lead__c;
-            List<contact> contactList = BAFCOLeadDetailsHelper.getContactDetails(dto.leadId);
+        dto.enquiryId = quoteObj.Opportunity__c;
+        dto.company = quoteObj.Opportunity__r.Account.Name;
+        dto.accountAvgMargin = quoteObj.Opportunity__r.Account.Average_margin__c;
+        dto.accountBestMargin = quoteObj.Opportunity__r.Account.Best_Margin__c;
+        dto.accountAvgCreditDays = quoteObj.Opportunity__r.Account.Average_credit_days__c;
+        dto.businessType = quoteObj.Opportunity__r.Business_Type__c;
+        dto.mode = quoteObj.Opportunity__r.Account.Modes__c;
+        system.debug('dto  *********** '+quoteObj.Opportunity__r.AccountId);
+        if(quoteObj.Opportunity__r.AccountId != null){
+            dto.leadId = quoteObj.Opportunity__r.AccountId;
+            List<contact> contactList = [Select MobilePhone,Email from Contact where AccountId =: quoteObj.Opportunity__r.AccountId order by createddate limit 1];
             if(contactList.size() > 0){
                 dto.contactMobile = contactList[0].MobilePhone != null ? contactList[0].MobilePhone : '-';
                 dto.contactEmail = contactList[0].Email != null ? contactList[0].Email : '-';
@@ -43,12 +44,13 @@ public class BAFCOQuotationReviseController {
             routetoItemMap.get(item.Route__r.name).add(item);
         }
         dto.routetoItemMap = routetoItemMap;
+        system.debug('dto '+dto);
         return dto;
     }
     @AuraEnabled
     public static List<Quotation__c> getquoteList(String quoteId){
-        Quotation__c quoteObj = [Select Enquiry__c,Enquiry__r.Recordtype.name from Quotation__c where Id =: quoteId limit 1];
-        List<Quotation__c> quoteList =  [Select Id,Name__c,Recordtype.name from Quotation__c where Enquiry__c =: quoteObj.Enquiry__c and recordtypeid = :QUOTE_EXPORT_RECORDTYPE_Id order by CreatedDate desc];
+        Quotation__c quoteObj = [Select id, opportunity__c from Quotation__c where Id =: quoteId limit 1];
+        List<Quotation__c> quoteList =  [Select Id,Name__c,Recordtype.name from Quotation__c where opportunity__c =: quoteObj.opportunity__c and recordtypeid = :QUOTE_EXPORT_RECORDTYPE_Id order by CreatedDate desc];
         
         return quoteList;
     }
@@ -62,7 +64,7 @@ public class BAFCOQuotationReviseController {
         }
         List<BAFCORoutingDetailsDto> routingDetailsList = new List<BAFCORoutingDetailsDto>();
         Integer index = 1;
-        for(Route__c enqObj : [SELECT Enquiry__c ,Regular_Routing_Lookup__r.name,Port_of_loading__c,Place_of_Discharge__c,Place_of_Pickup__c,Id, Regular_Routing__c,INCO_Term__r.name, Kind_Of_Shipment__c, Service_Type__c, Port_of_loading__r.Name, 
+        for(Route__c enqObj : [SELECT Opportunity_Enquiry__c ,Regular_Routing_Lookup__r.name,Port_of_loading__c,Place_of_Discharge__c,Place_of_Pickup__c,Id, Regular_Routing__c,INCO_Term__r.name, Kind_Of_Shipment__c, Service_Type__c, Port_of_loading__r.Name, 
                                Port_of_Destination__r.Name, Shipping_Line__r.name, Commodity__r.Name, Cargo_Weight__c, Remarks__c, Name  
                                FROM Route__c WHERE  Id in : mapRouteIdToQuotationItem.keySet()]){
                                    BAFCORoutingDetailsDto enqDtoObj = new BAFCORoutingDetailsDto();
@@ -77,7 +79,7 @@ public class BAFCOQuotationReviseController {
                                    enqDtoObj.remarks = enqObj.Remarks__c != null ? enqObj.Remarks__c : '-';
                                    enqDtoObj.routeId = enqObj.Id;
                                    enqDtoObj.shippingLine = enqObj.Shipping_Line__r.name != null ? enqObj.Shipping_Line__r.name : '-';
-                                   enqDtoObj.enquiryId = enqObj.Enquiry__c;
+                                   enqDtoObj.enquiryId = enqObj.Opportunity_Enquiry__c;
                                    index++;
                                    routingDetailsList.add(enqDtoObj);
                                }

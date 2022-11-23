@@ -26,6 +26,7 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
     AddContainerPNG = CONTAINER_PNG;
     @track regularRouteOption = [];
     @track dontShowAddNewRoute = false;
+    @track closeDate = '';
 
 
     @wire(getPicklistValues, {
@@ -129,11 +130,24 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
     handleSubmit(){
         console.log('lead List' +JSON.stringify(this.leadEnquiryList,null,2))
         console.log('businessTypeSelected '+this.businessTypeSelected)
-        if(this.businessTypeSelected != ''){
+        let allValid = true;
+        if(this.businessTypeSelected == '' || this.businessTypeSelected == undefined){
+            this.quoteTypeErrorClass = 'slds-has-error';
+            this.quoteTypeErrorMsg  = 'Complete this field.';
+            allValid  = false;
+        }
+        if(this.closeDate == '' || this.closeDate == null){
+            let closeDateField = this.template.querySelector("[data-field='closeDateField']");
+            closeDateField.setCustomValidity("Complete this field");
+            closeDateField.reportValidity();
+            allValid  = false;
+        }
+        if(allValid){
             submitRoutingList({ 
                 routingList : this.leadEnquiryList,
                 businessType : this.businessTypeSelected,
-                quoteId : this.quoteId
+                quoteId : this.quoteId,
+                closeDate : this.closeDate
             })
             .then(result =>{
                 console.log('routing submit  result : ', JSON.stringify(result,null,2));
@@ -149,11 +163,6 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
                 console.log('routing submit error lead: ', JSON.stringify(error));
             });
         }
-        else{
-            this.quoteTypeErrorClass = 'slds-has-error';
-            this.quoteTypeErrorMsg  = 'Complete this field.';
-        }
-
     }    
     handleBusinessTypeChange(event){
         this.businessTypeSelected = event.target.value
@@ -303,5 +312,17 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
         this.leadEnquiryList[strIndex - 1 ].placeOfDischargeName = '';
         this.template.querySelector('c-b-a-f-c-o-lead-enquiry-entry-intake').resetform(strIndex);
         console.log(JSON.stringify(this.leadEnquiryList[strIndex - 1 ],null,2));
+    }
+    handelCloseDate(e){
+        this.closeDate =e.target.value
+        console.log('this.closeDate ',this.closeDate)
+        let closeDateField = this.template.querySelector("[data-field='closeDateField']");
+        if(this.closeDate == null){
+            closeDateField.setCustomValidity("Complete this field");
+        }
+        else{
+            closeDateField.setCustomValidity("");
+        }        
+        closeDateField.reportValidity();
     }
 }

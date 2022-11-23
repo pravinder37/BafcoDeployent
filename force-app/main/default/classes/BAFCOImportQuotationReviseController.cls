@@ -4,8 +4,8 @@ public class BAFCOImportQuotationReviseController {
         .getRecordTypeId();
     @AuraEnabled
     public static List<Quotation__c> getquoteList(String quoteId){
-        Quotation__c quoteObj = [Select Enquiry__c,Enquiry__r.Recordtype.name from Quotation__c where Id =: quoteId limit 1];
-        List<Quotation__c> quoteList =  [Select Id,Name__c,Recordtype.name from Quotation__c where Enquiry__c =: quoteObj.Enquiry__c and recordtypeid = :QUOTE_IMPORT_RECORDTYPE_Id order by CreatedDate desc];
+        Quotation__c quoteObj = [Select id,opportunity__c from Quotation__c where Id =: quoteId limit 1];
+        List<Quotation__c> quoteList =  [Select Id,Name__c,Recordtype.name from Quotation__c where opportunity__c =: quoteObj.opportunity__c and recordtypeid = :QUOTE_IMPORT_RECORDTYPE_Id order by CreatedDate desc];
         
         return quoteList;
     }

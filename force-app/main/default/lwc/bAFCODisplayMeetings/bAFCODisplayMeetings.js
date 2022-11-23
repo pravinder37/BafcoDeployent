@@ -260,16 +260,19 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
                 this.endDate1 = result.endDate
                 this.endTime1 = this.formatTime1(result.endTime)
                 this.meetinginute1 = result.meetingMinute  
+                console.log('*********** '+result.relatedEnquiryId)
                 if(result.objectName == 'Lead__c') this.filter1 = 'Lead__c = \''+result.whatId+'\'';
                 else if(result.objectName == 'Account') this.filter1 = 'Account__c = \''+result.whatId+'\'';
                 setTimeout(() => {
                     let childComp = this.template.querySelector('c-b-a-f-c-o-custom-look-up-component');
+                console.log('ccccc '+JSON.stringify(childComp,null,2))
                 if(result.relatedEnquiryId != undefined){
                     let defaultObj = {Id:result.relatedEnquiryId,Name:result.relatedEnquiryName}
                 if(childComp != null){
                     childComp.handleDefaultSelected(defaultObj);
                 }
                 }
+                
                 }, 100);
                 
             }

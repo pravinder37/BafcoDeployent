@@ -25,6 +25,7 @@ export default class BAFCOReviseQuotation extends NavigationMixin(LightningEleme
     @track validityDate = '';
     connectedCallback(){
         console.log('quotation id '+this.quoteID);
+        console.log('leadId id '+this.leadId);
         document.title = 'Revise Export Quote';
         this.getquoteDetails();
     }
@@ -54,6 +55,7 @@ export default class BAFCOReviseQuotation extends NavigationMixin(LightningEleme
     handleQuoteActive(event){
             let quoteId = event.target.value;
             this.activeQuoteId = quoteId;
+            console.log('this.activeQuoteId '+this.activeQuoteId);
             this.getQuoteLineItemRoute();
     }
     getQuoteLineItemRoute(){

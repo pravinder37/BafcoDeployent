@@ -14,6 +14,8 @@ public class BAFCOOrderCreationDto {
     }
     public class value{
         @AuraEnabled
+        public String recordtypeId { get; set; }
+        @AuraEnabled
         public String shipName { get; set; }
         @AuraEnabled
         public Decimal Qty { get; set; }

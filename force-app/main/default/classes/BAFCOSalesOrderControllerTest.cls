@@ -10,10 +10,17 @@ public class BAFCOSalesOrderControllerTest {
         acc.name = 'test';
         acc.branch__c ='Jeddah';
         insert acc;
-        
+        opportunity opty = new Opportunity();
+        opty.AccountId = acc.id;
+        opty.StageName = 'Qualification';
+        opty.CloseDate = system.today();
+        opty.Name ='testopty';
+        opty.Business_Type__c = 'Export';
+        insert opty;
         Port__c port = new Port__c();
         port.City__c = 'Test';
         port.Name ='PortName';
+        port.Sector__c = 'Africa';
         Insert port;
         
         Commodity__c comd = new Commodity__c();
@@ -34,7 +41,7 @@ public class BAFCOSalesOrderControllerTest {
         insert enq;
         
         Route__c route = new Route__c();
-        route.Enquiry__c = enq.id;
+        route.Opportunity_Enquiry__c = opty.id;
         route.Port_of_Destination__c = port.id;
         route.Port_of_loading__c =port.id;
         route.Commodity__c = comd.id;
@@ -60,7 +67,7 @@ public class BAFCOSalesOrderControllerTest {
         Integer Year1= Integer.valueof(s1);
         Quotation__c quoteObj = new Quotation__c();
         quoteObj.Name__c= 'Quote/'+Year1+'/'+1;
-        quoteObj.Enquiry__c = enq.id;
+        quoteObj.Opportunity__c = opty.id;
         quoteObj.Leadc__c = ld.id;
         quoteObj.Account__c = acc.id;
         Insert quoteObj;
@@ -128,7 +135,8 @@ public class BAFCOSalesOrderControllerTest {
         return [Select id from Account limit 1].Id;
     }
     static string getEnquiryId(){
-        return [Select id from Enquiry__c limit 1].Id;
+        //return [Select id from Enquiry__c limit 1].Id;
+        return null;
     }
     static string getQuoteId(){
         return [Select id from Quotation__c limit 1].Id;

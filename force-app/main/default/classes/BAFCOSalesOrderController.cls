@@ -1,4 +1,16 @@
 public class BAFCOSalesOrderController {
+    public static final Id ORDER_EXPORT_RECORDTYPE_Id = Schema.SObjectType.Order__c.getRecordTypeInfosByName()
+        .get('Export')
+        .getRecordTypeId();
+    public static final Id ORDER_IMPORT_RECORDTYPE_Id = Schema.SObjectType.Order__c.getRecordTypeInfosByName()
+        .get('Import')
+        .getRecordTypeId();
+    public static final Id QUOTE_EXPORT_RECORDTYPE_Id = Schema.SObjectType.Quotation__c.getRecordTypeInfosByName()
+        .get('Export')
+        .getRecordTypeId();
+    public static final Id QUOTE_IMPORT_RECORDTYPE_Id = Schema.SObjectType.Quotation__c.getRecordTypeInfosByName()
+        .get('Import')
+        .getRecordTypeId();
     @AuraEnabled
     public static Map<String,Route__c> getRouteItem(String quoteId){
         Map<String,Route__c> mapRouteNameToItem = new Map<String,Route__c>();
@@ -9,7 +21,7 @@ public class BAFCOSalesOrderController {
             routeId.add(item.Route__c);
         }
         if(routeId.size()>0){
-            for(Route__c routeObj : [SELECT Enquiry__c ,Port_of_loading__c,Place_of_Discharge__c,Place_of_Pickup__c,Id, Regular_Routing__c,INCO_Term__r.name, Kind_Of_Shipment__c, Service_Type__c, Port_of_loading__r.Name, 
+            for(Route__c routeObj : [SELECT Opportunity_Enquiry__c ,Port_of_loading__c,Place_of_Discharge__c,Place_of_Pickup__c,Id, Regular_Routing__c,INCO_Term__r.name, Kind_Of_Shipment__c, Service_Type__c, Port_of_loading__r.Name, 
                                      Port_of_Destination__r.Name, Shipping_Line__r.name, Commodity__r.Name, Cargo_Weight__c, Remarks__c, Name  
                                      FROM Route__c WHERE  Id in : routeId]){
                                          if(!mapRouteIdToName.containsKey(routeObj.Id)){
@@ -41,8 +53,8 @@ public class BAFCOSalesOrderController {
                                       Port_Shuttling__c,Re_palletization__c,Reefer_cntr_plug_in_charges__c,Reefer_PTI_charges__c,
                                       Reefer_steam_wash__c,RMS__c,Route__c,Sea_Freight__c,Seal_Charges__c,Stuffing_Charges__c,
                                       SweepingCleaning__c,Tabadul__c,Tarpauline_charge__c,Total_INCO__c,Total_SL__c,Truck_Head_charges__c,
-                                      Truck_idling_charges__c,Vessel_certificate_charges__c,Wrappingpacking_charges__c,Xray__c,
-                                      Quotation__r.Leadc__c,Quotation__r.Enquiry__c,Quotation__r.Account__c,Total__c,Agent_Name__c,
+                                      Truck_idling_charges__c,Vessel_certificate_charges__c,Wrappingpacking_charges__c,Xray__c,Quotation__r.RecordtypeId,
+                                      Quotation__r.Leadc__c,Quotation__r.Opportunity__c,Quotation__r.Account__c,Total__c,Agent_Name__c,
                                       Remarks_SL_Charges__c,Remarks_Origin_Charges__c,Remarks_Destination_Charges__c,Remarks_Additional_Charges__c,Total_Additional__c,War_Risk_Surcharge__c,VGM__c,Total_Dest__c,Pickup_Charges__c,Overweight_surcharge__c,Origin_Detention_Demurrage_Charges__c,Lashing_Charges__c,Operational_Recovery_Surcharge__c,Low_Sulphur_Surcharge__c,Inland_haulage__c,Inland_Handling_Fees__c,Inland_Fuel_Surcharge__c,Gate_pass_charges__c,Fuel_Surcharge__c,Fasah_Charges__c,Export_Service_Fees__c,DG_Surcharge__c,Carriage_Congestion_Surcharge__c,BL_Fees__c,Bayan_Charges__c,
                                       Container_Lashing_Charges__c,DO_charges__c,LOLO_Charges__c,Carrier_Security_Fees__c,
                                       Shipping_Line__c,Equipment_Type__r.Name 
@@ -64,7 +76,7 @@ public class BAFCOSalesOrderController {
                                                   dto.sellingRate = item.Total__c;
                                                   dto.checkBoxSelected = false;
                                                   dto.accountId = item.Quotation__r.Account__c;
-                                                  dto.enquiryId = item.Quotation__r.Enquiry__c;
+                                                  dto.enquiryId = item.Quotation__r.Opportunity__c;
                                                   dto.leadId = item.Quotation__r.Leadc__c;
                                                   dto.quotationId = item.Quotation__c;
                                                   dto.equipmentType =item.Equipment_Type__c ;
@@ -119,6 +131,7 @@ public class BAFCOSalesOrderController {
                                                   dto.vesselCertificate=item.Vessel_certificate_charges__c != null ? item.Vessel_certificate_charges__c : 0;
                                                   dto.wrappingPacking=item.Wrappingpacking_charges__c != null ? item.Wrappingpacking_charges__c : 0;
                                                   dto.xRay=item.Xray__c != null ? item.Xray__c : 0;
+                                                  dto.recordtypeId = item.Quotation__r.RecordtypeId;
                                                   
                                                   //Added field
                                                   dto.bayanCharges = item.Bayan_Charges__c != null ? item.Bayan_Charges__c : 0;
@@ -173,10 +186,12 @@ public class BAFCOSalesOrderController {
                 BAFCOOrderCreationDto.value orderData = firstEquipmentData.value[0]; 
                 system.debug('orderData '+orderData);
                 orderObj.Account_Order__c = orderData.accountId;
-                orderObj.Enquiry_Order__c = orderData.enquiryId;
+                orderObj.Opportunity_Order__c = orderData.enquiryId;
                 orderObj.Leadc_Order__c = orderData.leadId;
                 orderObj.Quotation__c = orderData.quotationId;
                 orderObj.Order_Validity__c = date.valueOf(validityDate);
+                orderObj.recordtypeId = orderData.recordtypeId == QUOTE_EXPORT_RECORDTYPE_Id ? ORDER_EXPORT_RECORDTYPE_Id : ORDER_IMPORT_RECORDTYPE_Id;
+                            
                 insert orderObj;
             }
             // creating OrderItem
@@ -285,6 +300,8 @@ public class BAFCOSalesOrderController {
     public class EquipData{
         @AuraEnabled
         public String shipName { get; set; }
+        @AuraEnabled
+        public String recordtypeId { get; set; }
         @AuraEnabled
         public String quotationId { get; set; }
         @AuraEnabled

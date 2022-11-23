@@ -37,7 +37,7 @@ public class BAFCOImportQuoteController {
                                  rmsEquipmentList.add(rmsObj.Equipment_Type__c) ;                     
                              }
         // to get Previously generated Quote
-        List<Quotation__c> quoteList = [SELECT Id FROM Quotation__c where Enquiry__c  =: enquiryId limit 1];
+        List<Quotation__c> quoteList = [SELECT Id FROM Quotation__c where Opportunity__c  =: enquiryId limit 1];
         if(quoteList.size() > 0) QuoteId = quoteList[0].Id;
         if(!String.isBlank(QuoteId)){
             for(Quotation_Item__c item : [Select Equipment_Type__r.name,Shipping_Line__c,id from Quotation_Item__c  where Quotation__c =: QuoteId
@@ -101,29 +101,31 @@ rmsDto.quotationItemId = quoteItemToIdMap.get(key);
         BAFCOIncoChargesDto incoDto = BAFCOLRoutingDetailsController.getIncoCharges(rmsId,incoTerm);
         Quotation__c quoteObj = new Quotation__c();
         if(quotationId == ''  || quotationId == null || (cameReviseCompt  == true && sameRoute == true)){
-            List<Enquiry__c> enqList  = [SELECT Id,No_of_Quotes__c,Lead__c,recordtypeId,(Select id,name,Name__c from Quotations__r order by createdDate) Lead__c FROM Enquiry__c where id =: enquiryId];     
+            List<opportunity> enqList  = [SELECT Id,AccountId,Business_Type__c,No_of_Quotes__c,(Select id,name,Name__c from Quotations__r order by createdDate) FROM Opportunity where id =: enquiryId];     
             if(enqList.size() > 0){
-                Enquiry__c enqObj = enqList[0];
-                quoteObj.Leadc__c = enqObj.Lead__c;                
-                if(enqObj.recordtypeId == ENQUIRY_EXPORT_RECORDTYPE_Id) quoteObj.recordtypeId = QUOTE_EXPORT_RECORDTYPE_Id;
-                else if(enqObj.recordtypeId == ENQUIRY_IMPORT_RECORDTYPE_Id) quoteObj.recordtypeId = QUOTE_IMPORT_RECORDTYPE_Id;
+                opportunity enqObj = enqList[0];
+                //quoteObj.Leadc__c = enqObj.Lead__c;   
+                quoteObj.Account__c = enqObj.AccountId;             
+                if(enqObj.Business_Type__c == 'Export') quoteObj.recordtypeId = QUOTE_EXPORT_RECORDTYPE_Id;
+                else if(enqObj.Business_Type__c == 'Import') quoteObj.recordtypeId = QUOTE_IMPORT_RECORDTYPE_Id;
                 
                 Decimal quoteNumber = enqObj.No_of_Quotes__c + 1;
                 quoteList = enqObj.Quotations__r;
             }
             else{
-                List<Enquiry__c> enqList1  = [SELECT Id,No_of_Quotes__c,Lead__c,recordtypeId,(Select id,name,Name__c from Quotations__r order by createdDate) Account FROM Enquiry__c where id =: enquiryId];
+               List<opportunity> enqList1  = [SELECT AccountId,Id,Business_Type__c,No_of_Quotes__c,(Select id,name,Name__c from Quotations__r order by createdDate) FROM opportunity where id =: enquiryId];
                 system.debug('enqList1 '+enqList1);
                 if(enqList1.size() > 0){
-                    Enquiry__c enqObj = enqList1[0];
+                    opportunity enqObj = enqList1[0];
                     quoteObj.Leadc__c = enqObj.Lead__c;
-                    if(enqObj.recordtypeId == ENQUIRY_EXPORT_RECORDTYPE_Id) quoteObj.recordtypeId = QUOTE_EXPORT_RECORDTYPE_Id;
-                    else if(enqObj.recordtypeId == ENQUIRY_IMPORT_RECORDTYPE_Id) quoteObj.recordtypeId = QUOTE_IMPORT_RECORDTYPE_Id;                    
-                    Decimal quoteNumber = enqObj.No_of_Quotes__c + 1;
+                    quoteObj.Account__c = enqObj.AccountId;
+                    if(enqObj.Business_Type__c == 'Export') quoteObj.recordtypeId = QUOTE_EXPORT_RECORDTYPE_Id;
+                    else if(enqObj.Business_Type__c == 'Import') quoteObj.recordtypeId = QUOTE_IMPORT_RECORDTYPE_Id;                    
+                   Decimal quoteNumber = enqObj.No_of_Quotes__c + 1;
                     quoteList = enqObj.Quotations__r;
-                }
+               }
             }
-            quoteObj.Enquiry__c = enquiryId;            
+            quoteObj.Opportunity__c = enquiryId;            
             integer year =  Date.Today().Year();
             string s1=string.valueof(year).right(2);
             Integer Year1= Integer.valueof(s1);
@@ -165,21 +167,19 @@ rmsDto.quotationItemId = quoteItemToIdMap.get(key);
                 quoteItemObj.Name = quoteList3[0].Quotation__r.name + ' - '+quoteList3.size() + 1;
             }
             quoteObj.id = quotationId;
-            List<Enquiry__c> enqList5  = [SELECT Id,No_of_Quotes__c,Lead__c,recordtypeId,(Select id,name,Name__c from Quotations__r order by createdDate) Lead__c FROM Enquiry__c where id =: enquiryId]; 
-            List<Enquiry__c> enqList6  = [SELECT Id,No_of_Quotes__c,Lead__c,recordtypeId,(Select id,name,Name__c from Quotations__r order by createdDate) Account FROM Enquiry__c where id =: enquiryId];
-            Enquiry__c enqObj = new Enquiry__c();
+            List<opportunity> enqList5  = [SELECT Id,Business_Type__c,No_of_Quotes__c,(Select id,name,Name__c from Quotations__r order by createdDate) FROM Opportunity where id =: enquiryId]; 
+            opportunity enqObj = new opportunity();
             if(enqList5.size() > 0) enqObj = enqList5[0];
-            else if(enqList6.size() > 0) enqObj = enqList6[0];
-            integer year =  Date.Today().Year();
+           integer year =  Date.Today().Year();
             string s1=string.valueof(year).right(2);
             Integer Year1= Integer.valueof(s1);
-            Decimal quoteNumber = enqObj.No_of_Quotes__c + 1;
+            Decimal quoteNumber = enqObj.No_of_Quotes__c != null ? enqObj.No_of_Quotes__c + 1 : 0;
             List<Quotation__c> quoteList2 = enqObj.Quotations__r; 
             if(quoteList2.size() > 0){
-                if(cameReviseCompt == true){
-                    String fullName = quoteList2[0].Name__c;
+               if(cameReviseCompt == true){
+                   String fullName = quoteList2[0].Name__c;
                     String lastName = fullName.Substring(fullName.lastIndexOf('/')+1,fullName.length());
-                    quoteObj.Name__c = 'Quote/'+Year1+'/'+lastName+'-'+quoteList.size();
+                   quoteObj.Name__c = 'Quote/'+Year1+'/'+lastName+'-'+quoteList.size();
                 }
                 else{
                     Integer  quoteSize = quoteList2.size();
@@ -187,8 +187,8 @@ rmsDto.quotationItemId = quoteItemToIdMap.get(key);
                 }
             }
             quoteObj.Remarks__c = remarks;
-            if(enqObj.recordtypeId == ENQUIRY_EXPORT_RECORDTYPE_Id) quoteObj.recordtypeId = QUOTE_EXPORT_RECORDTYPE_Id;
-            else if(enqObj.recordtypeId == ENQUIRY_IMPORT_RECORDTYPE_Id) quoteObj.recordtypeId = QUOTE_IMPORT_RECORDTYPE_Id;                    
+           if(enqObj.Business_Type__c == 'Export') quoteObj.recordtypeId = QUOTE_EXPORT_RECORDTYPE_Id;
+            else if(enqObj.Business_Type__c == 'Import') quoteObj.recordtypeId = QUOTE_IMPORT_RECORDTYPE_Id;                    
             update quoteObj;
         }
         if(dto.serviceChargeList != null){

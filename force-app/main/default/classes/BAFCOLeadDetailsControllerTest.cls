@@ -13,6 +13,13 @@ public class BAFCOLeadDetailsControllerTest {
         acc.Branch__c= 'Jeddah';
         acc.Name= 'test';
         insert acc;
+        opportunity opty = new Opportunity();
+        opty.AccountId = acc.id;
+        opty.StageName = 'Qualification';
+        opty.CloseDate = system.today();
+        opty.Name ='testopty';
+        opty.Business_Type__c = 'Export';
+        insert opty;
         Contact cont = new Contact();
         cont.FirstName='First Name';
         cont.LastName = 'Last name';
@@ -21,6 +28,7 @@ public class BAFCOLeadDetailsControllerTest {
         insert cont;
         Port__c portObj = new Port__c();
         portObj.Name = 'test';
+        portObj.Sector__c = 'Africa';
         insert portObj;
         
         Commodity__c comd = new Commodity__c();

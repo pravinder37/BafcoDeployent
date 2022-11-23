@@ -21,10 +21,10 @@ public class BAFCOLRoutingDetailsController {
     public static List<BAFCORoutingDetailsDto> getEnqueryDetails(String enquiryID) {
         List<BAFCORoutingDetailsDto> routingDetailsList = new List<BAFCORoutingDetailsDto>();
         Integer index = 1;
-        for(Route__c enqObj : [SELECT Regular_Routing_Lookup__r.name,Port_of_loading__c,Place_of_Discharge__c,Place_of_Pickup__c,Id,Enquiry__r.Lead__c, Regular_Routing__c,INCO_Term__r.name, Kind_Of_Shipment__c, Service_Type__c, Port_of_loading__r.Name, 
+        for(Route__c enqObj : [SELECT Opportunity_Enquiry__r.AccountId,Regular_Routing_Lookup__r.name,Port_of_loading__c,Place_of_Discharge__c,Place_of_Pickup__c,Id,/*Enquiry__r.Lead__c,*/ Regular_Routing__c,INCO_Term__r.name, Kind_Of_Shipment__c, Service_Type__c, Port_of_loading__r.Name, 
                                Port_of_Destination__r.Name, Shipping_Line__r.name, Commodity__r.Name, Cargo_Weight__c, Remarks__c, 
-                               Name,Enquiry__r.Account__r.Average_Margin__c,Enquiry__r.Account__r.Best_Margin__c,Enquiry__r.Account__r.Average_Credit_Days__c,Enquiry__r.Business_Type__c  
-                               FROM Route__c WHERE Enquiry__c=:enquiryID]){
+                               Name,Opportunity_Enquiry__r.Business_Type__c,Opportunity_Enquiry__r.Account.Average_Credit_Days__c,Opportunity_Enquiry__r.Account.Best_Margin__c,Opportunity_Enquiry__r.Account.Average_Margin__c /*Enquiry__r.Account__r.Average_Margin__c,Enquiry__r.Account__r.Best_Margin__c,Enquiry__r.Account__r.Average_Credit_Days__c,Enquiry__r.Business_Type__c*/  
+                               FROM Route__c WHERE Opportunity_Enquiry__c=:enquiryID]){
                                    BAFCORoutingDetailsDto enqDtoObj = new BAFCORoutingDetailsDto();
                                    enqDtoObj.routeName = 'Route '+ index;
                                    enqDtoObj.routingRegular = enqObj.Regular_Routing_Lookup__c != null ? enqObj.Regular_Routing_Lookup__r.Name : '-';
@@ -40,13 +40,13 @@ public class BAFCOLRoutingDetailsController {
                                    enqDtoObj.shippingLine = enqObj.Shipping_Line__r.name != null ? enqObj.Shipping_Line__r.name : '-';
                                    enqDtoObj.incoTerm = enqObj.INCO_Term__r.name != null ? enqObj.INCO_Term__r.name : '-'; 
                                    enqDtoObj.incoTermId = enqObj.INCO_Term__c != null ? enqObj.INCO_Term__c : null; 
-                                   enqDtoObj.leadId =  enqObj.Enquiry__r.Lead__c != null ? enqObj.Enquiry__r.Lead__c : enqObj.Enquiry__r.Account__c != null ? enqObj.Enquiry__r.Account__c : '' ;
-                                   enqDtoObj.accountAvgMargin = enqObj.Enquiry__r.Account__r.Average_Margin__c != null ? enqObj.Enquiry__r.Account__r.Average_Margin__c : 0 ;
-                                   enqDtoObj.accountBestMargin = enqObj.Enquiry__r.Account__r.Best_Margin__c !=null ? enqObj.Enquiry__r.Account__r.Best_Margin__c : 0;
-                                   enqDtoObj.accountAvgCreditDays = enqObj.Enquiry__r.Account__r.Average_Credit_Days__c != null ?enqObj.Enquiry__r.Account__r.Average_Credit_Days__c : 0 ;
+                                   enqDtoObj.leadId =  enqObj.Opportunity_Enquiry__r.AccountId != null ? enqObj.Opportunity_Enquiry__r.AccountId :  '' ;
+                                   enqDtoObj.accountAvgMargin = enqObj.Opportunity_Enquiry__r.Account.Average_Margin__c != null ? enqObj.Opportunity_Enquiry__r.Account.Average_Margin__c : 0 ;
+                                   enqDtoObj.accountBestMargin = enqObj.Opportunity_Enquiry__r.Account.Best_Margin__c !=null ? enqObj.Opportunity_Enquiry__r.Account.Best_Margin__c : 0;
+                                   enqDtoObj.accountAvgCreditDays = enqObj.Opportunity_Enquiry__r.Account.Average_Credit_Days__c != null ?enqObj.Opportunity_Enquiry__r.Account.Average_Credit_Days__c : 0 ;
                                    enqDtoObj.placeOfPickup = enqObj.Place_of_Pickup__c;
                                    enqDtoObj.placeOfDischarge = enqObj.Place_of_Discharge__c;
-                                   enqDtoObj.businessType = enqObj.Enquiry__r.Business_Type__c !=  null ? enqObj.Enquiry__r.Business_Type__c : '-';
+                                   enqDtoObj.businessType = enqObj.Opportunity_Enquiry__r.Business_Type__c !=  null ? enqObj.Opportunity_Enquiry__r.Business_Type__c : '-';
                                    index++;
                                    routingDetailsList.add(enqDtoObj);
                                }
@@ -72,7 +72,7 @@ public class BAFCOLRoutingDetailsController {
                              }
         
         // to get Previously generated Quote
-        List<Quotation__c> quoteList = [SELECT Id FROM Quotation__c where Enquiry__c  =: enquiryId limit 1];
+        List<Quotation__c> quoteList = [SELECT Id FROM Quotation__c /*where Enquiry__c  =: enquiryId*/ limit 1];
         if(quoteList.size() > 0) QuoteId = quoteList[0].Id;
         
         // to getquoteItemItem so as to update on Generate quoteItem
@@ -159,38 +159,20 @@ public class BAFCOLRoutingDetailsController {
         return lookUpList;
     }
     @AuraEnabled
-    public static String submitRoutingList(List<BAFCORoutingDetailsDto> routingList, String businessType, String quoteId) {
+    public static String submitRoutingList(List<BAFCORoutingDetailsDto> routingList, String businessType, String quoteId,String closeDate) {
         system.debug('routingList '+routingList);
         List<Route__c> routeList = new List<Route__c>();
-        Enquiry__c enquiryObj = new Enquiry__c();
+        Opportunity optyObj = new Opportunity();
         if(businessType != '' && quoteId != ''){
-            String objectAPIName = '';
-            String keyPrefix = '';
-            keyPrefix = quoteId.substring(0,3);
-            for( Schema.SObjectType obj : Schema.getGlobalDescribe().Values() ){
-                String prefix = obj.getDescribe().getKeyPrefix();
-                if(prefix == keyPrefix){
-                    objectAPIName = obj.getDescribe().getName();
-                    break;
-                }
-            }
-            system.debug('objectAPIName '+objectAPIName);
-            if(objectAPIName == 'Lead__c'){
-                Lead__c leadObj = [Select id,Name from Lead__c where Id =: quoteId];                
-                enquiryObj.Name = leadObj.Name +' - '+String.valueOf(date.today()).split(' ')[0];
-                enquiryObj.Lead__c = leadObj.Id;
-            }
-            else if(objectAPIName == 'Account'){
-                Account acc = [Select id,name from Account where id=: quoteId];
-                enquiryObj.Name = acc.Name +' - '+String.valueOf(date.today()).split(' ')[0];
-                enquiryObj.Account__c = quoteId;
-            }
-            enquiryObj.Business_Type__c = businessType;
-            if(businessType == 'Export') enquiryObj.RecordTypeId = ENQUIRY_EXPORT_RECORDTYPE_Id;
-            else if(businessType == 'Import') enquiryObj.RecordTypeId = ENQUIRY_IMPORT_RECORDTYPE_Id;
+            Account acc = [Select id,name from Account where id=: quoteId];
+            optyObj.Name = acc.Name +' - '+String.valueOf(date.today()).split(' ')[0];
+            optyObj.AccountId = acc.Id;
+            optyObj.Business_Type__c = businessType;
             try{
-                Insert enquiryObj;
-                system.debug('enquiryObj '+enquiryObj);
+                optyObj.StageName = 'Qualification';
+                optyObj.CloseDate = date.valueOf(closeDate);
+                insert optyObj;
+                system.debug('optyObj '+optyObj);
             }
             catch(Exception e){
                 System.debug('Excepiton '+e.getMessage());
@@ -204,7 +186,7 @@ public class BAFCOLRoutingDetailsController {
                 routeObj.Kind_Of_Shipment__c = dto.shipmentKind;
                 routeObj.Regular_Routing__c = dto.routingRegular;
                 String ObjectName = '';
-                if(objectAPIName == 'Account') routeObj.Regular_Routing_Lookup__c = dto.routingRegular != '' ? dto.routingRegular : null;
+                routeObj.Regular_Routing_Lookup__c = dto.routingRegular != '' ? dto.routingRegular : null;
                 if(!String.isBlank(dto.shippingLine)) routeObj.Shipping_Line__c = dto.shippingLine;
                 routeObj.Service_Type__c = dto.serviceType;
                 if(!String.isBlank(dto.portLoading)) routeObj.Port_of_loading__c = dto.portLoading;
@@ -213,7 +195,7 @@ public class BAFCOLRoutingDetailsController {
                 routeObj.Dangerous_Goods__c = dto.dangerousGoods;
                 routeObj.Index__c = String.valueOf(dto.leadIndex);
                 if(!String.isBlank(dto.incoTerm)) routeObj.INCO_Term__c = dto.incoTerm  ;
-                routeObj.Enquiry__c = enquiryObj.id;
+                routeObj.Opportunity_Enquiry__c = optyObj.id;
                 routeObj.DG_Class__c = dto.dgClass;
                 if(!String.isBlank(dto.placeOfPickup)) routeObj.Place_of_Pickup__c = dto.placeOfPickup;
                 if(!String.isBlank(dto.placeOfDischarge)) routeObj.Place_of_Discharge__c = dto.placeOfDischarge;
@@ -238,7 +220,7 @@ public class BAFCOLRoutingDetailsController {
                 Insert routeEquipList;
             }
         }
-        return enquiryObj.id;
+        return optyObj.id;
     }
     @AuraEnabled
     public static BAFCOIncoChargesDto getIncoCharges(String rmsId, String incoTerm){
@@ -250,8 +232,6 @@ public class BAFCOLRoutingDetailsController {
                                       FROM INCO_Charge__c WHERE RMS__c =: rmsId AND INCO_Term__r.Name =: incoTerm]){
                                           system.debug(obj.Bayan__c == null);
                                           if((obj.Bayan__c == null || obj.Bayan__c < 1) 
-                                             //&& (obj.Destination_Customs_Clearance__c == null || obj.Destination_Customs_Clearance__c < 1) 
-                                             //&& (obj.Destination_Loading_Charges__c == null || obj.Destination_Loading_Charges__c < 1)
                                              && (obj.Fasah_fee__c == null || obj.Fasah_fee__c < 1)
                                              && (obj.Inspection__c == null || obj.Inspection__c < 1)
                                              && (obj.Lift_on_Lift_off__c == null || obj.Lift_on_Lift_off__c < 1)
@@ -266,8 +246,6 @@ public class BAFCOLRoutingDetailsController {
                                             }
                                           else{
                                               incoChargeDto.bayan = obj.Bayan__c;
-                                              //incoChargeDto.destinationCustomsClearance =obj.Destination_Customs_Clearance__c;
-                                              //incoChargeDto.destinationLoadingCharges = obj.Destination_Loading_Charges__c;
                                               incoChargeDto.fasahFee = obj.Fasah_fee__c;
                                               incoChargeDto.inspection = obj.Inspection__c;
                                               incoChargeDto.liftOnLiftOff = obj.Lift_on_Lift_off__c;
@@ -303,11 +281,12 @@ public class BAFCOLRoutingDetailsController {
         Quotation__c quoteObj = new Quotation__c();
         system.debug('sameRoute '+sameRoute);
         if(quotationId == ''  || quotationId == null || (cameReviseCompt  == true && sameRoute == true)){
-            Enquiry__c enqObj  = [SELECT Id,No_of_Quotes__c,Lead__c,RecordtypeId,(Select id,name,Name__c from Quotations__r order by createdDate) Lead__c FROM Enquiry__c where id =: enquiryId];            
-            quoteObj.Enquiry__c = enquiryId;
-            quoteObj.Leadc__c = enqObj.Lead__c;
-            if(enqObj.recordtypeId == ENQUIRY_EXPORT_RECORDTYPE_Id) quoteObj.recordtypeId = QUOTE_EXPORT_RECORDTYPE_Id;
-            else if(enqObj.recordtypeId == ENQUIRY_IMPORT_RECORDTYPE_Id) quoteObj.recordtypeId = QUOTE_IMPORT_RECORDTYPE_Id;
+            Opportunity enqObj  = [SELECT Accountid,Business_Type__c,Id,No_of_Quotes__c,(Select id,name,Name__c from Quotations__r order by createdDate)  FROM Opportunity where id =: enquiryId];            
+            quoteObj.Opportunity__c = enquiryId;
+            //quoteObj.Leadc__c = enqObj.Lead__c;
+            quoteObj.Account__c = enqObj.accountid;
+            if(enqObj.Business_Type__c == 'Export') quoteObj.recordtypeId = QUOTE_EXPORT_RECORDTYPE_Id;
+            else if(enqObj.Business_Type__c == 'Import') quoteObj.recordtypeId = QUOTE_IMPORT_RECORDTYPE_Id;
             integer year =  Date.Today().Year();
             string s1=string.valueof(year).right(2);
             Integer Year1= Integer.valueof(s1);
@@ -354,28 +333,29 @@ public class BAFCOLRoutingDetailsController {
                 quoteItemObj.Name = quoteList[0].Quotation__r.name + ' - '+quoteList.size() + 1;
             }
             quoteObj.id = quotationId;
-            Enquiry__c enqObj  = [SELECT Id,No_of_Quotes__c,Lead__c,recordtypeId,(Select id,name,Name__c from Quotations__r order by createdDate) Lead__c FROM Enquiry__c where id =: enquiryId];
-            if(enqObj.recordtypeId == ENQUIRY_EXPORT_RECORDTYPE_Id) quoteObj.recordtypeId = QUOTE_EXPORT_RECORDTYPE_Id;
-            else if(enqObj.recordtypeId == ENQUIRY_IMPORT_RECORDTYPE_Id) quoteObj.recordtypeId = QUOTE_IMPORT_RECORDTYPE_Id;
+              opportunity enqObj  = [SELECT Id,Business_Type__c,No_of_Quotes__c,(Select id,name,Name__c from Quotations__r order by createdDate) FROM opportunity where id =: enquiryId];
+             if(enqObj.Business_Type__c == 'Export') quoteObj.recordtypeId = QUOTE_EXPORT_RECORDTYPE_Id;
+             else if(enqObj.Business_Type__c == 'Import') quoteObj.recordtypeId = QUOTE_IMPORT_RECORDTYPE_Id;
             
             integer year =  Date.Today().Year();
             string s1=string.valueof(year).right(2);
             Integer Year1= Integer.valueof(s1);
-            Decimal quoteNumber = enqObj.No_of_Quotes__c + 1;
-            List<Quotation__c> quoteList2 = enqObj.Quotations__r; 
-            if(quoteList2.size() > 0){
-                if(cameReviseCompt == true){
-                    String fullName = quoteList2[0].Name__c;
-                    String lastName = fullName.Substring(fullName.lastIndexOf('/')+1,fullName.length());
-                    quoteObj.Name__c = 'Quote/'+Year1+'/'+lastName+'-'+quoteList.size();
-                }
-                else{
-                    Integer  quoteSize = quoteList2.size();
-                    quoteObj.Name__c = 'Quote/'+Year1+'/'+quoteSize;
-                }
-            }
-            quoteObj.remarks__c = quoteRemarks;
+             Decimal quoteNumber = enqObj.No_of_Quotes__c + 1;
+              List<Quotation__c> quoteList2 = enqObj.Quotations__r; 
+              if(quoteList2.size() > 0){
+                  if(cameReviseCompt == true){
+                  String fullName = quoteList2[0].Name__c;
+                  String lastName = fullName.Substring(fullName.lastIndexOf('/')+1,fullName.length());
+                   quoteObj.Name__c = 'Quote/'+Year1+'/'+lastName+'-'+quoteList.size();
+               }
+               else{
+                 Integer  quoteSize = quoteList2.size();
+                                quoteObj.Name__c = 'Quote/'+Year1+'/'+quoteSize;
+               }
+             }
+             quoteObj.remarks__c = quoteRemarks;
             update quoteObj;
+            system.debug('quoteObj '+quoteObj);
         }
         if(dto.serviceChargeList != null){
             if(dto.serviceChargeList.servichargesObj != null){
@@ -421,15 +401,12 @@ public class BAFCOLRoutingDetailsController {
                     quoteItemObj.Tabadul__c = originObj.tabadul != null ? originObj.tabadul : null;
                     quoteItemObj.Tarpauline_charge__c = originObj.trapulinCharges != null ? originObj.trapulinCharges : null;
                     quoteItemObj.Truck_idling_charges__c = originObj.truckIdlingCharges != null ? originObj.truckIdlingCharges : null;
-                    // quoteItemObj.t = originObj.transportationCharges != null ? originObj.transportationCharges : null;
                     quoteItemObj.VGM__c = originObj.vgm != null ? originObj.vgm : null;
                     quoteItemObj.Xray__c = originObj.xray != null ? originObj.xray : null;
                     quoteItemObj.Fuel_Surcharge__c = originObj.fuelSurcharge != null ? originObj.fuelSurcharge : null;
                     quoteItemObj.Lashing_Charges__c = originObj.lashingCharges != null ? originObj.lashingCharges : null;
                 }
                 quoteItemObj.Total_INCO__c = originObj.TotalOrigincharges != null ? originObj.TotalOrigincharges : null;
-                //quoteItemObj.d = originObj.directionValue != null ? originObj.directionValue : null;
-                //quoteItemObj.lo = originObj.loadingChargeId != null ? originObj.loadingChargeId : null;
             }
             if(dto.serviceChargeList.destinChargeObj != null){
                 BAFCOImportRMSDto.destinChargeObj destinObj = dto.serviceChargeList.destinChargeObj;
@@ -440,7 +417,6 @@ public class BAFCOLRoutingDetailsController {
                     quoteItemObj.Fasah_Charges__c = destinObj.destinFasahCharges != null ? destinObj.destinFasahCharges : null; 
                     quoteItemObj.Gate_pass_charges__c = destinObj.destinGatePassCharges != null ? destinObj.destinGatePassCharges : null; 
                     quoteItemObj.LOLO_Charges__c = destinObj.destinLOLOCharges != null ? destinObj.destinLOLOCharges : null; 
-                    //quoteItemObj = destinObj.destinTransPortationCharges != null ? destinObj.destinTransPortationCharges : null; 
                 }
                 quoteItemObj.Total_Dest__c = destinObj.destinTotalCharges != null ? destinObj.destinTotalCharges : null; 
             }
@@ -507,9 +483,6 @@ public class BAFCOLRoutingDetailsController {
             if(dto2.name == 'Sweeping/Cleaning'){
                 quoteItemObj.SweepingCleaning__c = dto2.value;
             }
-            /*if(dto.name == 'Tarpauline charge'){
-quoteItemObj. = dto.value;
-}*/
             if(dto2.name == 'Truck Head charges'){
                 quoteItemObj.Truck_Head_charges__c = dto2.value;
             }
@@ -526,6 +499,7 @@ quoteItemObj. = dto.value;
         quoteItemObj.Total__c = dto.total;
         quoteItemObj.Total_Additional__c = additionalChargeTotal;
         quoteItemObj.Sea_Freight__c = dto.seaFreightSellRate;  
+        system.debug('quoteItemObj '+quoteItemObj);
         try{
             upsert quoteItemObj;
         }
@@ -554,24 +528,7 @@ quoteItemObj. = dto.value;
         
         String equipId = [SELECT Max_Weight__c, Name, Id FROM Equipment_Type__c where Name =: equipmentType].id;
         String shippingLineId = [SELECT Name, Id FROM Shipping_Line__c where Name =: shippingLine limit 1].id;
-        
-        String objectAPIName = '';
-        String businesstype = '';
-        String keyPrefix = '';
-        if(leadId != '') {
-            keyPrefix = leadId.substring(0,3);
-            for( Schema.SObjectType obj : Schema.getGlobalDescribe().Values() ){
-                String prefix = obj.getDescribe().getKeyPrefix();
-                if(prefix == keyPrefix){
-                    objectAPIName = obj.getDescribe().getName();
-                    break;
-                }
-            }
-            
-            
-            if(objectAPIName == 'Lead__c' )
-                businesstype = [SELECT Id, Business_Type__c FROM Lead__c where id =: leadId limit 1].Business_Type__c;
-        }
+        String businesstype = [SELECT Id, Business_Type__c FROM Account where id =: leadId limit 1].Business_Type__c;
         system.debug('incocharges '+incocharges);
         Id ExportRecordTypeId = Schema.SObjectType.RMS__c.getRecordTypeInfosByName()
             .get('Export')
@@ -687,29 +644,28 @@ quoteItemObj. = dto.value;
         desti.RMS__c = rmsObj.id;
         desti.Offset_Value__c = destinCharges.offSet;
         insert desti;
-         List<Rate_Procurement__c> procumentList  = new  List<Rate_Procurement__c>();
+        List<Rate_Procurement__c> procumentList  = new  List<Rate_Procurement__c>();
         if(rmsObj.RecordTypeId == ExportRecordTypeId){
-             procumentList = [Select id from Rate_Procurement__c where 
-                                                   Port_of_Loading__c =:rmsobj.Port_Of_Loading__c AND 
-                                                   Port_of_Discharge__c =:rmsObj.Port_Of_Discharge__c AND 
-                                                   Shipping_Line__c =: rmsObj.Shipping_Line__c AND 
-                                                   Equipment_Type__c =: rmsObj.Equipment_Type__c limit 1];
+            procumentList = [Select id from Rate_Procurement__c where 
+                             Port_of_Loading__c =:rmsobj.Port_Of_Loading__c AND 
+                             Port_of_Discharge__c =:rmsObj.Port_Of_Discharge__c AND 
+                             Shipping_Line__c =: rmsObj.Shipping_Line__c AND 
+                             Equipment_Type__c =: rmsObj.Equipment_Type__c limit 1];
         }
         else if(rmsObj.RecordTypeId == ImportRecordTypeId){
-            system.debug('came in import');
-             procumentList = [Select id from Rate_Procurement__c where 
-                                                   Port_of_Loading__c =:rmsobj.Port_Of_Loading__c AND 
-                                                   Port_of_Discharge__c =:rmsObj.Port_Of_Discharge__c AND 
-                                                   Shipping_Line__c =: rmsObj.Shipping_Line__c AND 
-                              					   Agent__c =:rmsObj.Agent__c AND 
-                                                   Equipment_Type__c =: rmsObj.Equipment_Type__c limit 1];
+            procumentList = [Select id from Rate_Procurement__c where 
+                             Port_of_Loading__c =:rmsobj.Port_Of_Loading__c AND 
+                             Port_of_Discharge__c =:rmsObj.Port_Of_Discharge__c AND 
+                             Shipping_Line__c =: rmsObj.Shipping_Line__c AND 
+                             Agent__c =:rmsObj.Agent__c AND 
+                             Equipment_Type__c =: rmsObj.Equipment_Type__c limit 1];
         }
         system.debug('procumentList '+procumentList);
         system.debug('rmsObj '+rmsObj);
         if(procumentList.size() > 0){
             Id ReceivedRecordtypeId = Schema.SObjectType.Rate_Procurement__c.getRecordTypeInfosByName()
-            .get('Received')
-            .getRecordTypeId();
+                .get('Received')
+                .getRecordTypeId();
             Rate_Procurement__c proobj = procumentList[0];
             proobj.RMS__c = rmsObj.id;
             proobj.RecordTypeId = ReceivedRecordtypeId;
@@ -790,7 +746,7 @@ quoteItemObj. = dto.value;
         procuObj.Port_of_Discharge__c = PortOfDischargeId;
         procuObj.Quantity__c = quantity;
         procuObj.Shipping_Line__c = shippingLine != '' ? shippingLine : null;
-        procuObj.Enquiry__c = enquiryId;
+        procuObj.Opportunity__c = enquiryId;
         procuObj.Agent__c = agentName != '' ?  agentName : null;
         procuObj.RecordTypeId = PENDING;
         insert procuObj;
@@ -804,6 +760,10 @@ quoteItemObj. = dto.value;
         insert tsk;
         
         return procuObj;        
+    }
+    @auraenabled
+    public static string getOptyBusinessType(string optyId){
+        return [Select id,Business_Type__c from opportunity where id =: optyId ].Business_Type__c;
     }
     public class SObjectResult {
         @AuraEnabled
