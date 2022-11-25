@@ -72,7 +72,7 @@ public class BAFCOLRoutingDetailsController {
                              }
         
         // to get Previously generated Quote
-        List<Quotation__c> quoteList = [SELECT Id FROM Quotation__c /*where Enquiry__c  =: enquiryId*/ limit 1];
+        List<Quotation__c> quoteList = [SELECT Id FROM Quotation__c where Opportunity__c  =: enquiryId limit 1];
         if(quoteList.size() > 0) QuoteId = quoteList[0].Id;
         
         // to getquoteItemItem so as to update on Generate quoteItem
