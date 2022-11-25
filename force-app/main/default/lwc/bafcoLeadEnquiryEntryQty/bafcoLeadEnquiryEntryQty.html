@@ -1,6 +1,6 @@
 <template>
-    <lightning-layout style="padding-top: 4%;">
-        <lightning-layout-item size="12" large-device-size="5" medium-device-size="5" small-device-size="12">
+    <lightning-layout style="padding-top: 4%; width: 100% !important;" multiple-rows>
+        <lightning-layout-item size="5" large-device-size="5" medium-device-size="5" small-device-size="5">
             <label class="slds-form-element__label customFont">
                 <p style="padding: 0px 20px 0px 20px; font-weight: 700;">Container</p>
             </label>
@@ -12,7 +12,7 @@
                         onlookupselected={handleContainerTypeSelection}
                         onlookupremoved={handleContainerTypeRemoved}></c-b-a-f-c-o-custom-look-up-component>
         </lightning-layout-item>
-        <lightning-layout-item size="12" large-device-size="5" medium-device-size="5" small-device-size="10">
+        <lightning-layout-item size="5" large-device-size="5" medium-device-size="5" small-device-size="5">
             <lightning-input type="number" label="Quantity"
                             onchange={handleQuantityChange}
                             data-field='quantityField'
@@ -21,7 +21,7 @@
                             class="customFont"
                             value={quantity}></lightning-input>
         </lightning-layout-item>
-        <lightning-layout-item class="removebuttonCss" size="12" large-device-size="2" medium-device-size="2" small-device-size="2">
+        <lightning-layout-item class="removebuttonCss" size="2" large-device-size="2" medium-device-size="2" small-device-size="2">
             <lightning-button-icon icon-name="utility:ban"
                                 variant="container"
                                 class="slds-m-top_large"  
