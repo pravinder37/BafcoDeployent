@@ -29,6 +29,7 @@ export default class BAFCORMSIntakeForm extends LightningElement {
     @track displayOriginCharge = true;
     @track displayShippingCharge = true;
     @track FreeTime = 0;
+    @track FreeTimePOD= 0;
     @track remarks = '';
     @track destinCharges ={};
     @track destinOffSet = 0;
@@ -166,6 +167,7 @@ export default class BAFCORMSIntakeForm extends LightningElement {
             'FOBAllIn':false,
             'ExWorksIn':false,
             'FreeTime':0,
+            'FreeTimePOD':0,
             'remarks':'',
             'currencyCode':'',
             'incoTermId':null
@@ -192,6 +194,10 @@ export default class BAFCORMSIntakeForm extends LightningElement {
     handleFreeTimeChange(e){
         this.FreeTime = e.target.value
         this.rmsDetail.FreeTime = this.FreeTime
+    }
+    handleFreeTimePODChange(e){
+        this.FreeTimePOD = e.target.value
+        this.rmsDetail.FreeTimePOD = this.FreeTimePOD
     }
     handleBusinessTypeChange(e){
         this.rmsDetail.businessType = e.target.value;

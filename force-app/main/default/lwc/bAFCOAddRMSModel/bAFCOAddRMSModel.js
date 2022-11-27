@@ -38,6 +38,7 @@ export default class
     @track displayOriginCharge = true;
     @track displayShippingCharge = true;
     @track FreeTime = 0;
+    @track FreeTimePOD = 0;
     @track remarks ='';
     @track curencyCodeOption = [];
     @track shippExchangeRate = '';
@@ -356,6 +357,10 @@ export default class
     handleFreeTimeChange(e){
         this.FreeTime = e.target.value
         this.rmsDetail.FreeTime = this.FreeTime
+    }
+    handleFreeTimePODChange(e){
+        this.FreeTimePOD = e.target.value
+        this.rmsDetail.FreeTimePOD = this.FreeTimePOD
     }
     handleRateTypeChange(e){
         this.rateType = e.target.value;

@@ -112,11 +112,17 @@
                                         placeholder="Select"></lightning-combobox>
                             </lightning-layout-item> 
                             <lightning-layout-item size="4" style="padding: 0px 40px">
-                                <lightning-input label="Free Time" 
+                                <lightning-input label="Free Time POL" 
                                         type="Number"
-                                        message-when-value-missing={FreeTime} 
+                                        value={FreeTime} 
                                         onchange={handleFreeTimeChange}></lightning-input>
-                            </lightning-layout-item>                           
+                            </lightning-layout-item>
+                            <lightning-layout-item size="4" style="padding: 0px 40px">
+                                <lightning-input label="Free Time POD" 
+                                        type="Number"
+                                        value={FreeTimePOD} 
+                                        onchange={handleFreeTimePODChange}></lightning-input>
+                            </lightning-layout-item>                             
                             <lightning-layout-item size="4" style="padding: 20px 40px 0px 40px;">
                                 <lightning-input label="All-in Rate" 
                                         type="checkbox"

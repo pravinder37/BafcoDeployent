@@ -48,6 +48,8 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
             this.kindOfShipmentOption = data.picklistFieldValues.Kind_Of_Shipment__c.values;
             this.serviceTypeOption = data.picklistFieldValues.Service_Type__c.values;
             this.dgClassOption = data.picklistFieldValues.DG_Class__c.values;
+            this.shipmentKind = 'FCL';
+            this.updateEnquiryList();
         }
         else if(error){
             console.log(' Route Object data error', JSON.stringify(error, null, 2));
