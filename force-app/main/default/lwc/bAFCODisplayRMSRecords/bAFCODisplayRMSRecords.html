@@ -4,7 +4,7 @@
         <lightning-layout class="customFont" multiple-rows style="padding-bottom: 30px;">
             <lightning-layout-item size="12" small-device-size="12" medium-device-size="3"  style="padding-left: 1%;">
                 <label class="slds-form-element__label">
-                    <p style="padding-left: 22px">Port of loading</p>
+                    <p style="padding-left: 22px" class="customFont">Port of loading</p>
                 </label>
                 <c-b-a-f-c-o-custom-look-up-component
                                 obj-name="Port__c"
@@ -15,7 +15,7 @@
             </lightning-layout-item>
             <lightning-layout-item size="12" small-device-size="12" medium-device-size="3"  style="padding-left: 1%;"> 
                 <label class="slds-form-element__label">
-                    <p style="padding-left: 22px">Port of destination</p>
+                    <p style="padding-left: 22px" class="customFont">Port of destination</p>
                 </label>               
                <c-b-a-f-c-o-custom-look-up-component
                                 obj-name="Port__c"
@@ -26,7 +26,7 @@
 
             </lightning-layout-item>
             <lightning-layout-item size="12"  small-device-size="9" medium-device-size="2" style="padding-left: 19px !important;padding-right: 20px !important;">
-                <lightning-input type="date" class="mobileRespcss" label="Validity expires in" data-field="validityField" value={validity} onchange={handleValidityChange} ></lightning-input>
+                <lightning-input type="date" class="mobileRespcss customFont" label="Validity expires in" data-field="validityField" value={validity} onchange={handleValidityChange} ></lightning-input>
             </lightning-layout-item>
             <lightning-layout-item size="12"  small-device-size="12" medium-device-size="2" style="padding-top: 23px; padding-left: 19px !important;padding-right: 20px !important;">
                 <lightning-button variant="brand" class="mobileRespcss" label="Search" title="Search" onclick={handleSearchClick}></lightning-button>

@@ -8,22 +8,6 @@
                 <lightning-layout-item size="4" style=" padding-top: 27px;">
                     <span style="font-size: 24px; margin-top: 10px; font-weight: 900;">Create Order</span>
                 </lightning-layout-item>
-                <lightning-layout-item size="4">
-                    <lightning-layout style="padding-top: 12px;">
-                        <lightning-layout-item size="4" class="slds-m-top_small " if:true={accountAvgMargin}>
-                            <span style="font-size: 18px; color: #FF9800; padding-right: 36px " class="slds-align_absolute-center">{accountAvgMargin}%</span>
-                            <p style="font-size: 11px; color: #5A5A5A; ">Avg. Margin</p>
-                        </lightning-layout-item>
-                        <lightning-layout-item size="4" class="slds-m-top_small " if:true={accountBestMargin}>
-                            <span style="font-size: 18px;color: #4CAF50; padding-right: 36px" class="slds-align_absolute-center">{accountBestMargin}%</span>
-                                <p style="font-size: 11px; color: #5A5A5A; ">Best Margin</p>
-                        </lightning-layout-item>
-                        <lightning-layout-item size="6" class="slds-m-top_small " if:true={accountAvgCreditDays}>
-                            <span style="font-size: 18px;color: #4CAF50; padding-right: 77px" class="slds-align_absolute-center">{accountAvgCreditDays}</span>
-                                <p style="font-size: 11px; color: #5A5A5A; ">Avg. Credit Days</p>
-                        </lightning-layout-item>
-                    </lightning-layout>
-                </lightning-layout-item> 
                 <lightning-layout-item size="12" if:true={quoteObj} style="padding-top: 4%;">
                     <lightning-layout>
                         <lightning-layout-item size="2">
