@@ -43,6 +43,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
     @track equipNotfound = false;
     @track seaFreight;
     @track seaFreightSellRate;
+    @track equipQuantity = 0;
     @track shippingEquipTabSelected ='';
     @track validity;
     @track equipmentId;
@@ -225,6 +226,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
         this.quantity=0;
         this.sellingRate = 0;
         this.seaFreightSellRate = 0;
+        this.equipQuantity = 0;
         this.additionalChargeList = [];
         this.profitLabel = '$ Profit';
         this.total = 0;
@@ -378,6 +380,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                         'seaFreightSellRate':0,
                         'quotationItemId':'',
                         'incoChargList':{},
+                        'quantity':this.equipQuantity,
                         'additionalChargeList':[],
                         'serviceChargeList':{},
                         'savedClicked':false,
@@ -389,6 +392,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                 }
                 else if(elem.value.length > 0){
                      this.seaFreightSellRate = elem.value[0].seaFreightSellRate ;
+                     this.equipQuantity = elem.value[0].quantity;
                      this.quotationItemId = elem.value[0].quotationItemId != undefined ? elem.value[0].quotationItemId : '';
                      if(elem.value[0].additionalChargeList.length > 0){
                         this.additionalChargeList = elem.value[0].additionalChargeList;
@@ -641,6 +645,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                     elem.value[0].quotationItemId = this.quotationItemId;
                     elem.value[0].additionalChargeList = this.additionalChargeList;
                     elem.value[0].serviceChargeList = this.serviceChargeList;
+                    elem.value[0].quantity = this.equipQuantity;
                 }
             }
         });        
@@ -1292,6 +1297,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                     this.quantity = elem.quantity;
                     this.quotationItemId =elem.quotationItemId;
                     this.rmsId = elem.rmsID;
+                    this.equipQuantity = elem.quantity
                 }
                 else{
                     this.equipNotfound = true ; 

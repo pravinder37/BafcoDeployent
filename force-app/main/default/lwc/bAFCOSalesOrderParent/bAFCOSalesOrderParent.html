@@ -57,11 +57,11 @@
                         <template for:each={salesOrderList} for:item="map">
                             <lightning-tab label={map.key} key={map.key} value={map.key} onactive={handleTabActive}>
                                 <lightning-layout multiple-rows style="margin: 1% 1% 1% 0%; background: #F7F7F7;">
-                                    <lightning-layout-item size="3" style="padding-left: 2%;padding-top: 1%;">
+                                    <!--lightning-layout-item size="3" style="padding-left: 2%;padding-top: 1%;">
                                         <span class="labelCss">Regular Routing</span>
                                         <p if:true={map.value.Regular_Routing__c} class="labelDataCss">{map.value.Regular_Routing__c}</p>
                                         <p if:false={map.value.Regular_Routing__c} class="labelDataCss">-</p>
-                                    </lightning-layout-item>
+                                    </lightning-layout-item-->
                                     <lightning-layout-item size="3" style="padding-left: 2%;padding-top: 1%;">
                                         <span class="labelCss">Kind of shipment</span>
                                         <p if:true={map.value.Kind_Of_Shipment__c} class="labelDataCss">{map.value.Kind_Of_Shipment__c}</p>

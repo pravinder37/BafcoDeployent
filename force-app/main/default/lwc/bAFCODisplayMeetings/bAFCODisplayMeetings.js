@@ -15,7 +15,7 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
     @track startDate = '';
     @track startTime = '';
     isLoading = false; 
-    @track objectName = 'Lead__c';
+    @track objectName = 'Lead';
     @track placeholder ='Search Lead';
     @track whatId ='';
     @track whatIdName ='';
@@ -23,7 +23,7 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
     @track whatIdErrorClass = '';
     @track whatIdErrorMsg ='';
     @track objecticon = 'standard:lead';
-    @track objectApiName = 'Lead__c';
+    @track objectApiName = 'Lead';
     @track filteredDate = ''; 
     @track hasEvent  = false;
     @track displayIntakeForm = false;
@@ -93,7 +93,7 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
     handleCustomerChoosed(event){
         this.objectChoosed = event.target.value;
         if(this.objectChoosed == 'Lead') {
-            this.objectApiName = 'Lead__c'
+            this.objectApiName = 'Lead'
             this.placeholder ='Search Lead'
             this.objecticon = 'standard:lead';
         }
@@ -261,7 +261,7 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
                 this.endTime1 = this.formatTime1(result.endTime)
                 this.meetinginute1 = result.meetingMinute  
                 console.log('*********** '+result.relatedEnquiryId)
-                if(result.objectName == 'Lead__c') this.filter1 = 'Lead__c = \''+result.whatId+'\'';
+                if(result.objectName == 'Lead') this.filter1 = 'Lead = \''+result.whatId+'\'';
                 else if(result.objectName == 'Account') this.filter1 = 'Account__c = \''+result.whatId+'\'';
                 setTimeout(() => {
                     let childComp = this.template.querySelector('c-b-a-f-c-o-custom-look-up-component');

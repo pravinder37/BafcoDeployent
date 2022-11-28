@@ -45,6 +45,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
     @track shippingEquipTabSelected = '';
     @track seaFreight = '';
     @track seaFreightSellRate = 0;
+    @track equipQuantity = 0;
     @track showServiceChargeModal = false ; 
     @track validity = ''
     @track margin = 0;
@@ -255,6 +256,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
         this.quantity=0;
         this.sellingRate = 0;
         this.seaFreightSellRate = 0;
+        this.equipQuantity = 0;
         this.additionalChargeList = [];
         this.profitLabel = '$ Profit';
         this.displayAdditionalCharge = false;
@@ -753,6 +755,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                     elem.value[0].quotationItemId = this.quotationItemId;                    
                     elem.value[0].additionalChargeList = this.additionalChargeList;
                     elem.value[0].serviceChargeList = this.serviceChargeList;
+                    elem.value[0].quantity=this.equipQuantity;
                 }
             }
         });
@@ -766,6 +769,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                     tempList.push({
                         'seaFreightSellRate':0,
                         'quotationItemId':'',
+                        'quantity':this.equipQuantity,
                         'incoChargList':{},
                         'additionalChargeList':[],
                         'serviceChargeList':{},
@@ -776,6 +780,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                 }
                 else if(elem.value.length > 0){
                      this.seaFreightSellRate = elem.value[0].seaFreightSellRate ;
+                     this.equipQuantity = elem.value[0].quantity;
                      this.quotationItemId = elem.value[0].quotationItemId != undefined ? elem.value[0].quotationItemId : '';                     
                     if(elem.value[0].additionalChargeList.length > 0){
                         this.additionalChargeList = elem.value[0].additionalChargeList;
@@ -1284,6 +1289,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
         dedicatedRoutingObj.forEach(elem =>{
             if(elem.equipmentName == this.shippingEquipTabSelected){
                 if(elem.equipmentId != ''){
+                    console.log('**** elem '+JSON.stringify(elem,null,2))
                     this.seaFreight = elem.seaFreight;
                     this.validity = elem.validity;
                     this.equipmentId = elem.equipmentId;
@@ -1291,6 +1297,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                     this.quantity = elem.quantity;
                     this.quotationItemId =elem.quotationItemId;
                     this.rmsId = elem.rmsID
+                    this.equipQuantity = elem.quantity
                 }
                 else{
                     this.shippingEquipTabSelected = this.shippingEquipTabSelected;
@@ -1299,6 +1306,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
             }
         })
         //this.getIncoCharges();
+        console.log('this.equipQuantity '+this.equipQuantity)
         this.isLoading = true;
         this.getServiceCharges();
         this.assignTabsData();
