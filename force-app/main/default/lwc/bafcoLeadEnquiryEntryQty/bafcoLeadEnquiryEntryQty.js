@@ -58,7 +58,6 @@ export default class BafcoLeadEnquiryEntryQty extends LightningElement {
         let spitInitalIndex = initalIndex.split('.');
         let cameIndex = i;
         let finalIndex = cameIndex+'.'+spitInitalIndex[1]
-        console.log('containerType '+containerType)
         if(containerType != ''){
             let field = this.template.querySelector('c-b-a-f-c-o-custom-look-up-component');
             let Obj={Id:containerType,Name:containerTypeName,index:finalIndex}

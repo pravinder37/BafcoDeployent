@@ -120,9 +120,13 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
             'parentId':this.quoteId
         }
         this.entryIntVar++;
-        if(this.entryIntVar <= 6)
-        this.leadEnquiryList.push(leadEnqObj); 
-        if(this.entryIntVar == 6){
+       if(this.leadEnquiryList.length <= 4 ){
+            this.leadEnquiryList.push(leadEnqObj); 
+        }
+        else{
+            this.dontShowAddNewRoute = true;
+        }
+        if(this.leadEnquiryList.length == 5){
             this.dontShowAddNewRoute = true;
         }
         console.log('Lead List '+JSON.stringify(this.leadEnquiryList,null,2));
@@ -216,15 +220,19 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
         let splitIndex = index.split('.');
         let containerTypeID = prdDto.containerTypeID;
         let containerTypeName = prdDto.containerTypeName;
-        this.leadEnquiryList[splitIndex[0] - 1].containerRecord[splitIndex[1] - 1].containerType = containerTypeID;
-        this.leadEnquiryList[splitIndex[0] - 1].containerRecord[splitIndex[1] - 1].containerTypeName = containerTypeName;
+        let indexOfLeadEnquiry = this.leadEnquiryList.findIndex(x => x.leadIndex == splitIndex[0] );
+        let childContainerIndex = this.leadEnquiryList[indexOfLeadEnquiry].containerRecord.findIndex(x => x.index == index );
+        this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].containerType = containerTypeID;
+        this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].containerTypeName = containerTypeName;
     }
     handleContainerQTYUpdate(e){
         let prdDto = JSON.parse(JSON.stringify(e.detail.dto));
         let index = prdDto.index;
         let splitIndex = index.split('.');
         let qty = prdDto.quantity;
-        this.leadEnquiryList[splitIndex[0] - 1].containerRecord[splitIndex[1] - 1].quantity = qty;
+        let indexOfLeadEnquiry = this.leadEnquiryList.findIndex(x => x.leadIndex == splitIndex[0] );
+        let childContainerIndex = this.leadEnquiryList[indexOfLeadEnquiry].containerRecord.findIndex(x => x.index == index );
+        this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].quantity = qty;
     } 
     handleContainerTypeRemove(e){
         let index = e.detail
@@ -261,61 +269,29 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
     } 
     handleaddEmptycontainertype(e){
         let cData = e.detail;
-        let strIndex = cData.index
+        let cameIndex = cData.index
         let tempList1 = this.leadEnquiryList;
-        tempList1[strIndex - 1].containerRecord = [];
+        let strIndex = this.leadEnquiryList.findIndex(x => x.leadIndex == cameIndex );
+        tempList1[strIndex].containerRecord = [];
         this.leadEnquiryList = JSON.parse( JSON.stringify( tempList1 ) );
         for(let i = 0 ;i<cData.size; i++ ){  
             let tempList = this.leadEnquiryList;  
             let newContainerIndex= i+1 
-            let lastContainerRecord = tempList[strIndex - 1].containerRecord;
+            let lastContainerRecord = tempList[strIndex].containerRecord;
             let containerRecord = {
             'containerType':'',
             'quantity':0,
             'containerTypeName':'',
-            'index' : strIndex +'.'+ newContainerIndex
+            'index' : cameIndex +'.'+ newContainerIndex
             }
             lastContainerRecord.push(containerRecord);
-            tempList[strIndex - 1].containerRecord = lastContainerRecord;
+            tempList[strIndex].containerRecord = lastContainerRecord;
             this.leadEnquiryList = JSON.parse( JSON.stringify( tempList ) );
         }
-    }
-    handleResetFormClicked(e){
-        let strIndex = e.detail;
-        console.log('strIndex '+strIndex)
-        console.log(JSON.stringify(this.leadEnquiryList[strIndex - 1 ],null,2));
-        this.leadEnquiryList[strIndex - 1 ].routingRegular = '';
-        this.leadEnquiryList[strIndex - 1 ].shipmentKind = '';
-        this.leadEnquiryList[strIndex - 1 ].serviceType = '';
-        this.leadEnquiryList[strIndex - 1 ].incoTerm = '';
-        this.leadEnquiryList[strIndex - 1 ].incoTermName = '';
-        this.leadEnquiryList[strIndex - 1 ].portLoading = '';
-        this.leadEnquiryList[strIndex - 1 ].portLoadingName = '';
-        this.leadEnquiryList[strIndex - 1 ].portDestination = '';
-        this.leadEnquiryList[strIndex - 1 ].portDestinationName = '';
-        this.leadEnquiryList[strIndex - 1 ].shippingLine = '';
-        this.leadEnquiryList[strIndex - 1 ].shippingLineName = '';
-        this.leadEnquiryList[strIndex - 1 ].placeOfPickup = '';
-        this.leadEnquiryList[strIndex - 1 ].placeOfDischarge = '';
-        this.leadEnquiryList[strIndex - 1 ].commodity = '';
-        this.leadEnquiryList[strIndex - 1 ].commodityName = '';
-        this.leadEnquiryList[strIndex - 1 ].cargoWeights=0
-        this.leadEnquiryList[strIndex - 1 ].dangerousGoods=false
-        this.leadEnquiryList[strIndex - 1 ].remarks = '';
-        this.leadEnquiryList[strIndex - 1 ].dgClass = '';
-        this.leadEnquiryList[strIndex - 1 ].showDGClassField = false
-        this.leadEnquiryList[strIndex - 1 ].showPickupPlaceField = false
-        this.leadEnquiryList[strIndex - 1 ].showDischargePlaceField = false
-        this.leadEnquiryList[strIndex - 1 ].incoTermField = '';
-        this.leadEnquiryList[strIndex - 1 ].copyFromAbove = false
-        this.leadEnquiryList[strIndex - 1 ].placeOfPickupName = '';
-        this.leadEnquiryList[strIndex - 1 ].placeOfDischargeName = '';
-        this.template.querySelector('c-b-a-f-c-o-lead-enquiry-entry-intake').resetform(strIndex);
-        console.log(JSON.stringify(this.leadEnquiryList[strIndex - 1 ],null,2));
+        
     }
     handelCloseDate(e){
         this.closeDate =e.target.value
-        console.log('this.closeDate ',this.closeDate)
         let closeDateField = this.template.querySelector("[data-field='closeDateField']");
         if(this.closeDate == null){
             closeDateField.setCustomValidity("Complete this field");
@@ -324,5 +300,20 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
             closeDateField.setCustomValidity("");
         }        
         closeDateField.reportValidity();
+    }
+    handleRemoveRouteOption(e){
+        let index = e.target.value;
+        if(index != 1){
+            let indexTobeRemoved = this.leadEnquiryList.findIndex(x => x.leadIndex == index );
+            if(indexTobeRemoved != -1) {
+                this.leadEnquiryList.splice( indexTobeRemoved, 1 );
+            }
+        }
+        if(this.leadEnquiryList.length <= 5){
+            this.dontShowAddNewRoute = false
+        }
+        else{
+            this.dontShowAddNewRoute = true
+        }
     }
 }

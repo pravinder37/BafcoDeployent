@@ -37,7 +37,7 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
     @track kindOfShipmentOption =[];
     @track serviceTypeOption=[];
     @track dgClassOption=[];
-    @api leadEnquiryList;
+    @api leadEnquiryList = [];
     AddContainerPNG = CONTAINER_PNG;
     @api accountId = '';
     @track isAccountObject = false;
@@ -74,7 +74,7 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
                 this.incoTerm = elem.incoTerm;
                 this.routingRegular = elem.routingRegular;
                 this.portLoading = elem.portLoading;
-                //this.portDestination = elem.portDestination;
+                this.portDestination = elem.portDestination;
                 this.shippingLine = elem.shippingLine;
                 this.showPickupPlaceField = elem.showPickupPlaceField;
                 this.showDischargePlaceField = elem.showDischargePlaceField;
@@ -106,11 +106,11 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
             let Obj={Id:this.portLoading,Name:this.portLoadingName}
             field.handleDefaultSelected(Obj);
         }
-       /* if(this.portDestination != ''){
+        if(this.portDestination != ''){
             let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[2];
             let Obj={Id:this.portDestination,Name:this.portDestinationName}
             field.handleDefaultSelected(Obj);
-        }*/
+        }
         if(this.shippingLine != ''){
             let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[3];
             let Obj={Id:this.shippingLine,Name:this.shippingLineName}

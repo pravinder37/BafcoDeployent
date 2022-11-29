@@ -37,6 +37,9 @@
                 <lightning-accordion>
                     <template for:each={leadEnquiryList} for:item="lead">
                         <lightning-accordion-section label={lead.routeName} key={lead.routeName} value={lead.routeName} style="font-weight: 500;" class="customFont">
+                            <lightning-button-menu slot="actions" alternative-text="Show menu" icon-size="x-small" menu-alignment="auto">
+                                <lightning-menu-item value={lead.leadIndex} prefix-icon-name="utility:ban" label="Remove Route" onclick={handleRemoveRouteOption}></lightning-menu-item>
+                            </lightning-button-menu>
                             <c-b-a-f-c-o-lead-enquiry-entry-intake 
                             copy-from-above={lead.copyFromAbove}
                             lead-index={lead.leadIndex}
