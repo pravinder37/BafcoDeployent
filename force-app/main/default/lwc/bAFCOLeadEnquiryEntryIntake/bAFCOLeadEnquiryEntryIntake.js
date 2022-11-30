@@ -33,6 +33,15 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
     @api copyFromAbove;
     @api placeOfDischargeName = '';
     @api placeOfPickupName = '';
+    @api shipmentKindClass='';
+    @api serviceTypeClass='';
+    @api incoTermClass='';
+    @api portOfLoadingClass='';
+    @api portOfDestinationClass='';
+    @api commodityClass='';
+    @api cargoweightClass='';
+    @api pickupPlaceClass='';
+    @api dischargePlaceClass='';
     @track regularRouteOption=[];
     @track kindOfShipmentOption =[];
     @track serviceTypeOption=[];
@@ -60,6 +69,10 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
             this.isAccountObject = true;
             this.getAllRegularRoute();
         }
+        console.log('containerRecord '+JSON.stringify(this.containerRecord,null,2));
+    }
+    renderedCallback(){
+        console.log('containerRecord '+JSON.stringify(this.containerRecord,null,2));
     }
     handleResetRoute(e){
         let index = e.target.dataset.recordId;
@@ -154,6 +167,14 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
             }, 500);
         }
         setTimeout(() => {
+            this.shipmentKindClass = '';
+            this.serviceTypeClass = '';
+            this.incoTermClass = '';
+            this.portOfLoadingClass = '';
+            this.portOfDestinationClass = '';
+            this.commodityClass = '';
+            this.dischargePlaceClass = '';
+            this.pickupPlaceClass = '';
             this.updateEnquiryList();
         }, 2000);
     }
@@ -188,6 +209,7 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
     handleshipmentKindChange(e){
         let shipmentKind = e.target.value;
         this.shipmentKind = shipmentKind;
+        this.shipmentKindClass ='';
         this.updateEnquiryList();
     }
     handleServiceType(e){
@@ -207,12 +229,14 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
         }
         this.placeOfPickup = '';
         this.placeOfDischarge = '';
+        this.serviceTypeClass ='';
         this.updateEnquiryList();
     }
     handleIncoTermSelection(e){
         let incoTermID = e.detail.Id;
         this.incoTerm = incoTermID;
         this.incoTermName = e.detail.Name
+        this.incoTermClass ='';
         this.updateEnquiryList();
     }
     handleIncoTermRemoved(e){
@@ -224,6 +248,7 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
         let portLoading = e.detail.Id;
         this.portLoading = portLoading;
         this.portLoadingName = e.detail.Name
+        this.portOfLoadingClass ='';
         this.updateEnquiryList();
     }
     handleLoadingPortRemoved(e){
@@ -235,6 +260,7 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
         let portDestination = e.detail.Id;
         this.portDestination = portDestination;
         this.portDestinationName = e.detail.Name
+        this.portOfDestinationClass ='';
         this.updateEnquiryList();
     }
     handleDestinationPortRemoved(e){
@@ -257,6 +283,7 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
         let commodity = e.detail.Id;
         this.commodity = commodity;
         this.commodityName = e.detail.Name
+        this.commodityClass ='';
         this.updateEnquiryList();
     }
     handleCommodityRemoved(e){
@@ -268,6 +295,7 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
         let placeOfPickup = e.detail.Id;
         this.placeOfPickup = placeOfPickup;
         this.placeOfPickupName = e.detail.Name
+        this.pickupPlaceClass ='';
         this.updateEnquiryList();
     }
     handlePickupRemoved(e){
@@ -279,6 +307,7 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
         let placeOfDischarge = e.detail.Id;
         this.placeOfDischarge = placeOfDischarge;
         this.placeOfDischargeName = e.detail.Name
+        this.dischargePlaceClass ='';
         this.updateEnquiryList();
     }
     handleDischargeRemoved(e){
@@ -289,6 +318,7 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
     handleCargoChange(e){
         let cargoWeights = e.target.value;
         this.cargoWeights = cargoWeights;
+        this.cargoweightClass ='';
         this.updateEnquiryList();
     }
     handleDangeorusGood(e){
@@ -376,6 +406,14 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
             }
 
             setTimeout(() => {
+                this.shipmentKindClass = '';
+                this.serviceTypeClass = '';
+                this.incoTermClass = '';
+                this.portOfLoadingClass = '';
+                this.portOfDestinationClass = '';
+                this.commodityClass = '';
+                this.dischargePlaceClass = '';
+                this.pickupPlaceClass = '';
                 this.updateEnquiryList();
             }, 500);
         
@@ -411,7 +449,16 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
             'commodityName':this.commodityName,
             'placeOfPickupName':this.placeOfPickupName,
             'placeOfDischargeName':this.placeOfDischargeName,
-            'containerRecords':this.containerRecords
+            'containerRecords':this.containerRecords,
+            'shipmentKindClass':this.shipmentKindClass,
+            'serviceTypeClass':this.serviceTypeClass,
+            'incoTermClass':this.incoTermClass,
+            'portOfLoadingClass':this.portOfLoadingClass,
+            'portOfDestinationClass':this.portOfDestinationClass,
+            'commodityClass':this.commodityClass,
+            'cargoweightClass':this.cargoweightClass,
+            'dischargePlaceClass':this.dischargePlaceClass,
+            'pickupPlaceClass':this.pickupPlaceClass
         }
         let updateleadEntryDto = JSON.parse(JSON.stringify(leadEntryDto));
         this.dispatchEvent(new CustomEvent('update', { detail: { dto: updateleadEntryDto } }));

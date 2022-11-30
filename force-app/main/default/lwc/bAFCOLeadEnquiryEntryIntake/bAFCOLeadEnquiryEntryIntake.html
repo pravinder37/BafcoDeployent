@@ -14,62 +14,86 @@
                                 onchange={handleRegularRouteChange}
                                 placeholder="Select"></lightning-combobox>
         </lightning-layout-item>
-        <lightning-layout-item size="12" class="mobilePaddingRight" large-device-size="4" medium-device-size="4" small-device-size="12">
+        <lightning-layout-item size="12"  class="mobilePaddingRight labelStyle" large-device-size="4" medium-device-size="4" small-device-size="12">
             <lightning-combobox label="Kind Of Shipment"
-                            class="labelStyle" 
                             options={kindOfShipmentOption}
                             data-record-id={leadIndex}                                                    
                             value={shipmentKind} 
                             style="padding: 0px 20px 0px 20px;"
                             onchange={handleshipmentKindChange}
-                            placeholder="Select"></lightning-combobox>            
+                            class={shipmentKindClass}
+                            placeholder="Select"></lightning-combobox>
+                            <div class="slds-form-element__help" style="color: rgb(234, 0, 30); padding-left: 20px; font-weight: 600;" if:true={shipmentKindClass}>
+                                Complete this field
+                            </div>
         </lightning-layout-item>
-        <lightning-layout-item size="12" class="mobilePaddingRight" large-device-size="4" medium-device-size="4" small-device-size="12">
+        <lightning-layout-item size="12" class="mobilePaddingRight labelStyle" large-device-size="4" medium-device-size="4" small-device-size="12">
             <lightning-combobox label="Service Type" 
                             options={serviceTypeOption}
                             data-record-id={leadIndex}
-                            class="labelStyle"
                             value={serviceType}
                             style="padding: 0px 20px 0px 20px;" 
                             onchange={handleServiceType}
+                            class={serviceTypeClass}
                             placeholder="Select"></lightning-combobox>
+                            <div class="slds-form-element__help" style="color: rgb(234, 0, 30); padding-left: 20px; font-weight: 600;" if:true={serviceTypeClass}>
+                                Complete this field
+                            </div>
         </lightning-layout-item>
         <lightning-layout-item size="12" class="mobilePaddingRight" large-device-size="4" medium-device-size="4" small-device-size="12">
-            <label class="slds-form-element__label">
-                <p style="padding: 0px 20px 0px 20px;" class="labelStyle" >INCO Term</p>
-            </label>
-            <c-b-a-f-c-o-custom-look-up-component
-                            obj-name="INCO_Term__c"
-                            search-placeholder="Search Inco Terms" 
-                            icon-name="standard:account"
-                            index={leadIndex}
-                            data-field="incoTermField"
-                            onlookupselected={handleIncoTermSelection}
-                            onlookupremoved={handleIncoTermRemoved}></c-b-a-f-c-o-custom-look-up-component>
+            <div class={incoTermClass}>
+                <label class="slds-form-element__label">
+                    <p style="padding: 0px 20px 0px 20px;" class="labelStyle" >INCO Term</p>
+                </label>
+                <c-b-a-f-c-o-custom-look-up-component
+                                obj-name="INCO_Term__c"
+                                search-placeholder="Search Inco Terms" 
+                                icon-name="standard:account"
+                                index={leadIndex}
+                                data-field="incoTermField"
+                                onlookupselected={handleIncoTermSelection}
+                                onlookupremoved={handleIncoTermRemoved}></c-b-a-f-c-o-custom-look-up-component>
+                               
+            </div>
+            <div class="slds-form-element__help" style="color: rgb(234, 0, 30); padding-left: 20px; font-weight: 600;" if:true={incoTermClass}>
+                Complete this field
+            </div>
         </lightning-layout-item>
         <lightning-layout-item size="12" class="mobilePaddingRight" large-device-size="4" medium-device-size="4" small-device-size="12">
-            <label class="slds-form-element__label">
-                <p style="padding: 0px 20px 0px 20px;" class="labelStyle">Port of Loading</p>
-            </label>
-            <c-b-a-f-c-o-custom-look-up-component
-                            obj-name="Port__c"
-                            search-placeholder="Search Loading Port" 
-                            icon-name="standard:account"
-                            index={leadIndex} 
-                            onlookupselected={handleLoadingPortSelectedSelection}
-                            onlookupremoved={handleLoadingPortRemoved}></c-b-a-f-c-o-custom-look-up-component>
+            <div class={portOfLoadingClass}>
+                <label class="slds-form-element__label">
+                    <p style="padding: 0px 20px 0px 20px;" class="labelStyle">Port of Loading</p>
+                </label>
+                <c-b-a-f-c-o-custom-look-up-component
+                                obj-name="Port__c"
+                                search-placeholder="Search Loading Port" 
+                                icon-name="standard:account"
+                                index={leadIndex} 
+                                onlookupselected={handleLoadingPortSelectedSelection}
+                                onlookupremoved={handleLoadingPortRemoved}></c-b-a-f-c-o-custom-look-up-component>
+                                <div class="slds-form-element__help" style="color: rgb(234, 0, 30); padding-left: 20px; font-weight: 600;" if:true={portOfLoadingClass}>
+                                    Complete this field
+                                </div>
+            </div>
+           
         </lightning-layout-item>
         <lightning-layout-item size="12" class="mobilePaddingRight" large-device-size="4" medium-device-size="4" small-device-size="12">
-            <label class="slds-form-element__label">
-                <p style="padding: 0px 20px 0px 20px;" class="labelStyle">Port of Destination</p>
-            </label>
-            <c-b-a-f-c-o-custom-look-up-component
-                            obj-name="Port__c"
-                            search-placeholder="Search Destination Port" 
-                            icon-name="standard:account"
-                            index={leadIndex} 
-                            onlookupselected={handleDestinationPortSelectedSelection}
-                            onlookupremoved={handleDestinationPortRemoved}></c-b-a-f-c-o-custom-look-up-component>
+            <div class={portOfDestinationClass}>
+                <label class="slds-form-element__label">
+                    <p style="padding: 0px 20px 0px 20px;" class="labelStyle">Port of Destination</p>
+                </label>
+                <c-b-a-f-c-o-custom-look-up-component
+                                obj-name="Port__c"
+                                search-placeholder="Search Destination Port" 
+                                icon-name="standard:account"
+                                index={leadIndex} 
+                                onlookupselected={handleDestinationPortSelectedSelection}
+                                onlookupremoved={handleDestinationPortRemoved}></c-b-a-f-c-o-custom-look-up-component>
+                                <div class="slds-form-element__help" style="color: rgb(234, 0, 30); padding-left: 20px; font-weight: 600;" if:true={portOfDestinationClass}>
+                                    Complete this field
+                                </div>
+            </div>
+            
         </lightning-layout-item>
         <lightning-layout-item size="12" class="mobilePaddingRight" large-device-size="4" medium-device-size="4" small-device-size="12">
             <label class="slds-form-element__label">
@@ -84,49 +108,67 @@
                             onlookupremoved={handleShippingLineRemoved}></c-b-a-f-c-o-custom-look-up-component>
         </lightning-layout-item>
         <lightning-layout-item size="12" class="mobilePaddingRight" large-device-size="4" medium-device-size="4" small-device-size="12">
-            <label class="slds-form-element__label">
-                <p style="padding: 0px 20px 0px 20px;" class="labelStyle">Commodity</p>
-            </label>
-            <c-b-a-f-c-o-custom-look-up-component
-                            obj-name="Commodity__c"
-                            search-placeholder="Search Commodity" 
-                            icon-name="standard:account"
-                            index={leadIndex} 
-                            onlookupselected={handleCommoditySelection}
-                            onlookupremoved={handleCommodityRemoved}></c-b-a-f-c-o-custom-look-up-component>
+            <div class={commodityClass}>
+                <label class="slds-form-element__label">
+                    <p style="padding: 0px 20px 0px 20px;" class="labelStyle">Commodity</p>
+                </label>
+                <c-b-a-f-c-o-custom-look-up-component
+                                obj-name="Commodity__c"
+                                search-placeholder="Search Commodity" 
+                                icon-name="standard:account"
+                                index={leadIndex} 
+                                onlookupselected={handleCommoditySelection}
+                                onlookupremoved={handleCommodityRemoved}></c-b-a-f-c-o-custom-look-up-component>
+                                <div class="slds-form-element__help" style="color: rgb(234, 0, 30); padding-left: 20px; font-weight: 600;" if:true={commodityClass}>
+                                    Complete this field
+                                </div>
+            </div>
+           
         </lightning-layout-item>
         <lightning-layout-item size="12" class="mobilePaddingRight" large-device-size="4" medium-device-size="4" small-device-size="12" if:true={showPickupPlaceField}>
-            <label class="slds-form-element__label">
-                <p style="padding: 0px 20px 0px 20px;" class="labelStyle">Place of Pickup</p>
-            </label>
-            <c-b-a-f-c-o-custom-look-up-component
-                            obj-name="Place__c"
-                            search-placeholder="Search Pickup Place" 
-                            icon-name="standard:account"
-                            index={leadIndex} 
-                            onlookupselected={handlePickupPlaceSelection}
-                            onlookupremoved={handlePickupRemoved}></c-b-a-f-c-o-custom-look-up-component>
+            <div class={pickupPlaceClass}>
+                <label class="slds-form-element__label">
+                    <p style="padding: 0px 20px 0px 20px;" class="labelStyle">Place of Pickup</p>
+                </label>
+                <c-b-a-f-c-o-custom-look-up-component
+                                obj-name="Place__c"
+                                search-placeholder="Search Pickup Place" 
+                                icon-name="standard:account"
+                                index={leadIndex} 
+                                onlookupselected={handlePickupPlaceSelection}
+                                onlookupremoved={handlePickupRemoved}></c-b-a-f-c-o-custom-look-up-component>
+            </div> 
+            <div class="slds-form-element__help" style="color: rgb(234, 0, 30); padding-left: 20px;" if:true={pickupPlaceClass}>
+                Complete this field.
+            </div>   
         </lightning-layout-item>
         <lightning-layout-item size="12" class="mobilePaddingRight" large-device-size="4" medium-device-size="4" small-device-size="12" if:true={showDischargePlaceField}>
-            <label class="slds-form-element__label">
-                <p style="padding: 0px 20px 0px 20px;" class="labelStyle">Place of Discharge</p>
-            </label>
-            <c-b-a-f-c-o-custom-look-up-component
-                            obj-name="Place__c"
-                            search-placeholder="Search Discharge Place" 
-                            icon-name="standard:account"
-                            index={leadIndex} 
-                            onlookupselected={handleDischargeSelection}
-                            onlookupremoved={handleDischargeRemoved}></c-b-a-f-c-o-custom-look-up-component>
-            
+            <div class={dischargePlaceClass}>
+                <label class="slds-form-element__label">
+                    <p style="padding: 0px 20px 0px 20px;" class="labelStyle">Place of Discharge</p>
+                </label>
+                <c-b-a-f-c-o-custom-look-up-component
+                                obj-name="Place__c"
+                                search-placeholder="Search Discharge Place" 
+                                icon-name="standard:account"
+                                index={leadIndex} 
+                                onlookupselected={handleDischargeSelection}
+                                onlookupremoved={handleDischargeRemoved}></c-b-a-f-c-o-custom-look-up-component>
+                                <div class="slds-form-element__help" style="color: rgb(234, 0, 30); padding-left: 20px; font-weight: 600;" if:true={dischargePlaceClass}>
+                                    Complete this field
+                                </div>
+            </div>
         </lightning-layout-item>
-        <lightning-layout-item size="12" class="mobilePaddingRight" large-device-size="4" medium-device-size="4" small-device-size="12">
+        <lightning-layout-item size="12" class="mobilePaddingRight labelStyle" large-device-size="4" medium-device-size="4" small-device-size="12">
             <lightning-input type="number" label="Cargo Weight(Kgs)"
-                            class="labelStyle"
+                            class={cargoweightClass}
                             onchange={handleCargoChange}
-                            data-record-id={leadIndex} required 
+                            data-record-id={leadIndex}  
                             style="padding: 0px 20px 0px 20px;" 
                             value={cargoWeights}></lightning-input>
+                            <div class="slds-form-element__help" style="color: rgb(234, 0, 30); padding-left: 20px; font-weight: 600;" if:true={cargoweightClass}>
+                                Complete this field
+                            </div>
         </lightning-layout-item>
         <lightning-layout-item size="12" class="mobilePaddingRight" large-device-size="4" medium-device-size="4" small-device-size="12">
             <lightning-input type="checkbox" label="Dangerous Goods"
@@ -175,6 +217,8 @@
                     index={contr.index}
                     container-type={contr.containerType}
                     quantity={contr.quantity}
+                    container-type-error-class={contr.containerTypeErrorClass}
+                    container-quantity-error-class={contr.containerQuantityErrorClass}
                     contr={containerRecord}
                     container-type-name={contr.containerTypeName}
                     oncontainertypeupdate={handleContainerTypeSelection}

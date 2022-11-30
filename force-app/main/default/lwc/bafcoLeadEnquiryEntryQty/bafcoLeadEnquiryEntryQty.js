@@ -6,6 +6,8 @@ export default class BafcoLeadEnquiryEntryQty extends LightningElement {
     @api quantity;
     @api contr;
     @api containerTypeName;
+    @api containerTypeErrorClass = '';
+    @api containerQuantityErrorClass = '';
     connectedCallback(){
         console.log('index '+this.index)
         console.log('containerType '+this.containerType)
@@ -18,6 +20,7 @@ export default class BafcoLeadEnquiryEntryQty extends LightningElement {
         let index = event.detail.index;
         let containerTypeID = event.detail.Id;
         let containerTypeName = event.detail.Name;
+        this.containerTypeErrorClass = '';
         let obj={
             'index':index,
             'containerTypeID':containerTypeID,
@@ -38,6 +41,7 @@ export default class BafcoLeadEnquiryEntryQty extends LightningElement {
     }
     handleQuantityChange(e){
         let index = e.target.dataset.recordId;
+        this.containerQuantityErrorClass = '';
         let quantityValue = e.detail.value;
         let obj={
             'index':index,
@@ -51,6 +55,7 @@ export default class BafcoLeadEnquiryEntryQty extends LightningElement {
         this.dispatchEvent(new CustomEvent('removecontainertype', { detail:  strIndex}));
     }
     @api handleCopyData(containerRecord,i){
+        console.log('# containerRecord' +JSON.stringify(containerRecord,null,2))
         let containerType = containerRecord.containerType;
         let quantity =  containerRecord.quantity;
         let containerTypeName =  containerRecord.containerTypeName;

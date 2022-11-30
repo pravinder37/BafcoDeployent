@@ -2,11 +2,12 @@ import { LightningElement,track, wire,api } from 'lwc';
 import submitRoutingList from '@salesforce/apex/BAFCOLRoutingDetailsController.submitRoutingList';
 import getLeadDetails from '@salesforce/apex/BAFCOLeadDetailsController.getLeadDetails';
 import { getPicklistValues,getPicklistValuesByRecordType } from 'lightning/uiObjectInfoApi';
-import BUSINESS_TYPE_FIELD from '@salesforce/schema/Enquiry__c.Business_Type__c';
+import BUSINESS_TYPE_FIELD from '@salesforce/schema/opportunity.Business_Type__c';
 import { NavigationMixin } from 'lightning/navigation';
 import ROUTE_OBJECT from '@salesforce/schema/Route__c';
 import CONTAINER_PNG from '@salesforce/resourceUrl/AddContainer';
 import getAllRegularRoute from '@salesforce/apex/BAFCOLRoutingDetailsController.getAllRegularRoute';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(LightningElement) {
     @track leadEnquiryList = [];
     pickListvalues = [];    
@@ -27,6 +28,7 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
     @track regularRouteOption = [];
     @track dontShowAddNewRoute = false;
     @track closeDate = '';
+    @track ErrorList = [];
 
 
     @wire(getPicklistValues, {
@@ -83,6 +85,8 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
             'containerType':'',
             'containerTypeName':'',
             'quantity':0,
+            'containerTypeErrorClass':'',
+            'containerQuantityErrorClass':'',
             'index' : this.entryIntVar +'.'+ this.contractVar
         }
         let contrTempList  = [];
@@ -117,7 +121,16 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
             'copyFromAbove':this.entryIntVar > 1 ? true : false,
             'placeOfPickupName':'',
             'placeOfDischargeName':'',
-            'parentId':this.quoteId
+            'parentId':this.quoteId,
+            'shipmentKindClass':'',
+            'serviceTypeClass':'',
+            'incoTermClass':'',
+            'portOfLoadingClass':'',
+            'portOfDestinationClass':'',
+            'commodityClass':'',
+            'cargoweightClass':'',
+            'dischargePlaceClass':'',
+            'pickupPlaceClass':'',
         }
         this.entryIntVar++;
        if(this.leadEnquiryList.length <= 4 ){
@@ -132,9 +145,8 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
         console.log('Lead List '+JSON.stringify(this.leadEnquiryList,null,2));
     }       
     handleSubmit(){
-        console.log('lead List' +JSON.stringify(this.leadEnquiryList,null,2))
-        console.log('businessTypeSelected '+this.businessTypeSelected)
         let allValid = true;
+        let errorList = [];
         if(this.businessTypeSelected == '' || this.businessTypeSelected == undefined){
             this.quoteTypeErrorClass = 'slds-has-error';
             this.quoteTypeErrorMsg  = 'Complete this field.';
@@ -146,6 +158,60 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
             closeDateField.reportValidity();
             allValid  = false;
         }
+        this.leadEnquiryList.forEach(elem=>{
+            let tempErrorList = [];
+            if(elem.shipmentKind == '') {
+                tempErrorList.push('Please fill kind of shipment')
+                elem.shipmentKindClass = 'slds-has-error';
+
+            }
+            if(elem.serviceType == '') {
+                tempErrorList.push('Please fill Service Type')
+                elem.serviceTypeClass = 'slds-has-error';
+            }
+            if(elem.incoTerm == '') {
+                tempErrorList.push('Please fill Inco term')
+                elem.incoTermClass = 'slds-has-error';
+            }
+            if(elem.portLoading == '') {
+                tempErrorList.push('Please fill Port of Loading')
+                elem.portOfLoadingClass = 'slds-has-error';
+            }
+            if(elem.portDestination == '') {
+                tempErrorList.push('Please fill Port of Destination')
+                elem.portOfDestinationClass = 'slds-has-error';
+            }
+            if(elem.commodity == '') {
+                tempErrorList.push('Please fill commodity')
+                elem.commodityClass = 'slds-has-error';
+            }
+            if(elem.cargoWeights <= 0 ){
+                tempErrorList.push('Please fill cargoWeights')
+                elem.cargoweightClass = 'slds-has-error';
+            }
+            if(elem.serviceType == 'D2P' && elem.placeOfPickup == ''){
+                tempErrorList.push('Please fill cargoWeights')
+                elem.pickupPlaceClass = 'slds-has-error';
+            }
+            if(elem.serviceType == 'D2D' && elem.placeOfDischarge == ''){
+                tempErrorList.push('Please fill cargoWeights')
+                elem.dischargePlaceClass = 'slds-has-error';
+            }
+            elem.containerRecord.forEach(elem2=>{
+                if(elem2.containerType == '' ){
+                    elem2.containerTypeErrorClass = 'slds-has-error';
+                    allValid = false
+                }
+                if(elem2.quantity <= 0){
+                    elem2.containerQuantityErrorClass = 'slds-has-error';
+                    allValid = false
+                }
+            })
+            if(tempErrorList.length > 0){
+               allValid  = false;
+               errorList.push(elem.routeName);
+            }
+        })
         if(allValid){
             submitRoutingList({ 
                 routingList : this.leadEnquiryList,
@@ -167,7 +233,19 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
                 console.log('routing submit error lead: ', JSON.stringify(error));
             });
         }
-    }    
+        else{
+            console.log('errorList '+JSON.stringify(errorList,null,2))
+            this.showErrorToast();
+        }
+    }
+    showErrorToast() {
+        const evt = new ShowToastEvent({
+            title: 'Missing Field',
+            message: 'Complete the missing field.',
+            variant: 'Error',
+        });
+        this.dispatchEvent(evt);
+    } 
     handleBusinessTypeChange(event){
         this.businessTypeSelected = event.target.value
         this.quoteTypeErrorClass ='';
@@ -210,6 +288,15 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
                 elem.placeOfPickupName = prdDto.placeOfPickupName;
                 elem.placeOfDischargeName = prdDto.placeOfDischargeName;
                 elem.containerRecords = prdDto.containerRecords;
+                elem.shipmentKindClass = prdDto.shipmentKindClass
+                elem.serviceTypeClass = prdDto.serviceTypeClass
+                elem.incoTermClass = prdDto.incoTermClass
+                elem.portOfLoadingClass = prdDto.portOfLoadingClass
+                elem.portOfDestinationClass = prdDto.portOfDestinationClass
+                elem.commodityClass = prdDto.commodityClass
+                elem.cargoweightClass = prdDto.cargoweightClass
+                elem.dischargePlaceClass = prdDto.dischargePlaceClass
+                elem.pickupPlaceClass = prdDto.pickupPlaceClass
             }
         })
         console.log('updated List '+ JSON.stringify(this.leadEnquiryList,null,2))
@@ -224,6 +311,7 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
         let childContainerIndex = this.leadEnquiryList[indexOfLeadEnquiry].containerRecord.findIndex(x => x.index == index );
         this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].containerType = containerTypeID;
         this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].containerTypeName = containerTypeName;
+        this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].containerTypeErrorClass = '';
     }
     handleContainerQTYUpdate(e){
         let prdDto = JSON.parse(JSON.stringify(e.detail.dto));
@@ -233,6 +321,7 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
         let indexOfLeadEnquiry = this.leadEnquiryList.findIndex(x => x.leadIndex == splitIndex[0] );
         let childContainerIndex = this.leadEnquiryList[indexOfLeadEnquiry].containerRecord.findIndex(x => x.index == index );
         this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].quantity = qty;
+        this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].containerQuantityErrorClass = '';
     } 
     handleContainerTypeRemove(e){
         let index = e.detail
