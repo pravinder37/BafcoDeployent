@@ -23,6 +23,10 @@
         padding-left: 6%;
     }
     .mobilePaddingRight{
-        padding-right: 7%;
+        padding-right: 7% !important;
+    }
+    .mobilePadding{
+        padding-right: 5% !important;
+        padding-left: 6% !important;
     }
 }

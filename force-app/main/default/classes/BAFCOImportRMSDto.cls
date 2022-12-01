@@ -5,6 +5,8 @@ public class BAFCOImportRMSDto {
     @AuraEnabled
     public Decimal seaFreightSellRate { get; set; }
     @AuraEnabled
+    public Decimal quantity { get; set; }
+    @AuraEnabled
     public Decimal total { get; set; }
     @AuraEnabled
     public String quotationItemId { get; set; }

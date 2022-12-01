@@ -339,7 +339,8 @@ quoteItemObj. = dto.value;
         }
         quoteItemObj.Total__c = dto.total;
         quoteItemObj.Total_Additional__c = additionalChargeTotal;
-        quoteItemObj.Sea_Freight__c = dto.seaFreightSellRate;  
+        quoteItemObj.Sea_Freight__c = dto.seaFreightSellRate;
+        quoteItemObj.Quantity__c = dto.quantity;
         try{
             upsert quoteItemObj;
         }

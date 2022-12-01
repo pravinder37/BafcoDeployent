@@ -2,7 +2,7 @@ public class BAFCOMeetingController {
     @AuraEnabled
     public static List<EventList> getMeetingsRecords(String filteredDate){
         Id currentUserId = UserInfo.getUserId();
-        Date filterDateTime = Date.valueOf(filteredDate);
+        Date filterDateTime = filteredDate != null ? Date.valueOf(filteredDate) : system.today();
         List<EventList> eventList = new List<EventList>();
         for(Event ev : [Select id, What.Name,StartDateTime, Purpose_of_Visit__c,Minutes_of_Meeting__c from Event where Start_Date__c =: filterDateTime AND createdbyId =:currentUserId  order by StartDateTime ]){
             EventList evobj = new EventList();
@@ -24,6 +24,7 @@ public class BAFCOMeetingController {
         String startTime,
         String visitFor 
     ){
+        system.debug('whatId'+whatId);
         List<String> dateList = startDate.split('-');
         List<String> timeList = startTime.split(':');
         Date myDate = Date.newInstance(integer.valueOf(dateList[0]), integer.valueOf(dateList[1]), integer.valueOf(dateList[2]));
@@ -31,7 +32,12 @@ public class BAFCOMeetingController {
         Datetime startDate3 = Datetime.newInstanceGmt(myDate,myTime);
         String startDate2 = startDate3.formatGmt('yyyy-MM-dd\'T\'HH:mm:ss') + '+00:00';	        
         Event ev =new Event();
-        ev.WhatId = whatId;
+        if(whatId.startsWith('00Q')){
+            ev.WhoID = whatId;
+        }
+        else{
+            ev.WhatId = whatId;
+        }
         ev.StartDateTime = DateTime.valueOf(startDate2.replace('T', ' '));
         ev.Purpose_of_Visit__c = visitFor;
         ev.Subject = visitFor;

@@ -159,7 +159,7 @@ public class BAFCOLRoutingDetailsController {
         return lookUpList;
     }
     @AuraEnabled
-    public static String submitRoutingList(List<BAFCORoutingDetailsDto> routingList, String businessType, String quoteId,String closeDate) {
+    public static String submitRoutingList(List<BAFCORoutingDetailsDto> routingList, String businessType, String quoteId,String closeDate, String commercialUserId) {
         system.debug('routingList '+routingList);
         List<Route__c> routeList = new List<Route__c>();
         Opportunity optyObj = new Opportunity();
@@ -171,7 +171,16 @@ public class BAFCOLRoutingDetailsController {
             try{
                 optyObj.StageName = 'Qualification';
                 optyObj.CloseDate = date.valueOf(closeDate);
+                optyObj.Commercial_User__c = commercialUserId != '' ? commercialUserId : null;
                 insert optyObj;
+                Task tsk = new Task();
+                tsk.Subject = 'Provide Quotation';
+                tsk.Status = 'Open';
+                tsk.OwnerId = commercialUserId != '' ? commercialUserId : UserInfo.getUserId();
+                tsk.WhatId = optyObj.Id;
+                tsk.IsReminderSet = true;
+                tsk.ActivityDate = Date.valueOf(DateTime.now());
+                insert tsk;
                 system.debug('optyObj '+optyObj);
             }
             catch(Exception e){
@@ -499,6 +508,7 @@ public class BAFCOLRoutingDetailsController {
         quoteItemObj.Total__c = dto.total;
         quoteItemObj.Total_Additional__c = additionalChargeTotal;
         quoteItemObj.Sea_Freight__c = dto.seaFreightSellRate;  
+        quoteItemObj.Quantity__c = dto.quantity;
         system.debug('quoteItemObj '+quoteItemObj);
         try{
             upsert quoteItemObj;
@@ -553,6 +563,7 @@ public class BAFCOLRoutingDetailsController {
         rmsObj.FOB_All_In__c = rmsDetail.FOBAllIn;
         rmsObj.Ex_Works_All_In__c = rmsDetail.ExWorksIn;
         rmsObj.Free_time__c = rmsDetail.FreeTime != null ? Decimal.valueOf(rmsDetail.FreeTime) : 0;
+        rmsObj.Free_time_POD__c = rmsDetail.FreeTimePOD != null ? Decimal.valueOf(rmsDetail.FreeTimePOD) : 0;
         rmsObj.Remarks__c = rmsDetail.remarks;
         rmsObj.Agent__c = rmsDetail.agentName != '' ? rmsDetail.agentName : null; 
         rmsObj.INCO_Term__c = rmsDetail.incoTermId != null ? rmsDetail.incoTermId : null;
@@ -715,7 +726,7 @@ public class BAFCOLRoutingDetailsController {
     @AuraEnabled
     public static Regular_Routing__c getRegularRouteData(String rgID){
         if(rgID != null){
-            return [Select Dangerous_Goods__c,DG_Class__c,Commodity__c,Commodity__r.Name,id, name,Service_Type__c,
+            return [Select Kind_of_Shipment__c,Dangerous_Goods__c,DG_Class__c,Commodity__c,Commodity__r.Name,id, name,Service_Type__c,
                     INCO_Term__c,INCO_Term__r.Name,Port_of_Loading__c,Port_of_Loading__r.Name,Port_of_Destination__c,
                     Port_of_Destination__r.Name,Place_of_Pickup__c, Place_of_Discharge__c,Place_of_Pickup__r.Name, Place_of_Discharge__r.Name,
                     Shipping_Line__c,Shipping_Line__r.Name from Regular_Routing__c where id=:rgID];
@@ -764,6 +775,14 @@ public class BAFCOLRoutingDetailsController {
     @auraenabled
     public static string getOptyBusinessType(string optyId){
         return [Select id,Business_Type__c from opportunity where id =: optyId ].Business_Type__c;
+    }
+    @auraenabled
+    public static List<Opportunity> getCommercialUserOnLoad(string AccountId){
+        List<Opportunity> optyList = new List<Opportunity>();
+        if(AccountId !=null){
+            optyList = [Select Commercial_User__r.Name from Opportunity where AccountId =: AccountId AND Commercial_User__c <> null order by createddate desc];
+        }
+        return optyList;
     }
     public class SObjectResult {
         @AuraEnabled

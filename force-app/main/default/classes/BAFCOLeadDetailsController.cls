@@ -59,7 +59,7 @@ public class BAFCOLeadDetailsController {
             else if(validity != ''){
                 query = 'Select Id, Commodity__r.Name, Business_Type__c,Port_Of_Discharge__r.Name,Port_Of_Loading__r.Name,';
                 query+='Port_Of_Discharge__c,Port_Of_Loading__c, Equipment_Type__r.Name, Sea_Freight__c, Validity__c,';
-                query+='Agent__r.Name, Shipping_Line__r.Name,LastModifiedBy.Name, Name from RMS__c Where Validity__c > '+todaysDate;
+                query+='Agent__r.Name, Shipping_Line__r.Name,LastModifiedBy.Name, Name from RMS__c Where Validity__c >= '+todaysDate;
                 query+=' AND Validity__c < = '+validity;
                 query+=' AND Port_Of_Loading__r.Name = \''+loadingPort+'\'';
             }
@@ -74,7 +74,7 @@ public class BAFCOLeadDetailsController {
             else if(validity != ''){
                 query = 'Select Id, Commodity__r.Name, Business_Type__c,Port_Of_Discharge__r.Name,Port_Of_Loading__r.Name,';
                 query+='Port_Of_Discharge__c,Port_Of_Loading__c, Equipment_Type__r.Name, Sea_Freight__c, Validity__c,';
-                query+='Agent__r.Name, Shipping_Line__r.Name,LastModifiedBy.Name, Name from RMS__c Where Validity__c > '+todaysDate;
+                query+='Agent__r.Name, Shipping_Line__r.Name,LastModifiedBy.Name, Name from RMS__c Where Validity__c >= '+todaysDate;
                 query+=' AND Validity__c < = '+validity;
                 query+=' AND Port_Of_Discharge__r.Name = \''+destinationPort+'\'';                
             }
@@ -90,7 +90,7 @@ public class BAFCOLeadDetailsController {
             else if(validity != ''){
                 query = 'Select Id, Commodity__r.Name, Business_Type__c,Port_Of_Discharge__r.Name,Port_Of_Loading__r.Name,';
                 query+='Port_Of_Discharge__c,Port_Of_Loading__c, Equipment_Type__r.Name, Sea_Freight__c, Validity__c,';
-                query+='Agent__r.Name, Shipping_Line__r.Name,LastModifiedBy.Name, Name from RMS__c Where Validity__c > '+todaysDate;
+                query+='Agent__r.Name, Shipping_Line__r.Name,LastModifiedBy.Name, Name from RMS__c Where Validity__c >= '+todaysDate;
                 query+=' AND Validity__c <= '+validity;
                 query+=' AND Port_Of_Discharge__r.Name = \''+destinationPort+'\'';
                 query+=' AND Port_Of_Loading__r.Name = \''+loadingPort+'\'';
@@ -105,7 +105,7 @@ public class BAFCOLeadDetailsController {
             else if(validity != ''){
                 query = 'Select Id, Commodity__r.Name, Business_Type__c,Port_Of_Discharge__r.Name,Port_Of_Loading__r.Name,';
                 query+='Port_Of_Discharge__c,Port_Of_Loading__c, Equipment_Type__r.Name, Sea_Freight__c, Validity__c,';
-                query+='Agent__r.Name, Shipping_Line__r.Name,LastModifiedBy.Name, Name from RMS__c Where Validity__c > '+todaysDate;
+                query+='Agent__r.Name, Shipping_Line__r.Name,LastModifiedBy.Name, Name from RMS__c Where Validity__c >= '+todaysDate;
                 query+=' AND Validity__c < = '+validity;               
             }
         }
@@ -168,6 +168,7 @@ Equipment_Type__r.Name, Sea_Freight__c, Validity__c, Agent__r.Name, Shipping_Lin
             rmsObj.FOB_All_In__c = rmsDetail.FOBAllIn;
             rmsObj.Ex_Works_All_In__c = rmsDetail.ExWorksIn;
             rmsObj.Free_time__c = rmsDetail.FreeTime != null ? Decimal.valueOf(rmsDetail.FreeTime) : 0;
+            rmsObj.Free_time_POD__c = rmsDetail.FreeTimePOD != null ? Decimal.valueOf(rmsDetail.FreeTimePOD) : 0;
             rmsObj.Remarks__c = rmsDetail.remarks;
             if(rmsDetail.businessType == 'Export') rmsObj.RecordTypeId = ExportRecordTypeId;
             else if(rmsDetail.businessType == 'Import')rmsObj.RecordTypeId = ImportRecordTypeId;

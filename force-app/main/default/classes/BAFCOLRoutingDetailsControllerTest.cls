@@ -183,7 +183,10 @@ public class BAFCOLRoutingDetailsControllerTest {
         bafcoList.add(dto);
         String closeDate = string.valueOf(system.today());
         String quoteId = [Select id from Account limit 1].Id;
-        BAFCOLRoutingDetailsController.submitRoutingList(bafcoList, 'Import', quoteId,closeDate);
+        String optyId = BAFCOLRoutingDetailsController.submitRoutingList(bafcoList, 'Import', quoteId,closeDate,'');
+        Opportunity optyObj = [Select AccountId from Opportunity where id =: optyId];
+        BAFCOLRoutingDetailsController.getCommercialUserOnLoad(optyObj.AccountId);
+        BAFCOLRoutingDetailsController.getOptyBusinessType(optyId);
     }
     testMethod static void getIncoChargesTest(){
         string rmsId = [Select id from RMS__c limit 1].Id;

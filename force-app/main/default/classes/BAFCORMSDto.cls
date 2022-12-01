@@ -53,5 +53,7 @@ public class BAFCORMSDto {
     @AuraEnabled
     public String FreeTime { get; set; }
     @AuraEnabled
+    public String FreeTimePOD { get; set; }
+    @AuraEnabled
     public String remarks { get; set; }
 }

@@ -2,12 +2,13 @@ import { LightningElement,track, wire,api } from 'lwc';
 import submitRoutingList from '@salesforce/apex/BAFCOLRoutingDetailsController.submitRoutingList';
 import getLeadDetails from '@salesforce/apex/BAFCOLeadDetailsController.getLeadDetails';
 import { getPicklistValues,getPicklistValuesByRecordType } from 'lightning/uiObjectInfoApi';
-import BUSINESS_TYPE_FIELD from '@salesforce/schema/opportunity.Business_Type__c';
+import BUSINESS_TYPE_FIELD from '@salesforce/schema/Opportunity.Business_Type__c';
 import { NavigationMixin } from 'lightning/navigation';
 import ROUTE_OBJECT from '@salesforce/schema/Route__c';
 import CONTAINER_PNG from '@salesforce/resourceUrl/AddContainer';
 import getAllRegularRoute from '@salesforce/apex/BAFCOLRoutingDetailsController.getAllRegularRoute';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import getCommercialUserOnLoad from '@salesforce/apex/BAFCOLRoutingDetailsController.getCommercialUserOnLoad';
 export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(LightningElement) {
     @track leadEnquiryList = [];
     pickListvalues = [];    
@@ -29,6 +30,8 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
     @track dontShowAddNewRoute = false;
     @track closeDate = '';
     @track ErrorList = [];
+    @track commercialUserId = '';
+    @track commercialUserName = '';
 
 
     @wire(getPicklistValues, {
@@ -59,9 +62,42 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
     }
 
     connectedCallback(){
+        let todaysDate = new Date().toISOString();
+        this.closeDate = this.formatDate(todaysDate);
+        this.getCommercialUserOnLoad();
         this.getAllRegularRoute();
         this.addRouteEnquiry();
         this.getDefaultBusinessType();
+    }
+    getCommercialUserOnLoad(){
+        getCommercialUserOnLoad({AccountId : this.quoteId})
+        .then(result=>{
+            console.log('getCommercialUserOnLoad result'+JSON.stringify(result,null,2));
+            if(result != null){
+                let commercialUserId = result[0].Commercial_User__c;
+                let commercialUserName = result[0].Commercial_User__r.Name;
+                let field = this.template.querySelector('c-b-a-f-c-o-custom-look-up-component');
+                let Obj={Id:commercialUserId,Name:commercialUserName}
+                field.handleDefaultSelected(Obj);
+            }
+
+        })
+        .catch(error=>{
+            console.log('getCommercialUserOnLoad error'+error);
+        })
+    }
+    formatDate(date) {
+        let d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + (d.getDate()+2),
+            year = d.getFullYear();
+    
+        if (month.length < 2) 
+            month = '0' + month;
+        if (day.length < 2) 
+            day = '0' + day;
+    
+        return [year, month, day].join('-');
     }
     getAllRegularRoute(){
         getAllRegularRoute()
@@ -185,10 +221,10 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
                 tempErrorList.push('Please fill commodity')
                 elem.commodityClass = 'slds-has-error';
             }
-            if(elem.cargoWeights <= 0 ){
+           /* if(elem.cargoWeights <= 0 ){
                 tempErrorList.push('Please fill cargoWeights')
                 elem.cargoweightClass = 'slds-has-error';
-            }
+            }*/
             if(elem.serviceType == 'D2P' && elem.placeOfPickup == ''){
                 tempErrorList.push('Please fill cargoWeights')
                 elem.pickupPlaceClass = 'slds-has-error';
@@ -217,7 +253,8 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
                 routingList : this.leadEnquiryList,
                 businessType : this.businessTypeSelected,
                 quoteId : this.quoteId,
-                closeDate : this.closeDate
+                closeDate : this.closeDate,
+                commercialUserId : this.commercialUserId
             })
             .then(result =>{
                 console.log('routing submit  result : ', JSON.stringify(result,null,2));
@@ -404,5 +441,13 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
         else{
             this.dontShowAddNewRoute = true
         }
+    }
+    handleCommercialUserSelection(e){
+        this.commercialUserId = e.detail.Id;
+        this.commercialUserName = e.detail.Name;
+    }
+    handleCommercialUserRemoved(e){
+        this.commercialUserId = '';
+        this.commercialUserName = '';
     }
 }
