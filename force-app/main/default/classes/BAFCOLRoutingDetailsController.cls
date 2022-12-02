@@ -784,6 +784,34 @@ public class BAFCOLRoutingDetailsController {
         }
         return optyList;
     }
+    @auraenabled
+    public static RmsDefaultValue getDefualtValueForRMS(){
+        String userId = userInfo.getUserId();
+        RmsDefaultValue dto = new RmsDefaultValue();
+        User userObj = [SELECT Id, Name, Handling__c, Branch__c FROM User where id =: userId];
+        List<Commodity__c> commodityList = [select id,name from Commodity__c where name ='FAK'];
+        List<INCO_Term__c> incoTermList = [select id,name from INCO_Term__c where name ='Ocean Freight'];
+        if(commodityList.size()>0){
+            dto.commodityId = commodityList[0].Id;
+            dto.commodityName = commodityList[0].Name;
+        }
+        if(incoTermList.size()>0){
+            dto.incoTermId = incoTermList[0].Id;
+            dto.incoTermName = incoTermList[0].Name;
+        }
+        dto.businessType = userObj.Handling__c != null ? userObj.Handling__c : '';
+        if(userObj.Branch__c != null){
+            List<Port__c> portList = new List<Port__c>();
+            if(userObj.Branch__c == 'Riyadh') portList = [Select id, name from Port__c where name = 'Jeddah' limit 1];
+            else portList = [Select id, name from Port__c where name =: userObj.Branch__c limit 1];            
+            if(portList.size() > 0){
+                dto.polId = portList[0].id;
+                dto.polName = portList[0].Name;
+            }
+        }
+        dto.equipmentList = [Select id, name from Equipment_Type__c limit 50];
+        return dto;
+    }
     public class SObjectResult {
         @AuraEnabled
         public String recName;
@@ -794,5 +822,18 @@ public class BAFCOLRoutingDetailsController {
             recName = recNameTemp;
             recId = recIdTemp;
         }
+    }
+    public class RmsDefaultValue {
+        RmsDefaultValue(){
+            equipmentList = new List<Equipment_Type__c>();
+        }
+        @AuraEnabled public String incoTermId{get;set;}
+        @AuraEnabled public String incoTermName{get;set;}
+        @AuraEnabled public String commodityId{get;set;}
+        @AuraEnabled public String commodityName{get;set;}
+        @AuraEnabled public String businessType{get;set;}
+        @AuraEnabled public String polId{get;set;}
+        @AuraEnabled public String polName{get;set;}
+        @AuraEnabled public List<Equipment_Type__c> equipmentList{get;set;}
     }
 }

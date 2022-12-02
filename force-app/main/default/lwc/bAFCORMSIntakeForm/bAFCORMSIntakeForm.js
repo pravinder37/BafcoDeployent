@@ -5,6 +5,7 @@ import RATE_TYPE_FIELD from '@salesforce/schema/RMS__c.Rate_Type__c';
 import BUSINESS_TYPE_FIELD from '@salesforce/schema/RMS__c.Business_Type__c';
 import submitRMS from '@salesforce/apex/BAFCOLeadDetailsController.submitRMS';
 import getExchangeRate from '@salesforce/apex/BAFCOLRoutingDetailsController.getExchangeRate';
+import getDefualtValueForRMS from '@salesforce/apex/BAFCOLRoutingDetailsController.getDefualtValueForRMS';
 export default class BAFCORMSIntakeForm extends LightningElement {
     
     @track shippTotalChanged = false; 
@@ -16,7 +17,7 @@ export default class BAFCORMSIntakeForm extends LightningElement {
     @track rateType = '';    
     @track rmsDetail ={};
     @track validity ='';
-    @track seaFreight = 0;
+    @track seaFreight;
     @track businessTypeOption = [];
     @track businessType = '';
     @track incoChargeTotalChange = false;
@@ -28,8 +29,8 @@ export default class BAFCORMSIntakeForm extends LightningElement {
     @track ExWorksIn = false;
     @track displayOriginCharge = true;
     @track displayShippingCharge = true;
-    @track FreeTime = 0;
-    @track FreeTimePOD= 0;
+    @track FreeTime;
+    @track FreeTimePOD;
     @track remarks = '';
     @track destinCharges ={};
     @track destinOffSet = 0;
@@ -43,6 +44,10 @@ export default class BAFCORMSIntakeForm extends LightningElement {
     @track disableShippOffSet = true;
     @track disableIncoOffSet = true;
     @track disableDestinOffSet = true;
+    @track isLoading = false;
+    @track displayAgentField = false;
+    @track equipmentTypeOption =[];
+    @track equipmentType = '';
 
 
     @wire(getPicklistValues, {
@@ -95,6 +100,7 @@ export default class BAFCORMSIntakeForm extends LightningElement {
     }
     connectedCallback(){
         this.getExchangeRate();
+        this.getDefualtValueForRMS();
         let templist = {
             'BAF':0,
             'BunkerSurcharge':0,
@@ -153,7 +159,7 @@ export default class BAFCORMSIntakeForm extends LightningElement {
         let rmsDetail = {
             'rateType':'',
             'validity':'',
-            'seaFreight':0,
+            'seaFreight':null,
             'loadingPortId':'',
             'loadingDestinationId':'',
             'commodityName':'',
@@ -166,8 +172,8 @@ export default class BAFCORMSIntakeForm extends LightningElement {
             'allInRate':false,
             'FOBAllIn':false,
             'ExWorksIn':false,
-            'FreeTime':0,
-            'FreeTimePOD':0,
+            'FreeTime':null,
+            'FreeTimePOD':null,
             'remarks':'',
             'currencyCode':'',
             'incoTermId':null
@@ -191,6 +197,54 @@ export default class BAFCORMSIntakeForm extends LightningElement {
         this.rmsDetail.validity = this.validity;
         
     }
+    getDefualtValueForRMS(){
+        this.isLoading = true
+        getDefualtValueForRMS()
+        .then(result=>{
+            console.log('getDefualtValueForRMS result',JSON.stringify(result))
+            if(result != null){
+                if(result.commodityId != undefined){
+                    let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[2];
+                    let Obj={Id:result.commodityId,Name:result.commodityName}
+                    field.handleDefaultSelected(Obj);
+                }
+                if(result.incoTermId != undefined){
+                    let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[4];
+                    let Obj={Id:result.incoTermId,Name:result.incoTermName}
+                    field.handleDefaultSelected(Obj);
+                }
+                if(result.businessType != undefined){
+                    this.businessType = result.businessType != null ? result.businessType : '';
+                    if(this.businessType == 'Import') this.displayAgentField = true;
+                    else this.displayAgentField = false;
+                }
+                if(result.polId != undefined){
+                    if(result.polId != null){
+                        let Obj={Id:result.polId,Name:result.polName}
+                        let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[0];
+                        if(result.businessType == 'Export') field.handleDefaultSelected(Obj);
+                        let field2 = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[1];
+                        if(result.businessType =='Import') field2.handleDefaultSelected(Obj);
+                    }
+                }
+                if(result.equipmentList != null){
+                    let templist = [];
+                    result.equipmentList.forEach(elem=>{
+                        templist.push({
+                            label:elem.Name,
+                            value:elem.Id
+                        })
+                    })
+                    this.equipmentTypeOption = templist
+                }
+                this.isLoading = false
+            }
+        })
+        .catch(error=>{
+            this.isLoading = false
+            console.log('getDefualtValueForRMS error',JSON.stringify(error))
+        })
+    }
     handleFreeTimeChange(e){
         this.FreeTime = e.target.value
         this.rmsDetail.FreeTime = this.FreeTime
@@ -201,6 +255,8 @@ export default class BAFCORMSIntakeForm extends LightningElement {
     }
     handleBusinessTypeChange(e){
         this.rmsDetail.businessType = e.target.value;
+        if(this.rmsDetail.businessType =='Import') this.displayAgentField = true;
+        else this.displayAgentField = false;
     }
     handleBAFChange(e){
         this.shipp.BAF = parseInt(e.target.value);
@@ -381,7 +437,9 @@ export default class BAFCORMSIntakeForm extends LightningElement {
             this.validity = this.formatDate(this.todaysDate,0)
         }
         else if(this.rateType == 'Contract'){
-            this.validity = this.formatDate(this.todaysDate,15)
+            let date = new Date(), y = date.getFullYear(), m = date.getMonth();
+            let lastDay = new Date(y, m + 1, 0);
+            this.validity = this.formatDate(lastDay)
         }
         this.rmsDetail.validity = this.validity 
     }
@@ -434,6 +492,10 @@ export default class BAFCORMSIntakeForm extends LightningElement {
     }
     handleEquipmentSelection(e){
         this.rmsDetail.equipmentId = e.detail.Id;
+    }
+    handleEquipmentChange(e){
+        this.rmsDetail.equipmentId = e.target.value;
+        this.equipmentType = e.target.value;
     }
     handleEquipmentRemoved(e){
         this.rmsDetail.equipmentId = '';

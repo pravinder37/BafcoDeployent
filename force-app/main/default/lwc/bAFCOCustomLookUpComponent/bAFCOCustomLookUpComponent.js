@@ -48,6 +48,7 @@ export default class BAFCOCustomLookUpComponent extends LightningElement {
 
     @api handleRemovePill() {
         this.isValueSelected = false;
+        this.searchTerm = ''
         let SelectedObj = {Id:'', index:this.index};
         const valueUnSelectedEvent = new CustomEvent('lookupremoved', {detail: SelectedObj });
         this.dispatchEvent(valueUnSelectedEvent);

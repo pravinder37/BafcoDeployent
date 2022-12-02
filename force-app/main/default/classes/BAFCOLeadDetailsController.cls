@@ -48,16 +48,23 @@ public class BAFCOLeadDetailsController {
         String query = '';
         String todaysDate = String.valueOf(Date.today());
         string splittedString = todaysDate.split(' ')[0];
-        //todaysDate.replaceAll('/', '-');
+        Date todaysDate2 = system.today();
+        Integer currentMonth = todaysDate2.month();
+        Date tempStartDate = Date.newInstance(todaysDate2.year(), currentMonth, 1);
+        integer noOfDays = Date.daysInMonth(todaysDate2.year(), currentMonth);        
+        Date tempEndDate = Date.newInstance( todaysDate2.year(), currentMonth, noOfDays);
+        String startDate = String.valueOf(todaysDate2);
+        String endDate = String.valueOf(tempEndDate);
         if(loadingPort != '' && destinationPort == ''){
             if(validity == ''){
-                query = 'Select Id, Commodity__r.Name, Business_Type__c,Port_Of_Discharge__r.Name,Port_Of_Loading__r.Name,';
+                query = 'Select Id,Rate_Type__c, Commodity__r.Name, Business_Type__c,Port_Of_Discharge__r.Name,Port_Of_Loading__r.Name,';
                 query+='Port_Of_Discharge__c,Port_Of_Loading__c, Equipment_Type__r.Name, Sea_Freight__c, Validity__c,';
-                query+='Agent__r.Name, Shipping_Line__r.Name,LastModifiedBy.Name, Name from RMS__c Where Validity__c <= '+todaysDate;
+                query+='Agent__r.Name, Shipping_Line__r.Name,LastModifiedBy.Name, Name from RMS__c Where Validity__c <= '+endDate;
+                query+=' AND Validity__c >= '+startDate;
                 query+=' AND Port_Of_Loading__r.Name = \''+loadingPort+'\'';
             }
             else if(validity != ''){
-                query = 'Select Id, Commodity__r.Name, Business_Type__c,Port_Of_Discharge__r.Name,Port_Of_Loading__r.Name,';
+                query = 'Select Id,Rate_Type__c, Commodity__r.Name, Business_Type__c,Port_Of_Discharge__r.Name,Port_Of_Loading__r.Name,';
                 query+='Port_Of_Discharge__c,Port_Of_Loading__c, Equipment_Type__r.Name, Sea_Freight__c, Validity__c,';
                 query+='Agent__r.Name, Shipping_Line__r.Name,LastModifiedBy.Name, Name from RMS__c Where Validity__c >= '+todaysDate;
                 query+=' AND Validity__c < = '+validity;
@@ -66,13 +73,14 @@ public class BAFCOLeadDetailsController {
         }
         else if(loadingPort == '' && destinationPort != ''){
             if(validity == ''){
-                query = 'Select Id, Commodity__r.Name, Business_Type__c,Port_Of_Discharge__r.Name,Port_Of_Loading__r.Name,';
+                query = 'Select Id,Rate_Type__c, Commodity__r.Name, Business_Type__c,Port_Of_Discharge__r.Name,Port_Of_Loading__r.Name,';
                 query+='Port_Of_Discharge__c,Port_Of_Loading__c, Equipment_Type__r.Name, Sea_Freight__c, Validity__c,';
-                query+='Agent__r.Name, Shipping_Line__r.Name,LastModifiedBy.Name, Name from RMS__c Where Validity__c <= '+todaysDate;
+                query+='Agent__r.Name, Shipping_Line__r.Name,LastModifiedBy.Name, Name from RMS__c Where Validity__c <= '+endDate;
+                query+=' AND Validity__c >= '+startDate;
                 query+=' AND Port_Of_Discharge__r.Name = \''+destinationPort+'\'';
             }
             else if(validity != ''){
-                query = 'Select Id, Commodity__r.Name, Business_Type__c,Port_Of_Discharge__r.Name,Port_Of_Loading__r.Name,';
+                query = 'Select Id,Rate_Type__c, Commodity__r.Name, Business_Type__c,Port_Of_Discharge__r.Name,Port_Of_Loading__r.Name,';
                 query+='Port_Of_Discharge__c,Port_Of_Loading__c, Equipment_Type__r.Name, Sea_Freight__c, Validity__c,';
                 query+='Agent__r.Name, Shipping_Line__r.Name,LastModifiedBy.Name, Name from RMS__c Where Validity__c >= '+todaysDate;
                 query+=' AND Validity__c < = '+validity;
@@ -81,14 +89,15 @@ public class BAFCOLeadDetailsController {
         }
         else if(loadingPort != '' && destinationPort != ''){
             if(validity == ''){
-                query = 'Select Id, Commodity__r.Name, Business_Type__c,Port_Of_Discharge__r.Name,Port_Of_Loading__r.Name,';
+                query = 'Select Id,Rate_Type__c, Commodity__r.Name, Business_Type__c,Port_Of_Discharge__r.Name,Port_Of_Loading__r.Name,';
                 query+='Port_Of_Discharge__c,Port_Of_Loading__c, Equipment_Type__r.Name, Sea_Freight__c, Validity__c,';
-                query+='Agent__r.Name, Shipping_Line__r.Name,LastModifiedBy.Name, Name from RMS__c Where Validity__c <= '+todaysDate;
+                query+='Agent__r.Name, Shipping_Line__r.Name,LastModifiedBy.Name, Name from RMS__c Where Validity__c <= '+endDate;
+                query+=' AND Validity__c >= '+startDate;
                 query+=' AND Port_Of_Discharge__r.Name = \''+destinationPort+'\'';
                 query+=' AND Port_Of_Loading__r.Name = \''+loadingPort+'\'';
             }
             else if(validity != ''){
-                query = 'Select Id, Commodity__r.Name, Business_Type__c,Port_Of_Discharge__r.Name,Port_Of_Loading__r.Name,';
+                query = 'Select Id,Rate_Type__c, Commodity__r.Name, Business_Type__c,Port_Of_Discharge__r.Name,Port_Of_Loading__r.Name,';
                 query+='Port_Of_Discharge__c,Port_Of_Loading__c, Equipment_Type__r.Name, Sea_Freight__c, Validity__c,';
                 query+='Agent__r.Name, Shipping_Line__r.Name,LastModifiedBy.Name, Name from RMS__c Where Validity__c >= '+todaysDate;
                 query+=' AND Validity__c <= '+validity;
@@ -98,12 +107,13 @@ public class BAFCOLeadDetailsController {
         }
         else if(loadingPort == '' && destinationPort == ''){
             if(validity == ''){
-                query = 'Select Id, Commodity__r.Name, Business_Type__c,Port_Of_Discharge__r.Name,Port_Of_Loading__r.Name,';
+                query = 'Select Id,Rate_Type__c, Commodity__r.Name, Business_Type__c,Port_Of_Discharge__r.Name,Port_Of_Loading__r.Name,';
                 query+='Port_Of_Discharge__c,Port_Of_Loading__c, Equipment_Type__r.Name, Sea_Freight__c, Validity__c,';
-                query+='Agent__r.Name, Shipping_Line__r.Name,LastModifiedBy.Name, Name from RMS__c Where Validity__c <= '+todaysDate;
+                query+='Agent__r.Name, Shipping_Line__r.Name,LastModifiedBy.Name, Name from RMS__c Where Validity__c <= '+endDate;
+                query+=' AND Validity__c >= '+startDate;
             }
             else if(validity != ''){
-                query = 'Select Id, Commodity__r.Name, Business_Type__c,Port_Of_Discharge__r.Name,Port_Of_Loading__r.Name,';
+                query = 'Select Id,Rate_Type__c, Commodity__r.Name, Business_Type__c,Port_Of_Discharge__r.Name,Port_Of_Loading__r.Name,';
                 query+='Port_Of_Discharge__c,Port_Of_Loading__c, Equipment_Type__r.Name, Sea_Freight__c, Validity__c,';
                 query+='Agent__r.Name, Shipping_Line__r.Name,LastModifiedBy.Name, Name from RMS__c Where Validity__c >= '+todaysDate;
                 query+=' AND Validity__c < = '+validity;               
@@ -117,23 +127,65 @@ Equipment_Type__r.Name, Sea_Freight__c, Validity__c, Agent__r.Name, Shipping_Lin
         if(rmsList.size()>0){
             for(RMS__c rmsObj : rmsList){
                 BAFCORMSDto dto = new BAFCORMSDto();
-                dto.shippingLineName = rmsObj.Shipping_Line__c !=null ? rmsObj.Shipping_Line__r.Name : '';
-                dto.equipmentName = rmsObj.Equipment_Type__r !=null ? rmsObj.Equipment_Type__r.Name : '';
-                dto.commodityName = rmsObj.Commodity__c !=null ? rmsObj.Commodity__r.Name : '';
-                dto.agentName = rmsObj.Agent__c !=null ? rmsObj.Agent__r.Name : '';                
-                dto.validity = rmsObj.Validity__c !=null ? String.valueOf(rmsObj.Validity__c) : '';
+                dto.shippingLineName = rmsObj.Shipping_Line__c !=null ? rmsObj.Shipping_Line__r.Name : '-';
+                dto.equipmentName = rmsObj.Equipment_Type__r !=null ? rmsObj.Equipment_Type__r.Name : '-';
+                dto.commodityName = rmsObj.Commodity__c !=null ? rmsObj.Commodity__r.Name : '-';
+                dto.agentName = rmsObj.Agent__c !=null ? rmsObj.Agent__r.Name : '-';              
+                dto.validity = rmsObj.Validity__c !=null ? (rmsObj.Validity__c.day()+'-'+ getMonthName(rmsObj.Validity__c.month()) +'-'+rmsObj.Validity__c.year()) : '-';
                 dto.lastModifiedByName = rmsObj.LastModifiedBy.Name;
-                dto.seaFreight = rmsObj.Sea_Freight__c;
+                dto.seaFreight = rmsObj.Sea_Freight__c != null ? rmsObj.Sea_Freight__c:0;
                 dto.loadingPortId = rmsObj.Port_Of_Loading__c;
                 dto.loadingDestinationId = rmsObj.Port_Of_Discharge__c;
-                dto.loadingPortName = rmsObj.Port_Of_Loading__r.Name;
-                dto.loadingDestinationName = rmsObj.Port_Of_Discharge__r.Name;
+                dto.loadingPortName = rmsObj.Port_Of_Loading__c != null ? rmsObj.Port_Of_Loading__r.Name :'-';
+                dto.loadingDestinationName = rmsObj.Port_Of_Discharge__c != null ? rmsObj.Port_Of_Discharge__r.Name:'-';
                 dto.rmsID = rmsObj.Id;
+                dto.rateType = rmsObj.Rate_Type__c != null ? rmsObj.Rate_Type__c : '-';
                 rmsDtolist.add(dto);
             }
         }
         system.debug('rmsDtolist '+rmsDtolist);
         return rmsDtolist;
+    }
+    private static string getMonthName(Integer n){
+        switch on n {
+            when 1 {
+                return 'Jan';
+            }
+             when 2 {
+                return 'Feb';
+            }
+             when 3 {
+                return 'Mar';
+            }
+             when 4 {
+                return 'Apr';
+            }
+             when 5 {
+                return 'May';
+            }
+             when 6 {
+                return 'Jun';
+            }
+             when 7 {
+                return 'Jul';
+            }
+            when 8 {
+                return 'Aug';
+            }
+            when 9 {
+                return 'Sept';
+            }
+            when 10 {
+                return 'Oct';
+            }
+            when 11 {
+                return 'Nov';
+            }
+            when 12 {
+                return 'Dec';
+            }
+        }
+        return null;
     }
     @AuraEnabled
     public static BAFCORMSDto submitRMS(

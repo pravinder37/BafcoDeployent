@@ -15,7 +15,6 @@ export default class BAFCODisplayRMSRecords extends NavigationMixin(LightningEle
     @track SearchClicked = false
 
     connectedCallback(){
-       // this.getRMSRecords();
        document.title='Search Rates'
     }    
     handleValidityChange(e){
@@ -31,6 +30,7 @@ export default class BAFCODisplayRMSRecords extends NavigationMixin(LightningEle
     }
     getRMSRecords(){
         this.isLoading = true;
+        this.displayRMSRecords = [];
         getRMSRecords({
             loadingPort: this.loadingPort,
             destinationPort:this.destinationPort,
@@ -87,7 +87,7 @@ export default class BAFCODisplayRMSRecords extends NavigationMixin(LightningEle
     handleDestinationSelection(e){
         this.destinationPort = e.detail.Name;
     }
-    handleDestinationRemoved(){
+    handleDestinationRemoved(e){
         this.destinationPort = ''
     }
     handleSuccessAddRate(e){
@@ -109,5 +109,12 @@ export default class BAFCODisplayRMSRecords extends NavigationMixin(LightningEle
             if(defaultLoadingDestinationField != null || defaultLoadingDestinationField != undefined) defaultLoadingDestinationField.handleDefaultSelected(defaultLoadingDestination);
         } 
         this.getRMSRecords();
+    }
+    resetClicked(){
+        this.SearchClicked = false;
+        let laodingPortField = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[0]
+        laodingPortField.handleRemovePill(); 
+        let defaultLoadingDestinationField = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[1]
+        defaultLoadingDestinationField.handleRemovePill();
     }
 }
