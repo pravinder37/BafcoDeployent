@@ -8,7 +8,7 @@
     <columns>OPPORTUNITY.CLOSE_DATE</columns>
     <columns>OPPORTUNITY.STAGE_NAME</columns>
     <columns>OPPORTUNITY.PROBABILITY</columns>
-    <columns>Follow_Up__c</columns>
+    <columns>OPPORTUNITY.CREATED_DATE</columns>
     <filterScope>Everything</filterScope>
     <label>All Opportunities</label>
 </ListView>

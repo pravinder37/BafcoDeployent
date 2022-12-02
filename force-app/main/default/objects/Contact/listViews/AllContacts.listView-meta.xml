@@ -6,7 +6,7 @@
     <columns>CONTACT.EMAIL</columns>
     <columns>CONTACT.PHONE1</columns>
     <columns>CONTACT.TITLE</columns>
-    <columns>CORE.USERS.ALIAS</columns>
+    <columns>CONTACT.CREATED_DATE</columns>
     <filterScope>Everything</filterScope>
     <label>All Contacts</label>
 </ListView>

@@ -3,12 +3,10 @@
     <fullName>AllOpenLeads</fullName>
     <columns>FULL_NAME</columns>
     <columns>LEAD.COMPANY</columns>
-    <columns>LEAD.STATE</columns>
     <columns>LEAD.PHONE</columns>
     <columns>LEAD.EMAIL</columns>
     <columns>LEAD.STATUS</columns>
-    <columns>Follow_Up__c</columns>
-    <columns>CORE.USERS.ALIAS</columns>
+    <columns>CORE.USERS.LAST_NAME</columns>
     <columns>LEAD.CREATED_DATE</columns>
     <filterScope>Everything</filterScope>
     <label>All Open Leads</label>

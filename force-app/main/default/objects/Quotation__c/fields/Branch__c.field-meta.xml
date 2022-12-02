@@ -2,10 +2,7 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Branch__c</fullName>
     <externalId>false</externalId>
-    <formula>IF ( INCLUDES (  Account__r.Branch__c  , &quot;Jeddah&quot; ), &quot;Jeddah, &quot;,null ) &amp;
-IF ( INCLUDES (  Account__r.Branch__c  , &quot;Riyadh&quot; ), &quot;Riyadh, &quot;,null ) &amp;
-IF ( INCLUDES (  Account__r.Branch__c  , &quot;Dammam&quot; ), &quot;Dammam, &quot;,null ) &amp;
-IF ( INCLUDES (  Account__r.Branch__c  , &quot;Jubail&quot; ), &quot;Jubail &quot;,null )</formula>
+    <formula>TEXT(Opportunity__r.Owner.Branch__c)</formula>
     <label>Branch</label>
     <required>false</required>
     <trackHistory>false</trackHistory>

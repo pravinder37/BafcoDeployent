@@ -4,7 +4,6 @@
     <columns>NAME</columns>
     <columns>Account__c</columns>
     <columns>Leadc__c</columns>
-    <columns>Enquiry__c</columns>
     <columns>CREATEDBY_USER</columns>
     <columns>LAST_UPDATE</columns>
     <filterScope>Everything</filterScope>

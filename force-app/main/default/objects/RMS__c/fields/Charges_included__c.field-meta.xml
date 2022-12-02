@@ -4,6 +4,7 @@
     <externalId>false</externalId>
     <label>Charges included</label>
     <length>131072</length>
+    <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>LongTextArea</type>

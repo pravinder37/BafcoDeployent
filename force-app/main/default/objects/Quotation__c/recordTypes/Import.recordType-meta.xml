@@ -3,4 +3,23 @@
     <fullName>Import</fullName>
     <active>true</active>
     <label>Import</label>
+    <picklistValues>
+        <picklist>Status__c</picklist>
+        <values>
+            <fullName>Confirmed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Issued</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>Request for Revision</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Revised</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
 </RecordType>

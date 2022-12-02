@@ -5,7 +5,6 @@
     <columns>Equipment_Type__c</columns>
     <columns>Route__c</columns>
     <columns>Quantity__c</columns>
-    <columns>Enquiry__c</columns>
     <columns>CREATEDBY_USER</columns>
     <columns>CREATED_DATE</columns>
     <filterScope>Everything</filterScope>
