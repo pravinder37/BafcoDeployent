@@ -11,7 +11,7 @@
                         <lightning-button label="Create Meeting" variant="brand" onclick={handleCreateMeetingClicked}></lightning-button>                
                     </lightning-layout-item>
                     <lightning-layout-item size="12" large-device-size="6" medium-device-size="12" small-device-size="12">
-                        <lightning-input type="date" value={filteredDate} label="Filter Date wise" onchange={handlefilteredDateChange}></lightning-input>
+                        <lightning-input type="date" value={filteredDate} min={minTodaysDate} label="Filter Date wise" onchange={handlefilteredDateChange}></lightning-input>
                     </lightning-layout-item>
                 </lightning-layout>                
             </lightning-layout-item>
@@ -96,7 +96,7 @@
                 </div>                
             </lightning-layout-item>
             <lightning-layout-item size="12" class="leftPadding">
-                <lightning-input class="inputFieldClass" type="date" data-field="startDate" value={startDate} label="Meeting Date" onchange={handleDateChange}></lightning-input>
+                <lightning-input class="inputFieldClass" type="date" min={minTodaysDate} data-field="startDate" value={startDate} label="Meeting Date" onchange={handleDateChange}></lightning-input>
             </lightning-layout-item> 
             <lightning-layout-item size="12" class="leftPadding">
                 <lightning-input class="inputFieldClass" type="time" data-field="startTime" value={startTime} label="Meeting time" onchange={handletimeChange}></lightning-input>

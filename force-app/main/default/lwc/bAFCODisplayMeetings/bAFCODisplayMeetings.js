@@ -20,6 +20,7 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
     @track whatId ='';
     @track whatIdName ='';
     @track todaysDate;
+    @track minTodaysDate =''
     @track whatIdErrorClass = '';
     @track whatIdErrorMsg ='';
     @track objecticon = 'standard:lead';
@@ -57,6 +58,8 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
         //this.handleGetCurrentLocationClick();
         document.title = 'Meeting';
         this.todaysDate = new Date().toISOString();  
+        let d = new Date().toISOString();  
+        this.minTodaysDate = this.formatDate(d);
         this.startDate = this.formatDate(this.todaysDate);
         this.startTime  = this.formatTime(this.todaysDate);
         this.filteredDate = this.formatDate(this.todaysDate);
@@ -65,6 +68,10 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
         this.objecticon = 'standard:lead';
         this.displayInitial = true;
         this.getMeetingsRecords();       
+    }
+    renderedcallback(){
+        let d = new Date().toISOString();  
+        this.minTodaysDate = this.formatDate(d);
     }
     getMeetingsRecords(){
         this.isLoading = true;
@@ -128,6 +135,9 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
     }
     handleCreateMeeting(){
         let allValid = true;
+        console.log('this.startDate < this.minTodaysDate ',this.startDate < this.minTodaysDate)
+        console.log('this.startDate ',this.startDate)
+        console.log('this.minTodaysDate',this.minTodaysDate)
         if(this.whatId == ''){
             this.whatIdErrorClass= 'slds-has-error';
             this.whatIdErrorMsg = 'Complete this field.';
@@ -136,6 +146,12 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
         if(this.startDate == null ){
             let startDateField = this.template.querySelector("[data-field='startDate']");
             startDateField.setCustomValidity('Complete this field.'); 
+            startDateField.reportValidity();
+            allValid = false;
+        }
+        else if(this.startDate < this.minTodaysDate){
+            let startDateField = this.template.querySelector("[data-field='startDate']");
+            startDateField.setCustomValidity('Value must be Dec 5, 2022 or later.'); 
             startDateField.reportValidity();
             allValid = false;
         }
