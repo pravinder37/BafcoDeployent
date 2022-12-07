@@ -29,6 +29,7 @@ export default class BAFCORMSIntakeForm extends LightningElement {
     @track ExWorksIn = false;
     @track displayOriginCharge = true;
     @track displayShippingCharge = true;
+    @track displayDestinCharge = true;
     @track FreeTime;
     @track FreeTimePOD;
     @track remarks = '';
@@ -572,6 +573,7 @@ export default class BAFCORMSIntakeForm extends LightningElement {
             this.oceanfreightCheckbox= false
             this.displayOriginCharge = false;
             this.displayShippingCharge = false;
+            this.displayDestinCharge= true;
         }
         else if(this.FOBAllIn == true){
             this.allInRate = false;
@@ -579,6 +581,7 @@ export default class BAFCORMSIntakeForm extends LightningElement {
             this.oceanfreightCheckbox= false
             this.displayShippingCharge = false;
             this.displayOriginCharge = false;
+            this.displayDestinCharge= true;
         }
         else if(this.ExWorksIn == true){
             this.FOBAllIn = false;
@@ -586,16 +589,19 @@ export default class BAFCORMSIntakeForm extends LightningElement {
             this.oceanfreightCheckbox= false
             this.displayShippingCharge = false;
             this.displayOriginCharge = false;
+            this.displayDestinCharge= true;
         }
         else if(this.oceanfreightCheckbox == true){
             this.FOBAllIn = false;
             this.allInRate = false;
             this.displayShippingCharge = true;
             this.displayOriginCharge = false;
+            this.displayDestinCharge= false;
         }
         else if(this.allInRate == false &&  this.FOBAllIn == false && this.ExWorksIn == false && this.oceanfreightCheckbox == false){
             this.displayShippingCharge = true;
             this.displayOriginCharge = true;
+            this.displayDestinCharge= true;
         }
         this.rmsDetail.allInRate = this.allInRate;
         this.rmsDetail.FOBAllIn = this.FOBAllIn;

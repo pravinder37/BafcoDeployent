@@ -563,7 +563,7 @@
                             </lightning-layout-item>
                         </lightning-layout>
                     </lightning-accordion-section>
-                    <lightning-accordion-section name="destinChargesDetail" label="Destination Charges">
+                    <lightning-accordion-section name="destinChargesDetail" label="Destination Charges" if:true={displayDestinCharge}>
                         <lightning-layout multiple-rows >
                             <lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;">
                                 <lightning-combobox label="Curency Code" 

@@ -113,6 +113,17 @@
                                         message-when-value-missing={FreeTimePOD} 
                                         onchange={handleFreeTimePODChange}></lightning-input>
                             </lightning-layout-item>
+                            <lightning-layout-item size="12" large-device-size="4" medium-device-size="4" small-device-size="12" style="padding-top: 4px;">
+                                <label class="slds-form-element__label">
+                                    <p style="padding-left: 22px">Customer Name</p>
+                                </label>
+                                <c-b-a-f-c-o-custom-look-up-component
+                                                obj-name="Account"
+                                                search-placeholder="Search customer name" 
+                                                icon-name="standard:account"
+                                                onlookupselected={handleCustomerSelection}
+                                                onlookupremoved={handleCustomerRemoved}></c-b-a-f-c-o-custom-look-up-component>
+                            </lightning-layout-item> 
                             <lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;">
                                 <lightning-textarea label="Remarks" 
                                         value={remarks} 
@@ -131,7 +142,11 @@
                                         type="checkbox"
                                         checked={ExWorksIn} 
                                         onchange={handleExWorksChange}></lightning-input>
-                            </lightning-layout-item> 
+                                        <lightning-input label="Only Ocean Freight" 
+                                        type="checkbox"
+                                        checked={oceanfreightCheckbox} 
+                                        onchange={handleoceanfreightCheckboxChange}></lightning-input>
+                            </lightning-layout-item>
                         </lightning-layout>
                     </lightning-accordion-section>
                     <lightning-accordion-section name="shippingLineDetail" label="Shipping Line Charges" if:true={displayShippingCharge}>
@@ -518,7 +533,7 @@
                             </lightning-layout-item>
                         </lightning-layout>
                     </lightning-accordion-section>
-                    <lightning-accordion-section name="destinChargesDetail" label="Destination Charges">
+                    <lightning-accordion-section name="destinChargesDetail" label="Destination Charges" if:true={displayDestinCharge}>
                         <lightning-layout multiple-rows >
                             <lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;">
                                 <lightning-combobox label="Curency Code" 

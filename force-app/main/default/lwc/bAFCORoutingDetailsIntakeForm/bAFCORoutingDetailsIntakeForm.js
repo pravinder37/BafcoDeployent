@@ -553,15 +553,10 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
         this.updateTabsData();
         this.handleUpdateCalculation();
     }
-    handleRemoveAdditionalCharge(event){
+    removeAdditionalCharge(event){
         let index = event.target.dataset.recordId;
         let arrindex = -1;
-        for(let i = 0; i < this.additionalChargeList.length ;  i++) {
-            if (this.additionalChargeList[i].index === index) {
-                arrindex = i;
-                break;
-            }
-        }
+        arrindex = this.additionalChargeList.findIndex((x) => x.index == index);
         if(arrindex != -1){
             this.additionalChargeList.splice(arrindex, 1);
         }
@@ -901,14 +896,11 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
             this.additionalChargeIndex++;
         });
         this.additionalChargeList = tempList2;
+        console.log('this.additionalChargeList '+JSON.stringify(this.additionalChargeList,null,2))
         if(this.additionalChargeList.length > 0) this.displayAdditionalCharge = true;
         else this.displayAdditionalCharge = false;
-        console.log('came here 1')
-
         this.updateTabsData();
-        console.log('came here 2')
         this.handleUpdateCalculation();
-        console.log('came here 3')
     }
     @api handleGotoQuotation(validityDate){        
         if(this.quotationId != ''){

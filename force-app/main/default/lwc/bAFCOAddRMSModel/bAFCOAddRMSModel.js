@@ -35,8 +35,10 @@ export default class
     @track allInRate = false;
     @track FOBAllIn = false;
     @track ExWorksIn = false;
+    @track oceanfreightCheckbox = false;
     @track displayOriginCharge = true;
     @track displayShippingCharge = true;
+    @track displayDestinCharge = true;
     @track FreeTime = 0;
     @track FreeTimePOD = 0;
     @track remarks ='';
@@ -192,9 +194,11 @@ export default class
             'allInRate':false,
             'FOBAllIn':false,
             'ExWorksIn':false,
+            'oceanfreightCheckbox':false,
             'remarks':'',
             'agentName':'',
-            'incoTermId':this.incoTermId
+            'incoTermId':this.incoTermId,
+            'customerName':''
         }
         this.rmsDetail = rmsDetail;
         this.todaysDate = new Date().toISOString();
@@ -307,47 +311,71 @@ export default class
     handleAllInRateChange(e){
         this.FOBAllIn = false;
         this.ExWorksIn = false;
+        this.oceanfreightCheckbox = false;
         this.allInRate = e.target.checked;
         this.updateRMSCheckBox();
     }
     handleFOBAllInChange(e){
         this.allInRate = false;
         this.ExWorksIn = false;
+        this.oceanfreightCheckbox = false;
         this.FOBAllIn = e.target.checked;
         this.updateRMSCheckBox();
     }
     handleExWorksChange(e){
         this.FOBAllIn = false;
         this.allInRate = false;
+        this.oceanfreightCheckbox = false;
         this.ExWorksIn = e.target.checked;
+        this.updateRMSCheckBox();
+    }
+    handleoceanfreightCheckboxChange(e){
+        this.FOBAllIn = false;
+        this.allInRate = false;
+        this.ExWorksIn = false;
+        this.oceanfreightCheckbox = e.target.checked;
         this.updateRMSCheckBox();
     }
     updateRMSCheckBox(){
         if(this.allInRate == true){
             this.FOBAllIn = false;
             this.ExWorksIn = false;
+            this.oceanfreightCheckbox = false;
             this.displayOriginCharge = false;
             this.displayShippingCharge = false;
+            this.displayDestinCharge= true;
         }
         else if(this.FOBAllIn == true){
             this.allInRate = false;
             this.ExWorksIn = false;
+            this.oceanfreightCheckbox = false;
             this.displayShippingCharge = false;
             this.displayOriginCharge = false;
+            this.displayDestinCharge= true;
         }
         else if(this.ExWorksIn == true){
             this.FOBAllIn = false;
             this.allInRate = false;
+            this.oceanfreightCheckbox = false;
             this.displayShippingCharge = false;
             this.displayOriginCharge = false;
+            this.displayDestinCharge= true;
+        }else if(this.oceanfreightCheckbox == true){
+            this.FOBAllIn = false;
+            this.allInRate = false;
+            this.displayShippingCharge = true;
+            this.displayOriginCharge = false;
+            this.displayDestinCharge= false;
         }
-        else if(this.allInRate == false &&  this.FOBAllIn == false && this.ExWorksIn == false){
+        else if(this.allInRate == false &&  this.FOBAllIn == false && this.ExWorksIn == false && this.oceanfreightCheckbox == false){
             this.displayShippingCharge = true;
             this.displayOriginCharge = true;
+            this.displayDestinCharge= true;
         }
         this.rmsDetail.allInRate = this.allInRate;
         this.rmsDetail.FOBAllIn = this.FOBAllIn;
         this.rmsDetail.ExWorksIn = this.ExWorksIn;
+        this.rmsDetail.oceanfreightCheckbox = this.oceanfreightCheckbox;
         //console.log('rms  '+JSON.stringify(this.rmsDetail,null,2))
     }
     handleRemarksChange(e){
@@ -764,5 +792,11 @@ export default class
     handlevGMChange(e){
         this.incoCharges.vGM = parseInt(e.target.value);
         this.updaTeIncoChargeTotal();
+    }
+    handleCustomerSelection(e){
+        this.rmsDetail.customerName = e.detail.Id;
+    }
+    handleCustomerRemoved(e){
+        this.rmsDetail.customerName = '';
     }
 }
