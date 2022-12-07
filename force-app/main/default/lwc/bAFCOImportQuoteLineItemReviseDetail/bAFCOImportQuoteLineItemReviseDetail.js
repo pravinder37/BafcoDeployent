@@ -13,6 +13,8 @@ export default class BAFCOImportQuoteLineItemReviseDetail extends LightningEleme
     @api dangerousGoods;
     @api remarks;
     @api routeId;
+    @api pickupPlaceName = '';
+    @api dischargePlaceName = '';
     @track quoteLineItemList = [];
     @track quoteLineItemMap = [];
     @api activeQuoteId = '';

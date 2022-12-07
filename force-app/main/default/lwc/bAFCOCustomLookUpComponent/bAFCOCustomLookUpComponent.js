@@ -10,11 +10,12 @@ export default class BAFCOCustomLookUpComponent extends LightningElement {
     @track records;
     @track isValueSelected;
     @track blurTimeout;
+    @api cameFromDisplayMeeting = false
     searchTerm;
     //css
     @track boxClass = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-has-focus';
     @track inputClass = '';
-    @wire(lookUp, {searchTerm : '$searchTerm', myObject : '$objName', filter : '$filter'})
+    @wire(lookUp, {searchTerm : '$searchTerm', myObject : '$objName', filter : '$filter',cameFromDisplayMeeting : '$cameFromDisplayMeeting'})
     wiredRecords({ error, data }) {
         if (data) {
             this.error = undefined;

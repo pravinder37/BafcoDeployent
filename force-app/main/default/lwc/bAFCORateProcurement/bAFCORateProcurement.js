@@ -3,7 +3,7 @@ import createRateProcument from '@salesforce/apex/BAFCOLRoutingDetailsController
 import getRouteEquipType from '@salesforce/apex/BAFCOLRoutingDetailsController.getRouteEquipType';
 export default class BAFCORateProcurement extends LightningElement {
     disableWhatsApp = false;
-    disableFollowUp = false;
+    disableFollowUp = true;
     @api portLoading = '';
     @api commodity ='';
     //@api shippingLine = '';
@@ -21,9 +21,11 @@ export default class BAFCORateProcurement extends LightningElement {
     }
   handleprocurementShippingLineChange(e){
       this.procurementShippingLine = e.detail.Id;
+      this.disableFollowUp = false;
   }
   handleShippRemoved(e){
     this.procurementShippingLine = '';
+    this.disableFollowUp = true;
   }
     handleCopyClicked(){
        this.getRouteEquipType();

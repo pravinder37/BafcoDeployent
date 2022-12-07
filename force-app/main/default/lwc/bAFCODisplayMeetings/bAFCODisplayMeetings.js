@@ -99,6 +99,10 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
     }
     handleCustomerChoosed(event){
         this.objectChoosed = event.target.value;
+        if(this.whatId) {
+            let defaultLoadingDestinationField = this.template.querySelector('c-b-a-f-c-o-custom-look-up-component')
+            defaultLoadingDestinationField.handleRemovePill();
+         }
         if(this.objectChoosed == 'Lead') {
             this.objectApiName = 'Lead'
             this.placeholder ='Search Lead'

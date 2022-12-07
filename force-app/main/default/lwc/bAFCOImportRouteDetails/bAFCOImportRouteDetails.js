@@ -30,6 +30,8 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
     @api cameReviseCompt=false;
     @api sameRoute ;
     @api businessType = '';
+    @api pickupPlaceName = '';
+    @api dischargePlaceName = '';
 
     @track addAgentModel = false;
     @track agentTabSelected = '';

@@ -28,6 +28,14 @@
             <p class="slds-m-top_small leadLabel">Commodity</p>
             <span class=leadDetails>{commodity}</span>
         </lightning-layout-item>
+        <lightning-layout-item size="2" class="slds-col slds-m-vertical_medium" if:true={pickupPlaceName}>
+            <p class="slds-m-top_small leadLabel">Place of Pickup</p>
+            <span class=leadDetails>{pickupPlaceName}</span>
+        </lightning-layout-item>
+        <lightning-layout-item size="2" class="slds-col slds-m-vertical_medium" if:true={dischargePlaceName}>
+            <p class="slds-m-top_small leadLabel">Place of Discharge</p>
+            <span class=leadDetails>{dischargePlaceName}</span>
+        </lightning-layout-item>
         <lightning-layout-item size="2" class="slds-col slds-m-vertical_medium">
             <p class="slds-m-top_small leadLabel">Remarks</p>
             <span class=leadDetails>{remarks}</span>

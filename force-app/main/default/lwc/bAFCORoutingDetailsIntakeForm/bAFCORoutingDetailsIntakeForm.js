@@ -30,6 +30,8 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
     @api cameReviseCompt=false;
     @api sameRoute ;
     @api businessType = '';
+    @api pickupPlaceName = '';
+    @api dischargePlaceName = '';
 
 
     @track routingList=[];
@@ -150,6 +152,8 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
     @track showProcument = false;
     @track destinationChargeList={};
     connectedCallback(){
+        console.log('@api pickupPlace ='+this.pickupPlace);
+        console.log('@api dischargePlace ='+this.dischargePlace);
         this.margin = 0;
         if(this.routeId){
             this.getRMSDetails();

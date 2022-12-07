@@ -48,6 +48,7 @@ export default class BAFCORMSIntakeForm extends LightningElement {
     @track displayAgentField = false;
     @track equipmentTypeOption =[];
     @track equipmentType = '';
+    @track oceanfreightCheckbox = false;
 
 
     @wire(getPicklistValues, {
@@ -156,29 +157,6 @@ export default class BAFCORMSIntakeForm extends LightningElement {
             'lashingCharges':0        
         }
         this.incoCharges = tempList2;
-        let rmsDetail = {
-            'rateType':'',
-            'validity':'',
-            'seaFreight':null,
-            'loadingPortId':'',
-            'loadingDestinationId':'',
-            'commodityName':'',
-            'shippingLineId':'',
-            'equipmentId':'',
-            'agentName':'',
-            'businessType':'',
-            'loadingPortName':'',
-            'loadingDestinationName':'',
-            'allInRate':false,
-            'FOBAllIn':false,
-            'ExWorksIn':false,
-            'FreeTime':null,
-            'FreeTimePOD':null,
-            'remarks':'',
-            'currencyCode':'',
-            'incoTermId':null
-        }
-        this.rmsDetail = rmsDetail;
         let templist3 = {
             'bayanCharges':0,
             'customClearance':0,
@@ -193,8 +171,6 @@ export default class BAFCORMSIntakeForm extends LightningElement {
         }
         this.destinCharges = templist3;
         this.todaysDate = new Date().toISOString();
-        this.validity = this.formatDate(this.todaysDate,0)
-        this.rmsDetail.validity = this.validity;
         
     }
     getDefualtValueForRMS(){
@@ -237,6 +213,36 @@ export default class BAFCORMSIntakeForm extends LightningElement {
                     })
                     this.equipmentTypeOption = templist
                 }
+                let rmsDetail = {
+                    'rateType':'',
+                    'validity':'',
+                    'seaFreight':null,
+                    'loadingPortId':'',
+                    'loadingDestinationId':'',
+                    'commodityName':'',
+                    'shippingLineId':'',
+                    'equipmentId':'',
+                    'agentName':'',
+                    'businessType':'',
+                    'loadingPortName':'',
+                    'loadingDestinationName':'',
+                    'allInRate':false,
+                    'FOBAllIn':false,
+                    'ExWorksIn':false,
+                    'FreeTime':null,
+                    'FreeTimePOD':null,
+                    'remarks':'',
+                    'currencyCode':'',
+                    'customerName':'',
+                    'incoTermId':null,
+                    'oceanfreightCheckbox':false
+                }
+                this.rmsDetail = rmsDetail;
+                this.validity = this.formatDate(this.todaysDate,0)
+                this.rmsDetail.validity = this.validity;
+                let index = this.equipmentTypeOption.findIndex((x) => x.label =='40HC')
+                this.rmsDetail.equipmentId = this.equipmentTypeOption[index].value
+                this.equipmentType = this.equipmentTypeOption[index].value
                 this.isLoading = false
             }
         })
@@ -533,18 +539,29 @@ export default class BAFCORMSIntakeForm extends LightningElement {
     handleAllInRateChange(e){
         this.FOBAllIn = false;
         this.ExWorksIn = false;
+        this.oceanfreightCheckbox = false
         this.allInRate = e.target.checked;
         this.updateRMSCheckBox();
     }
     handleFOBAllInChange(e){
         this.allInRate = false;
         this.ExWorksIn = false;
+        this.oceanfreightCheckbox = false
         this.FOBAllIn = e.target.checked;
+        this.updateRMSCheckBox();
+    }
+    handleoceanfreightCheckboxChange(e){
+        this.oceanfreightCheckbox = e.target.checked;
+        this.allInRate = false;
+        this.ExWorksIn = false;
+        this.FOBAllIn = false;
+        console.log('this.oceanfreightCheckbox '+this.oceanfreightCheckbox)
         this.updateRMSCheckBox();
     }
     handleExWorksChange(e){
         this.FOBAllIn = false;
         this.allInRate = false;
+        this.oceanfreightCheckbox = false
         this.ExWorksIn = e.target.checked;
         this.updateRMSCheckBox();
     }
@@ -552,28 +569,38 @@ export default class BAFCORMSIntakeForm extends LightningElement {
         if(this.allInRate == true){
             this.FOBAllIn = false;
             this.ExWorksIn = false;
+            this.oceanfreightCheckbox= false
             this.displayOriginCharge = false;
             this.displayShippingCharge = false;
         }
         else if(this.FOBAllIn == true){
             this.allInRate = false;
             this.ExWorksIn = false;
+            this.oceanfreightCheckbox= false
             this.displayShippingCharge = false;
             this.displayOriginCharge = false;
         }
         else if(this.ExWorksIn == true){
             this.FOBAllIn = false;
             this.allInRate = false;
+            this.oceanfreightCheckbox= false
             this.displayShippingCharge = false;
             this.displayOriginCharge = false;
         }
-        else if(this.allInRate == false &&  this.FOBAllIn == false && this.ExWorksIn == false){
+        else if(this.oceanfreightCheckbox == true){
+            this.FOBAllIn = false;
+            this.allInRate = false;
+            this.displayShippingCharge = true;
+            this.displayOriginCharge = false;
+        }
+        else if(this.allInRate == false &&  this.FOBAllIn == false && this.ExWorksIn == false && this.oceanfreightCheckbox == false){
             this.displayShippingCharge = true;
             this.displayOriginCharge = true;
         }
         this.rmsDetail.allInRate = this.allInRate;
         this.rmsDetail.FOBAllIn = this.FOBAllIn;
         this.rmsDetail.ExWorksIn = this.ExWorksIn;
+        this.rmsDetail.oceanfreightCheckbox = this.oceanfreightCheckbox;
         console.log('rms  '+JSON.stringify(this.rmsDetail,null,2))
     }
     handleRemarksChange(e){
@@ -788,5 +815,11 @@ export default class BAFCORMSIntakeForm extends LightningElement {
     }
     handleIncoRemoved(e){
         this.rmsDetail.incoTermId = null;
+    }
+    handleCustomerSelection(e){
+        this.rmsDetail.customerName = e.detail.Id;
+    }
+    handleCustomerRemoved(e){
+        this.rmsDetail.customerName = '';
     }
 }
