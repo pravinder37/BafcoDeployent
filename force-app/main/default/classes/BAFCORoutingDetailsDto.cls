@@ -25,6 +25,10 @@ public class BAFCORoutingDetailsDto {
     @AuraEnabled
     public String placeOfDischarge { get; set; }
     @AuraEnabled
+    public String placeOfPickupName { get; set; }
+    @AuraEnabled
+    public String placeOfDischargeName { get; set; }
+    @AuraEnabled
     public String dgClass { get; set; }
     @AuraEnabled
     public String portDestination { get; set; }

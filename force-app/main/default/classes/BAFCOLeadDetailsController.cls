@@ -219,9 +219,11 @@ Equipment_Type__r.Name, Sea_Freight__c, Validity__c, Agent__r.Name, Shipping_Lin
             rmsObj.All_in_Rate__c = rmsDetail.allInRate;
             rmsObj.FOB_All_In__c = rmsDetail.FOBAllIn;
             rmsObj.Ex_Works_All_In__c = rmsDetail.ExWorksIn;
+            rmsObj.Customer_Name__c = rmsDetail.customerName != '' ? rmsDetail.customerName : null;
             rmsObj.Free_time__c = rmsDetail.FreeTime != null ? Decimal.valueOf(rmsDetail.FreeTime) : 0;
             rmsObj.Free_time_POD__c = rmsDetail.FreeTimePOD != null ? Decimal.valueOf(rmsDetail.FreeTimePOD) : 0;
             rmsObj.Remarks__c = rmsDetail.remarks;
+            
             if(rmsDetail.businessType == 'Export') rmsObj.RecordTypeId = ExportRecordTypeId;
             else if(rmsDetail.businessType == 'Import')rmsObj.RecordTypeId = ImportRecordTypeId;
             insert rmsObj;
@@ -288,7 +290,7 @@ Equipment_Type__r.Name, Sea_Freight__c, Validity__c, Agent__r.Name, Shipping_Lin
             iObj.CurrencyIsoCode = incoCharges.currencyCode;
             iObj.Offset_Value__c = incoCharges.offSet;
             
-            if(rmsObj.All_in_Rate__c == false && rmsObj.Ex_Works_All_In__c == false && rmsObj.FOB_All_In__c == false)  Insert iObj;
+            if(rmsObj.All_in_Rate__c == false && rmsObj.Ex_Works_All_In__c == false && rmsObj.FOB_All_In__c == false )  Insert iObj;
             Destination_Charges__c desti = new Destination_Charges__c();
             if(!destinTotalChanged){
                 desti.Bayan_Charges__c = destinCharges.bayanCharges;

@@ -64,7 +64,7 @@ public class BAFCOQuotationReviseController {
         }
         List<BAFCORoutingDetailsDto> routingDetailsList = new List<BAFCORoutingDetailsDto>();
         Integer index = 1;
-        for(Route__c enqObj : [SELECT Opportunity_Enquiry__c ,Regular_Routing_Lookup__r.name,Port_of_loading__c,Place_of_Discharge__c,Place_of_Pickup__c,Id, Regular_Routing__c,INCO_Term__r.name, Kind_Of_Shipment__c, Service_Type__c, Port_of_loading__r.Name, 
+        for(Route__c enqObj : [SELECT Place_of_Discharge__r.Name,Place_of_Pickup__r.Name,Opportunity_Enquiry__c ,Regular_Routing_Lookup__r.name,Port_of_loading__c,Place_of_Discharge__c,Place_of_Pickup__c,Id, Regular_Routing__c,INCO_Term__r.name, Kind_Of_Shipment__c, Service_Type__c, Port_of_loading__r.Name, 
                                Port_of_Destination__r.Name, Shipping_Line__r.name, Commodity__r.Name, Cargo_Weight__c, Remarks__c, Name  
                                FROM Route__c WHERE  Id in : mapRouteIdToQuotationItem.keySet()]){
                                    BAFCORoutingDetailsDto enqDtoObj = new BAFCORoutingDetailsDto();
@@ -80,6 +80,9 @@ public class BAFCOQuotationReviseController {
                                    enqDtoObj.routeId = enqObj.Id;
                                    enqDtoObj.shippingLine = enqObj.Shipping_Line__r.name != null ? enqObj.Shipping_Line__r.name : '-';
                                    enqDtoObj.enquiryId = enqObj.Opportunity_Enquiry__c;
+                                   enqDtoObj.placeOfPickupName = enqObj.Place_of_Pickup__c != null ? enqObj.Place_of_Pickup__r.Name : null;
+                                   enqDtoObj.placeOfDischargeName = enqObj.Place_of_Discharge__c != null ? enqObj.Place_of_Discharge__r.Name : null;
+                                   
                                    index++;
                                    routingDetailsList.add(enqDtoObj);
                                }

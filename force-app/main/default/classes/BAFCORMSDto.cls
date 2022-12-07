@@ -29,6 +29,8 @@ public class BAFCORMSDto {
     @AuraEnabled
     public String businessType { get; set; }
     @AuraEnabled
+    public String customerName { get; set; }
+    @AuraEnabled
     public String quotationId { get; set; }
     @AuraEnabled
     public String quotationItemId { get; set; }
@@ -50,6 +52,8 @@ public class BAFCORMSDto {
     public Boolean FOBAllIn { get; set; }
     @AuraEnabled
     public Boolean ExWorksIn { get; set; }
+    @AuraEnabled
+    public Boolean oceanfreightCheckbox { get; set; }
     @AuraEnabled
     public String FreeTime { get; set; }
     @AuraEnabled

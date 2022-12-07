@@ -21,7 +21,7 @@ public class BAFCOLRoutingDetailsController {
     public static List<BAFCORoutingDetailsDto> getEnqueryDetails(String enquiryID) {
         List<BAFCORoutingDetailsDto> routingDetailsList = new List<BAFCORoutingDetailsDto>();
         Integer index = 1;
-        for(Route__c enqObj : [SELECT Opportunity_Enquiry__r.AccountId,Regular_Routing_Lookup__r.name,Port_of_loading__c,Place_of_Discharge__c,Place_of_Pickup__c,Id,/*Enquiry__r.Lead__c,*/ Regular_Routing__c,INCO_Term__r.name, Kind_Of_Shipment__c, Service_Type__c, Port_of_loading__r.Name, 
+        for(Route__c enqObj : [SELECT Place_of_Discharge__r.Name,Place_of_Pickup__r.Name,Opportunity_Enquiry__r.AccountId,Regular_Routing_Lookup__r.name,Port_of_loading__c,Place_of_Discharge__c,Place_of_Pickup__c,Id,/*Enquiry__r.Lead__c,*/ Regular_Routing__c,INCO_Term__r.name, Kind_Of_Shipment__c, Service_Type__c, Port_of_loading__r.Name, 
                                Port_of_Destination__r.Name, Shipping_Line__r.name, Commodity__r.Name, Cargo_Weight__c, Remarks__c, 
                                Name,Opportunity_Enquiry__r.Business_Type__c,Opportunity_Enquiry__r.Account.Average_Credit_Days__c,Opportunity_Enquiry__r.Account.Best_Margin__c,Opportunity_Enquiry__r.Account.Average_Margin__c /*Enquiry__r.Account__r.Average_Margin__c,Enquiry__r.Account__r.Best_Margin__c,Enquiry__r.Account__r.Average_Credit_Days__c,Enquiry__r.Business_Type__c*/  
                                FROM Route__c WHERE Opportunity_Enquiry__c=:enquiryID]){
@@ -46,6 +46,8 @@ public class BAFCOLRoutingDetailsController {
                                    enqDtoObj.accountAvgCreditDays = enqObj.Opportunity_Enquiry__r.Account.Average_Credit_Days__c != null ?enqObj.Opportunity_Enquiry__r.Account.Average_Credit_Days__c : 0 ;
                                    enqDtoObj.placeOfPickup = enqObj.Place_of_Pickup__c;
                                    enqDtoObj.placeOfDischarge = enqObj.Place_of_Discharge__c;
+                                   enqDtoObj.placeOfPickupName = enqObj.Place_of_Pickup__c != null ? enqObj.Place_of_Pickup__r.Name : null;
+                                   enqDtoObj.placeOfDischargeName = enqObj.Place_of_Discharge__c != null ? enqObj.Place_of_Discharge__r.Name : null;
                                    enqDtoObj.businessType = enqObj.Opportunity_Enquiry__r.Business_Type__c !=  null ? enqObj.Opportunity_Enquiry__r.Business_Type__c : '-';
                                    index++;
                                    routingDetailsList.add(enqDtoObj);
@@ -141,17 +143,27 @@ public class BAFCOLRoutingDetailsController {
         return shipLineToEquipMap;
     }
     @AuraEnabled(cacheable=true)
-    public static List<sObject> search(String searchTerm, string myObject, String filter) {
+    public static List<sObject> search(String searchTerm, string myObject, String filter, Boolean cameFromDisplayMeeting) {
         String myQuery = null;
         if(filter != null && filter != ''){
-            myQuery = 'Select Id, Name from '+myObject+' Where Name Like  \'%' + searchTerm + '%\' AND '+filter+' LIMIT  5';
+            if(cameFromDisplayMeeting == true && myObject == 'Lead'){
+                myQuery = 'Select Id, Name from '+myObject+' Where Search__c Like  \'%' + searchTerm + '%\' AND '+filter+' LIMIT  5';
+            }
+            else{
+                myQuery = 'Select Id, Name from '+myObject+' Where Name Like  \'%' + searchTerm + '%\' AND '+filter+' LIMIT  5';
+            }
         }
         else {
             if(searchTerm == null || searchTerm == ''){
                 myQuery = 'Select Id, Name from '+myObject+' Where LastViewedDate != NULL ORDER BY LastViewedDate DESC LIMIT  5';
             }
             else {
-                myQuery = 'Select Id, Name from '+myObject+' Where Name Like  \'%' + searchTerm + '%\' LIMIT  5';
+                if(cameFromDisplayMeeting == true && myObject == 'Lead'){
+                    myQuery = 'Select Id, Name from '+myObject+' Where Search__c Like  \'%' + searchTerm + '%\' LIMIT  5';
+                }
+                else{
+                    myQuery = 'Select Id, Name from '+myObject+' Where Name Like  \'%' + searchTerm + '%\' LIMIT  5';
+                }
             }
         }
         system.debug('myQuery '+myQuery);
@@ -342,27 +354,27 @@ public class BAFCOLRoutingDetailsController {
                 quoteItemObj.Name = quoteList[0].Quotation__r.name + ' - '+quoteList.size() + 1;
             }
             quoteObj.id = quotationId;
-              opportunity enqObj  = [SELECT Id,Business_Type__c,No_of_Quotes__c,(Select id,name,Name__c from Quotations__r order by createdDate) FROM opportunity where id =: enquiryId];
-             if(enqObj.Business_Type__c == 'Export') quoteObj.recordtypeId = QUOTE_EXPORT_RECORDTYPE_Id;
-             else if(enqObj.Business_Type__c == 'Import') quoteObj.recordtypeId = QUOTE_IMPORT_RECORDTYPE_Id;
+            opportunity enqObj  = [SELECT Id,Business_Type__c,No_of_Quotes__c,(Select id,name,Name__c from Quotations__r order by createdDate) FROM opportunity where id =: enquiryId];
+            if(enqObj.Business_Type__c == 'Export') quoteObj.recordtypeId = QUOTE_EXPORT_RECORDTYPE_Id;
+            else if(enqObj.Business_Type__c == 'Import') quoteObj.recordtypeId = QUOTE_IMPORT_RECORDTYPE_Id;
             
             integer year =  Date.Today().Year();
             string s1=string.valueof(year).right(2);
             Integer Year1= Integer.valueof(s1);
-             Decimal quoteNumber = enqObj.No_of_Quotes__c + 1;
-              List<Quotation__c> quoteList2 = enqObj.Quotations__r; 
-              if(quoteList2.size() > 0){
-                  if(cameReviseCompt == true){
-                  String fullName = quoteList2[0].Name__c;
-                  String lastName = fullName.Substring(fullName.lastIndexOf('/')+1,fullName.length());
-                   quoteObj.Name__c = 'Quote/'+Year1+'/'+lastName+'-'+quoteList.size();
-               }
-               else{
-                 Integer  quoteSize = quoteList2.size();
-                                quoteObj.Name__c = 'Quote/'+Year1+'/'+quoteSize;
-               }
-             }
-             quoteObj.remarks__c = quoteRemarks;
+            Decimal quoteNumber = enqObj.No_of_Quotes__c + 1;
+            List<Quotation__c> quoteList2 = enqObj.Quotations__r; 
+            if(quoteList2.size() > 0){
+                if(cameReviseCompt == true){
+                    String fullName = quoteList2[0].Name__c;
+                    String lastName = fullName.Substring(fullName.lastIndexOf('/')+1,fullName.length());
+                    quoteObj.Name__c = 'Quote/'+Year1+'/'+lastName+'-'+quoteList.size();
+                }
+                else{
+                    Integer  quoteSize = quoteList2.size();
+                    quoteObj.Name__c = 'Quote/'+Year1+'/'+quoteSize;
+                }
+            }
+            quoteObj.remarks__c = quoteRemarks;
             update quoteObj;
             system.debug('quoteObj '+quoteObj);
         }
