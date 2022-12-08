@@ -565,7 +565,8 @@ public class BAFCOLRoutingDetailsController {
         RMS__c rmsobj = new RMS__c();
         rmsobj.Port_Of_Loading__c = routeObj.Port_of_loading__c;
         rmsObj.Port_Of_Discharge__c = routeObj.Port_of_Destination__c;
-        rmsObj.Commodity__c = routeObj.Commodity__c;
+        //rmsObj.Commodity__c = routeObj.Commodity__c;
+        rmsObj.Commodity__c = rmsDetail.commodity != '' ? rmsDetail.commodity : null;
         rmsObj.Shipping_Line__c = shippingLineId;
         rmsObj.Rate_Type__c = rmsDetail.rateType;
         rmsObj.Validity__c = Date.valueOf(rmsDetail.validity);
@@ -580,7 +581,7 @@ public class BAFCOLRoutingDetailsController {
         rmsObj.Free_time_POD__c = rmsDetail.FreeTimePOD != null ? Decimal.valueOf(rmsDetail.FreeTimePOD) : 0;
         rmsObj.Remarks__c = rmsDetail.remarks;
         rmsObj.Agent__c = rmsDetail.agentName != '' ? rmsDetail.agentName : null; 
-        rmsObj.INCO_Term__c = rmsDetail.incoTermId != null ? rmsDetail.incoTermId : null;
+        rmsObj.INCO_Term__c = rmsDetail.incoTermId != '' ? rmsDetail.incoTermId : null;
         //rmsObj.Customer_Name__c = rmsDetail.customerName != null ? rmsDetail.customerName : null;
         if(rmsObj.Business_Type__c == 'Export') rmsObj.RecordTypeId = ExportRecordTypeId;
         else if(rmsObj.Business_Type__c == 'Import')rmsObj.RecordTypeId = ImportRecordTypeId;

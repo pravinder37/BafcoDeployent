@@ -7,11 +7,12 @@ import getLoadingCharges from '@salesforce/apex/BAFCOLRoutingDetailsController.g
 import getExchangeRate from '@salesforce/apex/BAFCOLRoutingDetailsController.getExchangeRate';
 import DIRECTION_FIELD from '@salesforce/schema/Loading_Charge__c.Direction__c';
 import BUSINESS_TYPE_FIELD from '@salesforce/schema/RMS__c.Business_Type__c';
-export default class 
+import getDefualtValueForRMS from '@salesforce/apex/BAFCOLRoutingDetailsController.getDefualtValueForRMS';
+export default class BAFCOAddRMSModel
  extends LightningElement {
     @api portLoading ='';
     @api portDestination ='';
-    @api commodity = '';
+    @track commodity = '';
     @api shippingLine ='';
     @api equipmentType = '';
     @api routeId ='';
@@ -20,7 +21,7 @@ export default class
     @api dischargePlace = '';
     @api portLoadingId='';
     @api incoTerm = '';
-    @api incoTermId = '';
+    @track incoTermId = '';
     @api agentObject;
     @api cameFromImport = false;
 
@@ -49,6 +50,7 @@ export default class
     @track incoOffSet = '';
     @track destinExchangeRate = '';
     @track destinOffSet = '';
+    @track isLoading = false;
 
     bayan = 0;                
     destinationCustomsClearance = 0; 
@@ -115,6 +117,7 @@ export default class
         console.log('*route '+JSON.stringify(this.routeId))
         this.getRouteEquipType();
         this.getExchangeRate();
+        this.getDefualtValueForRMS();
         let templist = {
             'BAF':0,
             'BunkerSurcharge':0,
@@ -186,28 +189,6 @@ export default class
         }
         this.destinCharges = templist3;
 
-        let rmsDetail = {
-            'rateType':'',
-            'validity':'',
-            'businessType':this.businessType,
-            'seaFreight':0,
-            'allInRate':false,
-            'FOBAllIn':false,
-            'ExWorksIn':false,
-            'oceanfreightCheckbox':false,
-            'remarks':'',
-            'agentName':'',
-            'incoTermId':this.incoTermId,
-            'customerName':''
-        }
-        this.rmsDetail = rmsDetail;
-        this.todaysDate = new Date().toISOString();
-        this.validity = this.formatDate(this.todaysDate,0)
-        this.rmsDetail.validity = this.validity;
-        if(this.cameFromImport == 'true'){
-            this.agentName = this.agentObject.Name;
-            this.rmsDetail.agentName = this.agentObject.Id;
-        }
     }
 
     @wire(getPicklistValues, {
@@ -798,5 +779,64 @@ export default class
     }
     handleCustomerRemoved(e){
         this.rmsDetail.customerName = '';
+    }
+    handleCommoditySelection(e){
+        this.rmsDetail.commodity =e.detail.Id
+    }
+    handleCommodityRemoved(e){
+        this.rmsDetail.commodity = ''
+    }
+    handleIncoTermSelection(e){
+        this.rmsDetail.incoTermId =e.detail.Id
+    }
+    handleIncoRemoved(e){
+        this.rmsDetail.incoTermId = ''
+    }
+    getDefualtValueForRMS(){
+        this.isLoading =true;
+        let rmsDetail = {
+            'rateType':'',
+            'validity':'',
+            'businessType':this.businessType,
+            'seaFreight':0,
+            'allInRate':false,
+            'FOBAllIn':false,
+            'ExWorksIn':false,
+            'oceanfreightCheckbox':false,
+            'remarks':'',
+            'agentName':'',
+            'incoTermId':'',
+            'customerName':'',
+            'commodity':''
+        }
+        this.rmsDetail = rmsDetail;
+        this.todaysDate = new Date().toISOString();
+        this.validity = this.formatDate(this.todaysDate,0)
+        this.rmsDetail.validity = this.validity;
+        if(this.cameFromImport == 'true'){
+            this.agentName = this.agentObject.Name;
+            this.rmsDetail.agentName = this.agentObject.Id;
+        }
+        getDefualtValueForRMS()
+        .then(result=>{
+            console.log('getDefualtValueForRMS result',JSON.stringify(result))
+            if(result != null){
+                if(result.commodityId != undefined){
+                    let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[0];
+                    let Obj={Id:result.commodityId,Name:result.commodityName}
+                    field.handleDefaultSelected(Obj);
+                }
+                if(result.incoTermId != undefined){
+                    let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[1];
+                    let Obj={Id:result.incoTermId,Name:result.incoTermName}
+                    field.handleDefaultSelected(Obj);
+                }
+            }
+            this.isLoading = false
+        })
+        .catch(error=>{
+            this.isLoading = false
+            console.log('getDefualtValueForRMS error',JSON.stringify(error))
+        })
     }
 }

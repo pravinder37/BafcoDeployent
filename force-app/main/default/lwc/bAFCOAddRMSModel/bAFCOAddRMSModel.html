@@ -14,6 +14,7 @@
             </header>
             <!-- Modal/Popup Box LWC body starts here -->
             <div style="overflow-y: scroll !important;" class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                <lightning-spinner variant="brand" size="large" if:true={isLoading}></lightning-spinner>
                 <lightning-accordion active-section-name="rmsDetail">
                     <lightning-accordion-section name="rmsDetail" label="Sea Freight Detail">
                         <lightning-layout multiple-rows >
@@ -29,24 +30,24 @@
                                     value={portDestination}
                                     disabled></lightning-input>
                             </lightning-layout-item>
-                            <lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;">
+                            <!--lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;">
                                 <lightning-input name="commodity"
                                     label="Commodity"
                                     value={commodity}
                                     disabled></lightning-input>
-                            </lightning-layout-item>
+                            </lightning-layout-item-->
                             <lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;">
                                 <lightning-input name="shippingLine"
                                     label="Shipping Line"
                                     value={shippingLine}
                                     disabled></lightning-input>
                             </lightning-layout-item>
-                            <lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;">
+                            <!--lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;">
                                 <lightning-input name="incoTerm"
                                     label="Inco Term"
                                     value={incoTerm}
                                     disabled></lightning-input>
-                            </lightning-layout-item>
+                            </lightning-layout-item-->
                             <lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;" if:false={emptyEquipType}>
                                 <lightning-input name="equipmentType"
                                     label="Equipment Type"
@@ -79,6 +80,28 @@
                                         value={agentName} 
                                         style="padding: 0px 20px 0px 20px;"
                                         disabled></lightning-input>
+                            </lightning-layout-item>
+                            <lightning-layout-item size="4">
+                                <label class="slds-form-element__label">
+                                    <p style="padding-left: 22px">Commodity</p>
+                                </label>
+                                <c-b-a-f-c-o-custom-look-up-component
+                                                obj-name="Commodity__c"
+                                                search-placeholder="Search commodity" 
+                                                icon-name="standard:account"
+                                                onlookupselected={handleCommoditySelection}
+                                                onlookupremoved={handleCommodityRemoved}></c-b-a-f-c-o-custom-look-up-component>
+                            </lightning-layout-item>
+                            <lightning-layout-item size="4">
+                                <label class="slds-form-element__label">
+                                    <p style="padding-left: 22px">Inco Term</p>
+                                </label>
+                                <c-b-a-f-c-o-custom-look-up-component
+                                                obj-name="INCO_Term__c"
+                                                search-placeholder="Search inco term" 
+                                                icon-name="standard:account"
+                                                onlookupselected={handleIncoTermSelection}
+                                                onlookupremoved={handleIncoRemoved}></c-b-a-f-c-o-custom-look-up-component>
                             </lightning-layout-item>
                             <lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;">
                                 <lightning-combobox label="Rate Type" 

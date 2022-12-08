@@ -60,4 +60,6 @@ public class BAFCORMSDto {
     public String FreeTimePOD { get; set; }
     @AuraEnabled
     public String remarks { get; set; }
+    @AuraEnabled
+    public String commodity { get; set; }
 }
