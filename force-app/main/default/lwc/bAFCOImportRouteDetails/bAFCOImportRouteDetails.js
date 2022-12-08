@@ -396,7 +396,9 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                         'savedClicked':false,
                         'currencyCode':'',
                         'offSet':0,
-                        'total':0
+                        'total':0,
+                        'pickupPlace' : this.pickupPlace,
+                        'dischargePlace' : this.dischargePlace
                     })
                     elem.value = tempList;
                 }

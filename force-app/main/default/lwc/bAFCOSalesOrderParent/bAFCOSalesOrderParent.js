@@ -269,7 +269,9 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                             dOcharges : shipValue.dOcharges,
                             lOLOCharges : shipValue.lOLOCharges,
                             carrierSecurityFees : shipValue.carrierSecurityFees,
-                            recordtypeId : shipValue.recordtypeId
+                            recordtypeId : shipValue.recordtypeId,
+                            pickupPlace:shipValue.pickupPlace,
+                            dischargePlace:shipValue.dischargePlace
 
                         })
                         elem.equipment.push({
@@ -373,7 +375,9 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 dOcharges : shipValue.dOcharges,
                                 lOLOCharges : shipValue.lOLOCharges,
                                 carrierSecurityFees : shipValue.carrierSecurityFees,
-                                recordtypeId : shipValue.recordtypeId
+                                recordtypeId : shipValue.recordtypeId,
+                                pickupPlace:shipValue.pickupPlace,
+                                dischargePlace:shipValue.dischargePlace
                             })
                             elem.equipment.push({
                                 key:equip,
@@ -475,6 +479,8 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 tempList[shipIndex].lOLOCharges = shipValue.lOLOCharges
                                 tempList[shipIndex].carrierSecurityFees = shipValue.carrierSecurityFees
                                 tempList[shipIndex].recordtypeId = shipValue.recordtypeId
+                                tempList[shipIndex].pickupPlace=shipValue.pickupPlace
+                                tempList[shipIndex].dischargePlace=shipValue.dischargePlace
                             }
                             else{
                                 tempList.push({
@@ -568,7 +574,9 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                     dOcharges : shipValue.dOcharges,
                                     lOLOCharges : shipValue.lOLOCharges,
                                     carrierSecurityFees : shipValue.carrierSecurityFees,
-                                    recordtypeId : shipValue.recordtypeId
+                                    recordtypeId : shipValue.recordtypeId,
+                                    pickupPlace:shipValue.pickupPlace,
+                                    dischargePlace:shipValue.dischargePlace
                                 })
                             }
                             elem.equipment[index].value = tempList

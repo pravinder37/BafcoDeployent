@@ -518,6 +518,8 @@ public class BAFCOLRoutingDetailsController {
             }
         }
         quoteItemObj.Total__c = dto.total;
+        quoteItemObj.Place_of_Pickup__c = dto.pickupPlace != '' ? dto.pickupPlace : null;
+        quoteItemObj.Place_of_Discharge__c = dto.dischargePlace != '' ? dto.dischargePlace : null;
         quoteItemObj.Total_Additional__c = additionalChargeTotal;
         quoteItemObj.Sea_Freight__c = dto.seaFreightSellRate;  
         quoteItemObj.Quantity__c = dto.quantity;
@@ -579,6 +581,7 @@ public class BAFCOLRoutingDetailsController {
         rmsObj.Remarks__c = rmsDetail.remarks;
         rmsObj.Agent__c = rmsDetail.agentName != '' ? rmsDetail.agentName : null; 
         rmsObj.INCO_Term__c = rmsDetail.incoTermId != null ? rmsDetail.incoTermId : null;
+        //rmsObj.Customer_Name__c = rmsDetail.customerName != null ? rmsDetail.customerName : null;
         if(rmsObj.Business_Type__c == 'Export') rmsObj.RecordTypeId = ExportRecordTypeId;
         else if(rmsObj.Business_Type__c == 'Import')rmsObj.RecordTypeId = ImportRecordTypeId;
         

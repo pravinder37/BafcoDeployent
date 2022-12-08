@@ -168,6 +168,8 @@ public class BAFCOOrderCreationDto {
         @AuraEnabled public Decimal dOcharges{ get; set; }
         @AuraEnabled public Decimal lOLOCharges{ get; set; }
         @AuraEnabled public Decimal carrierSecurityFees{ get; set; }
+        @AuraEnabled public String pickupPlace { get; set; }
+        @AuraEnabled public String dischargePlace { get; set; }
         
     }
 }

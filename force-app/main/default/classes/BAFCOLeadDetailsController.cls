@@ -62,6 +62,7 @@ public class BAFCOLeadDetailsController {
                 query+='Agent__r.Name, Shipping_Line__r.Name,LastModifiedBy.Name, Name from RMS__c Where Validity__c <= '+endDate;
                 query+=' AND Validity__c >= '+startDate;
                 query+=' AND Port_Of_Loading__r.Name = \''+loadingPort+'\'';
+                query+=' AND Customer_Name__c = null';
             }
             else if(validity != ''){
                 query = 'Select Id,Rate_Type__c, Commodity__r.Name, Business_Type__c,Port_Of_Discharge__r.Name,Port_Of_Loading__r.Name,';
@@ -69,6 +70,7 @@ public class BAFCOLeadDetailsController {
                 query+='Agent__r.Name, Shipping_Line__r.Name,LastModifiedBy.Name, Name from RMS__c Where Validity__c >= '+todaysDate;
                 query+=' AND Validity__c < = '+validity;
                 query+=' AND Port_Of_Loading__r.Name = \''+loadingPort+'\'';
+                query+=' AND Customer_Name__c = null';
             }
         }
         else if(loadingPort == '' && destinationPort != ''){
@@ -78,13 +80,15 @@ public class BAFCOLeadDetailsController {
                 query+='Agent__r.Name, Shipping_Line__r.Name,LastModifiedBy.Name, Name from RMS__c Where Validity__c <= '+endDate;
                 query+=' AND Validity__c >= '+startDate;
                 query+=' AND Port_Of_Discharge__r.Name = \''+destinationPort+'\'';
+                query+=' AND Customer_Name__c = null';
             }
             else if(validity != ''){
                 query = 'Select Id,Rate_Type__c, Commodity__r.Name, Business_Type__c,Port_Of_Discharge__r.Name,Port_Of_Loading__r.Name,';
                 query+='Port_Of_Discharge__c,Port_Of_Loading__c, Equipment_Type__r.Name, Sea_Freight__c, Validity__c,';
                 query+='Agent__r.Name, Shipping_Line__r.Name,LastModifiedBy.Name, Name from RMS__c Where Validity__c >= '+todaysDate;
                 query+=' AND Validity__c < = '+validity;
-                query+=' AND Port_Of_Discharge__r.Name = \''+destinationPort+'\'';                
+                query+=' AND Port_Of_Discharge__r.Name = \''+destinationPort+'\'';     
+                query+=' AND Customer_Name__c = null';
             }
         }
         else if(loadingPort != '' && destinationPort != ''){
@@ -95,6 +99,7 @@ public class BAFCOLeadDetailsController {
                 query+=' AND Validity__c >= '+startDate;
                 query+=' AND Port_Of_Discharge__r.Name = \''+destinationPort+'\'';
                 query+=' AND Port_Of_Loading__r.Name = \''+loadingPort+'\'';
+                query+=' AND Customer_Name__c = null';
             }
             else if(validity != ''){
                 query = 'Select Id,Rate_Type__c, Commodity__r.Name, Business_Type__c,Port_Of_Discharge__r.Name,Port_Of_Loading__r.Name,';
@@ -103,6 +108,7 @@ public class BAFCOLeadDetailsController {
                 query+=' AND Validity__c <= '+validity;
                 query+=' AND Port_Of_Discharge__r.Name = \''+destinationPort+'\'';
                 query+=' AND Port_Of_Loading__r.Name = \''+loadingPort+'\'';
+                query+=' AND Customer_Name__c = null';
             }
         }
         else if(loadingPort == '' && destinationPort == ''){
@@ -111,12 +117,14 @@ public class BAFCOLeadDetailsController {
                 query+='Port_Of_Discharge__c,Port_Of_Loading__c, Equipment_Type__r.Name, Sea_Freight__c, Validity__c,';
                 query+='Agent__r.Name, Shipping_Line__r.Name,LastModifiedBy.Name, Name from RMS__c Where Validity__c <= '+endDate;
                 query+=' AND Validity__c >= '+startDate;
+                query+=' AND Customer_Name__c = null';
             }
             else if(validity != ''){
                 query = 'Select Id,Rate_Type__c, Commodity__r.Name, Business_Type__c,Port_Of_Discharge__r.Name,Port_Of_Loading__r.Name,';
                 query+='Port_Of_Discharge__c,Port_Of_Loading__c, Equipment_Type__r.Name, Sea_Freight__c, Validity__c,';
                 query+='Agent__r.Name, Shipping_Line__r.Name,LastModifiedBy.Name, Name from RMS__c Where Validity__c >= '+todaysDate;
-                query+=' AND Validity__c < = '+validity;               
+                query+=' AND Validity__c < = '+validity;    
+                query+=' AND Customer_Name__c = null';
             }
         }
         system.debug(query);

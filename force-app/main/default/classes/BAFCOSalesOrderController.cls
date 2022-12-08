@@ -57,7 +57,7 @@ public class BAFCOSalesOrderController {
                                       Quotation__r.Leadc__c,Quotation__r.Opportunity__c,Quotation__r.Account__c,Total__c,Agent_Name__c,
                                       Remarks_SL_Charges__c,Remarks_Origin_Charges__c,Remarks_Destination_Charges__c,Remarks_Additional_Charges__c,Total_Additional__c,War_Risk_Surcharge__c,VGM__c,Total_Dest__c,Pickup_Charges__c,Overweight_surcharge__c,Origin_Detention_Demurrage_Charges__c,Lashing_Charges__c,Operational_Recovery_Surcharge__c,Low_Sulphur_Surcharge__c,Inland_haulage__c,Inland_Handling_Fees__c,Inland_Fuel_Surcharge__c,Gate_pass_charges__c,Fuel_Surcharge__c,Fasah_Charges__c,Export_Service_Fees__c,DG_Surcharge__c,Carriage_Congestion_Surcharge__c,BL_Fees__c,Bayan_Charges__c,
                                       Container_Lashing_Charges__c,DO_charges__c,LOLO_Charges__c,Carrier_Security_Fees__c,
-                                      Shipping_Line__c,Equipment_Type__r.Name 
+                                      Shipping_Line__c,Equipment_Type__r.Name,Place_of_Pickup__c,Place_of_Discharge__c   
                                       from Quotation_Item__c 
                                       where Quotation__c =: quoteId 
                                       And Route__c =:routeId]){
@@ -163,6 +163,8 @@ public class BAFCOSalesOrderController {
                                                   dto.dOcharges = item.DO_charges__c != null ? item.DO_charges__c : 0;
                                                   dto.lOLOCharges = item.LOLO_Charges__c != null ? item.LOLO_Charges__c : 0;
                                                   dto.carrierSecurityFees = item.Carrier_Security_Fees__c != null ? item.Carrier_Security_Fees__c : 0;
+                                                  dto.pickupPlace = item.Place_of_Pickup__c;
+                                                  dto.dischargePlace = item.Place_of_Discharge__c;
                                                   system.debug('item '+item);
                                                   if(item.Total__c > 0) equipLineToShipData.get(equipName).add(dto);
                                               }
@@ -285,6 +287,8 @@ public class BAFCOSalesOrderController {
                             orderitem.DO_charges__c = orderDto.dOcharges;
                             orderitem.LOLO_Charges__c = orderDto.lOLOCharges;
                             orderitem.Carrier_Security_Fees__c = orderDto.carrierSecurityFees;
+                            orderitem.Place_of_Pickup__c = orderDto.pickupPlace;
+                            orderitem.Place_of_Discharge__c = orderDto.dischargePlace;
                             system.debug('orderDto '+orderDto);
                             if(orderDto.checkBoxSelected == true) orderItemList.add(orderItem);
                         }
@@ -452,6 +456,7 @@ public class BAFCOSalesOrderController {
         @AuraEnabled public Decimal dOcharges{ get; set; }
         @AuraEnabled public Decimal lOLOCharges{ get; set; }
         @AuraEnabled public Decimal carrierSecurityFees{ get; set; }
-        
+        @AuraEnabled public String pickupPlace { get; set; }
+        @AuraEnabled public String dischargePlace { get; set; }
     }
 }

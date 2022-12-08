@@ -15,6 +15,10 @@ public class BAFCOImportRMSDto {
     @AuraEnabled
     public String currencyCode { get; set; }
     @AuraEnabled
+    public String pickupPlace { get; set; }
+    @AuraEnabled
+    public String dischargePlace { get; set; }
+    @AuraEnabled
     public serviceChargeList serviceChargeList { get; set; }
     @AuraEnabled
     public List<AdditionalCharge> additionalChargeList { get; set; }

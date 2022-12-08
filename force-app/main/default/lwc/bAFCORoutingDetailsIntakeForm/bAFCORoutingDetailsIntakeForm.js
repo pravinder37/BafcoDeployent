@@ -814,6 +814,8 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                         'additionalChargeList':[],
                         'serviceChargeList':{},
                         'savedClicked':false,
+                        'pickupPlace':this.pickupPlace,
+                        'dischargePlace':this.dischargePlace,
                         'total':0
                     })
                     elem.value = tempList;

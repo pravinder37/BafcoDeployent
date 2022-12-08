@@ -340,6 +340,8 @@ quoteItemObj. = dto.value;
         quoteItemObj.Total__c = dto.total;
         quoteItemObj.Total_Additional__c = additionalChargeTotal;
         quoteItemObj.Sea_Freight__c = dto.seaFreightSellRate;
+        quoteItemObj.Place_of_Pickup__c = dto.pickupPlace != '' ? dto.pickupPlace : null;
+        quoteItemObj.Place_of_Discharge__c = dto.dischargePlace != '' ? dto.dischargePlace : null;
         quoteItemObj.Quantity__c = dto.quantity;
         try{
             upsert quoteItemObj;
