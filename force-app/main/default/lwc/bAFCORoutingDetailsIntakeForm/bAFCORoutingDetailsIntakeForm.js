@@ -39,6 +39,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
     @track shippingList=[];
     @track shippingIndex = 1;
     @track rmsId = '';
+    @track tempshippingTabSelected ='';
 
     @track buyingRate = 0;
     @track sellingRate = 0;
@@ -775,7 +776,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
     handleAddShipLine(e){
         this.addShippinglineModel = false;
         let temp = e.detail;
-        this.shippingTabSelected = temp ;
+        this.tempshippingTabSelected = temp ;
         this.showAddRatesModel = true;
     }
     updateTabsData(){
