@@ -66,7 +66,7 @@ public class BAFCOImportQuoteController {
                                 if(!tempMap.containsKey(rmsObj.Shipping_Line__r.Name)){
                                     tempMap.put(rmsObj.Shipping_Line__r.Name, new List<BAFCORMSDto>());
                                 }
-                                BAFCORMSDto rmsDto = new BAFCORMSDto();                                
+                                BAFCORMSDto rmsDto = new BAFCORMSDto();  
                                 if(routeEquipmentoquantityMap.containsKey(rmsObj.Equipment_Type__r.name)){
                                     rmsDto.quantity = routeEquipmentoquantityMap.get(rmsObj.Equipment_Type__r.name);
                                 }
@@ -76,6 +76,7 @@ public class BAFCOImportQuoteController {
                                 rmsDto.rmsID = rmsObj.id;
                                 rmsDto.quotationId = QuoteId;
                                 rmsDto.agentId = rmsObj.Agent__c;
+                                rmsDto.agentName = rmsObj.Agent__r.Name;
                                 /* NEED TO DISCUSS */
                                 /* String key = rmsObj.Shipping_Line__r.Name+'-'+rmsObj.Equipment_Type__r.name;
 if(quoteItemToIdMap.containsKey(key)){
@@ -87,6 +88,26 @@ rmsDto.quotationItemId = quoteItemToIdMap.get(key);
                                 tempMap.get(rmsObj.Shipping_Line__r.Name).add(rmsDto);
                                 
                             }
+        for(String equip : routeEquipmentList){
+            for(String key : agentToEquipMap.keyset()){
+                for(String key2 : agentToEquipMap.get(key).keyset()){
+                    Boolean found = false;
+                    for(BAFCORMSDto dto : agentToEquipMap.get(key).get(key2)){
+                        if(dto.equipmentName == equip){
+                            found = true;
+                            break;
+                        }
+                    }
+                    if(!found){
+                        BAFCORMSDto rmsDto = new BAFCORMSDto();
+                        rmsDto.equipmentName = equip;
+                        rmsDto.equipmentId  = '';
+                        rmsDto.rmsID = '';
+                        agentToEquipMap.get(key).get(key2).add(rmsDto);
+                    }
+                }
+            }
+        }
         return agentToEquipMap;
     }
     @AuraEnabled

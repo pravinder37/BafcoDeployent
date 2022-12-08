@@ -1392,4 +1392,25 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
         this.updateTabsData();
         this.handleBuyingRate();
     }
+    handleAddRates(){
+        let dedicatedRoutingObj = this.routingListMap[this.agentTabSelected];
+        let templist =[];
+        let agentId = '';
+        for(let key in dedicatedRoutingObj){
+            templist.push({key:key, data: dedicatedRoutingObj[key]})
+        }
+        let data = [];
+        templist.forEach(elem=>{
+            if(elem.key == this.shippingTabSelected){
+                data= elem.data
+            }
+        })
+        data.forEach(elem =>{
+            if(elem.agentName == this.agentTabSelected) agentId = elem.agentId;
+        })
+        this.tempShippingTab = this.shippingTabSelected;
+        let obj={Id:agentId,Name:this.agentTabSelected}
+        this.agentObject = obj
+        this.showAddRatesModel = true;
+    }
 }

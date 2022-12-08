@@ -788,11 +788,21 @@
                     
                 </lightning-layout-item>      </div>           
             </lightning-layout-item>
-
-
-
-
         </lightning-layout>
+        <div if:true={equipNotfound}>
+            <lightning-layout multiple-rows class="customFont">
+                <lightning-layout-item size="12" class="slds-m-top_small slds-align_absolute-center">
+                    Shipping Line Rate are not available for this route.
+                </lightning-layout-item>
+                <lightning-layout-item size="12" class="slds-m-top_medium slds-align_absolute-center">
+                    <lightning-button  
+                                variant="brand" 
+                                label="Add Rates" 
+                                title="Add Rates" 
+                                onclick={handleAddRates}></lightning-button>
+                </lightning-layout-item>
+            </lightning-layout>
+         </div>
     </template>
     <template if:true={showServiceChargeModal}>
         <c-b-a-f-c-o-service-charges-help-component rms-id={rmsId} onclose={closeServiceChargeModal}></c-b-a-f-c-o-service-charges-help-component>
