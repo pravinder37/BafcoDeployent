@@ -105,7 +105,16 @@
                                                         <!--Service Charges-->
                                                         <lightning-layout-item size="12" style="padding-top: 4%;">
                                                             <lightning-layout multiple-rows if:true={totalSl}>
-                                                                <lightning-layout-item size="12"><b>Shipping Line Charge</b></lightning-layout-item>
+                                                                <lightning-layout-item size="12">
+                                                                    <lightning-layout style="padding-bottom: 12px;">
+                                                                        <lightning-layout-item size="8"><b>Shipping Line Charge</b></lightning-layout-item>
+                                                                        <lightning-layout-item size="4"><lightning-input label="Add To Buying Rate" 
+                                                                            type="checkbox"
+                                                                            checked={addServiceCharge} 
+                                                                            onchange={handleaddServiceChargeChange}></lightning-input>
+                                                                        </lightning-layout-item>
+                                                                    </lightning-layout>
+                                                                </lightning-layout-item>
                                                                 <template if:true={displayAllServiceChargeField}>
                                                                     <lightning-layout-item size="12">
                                                                         <lightning-layout multiple-rows>
@@ -307,7 +316,16 @@
                                                         </lightning-layout-item>
                                                         <lightning-layout-item size="12" style="padding-top: 4%;">
                                                             <lightning-layout multiple-rows if:true={TotalOrigincharges}>
-                                                                <lightning-layout-item size="12"><b>Origin Charges</b></lightning-layout-item>
+                                                                <lightning-layout-item size="12">
+                                                                    <lightning-layout style="padding-bottom: 12px;">
+                                                                        <lightning-layout-item size="8"><b>Origin Charges</b></lightning-layout-item>
+                                                                        <lightning-layout-item size="4"><lightning-input label="Add To Buying Rate" 
+                                                                            type="checkbox"
+                                                                            checked={addOriginCharge} 
+                                                                            onchange={handleaddOriginChargeChange}></lightning-input>
+                                                                        </lightning-layout-item>
+                                                                    </lightning-layout>
+                                                                </lightning-layout-item>
                                                                 <template if:true={displayOriginChargeCharge}>
                                                                     <lightning-layout-item size="12">
                                                                         <lightning-layout multiple-rows>
@@ -518,7 +536,16 @@
                                                         </lightning-layout-item>
                                                         <lightning-layout-item size="12" style="padding-top: 4%;">
                                                             <lightning-layout multiple-rows if:true={destinTotalCharges}>
-                                                                <lightning-layout-item size="12"><b>Destination Charge</b></lightning-layout-item>
+                                                                <lightning-layout-item size="12">
+                                                                    <lightning-layout style="padding-bottom: 12px;">
+                                                                        <lightning-layout-item size="8"><b>Destination Charges</b></lightning-layout-item>
+                                                                        <lightning-layout-item size="4"><lightning-input label="Add To Buying Rate" 
+                                                                            type="checkbox"
+                                                                            checked={addDestinCharge} 
+                                                                            onchange={handleaddDestinChange}></lightning-input>
+                                                                        </lightning-layout-item>
+                                                                    </lightning-layout>
+                                                                </lightning-layout-item>
                                                                 <template if:true={displayDestinCharges}>
                                                                     <lightning-layout-item size="12">
                                                                         <lightning-layout multiple-rows>
@@ -612,7 +639,16 @@
                                                         </lightning-layout-item>
                                                         <lightning-layout-item size="12" style="padding-top: 4%;">
                                                             <lightning-layout multiple-rows if:true={displayAdditionalCharge}>
-                                                                <lightning-layout-item size="12"><b>Additional Charges</b></lightning-layout-item>
+                                                                <lightning-layout-item size="12">
+                                                                    <lightning-layout style="padding-bottom: 12px;">
+                                                                        <lightning-layout-item size="8"><b>Additional Charges</b></lightning-layout-item>
+                                                                        <lightning-layout-item size="4"><lightning-input label="Add To Buying Rate" 
+                                                                            type="checkbox"
+                                                                            checked={addAdditionalCharge} 
+                                                                            onchange={handleaddAdditionalChange}></lightning-input>
+                                                                        </lightning-layout-item>
+                                                                    </lightning-layout>
+                                                                </lightning-layout-item>
                                                                  <!--Additional Service charges -->
                                                                 <template for:each={additionalChargeList} for:item="item" >
                                                                     <lightning-layout-item key={item} size="6" class="slds-m-top_large" style="padding-left: 7%" >

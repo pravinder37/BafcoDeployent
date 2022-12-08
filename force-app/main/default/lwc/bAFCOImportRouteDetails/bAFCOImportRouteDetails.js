@@ -148,6 +148,10 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
 
     @track showProcument = false;
     @track tempShippingTab
+    @track addServiceCharge=true;
+    @track addOriginCharge = true;
+    @track addDestinCharge=true;
+    @track addAdditionalCharge = true;
 
     connectedCallback(){     
         if(this.routeId){
@@ -382,6 +386,10 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                         'seaFreightSellRate':0,
                         'quotationItemId':'',
                         'incoChargList':{},
+                        'addServiceCharge':true,
+                        'addOriginCharge':true,
+                        'addDestinCharge':true,
+                        'addAdditionalCharge':true,
                         'quantity':this.equipQuantity,
                         'additionalChargeList':[],
                         'serviceChargeList':{},
@@ -403,6 +411,10 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                      }
                     this.total = elem.value[0].total;
                     this.serviceChargeList = elem.value[0].serviceChargeList;
+                    this.addServiceCharge = elem.value[0].addServiceCharge;
+                    this.addOriginCharge = elem.value[0].addOriginCharge;
+                    this.addDestinCharge = elem.value[0].addDestinCharge;
+                    this.addAdditionalCharge = elem.value[0].addAdditionalCharge;
                 }
             }
         });
@@ -498,16 +510,19 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                             dto.additionalChargeList.forEach(addCha => {
                                 if(addCha.value > 0){
                                     additonalChargeTotal = additonalChargeTotal + addCha.value;
-                                    dtoTotal = dtoTotal + addCha.value;
+                                    //dtoTotal = dtoTotal + addCha.value;
                                 }
                             });
                         }
-                        if(this.totalSl > 0) dtoTotal = dtoTotal + this.totalSl       
+                        if(dto.addServiceCharge == false && this.totalSl > 0) dtoTotal = dtoTotal + this.totalSl       
                         
-                        if(this.TotalOrigincharges > 0) dtoTotal = dtoTotal + this.TotalOrigincharges   
-                        if(this.destinTotalCharges > 0) dtoTotal = dtoTotal + this.destinTotalCharges
+                        if(dto.addOriginCharge == false && this.TotalOrigincharges > 0) dtoTotal = dtoTotal + this.TotalOrigincharges   
+                        if(dto.addDestinCharge == false && this.destinTotalCharges > 0) dtoTotal = dtoTotal + this.destinTotalCharges
                         dto.total= dtoTotal;
-                        if(additonalChargeTotal > 0 ) this.additionalChargeTotal = additonalChargeTotal;
+                        if(additonalChargeTotal > 0 ) {
+                            if(dto.addAdditionalCharge == false) dtoTotal = dtoTotal + additonalChargeTotal;
+                            this.additionalChargeTotal = additonalChargeTotal;
+                        }
                     }
                 }
             });
@@ -627,6 +642,29 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
         if(this.seaFreight != undefined && this.seaFreight > 0){
             this.buyingRate = this.buyingRate + this.seaFreight;
         }
+        if(this.addServiceCharge == true && this.totalSl > 0 ) this.buyingRate = this.buyingRate + this.totalSl;
+        if(this.addOriginCharge == true && this.TotalOrigincharges > 0 ) this.buyingRate = this.buyingRate + this.TotalOrigincharges;
+        if(this.addDestinCharge == true && this.destinTotalCharges > 0 ) this.buyingRate = this.buyingRate + this.destinTotalCharges;
+
+        let keyName = this.agentTabSelected+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected;  
+        let additionalChargeTotal = 0;   
+        this.toHoldData.forEach(elem => {
+            if(elem.key == keyName){
+                if(elem.value.length > 0){
+                    let dto = elem.value[0];
+                    if(dto.additionalChargeList.length > 0){
+                        dto.additionalChargeList.forEach(addCha => {
+                            if(addCha.value > 0){
+                                additionalChargeTotal = additionalChargeTotal + addCha.value;
+                            }
+                        });
+                    }
+                }
+            }
+        })
+        this.additionalChargeTotal = additionalChargeTotal
+
+        if(this.addAdditionalCharge == true && this.additionalChargeTotal > 0 ) this.buyingRate = this.buyingRate + this.additionalChargeTotal;
         this.handleUpdateCalculation();
         this.isLoading = false
     }
@@ -648,6 +686,10 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                     elem.value[0].additionalChargeList = this.additionalChargeList;
                     elem.value[0].serviceChargeList = this.serviceChargeList;
                     elem.value[0].quantity = this.equipQuantity;
+                    elem.value[0].addServiceCharge=this.addServiceCharge;
+                    elem.value[0].addOriginCharge=this.addOriginCharge;
+                    elem.value[0].addDestinCharge=this.addDestinCharge;
+                    elem.value[0].addAdditionalCharge = this.addAdditionalCharge;
                 }
             }
         });        
@@ -754,6 +796,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
         if(tempList2.length > 0) this.displayAdditionalCharge = true;
         else this.displayAdditionalCharge = false;
         this.updateTabsData();
+        this.handleBuyingRate();
         this.handleUpdateCalculation();
     }
     handleAddSelected(event){
@@ -796,6 +839,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
             if(elem.index == index) elem.value = parseInt(event.target.value);
         })
         this.updateTabsData();
+        this.handleBuyingRate();
         this.handleUpdateCalculation();
     }
     removeAdditionalCharge(event){
@@ -913,6 +957,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
         if(this.displayDestinCharges == true) this.updateDestinChargeTotal();
         if(this.displayOriginChargeCharge == true) this.updateOriginChargesTotal();
         console.log('warRiskSurcharges ',this.warRiskSurcharges)
+        this.handleBuyingRate();
     }
     
     handleBAFChange(e){
@@ -1324,5 +1369,25 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                 }
             });
         this.handleUpdateCalculation();
+    }
+    handleaddServiceChargeChange(e){
+        this.addServiceCharge = e.target.checked;
+        this.updateTabsData();
+        this.handleBuyingRate();
+    }
+    handleaddOriginChargeChange(e){
+        this.addOriginCharge = e.target.checked;
+        this.updateTabsData();
+        this.handleBuyingRate();
+    }
+    handleaddDestinChange(e){
+        this.addDestinCharge = e.target.checked;
+        this.updateTabsData();
+        this.handleBuyingRate();
+    }
+    handleaddAdditionalChange(e){
+        this.addAdditionalCharge = e.target.checked;
+        this.updateTabsData();
+        this.handleBuyingRate();
     }
 }
