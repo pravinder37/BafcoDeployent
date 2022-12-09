@@ -363,20 +363,23 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
 
         let keyName = this.shippingTabSelected+'-'+this.shippingEquipTabSelected;  
         let additonalChargeTotal = 0;   
-        this.toHoldData.forEach(elem => {
-            if(elem.key == keyName){
-                if(elem.value.length > 0){
-                    let dto = elem.value[0];
-                    if(dto.additionalChargeList.length > 0){
-                        dto.additionalChargeList.forEach(addCha => {
-                            if(addCha.value > 0){
-                                additonalChargeTotal = additonalChargeTotal + addCha.value;
-                            }
-                        });
+        if(this.toHoldData.length > 0){
+            this.toHoldData.forEach(elem => {
+                if(elem.key == keyName){
+                    if(elem.value.length > 0){
+                        let dto = elem.value[0];
+                        if(dto.additionalChargeList.length > 0){
+                            dto.additionalChargeList.forEach(addCha => {
+                                if(addCha.value > 0){
+                                    additonalChargeTotal = additonalChargeTotal + addCha.value;
+                                }
+                            });
+                        }
                     }
                 }
-            }
-        })
+            })
+        }
+        
         this.additonalChargeTotal = additonalChargeTotal
 
         if(this.addAdditionalCharge == true && this.additonalChargeTotal > 0 ) this.buyingRate = this.buyingRate + this.additonalChargeTotal;
@@ -769,6 +772,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
         this.showAddRatesModel = true;
     }
     updateTabsData(){
+        this.handleBuyingRate();
         let keyName = this.shippingTabSelected+'-'+this.shippingEquipTabSelected;        
         this.toHoldData.forEach(elem => {
             if(elem.key == keyName){

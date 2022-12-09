@@ -71,7 +71,7 @@ export default class BAFCORateProcurement extends LightningElement {
             content=content+'\nPort Of Discharge: '+this.portDischarge;
             content=content+'\nEquipment: '+this.equipmentType;
             content=content+'\nCommodity: '+this.commodity;
-            content=content+'\nQuantity: '+(this.quantity > 0 ? this.quantity : '');
+            content=content+'\nVolume: '+(this.quantity > 0 ? this.quantity : '');
             content=content+'\n\nYour earliest response is highly appreciated.';
             
             if (navigator.clipboard && window.isSecureContext) {

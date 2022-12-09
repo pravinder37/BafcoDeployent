@@ -3,6 +3,7 @@ import ROUTE_OBJECT from '@salesforce/schema/Route__c';
 import { getPicklistValuesByRecordType } from 'lightning/uiObjectInfoApi';
 import getAllRegularRoute from '@salesforce/apex/BAFCOLRoutingDetailsController.getAllRegularRoute';
 import getRegularRouteData from '@salesforce/apex/BAFCOLRoutingDetailsController.getRegularRouteData';
+import getDefualtValueForEnquiry from '@salesforce/apex/BAFCOLRoutingDetailsController.getDefualtValueForEnquiry';
 import CONTAINER_PNG from '@salesforce/resourceUrl/AddContainer';
 export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
     @api routeName;
@@ -69,10 +70,30 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
             this.isAccountObject = true;
             this.getAllRegularRoute();
         }
-        console.log('containerRecord '+JSON.stringify(this.containerRecord,null,2));
+        this.getDefualtValueForEnquiry();
     }
-    renderedCallback(){
-        console.log('containerRecord '+JSON.stringify(this.containerRecord,null,2));
+    getDefualtValueForEnquiry(){
+        getDefualtValueForEnquiry()
+        .then(result=>{
+            console.log(' getDefualtValueForEnquiry result', JSON.stringify(result, null, 2));
+            if(result != null){
+                if(result.commodityId != undefined){
+                    let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[4];
+                    let Obj={Id:result.commodityId,Name:result.commodityName}
+                    field.handleDefaultSelected(Obj);
+                }
+                if(result.incoTermId != undefined){
+                    let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[0];
+                    let Obj={Id:result.incoTermId,Name:result.incoTermName}
+                    field.handleDefaultSelected(Obj);
+                }
+            }
+            this.shipmentKind = 'FCL';
+            this.updateEnquiryList();
+        })
+        .catch(error=>{
+            console.log(' getDefualtValueForEnquiry error', JSON.stringify(error, null, 2));
+        })
     }
     handleResetRoute(e){
         let index = e.target.dataset.recordId;
