@@ -67,10 +67,10 @@ public class BAFCOLRoutingDetailsController {
             routeEquipmentList.add(routeEquip.Equipment_Type__r.name);
             routeEquipmentoquantityMap.put(routeEquip.Equipment_Type__r.name,routeEquip.Quantity__c);
         }
-        for(RMS__c rmsObj : [Select Equipment_Type__c  FROM RMS__c WHERE Port_Of_Loading__r.Name =: portLoading 
+        for(RMS__c rmsObj : [Select Equipment_Type__r.Name,Equipment_Type__c  FROM RMS__c WHERE Port_Of_Loading__r.Name =: portLoading 
                              AND Port_Of_Discharge__r.Name =: portDestination
                              AND Validity__c >=: todaysDate AND recordtypeId =: RMS_EXPORT_RECORDTYPE_Id]){
-                                 rmsEquipmentList.add(rmsObj.Equipment_Type__c) ;                     
+                                 rmsEquipmentList.add(rmsObj.Equipment_Type__c) ; 
                              }
         
         // to get Previously generated Quote
@@ -85,14 +85,11 @@ public class BAFCOLRoutingDetailsController {
                                               quoteItemToIdMap.put(key,item.Id);
                                           }
         }
-        system.debug('rmsEquipmentList '+rmsEquipmentList);
-        system.debug('quoteItemToId '+quoteItemToIdMap);
         if(rmsEquipmentList.size() > 0){
             for(Route_Equipment__c routeEquip : [Select Equipment_Type__r.name,Quantity__c  FROM Route_Equipment__c WHERE Route__c=:routeId and id in : rmsEquipmentList]){
                 routeEquipmentoquantityMap.put(routeEquip.Equipment_Type__r.name,routeEquip.Quantity__c);
             }        
         }
-        
         for(RMS__c rmsObj : [Select Validity__c, Id,Sea_Freight__c, Equipment_Type__c,Shipping_Line__c,Shipping_Line__r.Name,Equipment_Type__r.name  
                              FROM RMS__c WHERE Port_Of_Loading__r.Name =: portLoading 
                              AND Port_Of_Discharge__r.Name =: portDestination
@@ -830,6 +827,21 @@ public class BAFCOLRoutingDetailsController {
             }
         }
         dto.equipmentList = [Select id, name from Equipment_Type__c limit 50];
+        return dto;
+    }
+    @auraenabled
+    public static RmsDefaultValue getDefualtValueForEnquiry(){
+        RmsDefaultValue dto = new RmsDefaultValue();
+        List<Commodity__c> commodityList = [select id,name from Commodity__c where name ='FAK'];
+        List<INCO_Term__c> incoTermList = [select id,name from INCO_Term__c where name ='CFR'];
+        if(commodityList.size()>0){
+            dto.commodityId = commodityList[0].Id;
+            dto.commodityName = commodityList[0].Name;
+        }
+        if(incoTermList.size()>0){
+            dto.incoTermId = incoTermList[0].Id;
+            dto.incoTermName = incoTermList[0].Name;
+        }
         return dto;
     }
     @AuraEnabled

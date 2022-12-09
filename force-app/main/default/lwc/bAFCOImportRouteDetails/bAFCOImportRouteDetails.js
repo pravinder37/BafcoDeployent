@@ -699,6 +699,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
         this.handleUpdateCalculation();
     }
     updateTabsData(){
+        this.handleBuyingRate();
         let keyName = this.agentTabSelected+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected;  
         this.toHoldData.forEach(elem => {
             if(elem.key == keyName){
