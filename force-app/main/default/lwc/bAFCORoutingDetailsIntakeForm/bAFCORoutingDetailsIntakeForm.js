@@ -156,9 +156,12 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
     @track addOriginCharge = true;
     @track addDestinCharge=true;
     @track addAdditionalCharge = true;
+    @track addExWorksCharge=true;
+    @track displayExWorksModal = false;
+    @track exWorksObj;
+    @track exWorksTotal = 0;
+    @track displayExworks = false;
     connectedCallback(){
-        console.log('@api pickupPlace ='+this.pickupPlace);
-        console.log('@api dischargePlace ='+this.dischargePlace);
         this.margin = 0;
         if(this.routeId){
             this.getRMSDetails();
@@ -181,9 +184,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
             enquiryId:this.enquiryId
          })
         .then(result =>{
-            console.log('routing  result : ', JSON.stringify(result,null,2));
             this.routingListMap = result;
-            console.log('lenght '+Object.keys(result).length)
             if(Object.keys(result).length == 0){
                 this.routlistNotfound = true;
                 this.hideCalculationSection = true;
@@ -230,8 +231,6 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                     }                
                 }
                 this.toHoldData = tempList;
-                console.log('quoteId '+this.quotationId)
-                console.log('routingList ',JSON.stringify(this.routingList,null,2));
         }).catch(error=>{
             console.log('error routing: ', JSON.stringify(error));
         });
@@ -257,10 +256,8 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
         }
         this.shippingIndex++;
         this.shippingList.push(shippObj);
-        console.log('ShippingList '+JSON.stringify(this.shippingList,null,2))
     }
     resetCalculation(){
-        console.log('reset call ')
         this.buyingRate = 0;
         this.quantity=0;
         this.sellingRate = 0;
@@ -326,7 +323,10 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
         this.serviceChargeList = {};
         this.total = 0;
         this.displayAdditionalCharge = false
-        this.additionalChargeTotal = null
+        this.additionalChargeTotal = null;
+        this.exWorksObj = {};
+        this.displayExworks =false;
+        this.exWorksTotal = null;
     }
     handleshippingLineActive(e){
         this.margin = 0;        
@@ -359,6 +359,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
         if(this.addServiceCharge == true && this.totalSl > 0 ) this.buyingRate = this.buyingRate + this.totalSl;
         if(this.addOriginCharge == true && this.TotalOrigincharges > 0 ) this.buyingRate = this.buyingRate + this.TotalOrigincharges;
         if(this.addDestinCharge == true && this.destinTotalCharges > 0 ) this.buyingRate = this.buyingRate + this.destinTotalCharges;
+        if(this.addExWorksCharge == true && this.exWorksTotal > 0) this.buyingRate = this.buyingRate + this.exWorksTotal
 
         let keyName = this.shippingTabSelected+'-'+this.shippingEquipTabSelected;  
         let additonalChargeTotal = 0;   
@@ -409,8 +410,6 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
         }).then(result =>{
             this.incoChargList = result;
             this.getDestinationCharge();
-            //this.handleBuyingRate();
-            console.log('After ',this.buyingRate)
         }).catch(error=>{
             console.log('error incoChargList charge: ', JSON.stringify(error));
         });
@@ -418,7 +417,6 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
     getDestinationCharge(){
         getDestintionCharges({rmsRecordId : this.rmsId})
         .then(result=>{
-           // console.log('*** destinationCharges'+JSON.stringify(result,null,2))
             this.destinationChargeList = result;
             this.handleBuyingRate();
         })
@@ -456,11 +454,11 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                                 }
                             });
                         }
-                        console.log('************** '+dto.addAdditionalCharge)
                         if(dto.addServiceCharge == false && this.totalSl > 0) dtoTotal = dtoTotal + this.totalSl       
                         
                         if(dto.addOriginCharge == false && this.TotalOrigincharges > 0) dtoTotal = dtoTotal + this.TotalOrigincharges   
                         if(dto.addDestinCharge == false && this.destinTotalCharges > 0) dtoTotal = dtoTotal + this.destinTotalCharges
+                        if(dto.addExWorksCharge == false && this.exWorksTotal > 0) dtoTotal = dtoTotal + this.exWorksTotal
                         if(additonalChargeTotal > 0 ) {
                             if(dto.addAdditionalCharge == false) dtoTotal = dtoTotal + additonalChargeTotal;
                             this.additionalChargeTotal = additonalChargeTotal;
@@ -479,8 +477,6 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
             }
 
            
-            console.log('buying rate calc'+this.buyingRate)
-            console.log('sellling rate calc'+this.sellingRate)
             let profit = 0;
             if(this.sellingRate > 0 && !isNaN(this.sellingRate)){
             profit = this.sellingRate - this.buyingRate;
@@ -508,11 +504,9 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
             
           this.profitLabel = '$ '+profit +' Profit.';
             let tempMap = this.quotationMap;
-            //console.log('TempMap '+JSON.stringify(tempMap,null,2))
             tempMap.forEach(elem=>{
                 if(elem.key == this.shippingTabSelected){
                     elem.value.forEach(el =>{
-                        console.log('')
                         //if(el.equipment == this.shippingEquipTabSelected){
                             el.sellingRate = parseInt(this.sellingRate) 
                             el.profit = parseInt(profit)
@@ -529,8 +523,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
            this.quotationMap = tempMap;
            
             
-           // console.log('this.quotationMap; '+JSON.stringify(this.quotationMap,null,2))
-            let toBeSend = {
+           let toBeSend = {
                 'routeName':this.routeName,
                 'quotationMap':this.quotationMap
             }
@@ -601,8 +594,6 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
     handleGenerateQuotaion(){
         let keyName = this.shippingTabSelected+'-'+this.shippingEquipTabSelected;
         let dto = {}; 
-        console.log('keyName '+keyName)
-        console.log('toHoldData '+JSON.stringify(this.toHoldData,null,2))
         this.toHoldData.forEach(elem => {
             if(elem.key == keyName){
                 dto = elem.value[0]
@@ -643,7 +634,6 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
 
 
                 let tempMap = this.quotationMap;
-                console.log('TempMap '+JSON.stringify(tempMap,null,2))
                 tempMap.forEach(elem=>{
                     if(elem.key == this.shippingTabSelected){
                         elem.value.forEach(el =>{
@@ -667,7 +657,6 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
     }
     updateServiceCharges(e){       
         let dto = e.detail
-        console.log('dto ',JSON.stringify(dto,null,2))
         if(dto.servichargesObj.shippTotalChanged == true) {
             this.displayAllServiceChargeField = false;
             this.totalSl = dto.servichargesObj.totalSl;
@@ -793,6 +782,10 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                     elem.value[0].addOriginCharge=this.addOriginCharge;
                     elem.value[0].addDestinCharge=this.addDestinCharge;
                     elem.value[0].addAdditionalCharge = this.addAdditionalCharge;
+                    elem.value[0].exWorksObj = this.exWorksObj;
+                    elem.value[0].addExWorksCharge = this.addExWorksCharge;
+                    elem.value[0].displayExworks = this.displayExworks;
+                    elem.value[0].exWorksTotal = this.exWorksTotal
                 }
             }
         });
@@ -811,6 +804,10 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                         'addOriginCharge':true,
                         'addDestinCharge':true,
                         'addAdditionalCharge':true,
+                        'addExWorksCharge':true,
+                        'displayExworks':false,
+                        'exWorksObj':{},
+                        'exWorksTotal':null,
                         'incoChargList':{},
                         'additionalChargeList':[],
                         'serviceChargeList':{},
@@ -836,6 +833,10 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                     this.addOriginCharge = elem.value[0].addOriginCharge;
                     this.addDestinCharge = elem.value[0].addDestinCharge;
                     this.addAdditionalCharge = elem.value[0].addAdditionalCharge;
+                    this.addExWorksCharge = elem.value[0].addExWorksCharge;
+                    this.exWorksObj = elem.value[0].exWorksObj;
+                    this.displayExworks = elem.value[0].displayExworks;
+                    this.exWorksTotal = elem.value[0].exWorksTotal;
                 }
             }
         });
@@ -944,9 +945,26 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
             this.additionalChargeIndex++;
         });
         this.additionalChargeList = tempList2;
-        console.log('this.additionalChargeList '+JSON.stringify(this.additionalChargeList,null,2))
         if(this.additionalChargeList.length > 0) this.displayAdditionalCharge = true;
         else this.displayAdditionalCharge = false;
+        this.updateTabsData();
+        this.handleBuyingRate();
+        this.handleUpdateCalculation();
+    }
+    handleAddExWorks(e){
+        this.displayExWorksModal = false;
+        let selectedExWorks = e.detail.tempObj;
+        this.displayExworks = true;
+        this.exWorksObj= selectedExWorks;
+        this.exWorksTotal = selectedExWorks.LoadCharge > 0 ? selectedExWorks.LoadCharge : 0;
+        this.updateTabsData();
+        this.handleBuyingRate();
+        this.handleUpdateCalculation();
+    }
+    handleExWorksTotalChange(e){
+        let value = parseInt(e.target.value)
+        this.exWorksObj.LoadCharge = value
+        this.exWorksTotal = value
         this.updateTabsData();
         this.handleBuyingRate();
         this.handleUpdateCalculation();
@@ -1309,7 +1327,6 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
     }
     handleRemarksChange(e){
         this.quoteRemarks = e.target.value;
-        console.log('quoteRemarks ',this.quoteRemarks)
     }
     handleNewServiceCharge(){
         this.showNewServiceCharge = true;
@@ -1334,7 +1351,6 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
         dedicatedRoutingObj.forEach(elem =>{
             if(elem.equipmentName == this.shippingEquipTabSelected){
                 if(elem.equipmentId != ''){
-                    console.log('**** elem '+JSON.stringify(elem,null,2))
                     this.seaFreight = elem.seaFreight;
                     this.validity = elem.validity;
                     this.equipmentId = elem.equipmentId;
@@ -1351,7 +1367,6 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
             }
         })
         //this.getIncoCharges();
-        console.log('this.equipQuantity '+this.equipQuantity)
         this.isLoading = true;
         this.getServiceCharges();
         this.assignTabsData();
@@ -1371,7 +1386,12 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
             });
             this.handleUpdateCalculation();
     }
-    handleAddWorks(){}
+    handleAddWorks(){
+        this.displayExWorksModal = true;
+    }
+    handleCloseExworks(){
+        this.displayExWorksModal = false;
+    }
     handleaddServiceChargeChange(e){
         this.addServiceCharge = e.target.checked;
         this.updateTabsData();
@@ -1389,6 +1409,11 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
     }
     handleaddAdditionalChange(e){
         this.addAdditionalCharge = e.target.checked;
+        this.updateTabsData();
+        this.handleBuyingRate();
+    }
+    handleaddExWorksChargeChange(e){
+        this.addExWorksCharge = e.target.checked;
         this.updateTabsData();
         this.handleBuyingRate();
     }

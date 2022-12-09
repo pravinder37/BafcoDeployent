@@ -153,6 +153,12 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
     @track addDestinCharge=true;
     @track addAdditionalCharge = true;
 
+    @track addExWorksCharge=true;
+    @track displayExWorksModal = false;
+    @track exWorksObj;
+    @track exWorksTotal = 0;
+    @track displayExworks = false;
+
     connectedCallback(){     
         if(this.routeId){
             this.getImportRMSDetails();
@@ -294,6 +300,9 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
         this.displayAdditionalCharge = false;
         this.additionalChargeList= [];
         this.additionalChargeTotal = null;
+        this.exWorksObj = {};
+        this.displayExworks =false;
+        this.exWorksTotal = null;
     }
     
     @api handleShowaddAgentModel(){
@@ -390,6 +399,10 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                         'addOriginCharge':true,
                         'addDestinCharge':true,
                         'addAdditionalCharge':true,
+                        'addExWorksCharge':true,
+                        'displayExworks':false,
+                        'exWorksObj':{},
+                        'exWorksTotal':null,
                         'quantity':this.equipQuantity,
                         'additionalChargeList':[],
                         'serviceChargeList':{},
@@ -417,6 +430,10 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                     this.addOriginCharge = elem.value[0].addOriginCharge;
                     this.addDestinCharge = elem.value[0].addDestinCharge;
                     this.addAdditionalCharge = elem.value[0].addAdditionalCharge;
+                    this.addExWorksCharge = elem.value[0].addExWorksCharge;
+                    this.exWorksObj = elem.value[0].exWorksObj;
+                    this.displayExworks = elem.value[0].displayExworks;
+                    this.exWorksTotal = elem.value[0].exWorksTotal;
                 }
             }
         });
@@ -525,6 +542,8 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                             if(dto.addAdditionalCharge == false) dtoTotal = dtoTotal + additonalChargeTotal;
                             this.additionalChargeTotal = additonalChargeTotal;
                         }
+                        if(dto.addExWorksCharge == false && this.exWorksTotal > 0) dtoTotal = dtoTotal + this.exWorksTotal
+                        
                     }
                 }
             });
@@ -647,6 +666,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
         if(this.addServiceCharge == true && this.totalSl > 0 ) this.buyingRate = this.buyingRate + this.totalSl;
         if(this.addOriginCharge == true && this.TotalOrigincharges > 0 ) this.buyingRate = this.buyingRate + this.TotalOrigincharges;
         if(this.addDestinCharge == true && this.destinTotalCharges > 0 ) this.buyingRate = this.buyingRate + this.destinTotalCharges;
+        if(this.addExWorksCharge == true && this.exWorksTotal > 0) this.buyingRate = this.buyingRate + this.exWorksTotal
 
         let keyName = this.agentTabSelected+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected;  
         let additionalChargeTotal = 0;   
@@ -692,6 +712,10 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                     elem.value[0].addOriginCharge=this.addOriginCharge;
                     elem.value[0].addDestinCharge=this.addDestinCharge;
                     elem.value[0].addAdditionalCharge = this.addAdditionalCharge;
+                    elem.value[0].exWorksObj = this.exWorksObj;
+                    elem.value[0].addExWorksCharge = this.addExWorksCharge;
+                    elem.value[0].displayExworks = this.displayExworks;
+                    elem.value[0].exWorksTotal = this.exWorksTotal
                 }
             }
         });        
@@ -1392,6 +1416,11 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
         this.updateTabsData();
         this.handleBuyingRate();
     }
+    handleaddExWorksChargeChange(e){
+        this.addExWorksCharge = e.target.checked;
+        this.updateTabsData();
+        this.handleBuyingRate();
+    }
     handleAddRates(){
         let dedicatedRoutingObj = this.routingListMap[this.agentTabSelected];
         let templist =[];
@@ -1412,5 +1441,29 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
         let obj={Id:agentId,Name:this.agentTabSelected}
         this.agentObject = obj
         this.showAddRatesModel = true;
+    }
+    handleAddExWorks(e){
+        this.displayExWorksModal = false;
+        let selectedExWorks = e.detail.tempObj;
+        this.displayExworks = true;
+        this.exWorksObj= selectedExWorks;
+        this.exWorksTotal = selectedExWorks.LoadCharge > 0 ? selectedExWorks.LoadCharge : 0;
+        this.updateTabsData();
+        this.handleBuyingRate();
+        this.handleUpdateCalculation();
+    }
+    handleAddWorks(){
+        this.displayExWorksModal = true;
+    }
+    handleCloseExworks(){
+        this.displayExWorksModal = false;
+    }
+    handleExWorksTotalChange(e){
+        let value = parseInt(e.target.value)
+        this.exWorksObj.LoadCharge = value
+        this.exWorksTotal = value
+        this.updateTabsData();
+        this.handleBuyingRate();
+        this.handleUpdateCalculation();
     }
 }

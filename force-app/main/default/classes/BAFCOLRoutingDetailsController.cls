@@ -523,6 +523,10 @@ public class BAFCOLRoutingDetailsController {
         quoteItemObj.Total_Additional__c = additionalChargeTotal;
         quoteItemObj.Sea_Freight__c = dto.seaFreightSellRate;  
         quoteItemObj.Quantity__c = dto.quantity;
+        if(dto.exWorksObj != null){
+            quoteItemObj.Ex_Works_Charge_Name__c = dto.exWorksObj.Id;
+            quoteItemObj.Ex_Works_Charge__c = dto.exWorksObj.LoadCharge;
+        }
         system.debug('quoteItemObj '+quoteItemObj);
         try{
             upsert quoteItemObj;
@@ -827,6 +831,13 @@ public class BAFCOLRoutingDetailsController {
         }
         dto.equipmentList = [Select id, name from Equipment_Type__c limit 50];
         return dto;
+    }
+    @AuraEnabled
+    public static List<Loading_Charge__c> getExWorksOnLoad(){
+        List<Loading_Charge__c> exWorksList = new List<Loading_Charge__c>();
+        exWorksList = [Select Id,Name,Port_of_Loading__r.Name,Place_of_Pickup__r.name,Loading_Charge__c from Loading_Charge__c];
+        if(exWorksList.size() > 0 ) return exWorksList;
+        else return null;
     }
     public class SObjectResult {
         @AuraEnabled

@@ -684,6 +684,29 @@
                                                         <!--Additional charges End-->
                                                             </lightning-layout>
                                                         </lightning-layout-item>
+                                                        <lightning-layout-item size="12" style="padding-top: 4%;">
+                                                            <lightning-layout multiple-rows if:true={displayExworks}>
+                                                                <lightning-layout-item size="12">
+                                                                    <lightning-layout style="padding-bottom: 12px;">
+                                                                        <lightning-layout-item size="8"><b>Ex Works Charge</b></lightning-layout-item>
+                                                                        <lightning-layout-item size="4"><lightning-input label="Add To Buying Rate" 
+                                                                            type="checkbox"
+                                                                            checked={addExWorksCharge} 
+                                                                            onchange={handleaddExWorksChargeChange}></lightning-input>
+                                                                        </lightning-layout-item>
+                                                                    </lightning-layout>
+                                                                </lightning-layout-item>
+                                                                <lightning-layout-item size="6">{exWorksObj.Name}</lightning-layout-item>
+                                                                <lightning-layout-item size="6" style="padding-right: 5%;" >
+                                                                    <lightning-input 
+                                                                        type="number"
+                                                                        variant="label-hidden"
+                                                                        value={exWorksTotal}
+                                                                        onchange={handleExWorksTotalChange}
+                                                                        ></lightning-input>
+                                                                </lightning-layout-item>
+                                                            </lightning-layout>
+                                                        </lightning-layout-item>
                                                         <!--Service Charge End-->
                                                         
                                                         <lightning-layout-item size="12" style="padding-top: 4%;">
@@ -766,18 +789,26 @@
                 </div>
                 <lightning-spinner variant="brand" size="large" if:true={isLoading}></lightning-spinner>
                 <lightning-layout-item size="12" style="margin-left: 10%;">
+                    <lightning-layout multiple-rows>
+                        <lightning-layout-item size="6">
                     <lightning-button  
                         variant="brand" 
                         label="Select For Quotation" 
                         title="Select For Quotation"
                         disabled={quotationSaved} 
-                        onclick={handleGenerateQuotaion}></lightning-button>
-                    <lightning-button  
+                        onclick={handleGenerateQuotaion}></lightning-button></lightning-layout-item>
+                        <lightning-layout-item size="6"><lightning-button  
                         variant="brand" 
                         style="margin-left: 10%;"
                         label="Choose Template" 
                         title="Choose Template"
-                        onclick={handleTemplateView}></lightning-button>
+                        onclick={handleTemplateView}></lightning-button></lightning-layout-item>
+                        <lightning-layout-item size="12" style="margin-top: 3%; margin-left: 35%"><lightning-button  
+                            variant="brand" 
+                            label="Add Ex-works" 
+                            title="Add Ex-works"
+                            onclick={handleAddWorks}></lightning-button></lightning-layout-item>
+                        </lightning-layout>
                     <!--lightning-layout-item size="12" style="margin-left: 40%;" if:true={quotationId}>
                             <lightning-button  
                                 variant="base" 
@@ -856,5 +887,8 @@
                                 route-id={routeId}
                                 came-from-import="true"
                                 quantity={quantity} onclose={handleCloseProcurement}></c-b-a-f-c-o-rate-procurement>
+    </template>
+    <template if:true={displayExWorksModal}>
+        <c-b-a-f-c-o-select-ex-works onaddselected={handleAddExWorks} onclose={handleCloseExworks}></c-b-a-f-c-o-select-ex-works>
     </template>
 </template>

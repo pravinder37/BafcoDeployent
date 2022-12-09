@@ -683,6 +683,29 @@
                                                     <!--Additional charges End-->
                                                         </lightning-layout>
                                                     </lightning-layout-item>
+                                                    <lightning-layout-item size="12" style="padding-top: 4%;">
+                                                        <lightning-layout multiple-rows if:true={displayExworks}>
+                                                            <lightning-layout-item size="12">
+                                                                <lightning-layout style="padding-bottom: 12px;">
+                                                                    <lightning-layout-item size="8"><b>Ex Works Charge</b></lightning-layout-item>
+                                                                    <lightning-layout-item size="4"><lightning-input label="Add To Buying Rate" 
+                                                                        type="checkbox"
+                                                                        checked={addExWorksCharge} 
+                                                                        onchange={handleaddExWorksChargeChange}></lightning-input>
+                                                                    </lightning-layout-item>
+                                                                </lightning-layout>
+                                                            </lightning-layout-item>
+                                                            <lightning-layout-item size="6">{exWorksObj.Name}</lightning-layout-item>
+                                                            <lightning-layout-item size="6" >
+                                                                <lightning-input 
+                                                                    type="number"
+                                                                    variant="label-hidden"
+                                                                    value={exWorksTotal}
+                                                                    onchange={handleExWorksTotalChange}
+                                                                    ></lightning-input>
+                                                            </lightning-layout-item>
+                                                        </lightning-layout>
+                                                    </lightning-layout-item>
                                                     <!--Service Charge End-->
                                                     <lightning-layout-item size="12" style="padding-top: 4%;">
                                                         <lightning-layout multiple-rows>
@@ -856,6 +879,9 @@
                                     enquiry-id={enquiryId}
                                     route-id={routeId}
                                     quantity={quantity} onclose={handleCloseProcurement}></c-b-a-f-c-o-rate-procurement>
+        </template>
+        <template if:true={displayExWorksModal}>
+            <c-b-a-f-c-o-select-ex-works onaddselected={handleAddExWorks} onclose={handleCloseExworks}></c-b-a-f-c-o-select-ex-works>
         </template>
     </template>    
 </template>

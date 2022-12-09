@@ -24,6 +24,8 @@ public class BAFCOGenerteQuoteDto {
     public String currencyCode { get; set; }
     @AuraEnabled
     public serviceChargeList serviceChargeList { get; set; }
+    @AuraEnabled
+    public exWorksObj exWorksObj  { get; set; }
     
     public Class AdditionalCharge{ 
         @AuraEnabled
@@ -114,5 +116,11 @@ public class BAFCOGenerteQuoteDto {
         @AuraEnabled public decimal warRiskSurcharges {get; set;}
         @AuraEnabled public decimal totalSl {get; set;}
         @AuraEnabled public boolean shippTotalChanged  {get; set;}
+    }
+    public class exWorksObj{
+        @AuraEnabled public String Id {get; set;}
+        @AuraEnabled public String pickup {get; set;}
+        @AuraEnabled public String LoadingPort {get; set;}
+        @AuraEnabled public decimal LoadCharge {get; set;}
     }
 }

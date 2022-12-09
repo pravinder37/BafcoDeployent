@@ -364,6 +364,10 @@ quoteItemObj. = dto.value;
         quoteItemObj.Place_of_Pickup__c = dto.pickupPlace != '' ? dto.pickupPlace : null;
         quoteItemObj.Place_of_Discharge__c = dto.dischargePlace != '' ? dto.dischargePlace : null;
         quoteItemObj.Quantity__c = dto.quantity;
+        if(dto.exWorksObj != null){
+            quoteItemObj.Ex_Works_Charge_Name__c = dto.exWorksObj.Id;
+            quoteItemObj.Ex_Works_Charge__c = dto.exWorksObj.LoadCharge;
+        }
         try{
             upsert quoteItemObj;
         }
