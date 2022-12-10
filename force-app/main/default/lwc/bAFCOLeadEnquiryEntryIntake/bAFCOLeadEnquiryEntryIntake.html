@@ -1,4 +1,5 @@
 <template>
+    <lightning-spinner variant="brand" size="large" if:true={isLoading}></lightning-spinner>
     <lightning-layout multiple-rows> 
         <lightning-layout-item size="12" if:true={copyFromAbove}> 
            <lightning-button variant="base" class="mobilePaddingRight" style="float: right;" icon-name="utility:copy" label="Copy From Route 1" onclick={handleCopyFromAbove} data-record-id={leadIndex}></lightning-button>

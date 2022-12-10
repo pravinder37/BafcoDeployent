@@ -6,6 +6,7 @@ import { getPicklistValuesByRecordType } from 'lightning/uiObjectInfoApi';
 import submitMeetingsRecords from '@salesforce/apex/BAFCOMeetingController.submitMeetingsRecords';
 import getIntakeMeetingObj from '@salesforce/apex/BAFCOMeetingController.getIntakeMeetingObj';
 import updateEventObject from '@salesforce/apex/BAFCOMeetingController.updateEventObject';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class BAFCODisplayMeetings extends NavigationMixin(LightningElement) {
     showCreateMeeting = false;
     @track objectChoosed ='Lead';
@@ -223,14 +224,6 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
            minute = ''+t.getMinutes() == 0 ? '00': (Math.round(t.getMinutes()/15) * 15) % 60 == 0 ? '00' : (Math.round(t.getMinutes()/15) * 15) % 60;
         return [hour, minute].join(':');
     }
-    handleGetCurrentLocationClick(){
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(position => {
-                 this.latitude = position.coords.latitude;
-                this.longitude = position.coords.longitude;
-            })
-        }
-    }
     handleWhatIdSelection(e){
         this.whatId = e.detail.Id
         this.whatIdName = e.detail.Name;
@@ -311,68 +304,82 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
     }    
     SaveDataBox(){
         let allValid = true;
-        if(this.startDate1 == null ){
-            let startDateField = this.template.querySelector("[data-field='startDate1']");
-            startDateField.setCustomValidity('Complete this field.'); 
-            startDateField.reportValidity();
-            allValid = false;
-        }
-        if(this.startTime1 == null){
-            let startTimeField = this.template.querySelector("[data-field='startTime1']");
-            startTimeField.setCustomValidity('Complete this field.'); 
-            startTimeField.reportValidity();
-            allValid = false;
-        }
-        if(this.endDate1 == null ){
-            let endDateField = this.template.querySelector("[data-field='endDate1']");
-            endDateField.setCustomValidity('Complete this field.'); 
-            endDateField.reportValidity();
-            allValid = false;
-        }
-        if(this.endTime1 == null){
-            let endTimeField = this.template.querySelector("[data-field='endTime1']");
-            endTimeField.setCustomValidity('Complete this field.'); 
-            endTimeField.reportValidity();
-            allValid = false;
-        }
-        if(this.meetinginute1 == '' || this.meetinginute1 == undefined || this.meetinginute1 == ''){
-            let meetingMinuteField = this.template.querySelector("[data-field='meetingMinute1']");
-            meetingMinuteField.setCustomValidity('Complete this field.'); 
-            meetingMinuteField.reportValidity();
-            allValid = false;
-        }
-        if(allValid){
-            this.isLoading = true
-            updateEventObject({
-                recordId: this.eventId,
-                enquiryId:this.enquiryId1,
-                startDate:this.startDate1,
-                startTime:this.startTime1,
-                endDate:this.endDate1,
-                endTime:this.endTime1,
-                meetingMinute:this.meetinginute1,
-                lati:this.lati1,
-                longi:this.longi1
-            })
-            .then(result=>{
-                console.log('result ',result)
-                this.isLoading1 = false
-                this.isLoading = false;
-                this.displayInitial = true
-                this.displayIntakeForm = false
-                this[NavigationMixin.GenerateUrl]({
-                    type: 'standard__recordPage',
-                    attributes: {
-                        recordId: result,
-                        actionName: 'view'
-                    },
-                }).then(url => { window.open(url,"_self") });
-            })
-            .catch(error=>{
-                console.log('error ',error)
-                this.isLoading1 = false
-            })
-        }
+        this.lati1 = '';
+        this.longi1 = '';
+        this.handleGetCurrentLocationClick();
+        setTimeout(() => {
+            if(this.startDate1 == null ){
+                let startDateField = this.template.querySelector("[data-field='startDate1']");
+                startDateField.setCustomValidity('Complete this field.'); 
+                startDateField.reportValidity();
+                allValid = false;
+            }
+            if(this.startTime1 == null){
+                let startTimeField = this.template.querySelector("[data-field='startTime1']");
+                startTimeField.setCustomValidity('Complete this field.'); 
+                startTimeField.reportValidity();
+                allValid = false;
+            }
+            if(this.endDate1 == null ){
+                let endDateField = this.template.querySelector("[data-field='endDate1']");
+                endDateField.setCustomValidity('Complete this field.'); 
+                endDateField.reportValidity();
+                allValid = false;
+            }
+            if(this.endTime1 == null){
+                let endTimeField = this.template.querySelector("[data-field='endTime1']");
+                endTimeField.setCustomValidity('Complete this field.'); 
+                endTimeField.reportValidity();
+                allValid = false;
+            }
+            if(this.meetinginute1 == '' || this.meetinginute1 == undefined || this.meetinginute1 == ''){
+                let meetingMinuteField = this.template.querySelector("[data-field='meetingMinute1']");
+                meetingMinuteField.setCustomValidity('Complete this field.'); 
+                meetingMinuteField.reportValidity();
+                allValid = false;
+            }
+            if(this.lati1 =='' || this.longi1 == ''){
+                const evt = new ShowToastEvent({
+                    title: 'Location Error :',
+                    message: 'Please enable location permission.',
+                    variant: 'error',
+                });
+                this.dispatchEvent(evt);
+                allValid = false;
+            }
+            if(allValid){
+                this.isLoading = true
+                updateEventObject({
+                    recordId: this.eventId,
+                    enquiryId:this.enquiryId1,
+                    startDate:this.startDate1,
+                    startTime:this.startTime1,
+                    endDate:this.endDate1,
+                    endTime:this.endTime1,
+                    meetingMinute:this.meetinginute1,
+                    lati:this.lati1,
+                    longi:this.longi1
+                })
+                .then(result=>{
+                    console.log('result ',result)
+                    this.isLoading1 = false
+                    this.isLoading = false;
+                    this.displayInitial = true
+                    this.displayIntakeForm = false
+                    this[NavigationMixin.GenerateUrl]({
+                        type: 'standard__recordPage',
+                        attributes: {
+                            recordId: result,
+                            actionName: 'view'
+                        },
+                    }).then(url => { window.open(url,"_self") });
+                })
+                .catch(error=>{
+                    console.log('error ',error)
+                    this.isLoading1 = false
+                })
+            }
+        }, 100);
     }
     handleGetCurrentLocationClick(){
         if (navigator.geolocation) {

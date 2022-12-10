@@ -51,6 +51,7 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
     AddContainerPNG = CONTAINER_PNG;
     @api accountId = '';
     @track isAccountObject = false;
+    @track isLoading = false;
 
     @wire(getPicklistValuesByRecordType, { objectApiName: ROUTE_OBJECT, recordTypeId: '012000000000000AAA' })
     routeObjectData({ data, error }) {
@@ -72,7 +73,8 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
         }
         this.getDefualtValueForEnquiry();
     }
-    getDefualtValueForEnquiry(){
+    @api getDefualtValueForEnquiry(){
+        this.isLoading = true
         getDefualtValueForEnquiry()
         .then(result=>{
             console.log(' getDefualtValueForEnquiry result', JSON.stringify(result, null, 2));
@@ -90,9 +92,11 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
             }
             this.shipmentKind = 'FCL';
             this.updateEnquiryList();
+            this.isLoading = false;
         })
         .catch(error=>{
             console.log(' getDefualtValueForEnquiry error', JSON.stringify(error, null, 2));
+            this.isLoading = false;
         })
     }
     handleResetRoute(e){
@@ -526,5 +530,13 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
     handleAddContainer(e){
         let strIndex = e.target.dataset.recordId;
         this.dispatchEvent(new CustomEvent('addcontainertype', { detail:  strIndex}));
+    }
+    @api removeDefaultOnImport(){
+        let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[4];
+        field.handleRemovePill();
+        let field2 = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[0];
+        field2.handleRemovePill();
+        this.shipmentKind = '';
+        this.updateEnquiryList();
     }
 }

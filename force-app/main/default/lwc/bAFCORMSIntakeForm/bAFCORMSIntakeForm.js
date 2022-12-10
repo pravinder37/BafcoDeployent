@@ -6,6 +6,7 @@ import BUSINESS_TYPE_FIELD from '@salesforce/schema/RMS__c.Business_Type__c';
 import submitRMS from '@salesforce/apex/BAFCOLeadDetailsController.submitRMS';
 import getExchangeRate from '@salesforce/apex/BAFCOLRoutingDetailsController.getExchangeRate';
 import getDefualtValueForRMS from '@salesforce/apex/BAFCOLRoutingDetailsController.getDefualtValueForRMS';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class BAFCORMSIntakeForm extends LightningElement {
     
     @track shippTotalChanged = false; 
@@ -421,7 +422,14 @@ export default class BAFCORMSIntakeForm extends LightningElement {
 
         })
         .catch(error=>{
-            console.log('submitRMS ',JSON.stringify(error))
+            console.log('submitRMS ',JSON.stringify(error,null,2))
+            let err = error.body.pageErrors[0].message
+            const evt = new ShowToastEvent({
+                title: 'Missing Field :',
+                message: err,
+                variant: 'error',
+            });
+            this.dispatchEvent(evt);
         })
     }
     handletotalChange(e){

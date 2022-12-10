@@ -287,6 +287,13 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
         this.businessTypeSelected = event.target.value
         this.quoteTypeErrorClass ='';
         this.quoteTypeErrorMsg ='';
+        let ChildList = this.template.querySelectorAll('c-b-a-f-c-o-lead-enquiry-entry-intake');
+        if(ChildList.length > 0){
+            ChildList.forEach(elem=>{
+                if(this.businessTypeSelected == 'Import' )elem.removeDefaultOnImport();
+                else if(this.businessTypeSelected == 'Export')elem.getDefualtValueForEnquiry();
+            })
+        }
     }
     getDefaultBusinessType(){
         getLeadDetails({leadId : this.quoteId})
