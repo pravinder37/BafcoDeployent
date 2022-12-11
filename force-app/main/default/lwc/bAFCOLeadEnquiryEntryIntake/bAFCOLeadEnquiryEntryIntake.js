@@ -539,4 +539,11 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
         this.shipmentKind = '';
         this.updateEnquiryList();
     }
+    @api onSubmit(){
+        this.isLoading = true;
+    }
+
+    @api submitdone(){
+        this.isLoading = false;
+    }
 }

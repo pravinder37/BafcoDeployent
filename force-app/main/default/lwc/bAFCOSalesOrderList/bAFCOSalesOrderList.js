@@ -9,10 +9,12 @@ export default class BAFCOSalesOrderList extends NavigationMixin(LightningElemen
     validityDate = '';
     errorMsg = '';
     hideCreateOrder(){
+        this.isLoading = true
        if(this.validityDate == '' || this.validityDate == null){
             let dateField = this.template.querySelector("[data-field='dateField']");
             dateField.setCustomValidity("Complete this field.");
             dateField.reportValidity();
+            this.isLoading = false
         }
         else{
             let hasValue = false;
@@ -21,6 +23,7 @@ export default class BAFCOSalesOrderList extends NavigationMixin(LightningElemen
             });
            console.log('hasValue ',hasValue)
             if(!hasValue){
+                this.isLoading = false
                 this.errorMsg='Please select atleast one item to create order';
             }
             else{

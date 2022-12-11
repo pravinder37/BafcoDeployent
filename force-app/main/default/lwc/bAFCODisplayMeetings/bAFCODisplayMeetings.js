@@ -338,7 +338,7 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
                 meetingMinuteField.reportValidity();
                 allValid = false;
             }
-            if(this.lati1 =='' || this.longi1 == ''){
+            /*if(this.lati1 =='' || this.longi1 == ''){
                 const evt = new ShowToastEvent({
                     title: 'Location Error :',
                     message: 'Please enable location permission.',
@@ -346,7 +346,7 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
                 });
                 this.dispatchEvent(evt);
                 allValid = false;
-            }
+            }*/
             if(allValid){
                 this.isLoading = true
                 updateEventObject({

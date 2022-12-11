@@ -399,6 +399,7 @@ export default class BAFCORMSIntakeForm extends LightningElement {
         this.incoTotal = parseInt(Total);
     }
     submitDetails(){
+        this.isLoading = true;
         submitRMS({
             rmsDetail : this.rmsDetail,
             shippingChargeDto : this.shipp,
@@ -410,6 +411,7 @@ export default class BAFCORMSIntakeForm extends LightningElement {
         })
         .then(result =>{
             console.log('submitRMS result',JSON.stringify(result));
+            this.isLoading = false;
            let disPatchObj = {
                 loadingPort : result.loadingPortName,
                 loadingDestination : result.loadingDestinationName,
@@ -423,6 +425,7 @@ export default class BAFCORMSIntakeForm extends LightningElement {
         })
         .catch(error=>{
             console.log('submitRMS ',JSON.stringify(error,null,2))
+            this.isLoading = false;
             let err = error.body.pageErrors[0].message
             const evt = new ShowToastEvent({
                 title: 'Missing Field :',

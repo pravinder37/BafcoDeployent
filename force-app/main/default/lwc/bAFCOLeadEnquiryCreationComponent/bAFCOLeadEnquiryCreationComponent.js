@@ -32,6 +32,7 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
     @track ErrorList = [];
     @track commercialUserId = '';
     @track commercialUserName = '';
+    @track isLoading = false;
 
 
     @wire(getPicklistValues, {
@@ -181,6 +182,12 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
         console.log('Lead List '+JSON.stringify(this.leadEnquiryList,null,2));
     }       
     handleSubmit(){
+        let ChildList = this.template.querySelectorAll('c-b-a-f-c-o-lead-enquiry-entry-intake');
+        if(ChildList.length > 0){
+            ChildList.forEach(elem=>{
+            elem.onSubmit();
+            })
+        }
         let allValid = true;
         let errorList = [];
         if(this.businessTypeSelected == '' || this.businessTypeSelected == undefined){
@@ -258,6 +265,11 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
             })
             .then(result =>{
                 console.log('routing submit  result : ', JSON.stringify(result,null,2));
+                if(ChildList.length > 0){
+                    ChildList.forEach(elem=>{
+                    elem.submitdone();
+                    })
+                }
                     this[NavigationMixin.Navigate]({
                     type: 'standard__recordPage',
                     attributes: {
@@ -268,10 +280,22 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
                 });
             }).catch(error=>{
                 console.log('routing submit error lead: ', JSON.stringify(error));
+                this.isLoading = false
+                if(ChildList.length > 0){
+                    ChildList.forEach(elem=>{
+                    elem.submitdone();
+                    })
+                }
             });
         }
         else{
             console.log('errorList '+JSON.stringify(errorList,null,2))
+            this.isLoading = false
+            if(ChildList.length > 0){
+                ChildList.forEach(elem=>{
+                elem.submitdone();
+                })
+            }
             this.showErrorToast();
         }
     }
