@@ -6,7 +6,7 @@ public without sharing class BAFCOGeneratePDFController {
     public String recordId {get;set;}
     public BAFCOGeneratePDFDto dto {get;set;}
     public BAFCOGeneratePDFController(ApexPages.StandardController controller){
-       /* Map<String, String> pageParameters = ApexPages.currentPage().getParameters();
+        Map<String, String> pageParameters = ApexPages.currentPage().getParameters();
         String showShippLine = pageParameters.get('showShippLine');
         String showCharges = pageParameters.get('showCharges');
         String recordId = pageParameters.get('recordId');
@@ -14,8 +14,7 @@ public without sharing class BAFCOGeneratePDFController {
         else this.showShippLine = false;
         if(showCharges == 'true') this.showCharges = true; 
         else this.showCharges = false;
-        this.recordId = recordId;*/
-        this.recordId = 'a0K78000000VVkgEAG'; this.showShippLine = true;this.showCharges = true;
+        this.recordId = recordId;
         dto =new BAFCOGeneratePDFDto();
     }
     public void getQuoteData(){
