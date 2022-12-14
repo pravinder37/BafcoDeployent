@@ -154,7 +154,7 @@ Equipment_Type__r.Name, Sea_Freight__c, Validity__c, Agent__r.Name, Shipping_Lin
         system.debug('rmsDtolist '+rmsDtolist);
         return rmsDtolist;
     }
-    private static string getMonthName(Integer n){
+    public static string getMonthName(Integer n){
         switch on n {
             when 1 {
                 return 'Jan';

@@ -58,6 +58,7 @@ public class BAFCOImportQuoteController {
                              AND Equipment_Type__r.name != null
                              AND Validity__c >=: todaysDate
                              AND recordtypeId =: RMS_IMPORT_RECORDTYPE_Id
+                             AND Equipment_Type__r.name in : routeEquipmentList
                             ]){
                                 if(!agentToEquipMap.ContainsKey(rmsObj.Agent__r.Name)){
                                     agentToEquipMap.put(rmsObj.Agent__r.Name,new Map<String,List<BAFCORMSDto>>());

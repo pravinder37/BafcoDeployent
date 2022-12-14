@@ -41,6 +41,8 @@ public class BAFCOImportRMSDto {
         public BAFCOImportRMSDto.originChargesObj originChargesObj { get; set; }
         @AuraEnabled
         public BAFCOImportRMSDto.servichargesObj servichargesObj { get; set; }
+        @AuraEnabled
+        public BAFCOImportRMSDto.additionalChargesObj additionalChargesObj { get; set; }
     }
     public class destinChargeObj{
         @AuraEnabled
@@ -119,5 +121,33 @@ public class BAFCOImportRMSDto {
         @AuraEnabled public String pickup {get; set;}
         @AuraEnabled public String LoadingPort {get; set;}
         @AuraEnabled public decimal LoadCharge {get; set;}
+    }
+    public class additionalChargesObj{
+        @AuraEnabled public decimal Bayancancellationcharge {get; set;}
+        @AuraEnabled public decimal Cleaningcharges {get; set;}
+        @AuraEnabled public decimal ContainerLashingCharges {get; set;}
+        @AuraEnabled public decimal Containermovementcharges {get; set;}
+        @AuraEnabled public decimal Containerstripping {get; set;}
+        @AuraEnabled public decimal Freetimecertificatecharges {get; set;}
+        @AuraEnabled public decimal Fumigation {get; set;}
+        @AuraEnabled public decimal Inspection {get; set;}
+        @AuraEnabled public decimal Insurancecharges {get; set;}
+        @AuraEnabled public decimal MinistryclearncechargeforOOGcargo {get; set;}
+        @AuraEnabled public decimal Miscellaneous {get; set;}
+        @AuraEnabled public decimal MOTfinecharges {get; set;}
+        @AuraEnabled public decimal NonPalletizedSurcharge {get; set;}
+        @AuraEnabled public decimal Pestcontrol {get; set;}
+        @AuraEnabled public decimal Repalletization {get; set;}
+        @AuraEnabled public decimal Reefercntrplugincharges {get; set;}
+        @AuraEnabled public decimal ReeferPTIcharges {get; set;}
+        @AuraEnabled public decimal Reefersteamwash {get; set;}
+        @AuraEnabled public decimal StuffingCharges {get; set;}
+        @AuraEnabled public decimal SweepingCleaning {get; set;}
+        @AuraEnabled public decimal TruckHeadcharges {get; set;}
+        @AuraEnabled public decimal Truckidlingcharges {get; set;}
+        @AuraEnabled public decimal Vesselcertificatecharges {get; set;}
+        @AuraEnabled public decimal Wrappingpackingcharges {get; set;}
+        @AuraEnabled public decimal totalAdditional {get; set;}
+        
     }
 }

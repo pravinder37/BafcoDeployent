@@ -52,11 +52,15 @@ public class BAFCOMeetingController {
     public static EventRecord getIntakeMeetingObj(String eventId){
         EventRecord dto = new EventRecord();
         String objectName = '';
-        Event ev = [Select Related_Enquiry__r.Name,id,whatId,what.Name,Start_Date__c,StartDateTime,End_Date__c,EndDateTime,Minutes_of_Meeting__c from event where id =: eventId];       	
+        Event ev = [Select who.Name,Related_Enquiry__r.Name,id,whatId,what.Name,Start_Date__c,StartDateTime,End_Date__c,EndDateTime,Minutes_of_Meeting__c from event where id =: eventId];       	
         if(ev.WhatId != null){
             dto.objectName = getObjectNameFromId(ev.WhatId);
             dto.whatName = ev.what.Name;
             dto.whatId = ev.WhatId;
+        }
+        else if(ev.WhoId != null){
+            dto.whatName = ev.who.Name;
+            dto.whatId = ev.WhoId;
         }
         dto.recordId = ev.Id;
         dto.startDate = String.valueOf(ev.Start_Date__c);

@@ -332,7 +332,8 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
         this.margin = 0;        
         this.resetCalculation();    
         this.shippingEquipTabSelected = '';    
-        this.shippingTabSelected = e.target.value;    
+        this.shippingTabSelected = e.target.value;   
+        this.tempshippingTabSelected =   e.target.value;   
         let dedicatedRoutingObj = this.routingListMap[this.shippingTabSelected]; 
         let elem  = 0;
         this.shippingEquipTabSelected  =   this.seaFreight = dedicatedRoutingObj[elem].equipmentName;

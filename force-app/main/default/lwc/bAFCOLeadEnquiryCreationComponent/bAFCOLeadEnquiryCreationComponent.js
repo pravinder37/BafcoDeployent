@@ -33,6 +33,7 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
     @track commercialUserId = '';
     @track commercialUserName = '';
     @track isLoading = false;
+    @track customerErrorClass = '';
 
 
     @wire(getPicklistValues, {
@@ -253,6 +254,10 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
             if(tempErrorList.length > 0){
                allValid  = false;
                errorList.push(elem.routeName);
+            }
+            if(this.commercialUserId == ''){
+                allValid = false;
+                this.customerErrorClass = 'slds-has-error'
             }
         })
         if(allValid){
@@ -476,9 +481,11 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
     handleCommercialUserSelection(e){
         this.commercialUserId = e.detail.Id;
         this.commercialUserName = e.detail.Name;
+        this.customerErrorClass ='';
     }
     handleCommercialUserRemoved(e){
         this.commercialUserId = '';
         this.commercialUserName = '';
+        this.customerErrorClass ='slds-has-error';
     }
 }

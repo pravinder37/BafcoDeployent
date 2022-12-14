@@ -1,0 +1,44 @@
+<apex:page standardController="Quotation__c" extensions="BAFCOGeneratePDFController">
+    <div style="page-break-before: always">
+       <!-- <div style="height: 8px ;background: #E39E25;"></div>
+        <div style="background: #01648E;height: 48px;">
+            <apex:image url="{!$Resource.QuoteCombinedHeaderLogo}" style="height: 50px;"/>
+        </div>-->
+        <br/>
+        <div style="background: #F1FAFF; font-family:MontserratCustomfont" >
+            <table>
+                <tr>
+                    <td style="width:20px;"><apex:image url="{!$Resource.AstrickPng}" style="padding: 6px;"/></td>
+                    <td><span style="font-size:11px;color:#01648E">Terms &amp; Conditions</span></td>
+                </tr>
+            </table>
+        </div>
+        <div style="margin-top: 5px; ">
+            <span style="color:#01648E">Exclusions:</span>
+            <p>
+                <span>Above rates does not include the following charges which are additional.</span>
+            </p>
+            <ul>
+                <li><b>Saudi EDI Service fees</b> – SR.10/- to SR.100/- according to invoice value of the cargo.</li>
+                <li>Bill of lading charges SR 150/-</li>
+                <li>Inspection charges or X RAY charges if any inside port same will be additional against official receipt.</li>
+                <li>Port Demurrage after expiry of free period.</li>
+            </ul>
+        </div>
+        <div style="margin-top: 5px; ">
+            <span style="color:#01648E">Inclusions:</span>
+        </div>
+        <p>
+            <span>Above rates includes following operations.</span>
+        </p>
+        <ul>
+            <li>Transportation of empty container from shipping line terminal to your loading site.</li>
+            <li>Waiting time for loading – maximum 4 hours.</li>
+            <li>Transportation of loaded container from your site to our terminal.</li>
+            <li>Offloading of container from trailer to ground.</li>
+            <li>Transportation of empty container from shipping line terminal to your loading site.</li>
+            <li>Shuttling of full container from our terminal to port.</li>
+            <li>Export customs clearance.</li>
+        </ul>
+    </div>
+</apex:page>

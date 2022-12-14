@@ -202,6 +202,31 @@ public class QuotationItemTriggerHandler {
                 chargesIncluded +='Wrapping/packing charges : '+quote.Wrappingpacking_charges__c +' '+ quote.CurrencyIsoCode + '\r\n';
             }
             
+            //Ex Works Charges Computation
+            /*if(quote.Place_of_Pickup__c!=0.0 && quote.Place_of_Pickup__c!=NULL){
+                chargesIncluded +='Place of Pickup : '+quote.Place_of_Pickup__c +' '+ quote.Place_of_Pickup__c + '\r\n';
+            }
+            if(quote.Place_of_Discharge__c!=0.0 && quote.Place_of_Discharge__c!=NULL){
+                chargesIncluded +='Place of Discharge : '+quote.Place_of_Discharge__c +' '+ quote.CurrencyIsoCode + '\r\n';
+            }*/
+            if(quote.Ex_Works_Charge__c!=0.0 && quote.Ex_Works_Charge__c!=NULL){
+                chargesIncluded +='Ex Works Charge : '+quote.Ex_Works_Charge__c +' '+ quote.CurrencyIsoCode + '\r\n';
+            }
+            
+            //Total Values Charges Computation
+            if(quote.Total_Dest__c!=0.0 && quote.Total_Dest__c!=NULL){
+                chargesIncluded +='Total Destination: '+quote.Total_Dest__c +' '+ quote.CurrencyIsoCode + '\r\n';
+            }
+            if(quote.Total_INCO__c!=0.0 && quote.Total_INCO__c!=NULL){
+                chargesIncluded +='Total Origin : '+quote.Total_INCO__c +' '+ quote.CurrencyIsoCode + '\r\n';
+            }
+            if(quote.Total_SL__c	!=0.0 && quote.Total_SL__c	!=NULL){
+                chargesIncluded +='Total SL : '+quote.Total_SL__c	 +' '+ quote.CurrencyIsoCode + '\r\n';
+            }
+            if(quote.Total_Additional__c!=0.0 && quote.Total_Additional__c!=NULL){
+                chargesIncluded +='Total Additional : '+quote.Total_Additional__c +' '+ quote.CurrencyIsoCode + '\r\n';
+            }
+            
             quote.Charges_Included__c = chargesIncluded;
             system.debug('chargesIncluded'+chargesIncluded);
             

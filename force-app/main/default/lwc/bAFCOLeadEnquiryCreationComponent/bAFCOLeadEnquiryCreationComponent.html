@@ -31,16 +31,21 @@
             <lightning-input type="date"  data-field='closeDateField' label="Close Date" value={closeDate} onchange={handelCloseDate}></lightning-input>
         </lightning-layout-item>
         <lightning-layout-item size="12" large-device-size="4" medium-device-size="4" small-device-size="12">
-            <label class="slds-form-element__label">
-                 <p style="padding: 0px 20px 0px 20px;" class="labelStyle">Commercial User</p>
-            </label>
-            <c-b-a-f-c-o-custom-look-up-component
-                                obj-name="User"
-                                search-placeholder="Search Commercial User" 
-                                icon-name="standard:user"
-                                filter="Profile.Name = 'Commercial Profile'"
-                                onlookupselected={handleCommercialUserSelection}
-                                onlookupremoved={handleCommercialUserRemoved}></c-b-a-f-c-o-custom-look-up-component>
+            <div class={customerErrorClass}>
+                <label class="slds-form-element__label">
+                    <p style="padding: 0px 20px 0px 20px;" class="labelStyle">Commercial User</p>
+               </label>
+               <c-b-a-f-c-o-custom-look-up-component
+                                   obj-name="User"
+                                   search-placeholder="Search Commercial User" 
+                                   icon-name="standard:user"
+                                   filter="Profile.Name = 'Commercial Profile'"
+                                   onlookupselected={handleCommercialUserSelection}
+                                   onlookupremoved={handleCommercialUserRemoved}></c-b-a-f-c-o-custom-look-up-component>
+                                   <div class="slds-form-element__help"  style="color: rgb(234, 0, 30); padding-left: 20px;" if:true={customerErrorClass}>
+                                    Complete this field.
+                                </div>
+            </div>
         </lightning-layout-item>
     </lightning-layout>
     <div if:true={leadEnquiryList}>

@@ -72,7 +72,6 @@ public class BAFCOLRoutingDetailsController {
                              AND Validity__c >=: todaysDate AND recordtypeId =: RMS_EXPORT_RECORDTYPE_Id]){
                                  rmsEquipmentList.add(rmsObj.Equipment_Type__c) ; 
                              }
-        
         // to get Previously generated Quote
         List<Quotation__c> quoteList = [SELECT Id FROM Quotation__c where Opportunity__c  =: enquiryId limit 1];
         if(quoteList.size() > 0) QuoteId = quoteList[0].Id;
@@ -97,6 +96,7 @@ public class BAFCOLRoutingDetailsController {
                              AND Equipment_Type__r.name != null
                              AND Validity__c >=: todaysDate
                              AND recordtypeId =: RMS_EXPORT_RECORDTYPE_Id
+                             AND Equipment_Type__r.name in: routeEquipmentList
                             ]){
                                 if(!shipLineToEquipMap.containsKey(rmsObj.Shipping_Line__r.Name)){
                                     shipLineToEquipMap.put(rmsObj.Shipping_Line__r.Name, new List<BAFCORMSDto>());
