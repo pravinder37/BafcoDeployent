@@ -65,7 +65,7 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
 
     connectedCallback(){
         let todaysDate = new Date().toISOString();
-        this.closeDate = this.formatDate(todaysDate);
+        //this.closeDate = this.formatDate(todaysDate);
         this.getCommercialUserOnLoad();
         this.getAllRegularRoute();
         this.addRouteEnquiry();
@@ -183,6 +183,7 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
         console.log('Lead List '+JSON.stringify(this.leadEnquiryList,null,2));
     }       
     handleSubmit(){
+        this.isLoading = true;
         let ChildList = this.template.querySelectorAll('c-b-a-f-c-o-lead-enquiry-entry-intake');
         if(ChildList.length > 0){
             ChildList.forEach(elem=>{
@@ -229,10 +230,6 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
                 tempErrorList.push('Please fill commodity')
                 elem.commodityClass = 'slds-has-error';
             }
-           /* if(elem.cargoWeights <= 0 ){
-                tempErrorList.push('Please fill cargoWeights')
-                elem.cargoweightClass = 'slds-has-error';
-            }*/
             if(elem.serviceType == 'D2P' && elem.placeOfPickup == ''){
                 tempErrorList.push('Please fill cargoWeights')
                 elem.pickupPlaceClass = 'slds-has-error';
@@ -261,6 +258,7 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
             }
         })
         if(allValid){
+            this.isLoading = true
             submitRoutingList({ 
                 routingList : this.leadEnquiryList,
                 businessType : this.businessTypeSelected,
@@ -269,6 +267,7 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
                 commercialUserId : this.commercialUserId
             })
             .then(result =>{
+                this.isLoading = false
                 console.log('routing submit  result : ', JSON.stringify(result,null,2));
                 if(ChildList.length > 0){
                     ChildList.forEach(elem=>{
@@ -295,13 +294,19 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
         }
         else{
             console.log('errorList '+JSON.stringify(errorList,null,2))
-            this.isLoading = false
+            
             if(ChildList.length > 0){
                 ChildList.forEach(elem=>{
                 elem.submitdone();
                 })
             }
-            this.showErrorToast();
+            setTimeout(() => {
+                this.isLoading = false
+            }, 100);
+            setTimeout(() => {
+                this.showErrorToast();
+            }, 300);
+           
         }
     }
     showErrorToast() {

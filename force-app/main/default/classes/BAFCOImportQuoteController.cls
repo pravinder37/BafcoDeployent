@@ -51,7 +51,7 @@ public class BAFCOImportQuoteController {
                 routeEquipmentoquantityMap.put(routeEquip.Equipment_Type__r.name,routeEquip.Quantity__c);
             }        
         }
-        for(RMS__c rmsObj : [Select Agent__r.Name,Validity__c, Id,Sea_Freight__c, Equipment_Type__c,Shipping_Line__c,Shipping_Line__r.Name,Equipment_Type__r.name  
+        for(RMS__c rmsObj : [Select Remarks__c,Rate_Type__c,Agent__r.Name,Validity__c, Id,Sea_Freight__c, Equipment_Type__c,Shipping_Line__c,Shipping_Line__r.Name,Equipment_Type__r.name  
                              FROM RMS__c WHERE Port_Of_Loading__r.Name =: portLoading 
                              AND Port_Of_Discharge__r.Name =: portDestination
                              AND Shipping_Line__r.Name != null
@@ -78,6 +78,8 @@ public class BAFCOImportQuoteController {
                                 rmsDto.quotationId = QuoteId;
                                 rmsDto.agentId = rmsObj.Agent__c;
                                 rmsDto.agentName = rmsObj.Agent__r.Name;
+                                rmsDto.rateType =rmsObj.Rate_Type__c ;
+                                rmsDto.rmsRemarks = rmsObj.Remarks__c;
                                 /* NEED TO DISCUSS */
                                 /* String key = rmsObj.Shipping_Line__r.Name+'-'+rmsObj.Equipment_Type__r.name;
 if(quoteItemToIdMap.containsKey(key)){

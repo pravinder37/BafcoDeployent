@@ -25,6 +25,8 @@ public class BAFCORMSDto {
     @AuraEnabled
     public String rateType { get; set; }
     @AuraEnabled
+    public String rmsRemarks { get; set; }
+    @AuraEnabled
     public Decimal seaFreight { get; set; }
     @AuraEnabled
     public String businessType { get; set; }

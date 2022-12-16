@@ -71,6 +71,8 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
     @track additionalChargeIndex = 0;
     @track showNewServiceCharge = false;
     @track serviceChargeList = {};
+    @track rateType =''
+    @track rmsRemarks = '';
 
 
     ///////////
@@ -236,6 +238,8 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
         console.log('reset call ')
         this.buyingRate = 0;
         this.quantity=0;
+        this.rateType = '';
+        this.rmsRemarks ='';
         this.sellingRate = 0;
         this.seaFreightSellRate = 0;
         this.equipQuantity = 0;
@@ -1372,6 +1376,8 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                     this.quotationItemId =elem.quotationItemId;
                     this.rmsId = elem.rmsID;
                     this.equipQuantity = elem.quantity
+                    this.rateType = elem.rateType
+                    this.rmsRemarks = elem.rmsRemarks
                 }
                 else{
                     this.equipNotfound = true ; 

@@ -552,7 +552,7 @@
                                     value={incoTotal}
                                     onchange={handletotalChange}></lightning-input>
                             </lightning-layout-item>
-                            <lightning-layout-item size="12" large-device-size="4" medium-device-size="4" small-device-size="12" style="padding: 0px 20px 0px 20px;">
+                            <!--lightning-layout-item size="12" large-device-size="4" medium-device-size="4" small-device-size="12" style="padding: 0px 20px 0px 20px;">
                                 <lightning-combobox
                                     name="Direction"
                                     label="Direction"
@@ -560,7 +560,7 @@
                                     placeholder="Select direction"
                                     options={DirectionOptions}
                                     onchange={handleDirectionChange} ></lightning-combobox>
-                            </lightning-layout-item>
+                            </lightning-layout-item-->
                         </lightning-layout>
                     </lightning-accordion-section>
                     <lightning-accordion-section name="destinChargesDetail" label="Destination Charges" if:true={displayDestinCharge}>
@@ -654,7 +654,14 @@
             </div>
             <footer class="slds-modal__footer">
                 <button class="slds-button slds-button_neutral" onclick={closeModal} title="Cancel">Cancel</button>
-                <button class="slds-button slds-button_brand" onclick={submitDetails} title="OK">Save Rates</button>
+                <!--button class="slds-button slds-button_brand" onclick={submitDetails} title="OK">Save Rates</button-->
+                <lightning-button 
+                            variant="brand"
+                            style="padding-left: 5px;"
+                            label="Save Rates" 
+                            title="Save Rates"
+                            disabled={isLoading}
+                            onclick={submitDetails}></lightning-button>
             </footer>
         </div>
     </section>

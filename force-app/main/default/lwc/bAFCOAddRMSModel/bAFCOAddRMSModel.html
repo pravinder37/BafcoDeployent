@@ -538,7 +538,7 @@
                                     disabled={incoChargeTotalChange}
                                     onchange={handlevGMChange}></lightning-input>
                             </lightning-layout-item>
-                            <lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;">
+                            <!--lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;">
                                 <lightning-combobox
                                     name="Direction"
                                     label="Direction"
@@ -546,7 +546,7 @@
                                     placeholder="Select direction"
                                     options={DirectionOptions}
                                     onchange={handleDirectionChange} ></lightning-combobox>
-                            </lightning-layout-item>
+                            </lightning-layout-item-->
                             <lightning-layout-item  size="4" style="padding: 0px 20px 0px 20px;">
                                 <lightning-input 
                                     type="number"
@@ -648,7 +648,14 @@
             <!-- Modal/Popup Box LWC footer starts here -->
             <footer class="slds-modal__footer">
                 <button class="slds-button slds-button_neutral" onclick={closeModal} title="Cancel">Cancel</button>
-                <button class="slds-button slds-button_brand" onclick={submitDetails} title="OK">Save Rates</button>
+                <!--button class="slds-button slds-button_brand" onclick={submitDetails} title="OK">Save Rates</button-->
+                <lightning-button 
+                            variant="brand"
+                            style="padding-left: 5px;"
+                            label="Save Rates" 
+                            title="Save Rates"
+                            disabled={isLoading}
+                            onclick={submitDetails}></lightning-button>
             </footer>
         </div>
     </section>

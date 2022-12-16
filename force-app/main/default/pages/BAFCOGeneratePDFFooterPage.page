@@ -1,4 +1,4 @@
-<apex:page standardController="Quotation__c" extensions="BAFCOGeneratePDFController">
+<apex:page renderAs="pdf" standardController="Quotation__c" extensions="BAFCOGeneratePDFController">
     <div style="page-break-before: always">
        <!-- <div style="height: 8px ;background: #E39E25;"></div>
         <div style="background: #01648E;height: 48px;">

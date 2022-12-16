@@ -67,11 +67,14 @@ public class BAFCOLRoutingDetailsController {
             routeEquipmentList.add(routeEquip.Equipment_Type__r.name);
             routeEquipmentoquantityMap.put(routeEquip.Equipment_Type__r.name,routeEquip.Quantity__c);
         }
+        system.debug('routeEquipmentList '+routeEquipmentList);
+        system.debug('routeEquipmentoquantityMap '+routeEquipmentoquantityMap);
         for(RMS__c rmsObj : [Select Equipment_Type__r.Name,Equipment_Type__c  FROM RMS__c WHERE Port_Of_Loading__r.Name =: portLoading 
                              AND Port_Of_Discharge__r.Name =: portDestination
                              AND Validity__c >=: todaysDate AND recordtypeId =: RMS_EXPORT_RECORDTYPE_Id]){
                                  rmsEquipmentList.add(rmsObj.Equipment_Type__c) ; 
                              }
+        system.debug('rmsEquipmentList '+rmsEquipmentList);
         // to get Previously generated Quote
         List<Quotation__c> quoteList = [SELECT Id FROM Quotation__c where Opportunity__c  =: enquiryId limit 1];
         if(quoteList.size() > 0) QuoteId = quoteList[0].Id;
@@ -89,7 +92,8 @@ public class BAFCOLRoutingDetailsController {
                 routeEquipmentoquantityMap.put(routeEquip.Equipment_Type__r.name,routeEquip.Quantity__c);
             }        
         }
-        for(RMS__c rmsObj : [Select Validity__c, Id,Sea_Freight__c, Equipment_Type__c,Shipping_Line__c,Shipping_Line__r.Name,Equipment_Type__r.name  
+        system.debug('routeEquipmentoquantityMap '+routeEquipmentoquantityMap);
+        for(RMS__c rmsObj : [Select Remarks__c,Rate_Type__c,Validity__c, Id,Sea_Freight__c, Equipment_Type__c,Shipping_Line__c,Shipping_Line__r.Name,Equipment_Type__r.name  
                              FROM RMS__c WHERE Port_Of_Loading__r.Name =: portLoading 
                              AND Port_Of_Discharge__r.Name =: portDestination
                              AND Shipping_Line__r.Name != null
@@ -109,6 +113,8 @@ public class BAFCOLRoutingDetailsController {
                                 rmsDto.equipmentId = rmsObj.Equipment_Type__c;
                                 rmsDto.seaFreight = rmsObj.Sea_Freight__c ; 
                                 rmsDto.rmsID = rmsObj.id;
+                                rmsDto.rateType =rmsObj.Rate_Type__c ;
+                                rmsDto.rmsRemarks = rmsObj.Remarks__c;
                                 rmsDto.quotationId = QuoteId;
                                 String key = rmsObj.Shipping_Line__r.Name+'-'+rmsObj.Equipment_Type__r.name;
                                 if(quoteItemToIdMap.containsKey(key)){
@@ -841,6 +847,16 @@ public class BAFCOLRoutingDetailsController {
         if(incoTermList.size()>0){
             dto.incoTermId = incoTermList[0].Id;
             dto.incoTermName = incoTermList[0].Name;
+        }
+        return dto;
+    }
+    @auraenabled
+    public static RmsDefaultValue getDefaultImportAddRate(String routeId){
+        RmsDefaultValue dto = new RmsDefaultValue();
+        if(routeId != null){
+            Route__c routeObj = [Select INCO_Term__r.Name,id from Route__c where id=:routeId];
+            dto.incoTermId = routeObj.INCO_Term__c;
+            dto.incoTermName =routeObj.INCO_Term__r.Name;
         }
         return dto;
     }

@@ -747,13 +747,17 @@
                         <lightning-layout-item size="5" class="buyingRateStyle">
                             <span style="color: #3A88F7;font-size: 20px;">$ {buyingRate}</span>
                             <p class="slds-align_absolute-center" style="color: #5A5A5A;">Buying Rate</p>
+                            <p class="slds-align_absolute-center" style="color: #5A5A5A; padding-top: 2px;font-size: 11px;">(Rate Type : {rateType})</p>
                          </lightning-layout-item>
                          <lightning-layout-item size="1"></lightning-layout-item>
                          <lightning-layout-item size="5" class="sellingRateStyle">
                             <span style="color: #4CAF50; font-size: 20px;">$ {sellingRate}</span>
-                            <p class="slds-align_absolute-center" style="color: #4CAF50;">Selling Rate</p>
+                            <p class="slds-align_absolute-center" style="color: #4CAF50;padding-bottom: 14px;">Selling Rate</p>
                          </lightning-layout-item>
                          <!--lightning-layout-item size="1"></lightning-layout-item-->
+                         <lightning-layout-item size="12" if:true={rmsRemarks} style="padding: 7px 0px 7px 15px;background: white;color: #5A5A5A;" >
+                            Remarks : <span>{rmsRemarks}</span>
+                         </lightning-layout-item>
                          <lightning-layout-item size="12" class="profitButton">
                             <span class="profitLabel">
                                 {profitLabel}

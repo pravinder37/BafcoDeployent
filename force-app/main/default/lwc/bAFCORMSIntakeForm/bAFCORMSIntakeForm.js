@@ -105,70 +105,70 @@ export default class BAFCORMSIntakeForm extends LightningElement {
         this.getExchangeRate();
         this.getDefualtValueForRMS();
         let templist = {
-            'BAF':0,
-            'BunkerSurcharge':0,
-            'ISPS':0,
-            'OTHC':0,
-            'CMC':0,
-            'EIC':0,
-            'sealCharges':0,
-            'DTHC':0,
-            'Total':0,
+            'BAF':null,
+            'BunkerSurcharge':null,
+            'ISPS':null,
+            'OTHC':null,
+            'CMC':null,
+            'EIC':null,
+            'sealCharges':null,
+            'DTHC':null,
+            'Total':null,
             'currencyCode':'USD',
-            'carriageCongestionSurcharg':0,
-            'carrierSecurityFees':0,
-            'cleaningCharges':0,
-            'DGSurcharge':0,
-            'inlandFuelSurcharge':0,
-            'inlandHandlingFees':0,
-            'inlandhaulage':0,
-            'lowSulphurSurcharge':0,
-            'operationalRecoverySurcharge':0,
-            'overweightsurcharge':0,
-            'warRiskSurcharge':0
+            'carriageCongestionSurcharg':null,
+            'carrierSecurityFees':null,
+            'cleaningCharges':null,
+            'DGSurcharge':null,
+            'inlandFuelSurcharge':null,
+            'inlandHandlingFees':null,
+            'inlandhaulage':null,
+            'lowSulphurSurcharge':null,
+            'operationalRecoverySurcharge':null,
+            'overweightsurcharge':null,
+            'warRiskSurcharge':null
         }
         this.shipp = templist;
 
         let tempList2 = {             
-            'bayan' : 0,                
-            'destinationCustomsClearance' : 0, 
-            'destinationLoadingCharges' : 0,
-            'fasahFee' : 0,
-            'inspection' : 0,                
-            'liftOnLiftOff' : 0,                    
-            'originCustomsclearance' : 0,                
-            'originLoadingCharges' : 0,                
-            'portShuttling' : 0,                    
-            'tabadul' : 0,                
-            'xray' : 0,                
-            'total' : 0,
-            'loadingCharge':0,
+            'bayan' : null,                
+            'destinationCustomsClearance' : null, 
+            'destinationLoadingCharges' : null,
+            'fasahFee' : null,
+            'inspection' : null,                
+            'liftOnLiftOff' : null,                    
+            'originCustomsclearance' : null,                
+            'originLoadingCharges' : null,                
+            'portShuttling' : null,                    
+            'tabadul' : null,                
+            'xray' : null,                
+            'total' : null,
+            'loadingCharge':null,
             'loadingChargeId':'',
             'currencyCode':'USD',
-            'bLFees':0,
-            'exportServiceFees':0,
-            'fuelSurcharge':0,
-            'insuranceCharges':0,
-            'originDetentionDemurrageCharges':0,
-            'OTHC':0,
-            'pickupCharges':0,
-            'reeferPluginCharges':0,
-            'tarpaulinCharges':0,
-            'truckidlingCharges':0,
-            'vGM':0,
-            'lashingCharges':0        
+            'bLFees':null,
+            'exportServiceFees':null,
+            'fuelSurcharge':null,
+            'insuranceCharges':null,
+            'originDetentionDemurrageCharges':null,
+            'OTHC':null,
+            'pickupCharges':null,
+            'reeferPluginCharges':null,
+            'tarpaulinCharges':null,
+            'truckidlingCharges':null,
+            'vGM':null,
+            'lashingCharges':null        
         }
         this.incoCharges = tempList2;
         let templist3 = {
-            'bayanCharges':0,
-            'customClearance':0,
-            'doCharges':0,
-            'DTHC':0,
-            'fasahCharges':0,
-            'gatePassCharges':0,
-            'LOLOCharges':0,
-            'total':0,
-            'transportation':0,
+            'bayanCharges':null,
+            'customClearance':null,
+            'doCharges':null,
+            'DTHC':null,
+            'fasahCharges':null,
+            'gatePassCharges':null,
+            'LOLOCharges':null,
+            'total':null,
+            'transportation':null,
             'currencyCode':'USD'
         }
         this.destinCharges = templist3;
@@ -186,15 +186,18 @@ export default class BAFCORMSIntakeForm extends LightningElement {
                     let Obj={Id:result.commodityId,Name:result.commodityName}
                     field.handleDefaultSelected(Obj);
                 }
-                if(result.incoTermId != undefined){
-                    let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[4];
-                    let Obj={Id:result.incoTermId,Name:result.incoTermName}
-                    field.handleDefaultSelected(Obj);
-                }
                 if(result.businessType != undefined){
                     this.businessType = result.businessType != null ? result.businessType : '';
                     if(this.businessType == 'Import') this.displayAgentField = true;
-                    else this.displayAgentField = false;
+                    else {
+                        this.displayAgentField = false;
+                        if(result.incoTermId != undefined && this.businessType == 'Export'){
+                            let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[4];
+                            let Obj={Id:result.incoTermId,Name:result.incoTermName}
+                            field.handleDefaultSelected(Obj);
+                        }
+                        
+                    }
                 }
                 if(result.polId != undefined){
                     if(result.polId != null){
@@ -263,7 +266,11 @@ export default class BAFCORMSIntakeForm extends LightningElement {
     }
     handleBusinessTypeChange(e){
         this.rmsDetail.businessType = e.target.value;
-        if(this.rmsDetail.businessType =='Import') this.displayAgentField = true;
+        if(this.rmsDetail.businessType =='Import') {
+            this.displayAgentField = true;
+            let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[4];
+            field.handleRemovePill();
+        }
         else this.displayAgentField = false;
     }
     handleBAFChange(e){

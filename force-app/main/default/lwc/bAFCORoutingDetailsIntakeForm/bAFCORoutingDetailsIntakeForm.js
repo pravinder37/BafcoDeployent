@@ -76,6 +76,8 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
     @track showErrorPopup = false;
     @track hideCalculationSection = false;
     @track isLoading = false;
+    @track rateType =''
+    @track rmsRemarks =''
 
     ///////////
     @track serviceChargeList = {};
@@ -259,6 +261,8 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
     }
     resetCalculation(){
         this.buyingRate = 0;
+        this.rateType ='';
+        this.rmsRemarks = '';
         this.quantity=0;
         this.sellingRate = 0;
         this.seaFreightSellRate = 0;
@@ -1355,6 +1359,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
         let dedicatedRoutingObj = this.routingListMap[this.shippingTabSelected];
         dedicatedRoutingObj.forEach(elem =>{
             if(elem.equipmentName == this.shippingEquipTabSelected){
+                console.log('elem '+JSON.stringify(elem,null,2))
                 if(elem.equipmentId != ''){
                     this.seaFreight = elem.seaFreight;
                     this.validity = elem.validity;
@@ -1364,6 +1369,8 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                     this.quotationItemId =elem.quotationItemId;
                     this.rmsId = elem.rmsID
                     this.equipQuantity = elem.quantity
+                    this.rateType = elem.rateType
+                    this.rmsRemarks = elem.rmsRemarks
                 }
                 else{
                     this.shippingEquipTabSelected = this.shippingEquipTabSelected;

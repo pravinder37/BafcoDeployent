@@ -11,15 +11,15 @@ public class BAFCOshippingLineChargesController {
                                            War_Risk_Surcharge__c,Total__c 
                                            FROM Shipping_Line_Charge__c WHERE RMS__c=:rmsRecordId]){
             
-            slcDTO.BunkerSurcharge = slc.Bunker_surcharge__c;
-            slcDTO.BAF = slc.BAF__c;
-            slcDTO.ISPS = slc.ISPS__c;
-            slcDTO.OTHC = slc.OTHC__c;
-            slcDTO.sealCharges = slc.Seal_Charges__c;
-            slcDTO.CMC = slc.CMC__c;
-            slcDTO.EIC = slc.EIC__c;
-            slcDTO.DTHC = slc.DTHC__c; 
-            slcDTO.Total = slc.Total__c;
+            slcDTO.BunkerSurcharge = slc.Bunker_surcharge__c != null ? slc.Bunker_surcharge__c : 0; 
+            slcDTO.BAF = slc.BAF__c != null ? slc.BAF__c : 0; 
+            slcDTO.ISPS = slc.ISPS__c != null ? slc.ISPS__c : 0; 
+            slcDTO.OTHC = slc.OTHC__c != null ? slc.OTHC__c : 0; 
+            slcDTO.sealCharges = slc.Seal_Charges__c != null ? slc.Seal_Charges__c : 0; 
+            slcDTO.CMC = slc.CMC__c != null ? slc.CMC__c : 0; 
+            slcDTO.EIC = slc.EIC__c != null ? slc.EIC__c : 0; 
+            slcDTO.DTHC = slc.DTHC__c != null ? slc.DTHC__c : 0; 
+            slcDTO.Total = slc.Total__c != null ? slc.Total__c : 0; 
             slcDto.currencyCode = slc.CurrencyIsoCode != null ? slc.CurrencyIsoCode : 'USD';
                                                
             slcDTO.carriageCongestionSurcharg = slc.Carriage_Congestion_Surcharge__c != null ? slc.Carriage_Congestion_Surcharge__c : 0; 
@@ -46,18 +46,18 @@ public class BAFCOshippingLineChargesController {
                                       Lashing_Charges__c,Origin_Detention_Demurrage_Charges__c,OTHC__c,Pickup_Charges__c,
                                       Reefer_Plugin_Charges__c,Truck_idling_Charges__c,Tarpaulin_Charges__c,VGM__c,
                                       Total__c, Id FROM INCO_Charge__c where RMS__c =: rmsRecordId limit 1]){
-             incoDto.bayan = iObj.Bayan__c;
-             incoDto.fasahFee = iObj.Fasah_fee__c;
-             incoDto.inspection = iObj.Inspection__c;
-             incoDto.liftOnLiftOff = iObj.Lift_on_Lift_off__c;
-             incoDto.originCustomsclearance = iObj.Origin_Customs_clearance__c;
-             incoDto.originLoadingCharges = iObj.Origin_Loading_Charges__c;
-             incoDto.portShuttling = iObj.Port_Shuttling__c;
-             incoDto.tabadul = iObj.Tabadul__c;
-             incoDto.total = iObj.Total__c;
-             incoDto.xray = iObj.Xray__c;
+             incoDto.bayan = iObj.Bayan__c!= null ? iObj.Bayan__c : 0;
+             incoDto.fasahFee = iObj.Fasah_fee__c!= null ? iObj.Fasah_fee__c : 0;
+             incoDto.inspection = iObj.Inspection__c!= null ? iObj.Inspection__c : 0;
+             incoDto.liftOnLiftOff = iObj.Lift_on_Lift_off__c!= null ? iObj.Lift_on_Lift_off__c : 0;
+             incoDto.originCustomsclearance = iObj.Origin_Customs_clearance__c!= null ? iObj.Origin_Customs_clearance__c : 0;
+             incoDto.originLoadingCharges = iObj.Origin_Loading_Charges__c!= null ? iObj.Origin_Loading_Charges__c : 0;
+             incoDto.portShuttling = iObj.Port_Shuttling__c!= null ? iObj.Port_Shuttling__c : 0;
+             incoDto.tabadul = iObj.Tabadul__c!= null ? iObj.Tabadul__c : 0;
+             incoDto.total = iObj.Total__c!= null ? iObj.Total__c : 0;
+             incoDto.xray = iObj.Xray__c!= null ? iObj.Xray__c : 0;
              //incoDto.seaFreight = iObj.RMS__r.Sea_Freight__c;
-             incoDto.loadingCharge = iObj.Loading_Charges__c;
+             incoDto.loadingCharge = iObj.Loading_Charges__c!= null ? iObj.Loading_Charges__c : 0;
              incoDto.rmsId = iObj.RMS__c;
              //incoDto.rmsName = iObj.RMS__r.Name;
                                           

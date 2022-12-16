@@ -118,13 +118,15 @@
         </lightning-layout>
     </div>
     <lightning-layout class="slds-align_absolute-center slds-m-around_large">
+        <lightning-spinner variant="brand" size="large" if:true={isLoading}></lightning-spinner>
         <lightning-layout-item>
             <lightning-button 
                             variant="brand"
                             label="Submit to Commercial team" 
                             title="submit commercial team"
+                            disabled={isLoading}
                             onclick={handleSubmit}></lightning-button>
         </lightning-layout-item>
     </lightning-layout>
-    <lightning-spinner variant="brand" size="large" if:true={isLoading}></lightning-spinner>
+   
 </template>
