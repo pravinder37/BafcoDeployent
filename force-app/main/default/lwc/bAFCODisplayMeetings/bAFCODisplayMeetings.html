@@ -112,7 +112,7 @@
                             placeholder="Select"></lightning-combobox>
             </lightning-layout-item>
             <lightning-layout-item size="12" style="padding-top: 4%;" class="leftPadding">
-                <lightning-button variant="brand" class="inputFieldClass" label="Create Meeting" onclick={handleCreateMeeting}></lightning-button>
+                <lightning-button variant="brand" disabled={isLoading} class="inputFieldClass" label="Create Meeting" onclick={handleCreateMeeting}></lightning-button>
             </lightning-layout-item>            
         </lightning-layout>
         <!--c-bafco-meeting-intake-form if:true={displayIntakeForm} event-id={eventId} onclose={closeMeetingDisplay} onupdate={handleRecordUpdated}></c-bafco-meeting-intake-form-->

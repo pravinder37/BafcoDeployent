@@ -140,9 +140,7 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
     }
     handleCreateMeeting(){
         let allValid = true;
-        console.log('this.startDate < this.minTodaysDate ',this.startDate < this.minTodaysDate)
-        console.log('this.startDate ',this.startDate)
-        console.log('this.minTodaysDate',this.minTodaysDate)
+        this.isLoading = true;
         if(this.whatId == ''){
             this.whatIdErrorClass= 'slds-has-error';
             this.whatIdErrorMsg = 'Complete this field.';
@@ -182,12 +180,17 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
             })
             .then(result=>{
                 console.log('submitMeetingsRecords result ',JSON.stringify(result))
+                this.visitFor = '';
                 this.getMeetingsRecords();
             })
             .catch(error=>{
                 console.log('submitMeetingsRecords error ',JSON.stringify(error))
             })
     
+        }else{
+            setTimeout(() => {
+                this.isLoading = false
+            }, 200);
         }
     }
     handleDateChange(e){
