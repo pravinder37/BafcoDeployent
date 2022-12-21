@@ -52,14 +52,12 @@ export default class BAFCOImportQuoteParent extends LightningElement {
             if(this.routingDetailsList[i].routeName == section)
             index = i;
         }
-        console.log('index '+index);
-        console.log('section '+section);
-       /* if(index != -1){
+        if(index != -1){
             setTimeout(() => {
-                this.template.querySelectorAll("c-b-a-f-c-o-routing-details-intake-form")[index].handleUpdateCalculation();
+                this.template.querySelectorAll("c-b-a-f-c-o-import-route-details")[index].handleUpdateCalculation();
             }, 200);
             
-        }*/
+        }
     }
     handleUpdateCalculation(e){
         let templist = [];

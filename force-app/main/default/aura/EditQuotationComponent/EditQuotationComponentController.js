@@ -6,6 +6,7 @@
             var state = response.getState();
             if (state === "SUCCESS") {
                 var quoteObj = response.getReturnValue();
+                console.log('quoteObj '+JSON.stringify(quoteObj));
                 var leadId = quoteObj.leadId;
                 var pageReference = {
                     type: 'standard__component',
@@ -21,7 +22,7 @@
                 const navService = cmp.find('navService');
                 const pageRef = cmp.get('v.pageReference');
                 const handleUrl = (url) => {
-                    window.open(url);
+                    window.open(url,'_self');
                 };
                 const handleError = (error) => {
                     console.log('error '+error);

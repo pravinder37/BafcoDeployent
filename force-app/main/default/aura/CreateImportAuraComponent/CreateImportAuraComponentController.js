@@ -14,7 +14,7 @@
         const navService = component.find('navService');
         const pageRef = component.get('v.pageReference');
         const handleUrl = (url) => {
-            window.open(url);
+            window.open(url,'_self');
         };
         const handleError = (error) => {
             console.log(error);

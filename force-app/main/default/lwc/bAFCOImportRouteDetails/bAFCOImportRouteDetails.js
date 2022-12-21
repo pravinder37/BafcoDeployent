@@ -32,6 +32,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
     @api businessType = '';
     @api pickupPlaceName = '';
     @api dischargePlaceName = '';
+    @api quotationId = '';
 
     @track addAgentModel = false;
     @track agentTabSelected = '';
@@ -216,15 +217,23 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                             'quantity':conts[key][key2][key3].quantity,
                             'quotationId':conts[key][key2][key3].quotationId,
                             'cssClass':'',
+                            'equipment':conts[key][key2][key3].equipmentName,
                             savedClicked:false
                         })
-                        let parentKey = key+'-'+key2;
-                        this.quotationMap.push({value : templist,key:parentKey})
+                        let parentKey = key+'-'+key2+'-'+conts[key][key2][key3].equipmentName+'-'+this.routeName;
+                        let existingIndex = this.quotationMap.findIndex(x=>x.key==parentKey);
+                        console.log('*** routenae '+this.routeName)
+                        console.log('*** inital '+JSON.stringify(this.quotationMap,null,2))
+                        let newTempListIndex = templist.findIndex(x=>x.equipment==conts[key][key2][key3].equipmentName);
+                        let NewTempList = [];
+                        NewTempList.push(templist[newTempListIndex])
+                        if(existingIndex == -1) this.quotationMap.push({value : NewTempList,key:parentKey})
+                        console.log('*** final '+JSON.stringify(this.quotationMap,null,2))
                         let toBeSend = {
                             'routeName':this.routeName,
                             'quotationMap':this.quotationMap
                         }
-                        this.dispatchEvent(new CustomEvent('updatecalculation', { detail: toBeSend }));             
+                        this.dispatchEvent(new CustomEvent('updatecalculation', { detail: toBeSend })); 
                     }   
                  }                
               }
@@ -518,7 +527,8 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
             }
         }    
     }
-    handleUpdateCalculation(){
+    @api handleUpdateCalculation(){
+        
         let dtoTotal = 0;  
         let additonalChargeTotal = 0;      
         let keyName = this.agentTabSelected+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected;
@@ -585,21 +595,22 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
             this.profitLabel = '$ '+profit +' Profit.';
             let tempMap = this.quotationMap;
             tempMap.forEach(elem=>{
-                if(elem.key == this.agentTabSelected+'-'+this.shippingTabSelected){
+                if(elem.key == this.agentTabSelected+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName){
                     elem.value.forEach(el =>{
-                        console.log('')
-                        el.sellingRate = parseInt(this.sellingRate) 
+                        if(el.equipment == this.shippingEquipTabSelected){
+                            el.sellingRate = parseInt(this.sellingRate) 
                             el.profit = parseInt(profit)
                             el.margin =  parseInt(this.margin)
                             el.validity = this.validity
                             el.quantity = this.quantity
                             if(el.savedClicked == true) el.cssClass = 'class2'
                             else el.cssClass = ''
+                        }
                     })
                 }
             })
 
-           this.quotationMap = tempMap;
+           this.quotationMap = JSON.parse(JSON.stringify(tempMap));
            let toBeSend = {
             'routeName':this.routeName,
             'quotationMap':this.quotationMap
@@ -776,7 +787,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                 let tempMap = this.quotationMap;
                 console.log('TempMap '+JSON.stringify(tempMap,null,2))
                 tempMap.forEach(elem=>{
-                    if(elem.key == this.shippingTabSelected){
+                    if(elem.key == this.agentTabSelected+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName){
                         elem.value.forEach(el =>{
                             el.cssClass = 'class2'
                         })

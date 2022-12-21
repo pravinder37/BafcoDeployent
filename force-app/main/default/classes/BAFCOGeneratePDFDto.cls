@@ -12,11 +12,15 @@ public class BAFCOGeneratePDFDto {
     @AuraEnabled public string validityTo{get;set;}
     @AuraEnabled public string serviceType{get;set;}
     @AuraEnabled public string shippingTerm{get;set;}
+    @AuraEnabled public string paymentTerm{get;set;}
     @AuraEnabled public string remarks{get;set;}
+    @AuraEnabled public string recordTypeName{get;set;}
     @AuraEnabled public string exclusionHeader{get;set;}
     @AuraEnabled public List<string> exclusionList{get;set;}
     @AuraEnabled public string inclusionHeader{get;set;}
     @AuraEnabled public List<string> inclusionList{get;set;}
+    @AuraEnabled public string termsNConditionHeader{get;set;}
+    @AuraEnabled public List<string> termsNConditionList{get;set;}
     @AuraEnabled public List<serviceChargeList> serviceChargeList{get;set;}
     
     public class serviceChargeList{

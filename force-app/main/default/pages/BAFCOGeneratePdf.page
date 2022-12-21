@@ -30,7 +30,18 @@
             }
             * {
             font-family: Helvetica,Dialog;
-            font-size: 11px;
+            font-size: 12px;
+            }
+            .boxesCss{
+            max-width:168px;
+            min-width:168px;
+            width:168px;
+            min-height:35px;
+            max-height:35px;
+            height:35px;
+            text-align: center;
+            // background: #E5F6FE !important;
+            //color : #01648E;
             }
         </style>
     </head>
@@ -45,14 +56,14 @@
         <br/>
         <div style="background: #F1FAFF; font-family:MontserratCustomfont" >
             <apex:image url="{!$Resource.QuotePdfBookIcon}" style="padding:3px 0px 2px 3px;"/>
-            <span style="color: #01648E; position: absolute;margin-top:6px;left: 30px;"><b>QUOTATION</b></span>
-            <span style="color: #212121; position: absolute;margin-top:6px;left: 14%;">
+            <span style="color: #01648E; position: absolute;margin-top:0px;left: 36px;"><b style="font-size: large;">QUOTATION</b></span>
+            <span style="color: #212121; position: absolute;margin-top:3px;left: 19%;font-size: 13px;">
                 (Thank you for giving BAFCO the opportunity to quote on your business.)
             </span>
         </div>
         <div style="margin-top: 1%;">
             <table class="customFont">
-                <tr>
+                <tr >
                     <td><!-- first Column -->
                         <table>
                             <tr>
@@ -87,7 +98,7 @@
                             </tr>
                             <tr>
                                 <td>Sales responsible</td>
-                                <td><b>{!dto.salesResponsible}</b></td>
+                                <td style="min-width: 120px;"><b>{!dto.salesResponsible}</b></td>
                             </tr>
                             <tr style="background: #E5F6FE;color: #01648E;">
                                 <td colspan="2">
@@ -101,12 +112,12 @@
                                             <td><b>{!dto.validityTo}</b></td>
                                         </tr>
                                         <tr>
-                                            <td style="width: 44%;">Service Type</td>
-                                            <td><b>{!dto.serviceType}</b></td>
+                                            <td style="width: 44%;">Service Type / Shipping Term</td>
+                                            <td><b>{!dto.serviceType} / {!dto.shippingTerm}</b></td>
                                         </tr>
                                         <tr>
-                                            <td style="width: 44%;">Shipping Term</td>
-                                            <td><b>{!dto.shippingTerm}</b></td>
+                                            <td style="width: 44%;">Payment Term</td>
+                                            <td><b>{!dto.paymentTerm}</b></td>
                                         </tr>
                                     </table>
                                 </td>
@@ -116,11 +127,11 @@
                 </tr>
             </table>
         </div>
-        <div style="height:23px;background: #F1FAFF;border-radius: 4px;color: #01648E; margin-top:1%">
+        <div style="height:29px;background: #F1FAFF;border-radius: 4px;color: #01648E; margin-top:1%">
             <table>
                 <tr>
                     <td style="width:20px"><apex:image url="{!$Resource.QuoteDollerIcon}" style="padding:3px 0px 2px 5px;"/></td>
-                    <td><sapn><b>OCEAN FREIGHT RATE</b></sapn></td>
+                    <td><sapn><b style="font-size: large;">FREIGHT RATES</b></sapn></td>
                 </tr>
             </table>
         </div>
@@ -171,24 +182,36 @@
                         <td><b><apex:outputText style="padding-left:3px;" rendered="{!item.ShowtotalDC == true}" value="20DC : "/></b>
                             <apex:outputText style="padding-left:3px;" rendered="{!item.ShowtotalDC == true}" value="{!item.totalDC}"/></td>
                     </tr>-->
-                    <tr style="background: #F9FAFB;">
-                        <td>
-                            <span><b><apex:outputText value="{!item.equipmentType}"/></b></span>
-                            <span><b><apex:outputText rendered="{!item.ShowtotalDC == true}" style="padding-left:72px;" value="20DC : "/></b></span>
+                    <tr style="background:#F5FCFF;color:#01648E;">
+                        <td style="padding-left:280px;font-size:large !important;" >
+                            <span><b style="font-size:large !important;"><apex:outputText value="{!item.equipmentType}"/></b></span>
+                            <span><b><apex:outputText rendered="{!item.ShowtotalDC == true}" style="padding-left:72px;font-size:large !important;" value="20DC"/></b></span>
                         </td>
-                    </tr>
-                    <tr style="background: #F9FAFB;">
-                        <td>
-                            <span><b><apex:outputText style="font-size:14px"  value="{!item.total}"/></b></span>
-                            <span><b><apex:outputText style="padding-left:50px;font-size:14px" value="{!item.totalDC}"/></b></span>
+                    </tr >
+                    <tr style="background: #F5FCFF;color:#01648E;">
+                        <td style="padding-left:280px;">
+                            <span>
+                                <b>
+                                    <apex:outputText style="font-size:large !important"  value="{0, number, #########.##} $">
+                                        <apex:param value="{!item.total}" />
+                                    </apex:outputText>
+                                </b>
+                            </span>
+                            <span>
+                                <b>
+                                    <apex:outputText rendered="{!item.ShowtotalDC == true}" style="padding-left:62px;font-size:large !important;" value="{0, number, #########.##} $">
+                                    <apex:param value="{!item.totalDC}" />
+                                    </apex:outputText>
+                                </b>
+                            </span>
                         </td>
                     </tr>
                     <hr style="border: 1px solid #E7E7E7;"/>
                     <tr class="itemCss" >
                         <td>
-                            <apex:panelGrid rendered="{!showCharges == true}" columns="4">
+                            <apex:panelGrid style="display: block;" rendered="{!showCharges == true}" columns="4">
                                 <apex:panelGroup rendered="{!item.servichargesObj.BAF  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="BAF "/>
                                             <apex:outputText value="{!item.servichargesObj.BAF}"/>
@@ -196,7 +219,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.servichargesObj.bunkerCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Bunker Surcharge "/>
                                             <apex:outputText value="{!item.servichargesObj.bunkerCharges}"/>
@@ -204,7 +227,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.servichargesObj.cleaningCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Cleaning Charges "/>
                                             <apex:outputText value="{!item.servichargesObj.cleaningCharges}"/>
@@ -212,7 +235,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.servichargesObj.CMC  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Container Maintenance Charge "/>
                                             <apex:outputText value="{!item.servichargesObj.CMC}"/>
@@ -220,7 +243,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.servichargesObj.carriageCongestionSurcharge  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Carriage Congestion Surcharge "/>
                                             <apex:outputText value="{!item.servichargesObj.carriageCongestionSurcharge}"/>
@@ -228,7 +251,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.servichargesObj.carrierSecurityFees  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Carrier Security Fees"/>
                                             <apex:outputText value="{!item.servichargesObj.carrierSecurityFees}"/>
@@ -236,7 +259,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.servichargesObj.dgSurcharge  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="DG Surcharge"/>
                                             <apex:outputText value="{!item.servichargesObj.dgSurcharge}"/>
@@ -244,7 +267,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.servichargesObj.DTHC  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="DTHC"/>
                                             <apex:outputText value="{!item.servichargesObj.DTHC}"/>
@@ -252,7 +275,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.servichargesObj.equipmentImbalance  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Equipment Imbalance"/>
                                             <apex:outputText value="{!item.servichargesObj.equipmentImbalance}"/>
@@ -260,7 +283,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.servichargesObj.inlandFuelCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="InlandFuel Charges"/>
                                             <apex:outputText value="{!item.servichargesObj.inlandFuelCharges}"/>
@@ -268,7 +291,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.servichargesObj.inlandHandlingfees  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Inland Handling Fees"/>
                                             <apex:outputText value="{!item.servichargesObj.inlandHandlingfees}"/>
@@ -276,7 +299,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.servichargesObj.inlandHaulage  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Inland Haulage"/>
                                             <apex:outputText value="{!item.servichargesObj.inlandHaulage}"/>
@@ -284,7 +307,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.servichargesObj.ISPS  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="ISPS"/>
                                             <apex:outputText value="{!item.servichargesObj.ISPS}"/>
@@ -292,7 +315,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.servichargesObj.lowerSulphurSurcharge  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Lower Sulphur Surcharge"/>
                                             <apex:outputText value="{!item.servichargesObj.lowerSulphurSurcharge}"/>
@@ -300,7 +323,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.servichargesObj.operationalRecovery  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Operational Recovery"/>
                                             <apex:outputText value="{!item.servichargesObj.operationalRecovery}"/>
@@ -308,7 +331,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.servichargesObj.OTHC  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="OTHC"/>
                                             <apex:outputText value="{!item.servichargesObj.OTHC}"/>
@@ -316,7 +339,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.servichargesObj.overWeightCharge  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Over Weight Charge"/>
                                             <apex:outputText value="{!item.servichargesObj.overWeightCharge}"/>
@@ -324,7 +347,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.servichargesObj.sealCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Seal Charges"/>
                                             <apex:outputText value="{!item.servichargesObj.sealCharges}"/>
@@ -332,15 +355,15 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.servichargesObj.warRiskSurcharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="War Risk Surcharges"/>
                                             <apex:outputText value="{!item.servichargesObj.warRiskSurcharges}"/>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
-                                <apex:panelGroup rendered="{!item.servichargesObj.totalSl  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                <apex:panelGroup rendered="{!AND(item.servichargesObj.totalSl  != NULL,item.servichargesObj.shippTotalChanged==true)}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Total Shipping line"/>
                                             <apex:outputText value="{!item.servichargesObj.totalSl}"/>
@@ -351,7 +374,7 @@
                                 <!-- origin Charges -->
                                 
                                 <apex:panelGroup rendered="{!item.originChargesObj.bayan  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Bayan Charges"/>
                                             <apex:outputText value="{!item.originChargesObj.bayan}"/>
@@ -359,7 +382,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.originChargesObj.blFees  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="BL Fees"/>
                                             <apex:outputText value="{!item.originChargesObj.blFees}"/>
@@ -367,7 +390,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.originChargesObj.originCustomClearance  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Origin Custom Clearance"/>
                                             <apex:outputText value="{!item.originChargesObj.originCustomClearance}"/>
@@ -375,7 +398,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.originChargesObj.exportServiceFees  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Export Service Fees"/>
                                             <apex:outputText value="{!item.originChargesObj.exportServiceFees}"/>
@@ -383,7 +406,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.originChargesObj.fasahFees  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Fasah Fees"/>
                                             <apex:outputText value="{!item.originChargesObj.fasahFees}"/>
@@ -391,7 +414,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.originChargesObj.inspection  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Inspection"/>
                                             <apex:outputText value="{!item.originChargesObj.inspection}"/>
@@ -399,7 +422,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.originChargesObj.insuranceCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Insurance Charges"/>
                                             <apex:outputText value="{!item.originChargesObj.insuranceCharges}"/>
@@ -407,7 +430,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.originChargesObj.liftOnLiftOff  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Lift OnLift Off"/>
                                             <apex:outputText value="{!item.originChargesObj.liftOnLiftOff}"/>
@@ -415,7 +438,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.originChargesObj.OriginDetention  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Origin Detention"/>
                                             <apex:outputText value="{!item.originChargesObj.OriginDetention}"/>
@@ -423,7 +446,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.originChargesObj.OriginLoadingCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Origin Loading Charges"/>
                                             <apex:outputText value="{!item.originChargesObj.OriginLoadingCharges}"/>
@@ -431,7 +454,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.originChargesObj.pickUpCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="PickUp Charges"/>
                                             <apex:outputText value="{!item.originChargesObj.pickUpCharges}"/>
@@ -439,7 +462,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.originChargesObj.ReeferControlPlugInCharge  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Reefer Control PlugIn Charge"/>
                                             <apex:outputText value="{!item.originChargesObj.ReeferControlPlugInCharge}"/>
@@ -447,7 +470,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.originChargesObj.tabadul  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Tabadul"/>
                                             <apex:outputText value="{!item.originChargesObj.tabadul}"/>
@@ -455,7 +478,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.originChargesObj.trapulinCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Trapulin Charges"/>
                                             <apex:outputText value="{!item.originChargesObj.trapulinCharges}"/>
@@ -463,7 +486,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.originChargesObj.truckIdlingCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="TruckIdling Charges"/>
                                             <apex:outputText value="{!item.originChargesObj.truckIdlingCharges}"/>
@@ -471,7 +494,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.originChargesObj.vgm  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="VGM"/>
                                             <apex:outputText value="{!item.originChargesObj.vgm}"/>
@@ -479,7 +502,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.originChargesObj.xray  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="X-Ray"/>
                                             <apex:outputText value="{!item.originChargesObj.xray}"/>
@@ -487,7 +510,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.originChargesObj.lashingCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Lashing Charges"/>
                                             <apex:outputText value="{!item.originChargesObj.lashingCharges}"/>
@@ -495,15 +518,15 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.originChargesObj.fuelSurcharge  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Fuel Surcharge"/>
                                             <apex:outputText value="{!item.originChargesObj.fuelSurcharge}"/>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
-                                <apex:panelGroup rendered="{!item.originChargesObj.TotalOrigincharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                <apex:panelGroup rendered="{!AND(item.originChargesObj.TotalOrigincharges  != NULL,item.originChargesObj.originTotalChanged ==true)}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Total Origin Charges"/>
                                             <apex:outputText value="{!item.originChargesObj.TotalOrigincharges}"/>
@@ -513,7 +536,7 @@
                                 
                                 <!-- Destination Charges -->
                                 <apex:panelGroup rendered="{!item.destinChargeObj.destinBayanCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Bayan Charges"/>
                                             <apex:outputText value="{!item.destinChargeObj.destinBayanCharges}"/>
@@ -521,7 +544,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.destinChargeObj.destinCustomClearanceCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Destination Custom Clearance Charges"/>
                                             <apex:outputText value="{!item.destinChargeObj.destinCustomClearanceCharges}"/>
@@ -529,7 +552,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.destinChargeObj.destinDOCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="DO Charges"/>
                                             <apex:outputText value="{!item.destinChargeObj.destinDOCharges}"/>
@@ -537,7 +560,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.destinChargeObj.destinFasahCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value=" Fasah Charges"/>
                                             <apex:outputText value="{!item.destinChargeObj.destinFasahCharges}"/>
@@ -545,7 +568,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.destinChargeObj.destinGatePassCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Gate Pass Charges"/>
                                             <apex:outputText value="{!item.destinChargeObj.destinGatePassCharges}"/>
@@ -553,15 +576,15 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.destinChargeObj.destinLOLOCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="LOLO Charges"/>
                                             <apex:outputText value="{!item.destinChargeObj.destinLOLOCharges}"/>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
-                                <apex:panelGroup rendered="{!item.destinChargeObj.destinTotalCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                <apex:panelGroup rendered="{!AND(item.destinChargeObj.destinTotalCharges  != NULL,item.destinChargeObj.DestinTotalChanged == true)}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Total Destination Charges"/>
                                             <apex:outputText value="{!item.destinChargeObj.destinTotalCharges}"/>
@@ -571,7 +594,7 @@
                                 
                                 <!-- Additional Charges --->
                                 <apex:panelGroup rendered="{!item.additionalChargesObj.Bayancancellationcharge  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Bayan cancellation charge"/>
                                             <apex:outputText value="{!item.additionalChargesObj.Bayancancellationcharge}"/>
@@ -579,7 +602,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.additionalChargesObj.Cleaningcharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Cleaning charges"/>
                                             <apex:outputText value="{!item.additionalChargesObj.Cleaningcharges}"/>
@@ -587,7 +610,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.additionalChargesObj.ContainerLashingCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Container Lashing Charges"/>
                                             <apex:outputText value="{!item.additionalChargesObj.ContainerLashingCharges}"/>
@@ -595,7 +618,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.additionalChargesObj.Containermovementcharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Container movement charges"/>
                                             <apex:outputText value="{!item.additionalChargesObj.Containermovementcharges}"/>
@@ -603,7 +626,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.additionalChargesObj.Containerstripping  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Container stripping"/>
                                             <apex:outputText value="{!item.additionalChargesObj.Containerstripping}"/>
@@ -619,7 +642,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.additionalChargesObj.Fumigation  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Fumigation"/>
                                             <apex:outputText value="{!item.additionalChargesObj.Fumigation}"/>
@@ -627,7 +650,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.additionalChargesObj.Inspection  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Inspection"/>
                                             <apex:outputText value="{!item.additionalChargesObj.Inspection}"/>
@@ -635,7 +658,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.additionalChargesObj.Insurancecharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Insurance charges"/>
                                             <apex:outputText value="{!item.additionalChargesObj.Insurancecharges}"/>
@@ -643,7 +666,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.additionalChargesObj.MinistryclearncechargeforOOGcargo  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Ministry clearnce charge for OOG cargo"/>
                                             <apex:outputText value="{!item.additionalChargesObj.MinistryclearncechargeforOOGcargo}"/>
@@ -651,7 +674,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.additionalChargesObj.Miscellaneous  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Miscellaneous"/>
                                             <apex:outputText value="{!item.additionalChargesObj.Miscellaneous}"/>
@@ -659,7 +682,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.additionalChargesObj.MOTfinecharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="MOT fine charges"/>
                                             <apex:outputText value="{!item.additionalChargesObj.MOTfinecharges}"/>
@@ -667,7 +690,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.additionalChargesObj.NonPalletizedSurcharge  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="NonPalletized Surcharge"/>
                                             <apex:outputText value="{!item.additionalChargesObj.NonPalletizedSurcharge}"/>
@@ -675,7 +698,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.additionalChargesObj.Pestcontrol  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Pest control"/>
                                             <apex:outputText value="{!item.additionalChargesObj.Pestcontrol}"/>
@@ -683,7 +706,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.additionalChargesObj.Repalletization  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Re palletization"/>
                                             <apex:outputText value="{!item.additionalChargesObj.Repalletization}"/>
@@ -691,7 +714,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.additionalChargesObj.Reefercntrplugincharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Reefer control plugin charges"/>
                                             <apex:outputText value="{!item.additionalChargesObj.Reefercntrplugincharges}"/>
@@ -699,7 +722,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.additionalChargesObj.ReeferPTIcharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Reefer PTI charges"/>
                                             <apex:outputText value="{!item.additionalChargesObj.ReeferPTIcharges}"/>
@@ -707,7 +730,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.additionalChargesObj.Reefersteamwash  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Reefer steam wash"/>
                                             <apex:outputText value="{!item.additionalChargesObj.Reefersteamwash}"/>
@@ -715,7 +738,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.additionalChargesObj.StuffingCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Stuffing Charges"/>
                                             <apex:outputText value="{!item.additionalChargesObj.StuffingCharges}"/>
@@ -723,7 +746,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.additionalChargesObj.SweepingCleaning  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Sweeping Cleaning"/>
                                             <apex:outputText value="{!item.additionalChargesObj.SweepingCleaning}"/>
@@ -731,7 +754,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.additionalChargesObj.TruckHeadcharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="TruckHead charges"/>
                                             <apex:outputText value="{!item.additionalChargesObj.TruckHeadcharges}"/>
@@ -739,7 +762,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.additionalChargesObj.Truckidlingcharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Truckidling charges"/>
                                             <apex:outputText value="{!item.additionalChargesObj.Truckidlingcharges}"/>
@@ -747,7 +770,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.additionalChargesObj.Vesselcertificatecharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Vessel certificate charges"/>
                                             <apex:outputText value="{!item.additionalChargesObj.Vesselcertificatecharges}"/>
@@ -755,7 +778,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.additionalChargesObj.Wrappingpackingcharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Wrappig packing charges"/>
                                             <apex:outputText value="{!item.additionalChargesObj.Wrappingpackingcharges}"/>
@@ -763,7 +786,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.additionalChargesObj.totalAdditional  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Total Additional Charge"/>
                                             <apex:outputText value="{!item.additionalChargesObj.totalAdditional}"/>
@@ -771,7 +794,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.exWorksObj.LoadCharge  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px;">
+                                    <div class="boxesCss"  style="background: #EFEFEF;padding: 10px;">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="{!item.exWorksObj.Id} "/>
                                             <apex:outputText value="{!item.exWorksObj.LoadCharge}"/>
@@ -783,9 +806,9 @@
                     </tr>
                     <tr>
                         <td>
-                            <apex:panelGrid rendered="{!item.ShowtotalDC == true}" columns="4">
+                            <apex:panelGrid style="display: block;" rendered="{!item.ShowtotalDC == true}" columns="4">
                                 <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.BAF  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="BAF "/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.BAF}"/>
@@ -793,7 +816,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.bunkerCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Bunker Surcharge "/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.bunkerCharges}"/>
@@ -801,7 +824,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.cleaningCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Cleaning Charges "/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.cleaningCharges}"/>
@@ -809,7 +832,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.CMC  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Container Maintenance Charge "/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.CMC}"/>
@@ -817,7 +840,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.carriageCongestionSurcharge  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Carriage Congestion Surcharge "/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.carriageCongestionSurcharge}"/>
@@ -825,7 +848,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.carrierSecurityFees  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Carrier Security Fees"/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.carrierSecurityFees}"/>
@@ -833,7 +856,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.dgSurcharge  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="DG Surcharge"/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.dgSurcharge}"/>
@@ -841,7 +864,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.DTHC  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="DTHC"/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.DTHC}"/>
@@ -849,7 +872,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.equipmentImbalance  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Equipment Imbalance"/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.equipmentImbalance}"/>
@@ -857,7 +880,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.inlandFuelCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="InlandFuel Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.inlandFuelCharges}"/>
@@ -865,7 +888,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.inlandHandlingfees  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Inland Handling Fees"/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.inlandHandlingfees}"/>
@@ -873,7 +896,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.inlandHaulage  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Inland Haulage"/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.inlandHaulage}"/>
@@ -881,7 +904,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.ISPS  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="ISPS"/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.ISPS}"/>
@@ -889,7 +912,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.lowerSulphurSurcharge  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Lower Sulphur Surcharge"/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.lowerSulphurSurcharge}"/>
@@ -897,7 +920,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.operationalRecovery  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Operational Recovery"/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.operationalRecovery}"/>
@@ -905,7 +928,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.OTHC  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="OTHC"/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.OTHC}"/>
@@ -913,7 +936,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.overWeightCharge  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Over Weight Charge"/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.overWeightCharge}"/>
@@ -921,7 +944,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.sealCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Seal Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.sealCharges}"/>
@@ -929,15 +952,15 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.warRiskSurcharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="War Risk Surcharges"/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.warRiskSurcharges}"/>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
-                                <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.totalSl  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                <apex:panelGroup rendered="{!AND(item.dc20Charges.servichargesObj.totalSl  != NULL,item.dc20Charges.servichargesObj.shippTotalChanged == true)}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Total Shipping line"/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.totalSl}"/>
@@ -948,7 +971,7 @@
                                 <!-- origin Charges -->
                                 
                                 <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.bayan  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Bayan Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.bayan}"/>
@@ -956,7 +979,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.blFees  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="BL Fees"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.blFees}"/>
@@ -964,7 +987,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.originCustomClearance  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Origin Custom Clearance"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.originCustomClearance}"/>
@@ -972,7 +995,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.exportServiceFees  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Export Service Fees"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.exportServiceFees}"/>
@@ -980,7 +1003,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.fasahFees  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Fasah Fees"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.fasahFees}"/>
@@ -988,7 +1011,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.inspection  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Inspection"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.inspection}"/>
@@ -996,7 +1019,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.insuranceCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Insurance Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.insuranceCharges}"/>
@@ -1004,7 +1027,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.liftOnLiftOff  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Lift OnLift Off"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.liftOnLiftOff}"/>
@@ -1012,7 +1035,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.OriginDetention  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Origin Detention"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.OriginDetention}"/>
@@ -1020,7 +1043,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.OriginLoadingCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Origin Loading Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.OriginLoadingCharges}"/>
@@ -1028,7 +1051,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.pickUpCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="PickUp Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.pickUpCharges}"/>
@@ -1036,7 +1059,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.ReeferControlPlugInCharge  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Reefer Control PlugIn Charge"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.ReeferControlPlugInCharge}"/>
@@ -1044,7 +1067,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.tabadul  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Tabadul"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.tabadul}"/>
@@ -1052,7 +1075,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.trapulinCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Trapulin Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.trapulinCharges}"/>
@@ -1060,7 +1083,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.truckIdlingCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="TruckIdling Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.truckIdlingCharges}"/>
@@ -1068,7 +1091,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.vgm  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="VGM"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.vgm}"/>
@@ -1076,7 +1099,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.xray  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="X-Ray"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.xray}"/>
@@ -1084,7 +1107,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.lashingCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Lashing Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.lashingCharges}"/>
@@ -1092,15 +1115,15 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.fuelSurcharge  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Fuel Surcharge"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.fuelSurcharge}"/>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
-                                <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.TotalOrigincharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                <apex:panelGroup rendered="{!AND(item.dc20Charges.originChargesObj.TotalOrigincharges  != NULL,item.dc20Charges.originChargesObj.originTotalChanged == true)}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Total Origin Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.TotalOrigincharges}"/>
@@ -1110,7 +1133,7 @@
                                 
                                 <!-- Destination Charges -->
                                 <apex:panelGroup rendered="{!item.dc20Charges.destinChargeObj.destinBayanCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Bayan Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.destinChargeObj.destinBayanCharges}"/>
@@ -1118,7 +1141,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.destinChargeObj.destinCustomClearanceCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Destination Custom Clearance Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.destinChargeObj.destinCustomClearanceCharges}"/>
@@ -1126,7 +1149,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.destinChargeObj.destinDOCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="DO Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.destinChargeObj.destinDOCharges}"/>
@@ -1134,7 +1157,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.destinChargeObj.destinFasahCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value=" Fasah Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.destinChargeObj.destinFasahCharges}"/>
@@ -1142,7 +1165,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.destinChargeObj.destinGatePassCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Gate Pass Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.destinChargeObj.destinGatePassCharges}"/>
@@ -1150,15 +1173,15 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.destinChargeObj.destinLOLOCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="LOLO Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.destinChargeObj.destinLOLOCharges}"/>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
-                                <apex:panelGroup rendered="{!item.dc20Charges.destinChargeObj.destinTotalCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                <apex:panelGroup rendered="{!AND(item.dc20Charges.destinChargeObj.destinTotalCharges  != NULL,item.dc20Charges.destinChargeObj.DestinTotalChanged == true)}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Total Destination Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.destinChargeObj.destinTotalCharges}"/>
@@ -1168,7 +1191,7 @@
                                 
                                 <!-- Additional Charges --->
                                 <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Bayancancellationcharge  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Bayan cancellation charge"/>
                                             <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Bayancancellationcharge}"/>
@@ -1176,7 +1199,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Cleaningcharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Cleaning charges"/>
                                             <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Cleaningcharges}"/>
@@ -1184,7 +1207,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.ContainerLashingCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Container Lashing Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.additionalChargesObj.ContainerLashingCharges}"/>
@@ -1192,7 +1215,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Containermovementcharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Container movement charges"/>
                                             <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Containermovementcharges}"/>
@@ -1200,7 +1223,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Containerstripping  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Container stripping"/>
                                             <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Containerstripping}"/>
@@ -1216,7 +1239,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Fumigation  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Fumigation"/>
                                             <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Fumigation}"/>
@@ -1224,7 +1247,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Inspection  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Inspection"/>
                                             <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Inspection}"/>
@@ -1232,7 +1255,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Insurancecharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Insurance charges"/>
                                             <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Insurancecharges}"/>
@@ -1240,7 +1263,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.MinistryclearncechargeforOOGcargo  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Ministry clearnce charge for OOG cargo"/>
                                             <apex:outputText value="{!item.dc20Charges.additionalChargesObj.MinistryclearncechargeforOOGcargo}"/>
@@ -1248,7 +1271,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Miscellaneous  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Miscellaneous"/>
                                             <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Miscellaneous}"/>
@@ -1256,7 +1279,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.MOTfinecharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="MOT fine charges"/>
                                             <apex:outputText value="{!item.dc20Charges.additionalChargesObj.MOTfinecharges}"/>
@@ -1264,7 +1287,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.NonPalletizedSurcharge  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="NonPalletized Surcharge"/>
                                             <apex:outputText value="{!item.dc20Charges.additionalChargesObj.NonPalletizedSurcharge}"/>
@@ -1272,7 +1295,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Pestcontrol  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Pest control"/>
                                             <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Pestcontrol}"/>
@@ -1280,7 +1303,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Repalletization  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Re palletization"/>
                                             <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Repalletization}"/>
@@ -1288,7 +1311,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Reefercntrplugincharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Reefer control plugin charges"/>
                                             <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Reefercntrplugincharges}"/>
@@ -1296,7 +1319,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.ReeferPTIcharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Reefer PTI charges"/>
                                             <apex:outputText value="{!item.dc20Charges.additionalChargesObj.ReeferPTIcharges}"/>
@@ -1304,7 +1327,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Reefersteamwash  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Reefer steam wash"/>
                                             <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Reefersteamwash}"/>
@@ -1312,7 +1335,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.StuffingCharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Stuffing Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.additionalChargesObj.StuffingCharges}"/>
@@ -1320,7 +1343,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.SweepingCleaning  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Sweeping Cleaning"/>
                                             <apex:outputText value="{!item.dc20Charges.additionalChargesObj.SweepingCleaning}"/>
@@ -1328,7 +1351,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.TruckHeadcharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="TruckHead charges"/>
                                             <apex:outputText value="{!item.dc20Charges.additionalChargesObj.TruckHeadcharges}"/>
@@ -1336,7 +1359,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Truckidlingcharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Truckidling charges"/>
                                             <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Truckidlingcharges}"/>
@@ -1344,7 +1367,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Vesselcertificatecharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Vessel certificate charges"/>
                                             <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Vesselcertificatecharges}"/>
@@ -1352,7 +1375,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Wrappingpackingcharges  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Wrappig packing charges"/>
                                             <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Wrappingpackingcharges}"/>
@@ -1360,7 +1383,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.totalAdditional  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Total Additional Charge"/>
                                             <apex:outputText value="{!item.dc20Charges.additionalChargesObj.totalAdditional}"/>
@@ -1368,7 +1391,7 @@
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.exWorksObj.LoadCharge  != NULL}">
-                                    <div style="background: #EFEFEF;padding: 10px;">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px;">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="{!item.dc20Charges.exWorksObj.Id} "/>
                                             <apex:outputText value="{!item.dc20Charges.exWorksObj.LoadCharge}"/>
@@ -1384,13 +1407,13 @@
             </table>
         </div>
         <div style="margin-top1%;margin-bottom:1%; background: #FFF3E0;height: 36px;padding-left:20px;padding-top:20px;">
-            <span style="">Remarks : <apex:outputText value="{!dto.remarks} "/></span>
+            <span><b style="font-size:larger">REMARKS : </b><apex:outputText value="{!dto.remarks} "/></span>
         </div>
         <div style="margin-top1%;">
             <apex:panelGrid columns="2">
                 <apex:image url="{!$Resource.QuoteQRCode}"/>
                 <div>
-                    <span style="color:#01648E;font-size:13px">Standard Operating Procedures</span>
+                    <span style="color:#01648E;font-size:large !important;font-weight:600;">Standard Operating Procedures</span>
                     <p>
                         Scan the QR code provided to understand all the details
                         of standard operating procedures.
@@ -1398,14 +1421,14 @@
                 </div>
             </apex:panelGrid>
         </div>
-        <div >
+        <div style="display:{!if(dto.recordTypeName == 'Export','block','none')}" >
             <!--apex:include pageName="BAFCOGeneratePDFFooterPage"/-->
             <br/>
             <div style="background: #F1FAFF; font-family:MontserratCustomfont" >
                 <table>
                     <tr>
-                        <td style="width:20px;"><apex:image url="{!$Resource.AstrickPng}" style="padding: 6px 0px 3px 3px"/></td>
-                        <td style="padding-top:10px;"><span style="font-size:11px;color:#01648E;padding-top:7px"><b>Terms &amp; Conditions</b></span></td>
+                        <td style="width:20px;"><apex:image url="{!$Resource.AstrickPng}" style="padding: 5px 0px 3px 3px"/></td>
+                        <td ><span style="color:#01648E;padding-top:0px"><b style="font-size: large;">TERMS &amp; CONDITIONS</b></span></td>
                     </tr>
                 </table>
             </div>
@@ -1433,6 +1456,30 @@
                     <li>{!item}</li>
                 </apex:repeat>
             </ul>
+        </div>
+        <div style="display:{!if(dto.recordTypeName == 'Import','block','none')}" >
+        	<br/>
+            <div style="background: #F1FAFF; font-family:MontserratCustomfont" >
+                <table>
+                    <tr>
+                        <td style="width:20px;"><apex:image url="{!$Resource.AstrickPng}" style="padding: 5px 0px 3px 3px"/></td>
+                        <td ><span style="color:#01648E;padding-top:0px"><b style="font-size: large;">TERMS &amp; CONDITIONS</b></span></td>
+                    </tr>
+                </table>
+            </div>
+            <div style="margin-top: 5px; ">
+                
+                <!--span style="color:#01648E"><b>Exclusions:</b></span-->
+                <p>
+                    <!--span>Above rates does not include the following charges which are additional.</span-->
+                    <span>{!dto.termsNConditionHeader}</span>
+                </p>
+                <ul>
+                    <apex:repeat value="{!dto.termsNConditionList}" var="item" >
+                        <li>{!item}</li>
+                    </apex:repeat>
+                </ul>
+            </div>
         </div>
     </body>
 </apex:page>

@@ -331,6 +331,7 @@ public class BAFCOLRoutingDetailsController {
                 quoteObj.Name__c = 'Quote/'+Year1+'/'+1;
             }
             quoteObj.remarks__c = quoteRemarks;
+            quoteObj.Effective_From__c = system.today();
             Insert quoteObj;
         }
         

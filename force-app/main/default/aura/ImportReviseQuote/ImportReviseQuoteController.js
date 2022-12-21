@@ -22,7 +22,7 @@
                 const navService = cmp.find('navService');
                 const pageRef = cmp.get('v.pageReference');
                 const handleUrl = (url) => {
-                    window.open(url);
+                    window.open(url,'_self');
                 };
                 const handleError = (error) => {
                     console.log('error '+error);

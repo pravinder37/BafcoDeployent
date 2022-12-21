@@ -1,4 +1,10 @@
 public without sharing class BAFCOGeneratePDFController {
+    public static final Id QUOTE_EXPORT_RECORDTYPE_Id = Schema.SObjectType.quotation__c.getRecordTypeInfosByName()
+        .get('Export')
+        .getRecordTypeId();
+    public static final Id QUOTE_IMPORT_RECORDTYPE_Id = Schema.SObjectType.quotation__c.getRecordTypeInfosByName()
+        .get('Import')
+        .getRecordTypeId();
     public Boolean showShippLine {get;set;}
     public Boolean showPickupPlace {get;set;}
     public Boolean showPickupDischarge {get;set;}
@@ -21,48 +27,75 @@ public without sharing class BAFCOGeneratePDFController {
         system.debug(' recordid '+this.recordId);
         Boolean has40HCEquip = false;
         if(this.recordId != null ){
-            Quotation__c quoteObj = [Select Inclusions__c,Exclusions__c,Remarks__c,Account__r.Name,Name,(Select Route__r.Service_Type__c,Route__r.INCO_Term__r.name from Quotation_Items__r),createdDate,CreatedBy.Name,Quotation_Validity__c from Quotation__c where id =: this.recordId];
+            Quotation__c quoteObj = [Select Recordtype.Name,Terms_and_Conditions__c,RecordtypeId,Effective_From__c,Payment_Terms__c,Inclusions__c,Exclusions__c,Remarks__c,Account__r.Name,Name,(Select Route__r.Service_Type__c,Route__r.INCO_Term__r.name from Quotation_Items__r),createdDate,CreatedBy.Name,Quotation_Validity__c from Quotation__c where id =: this.recordId];
             this.dto.quoteNumber = quoteObj.Name;
-            this.dto.validityTo = String.valueOf(Date.valueOf(quoteObj.Quotation_Validity__c));
+            this.dto.validityTo = quoteObj.Quotation_Validity__c.day()+'-'+ BAFCOLeadDetailsController.getMonthName(quoteObj.Quotation_Validity__c.month()) +'-'+quoteObj.Quotation_Validity__c.year();
             this.dto.customerName = quoteObj.Account__r.Name;
             this.dto.quoteIssued = quoteObj.createdDate.day()+'-'+ BAFCOLeadDetailsController.getMonthName(quoteObj.createdDate.month()) +'-'+quoteObj.createdDate.year();
             this.dto.preparedBy = quoteObj.CreatedBy.Name;
-            this.dto.salesResponsible=quoteObj.CreatedBy.Name;
-            List<String> inclusionList =quoteObj.Inclusions__c != null ? quoteObj.Inclusions__c.split(';;') : null; 
-            if(inclusionList != null && inclusionList.size() > 0){
+            //this.dto.salesResponsible=quoteObj.CreatedBy.Name;
+            this.dto.paymentTerm = quoteObj.Payment_Terms__c;
+            this.dto.recordTypeName = quoteObj.RecordType.Name;
+            if(quoteObj.recordtypeId == QUOTE_EXPORT_RECORDTYPE_Id){
+                List<String> inclusionList =quoteObj.Inclusions__c != null ? quoteObj.Inclusions__c.split(';;') : null; 
+                if(inclusionList != null && inclusionList.size() > 0){
                     this.dto.inclusionHeader = inclusionList[0] != null ? inclusionList[0] : null;
-                if(inclusionList.size() >1){
-                    this.dto.inclusionList = inclusionList[1].split(';');
+                    if(inclusionList.size() >1){
+                        this.dto.inclusionList = inclusionList[1].split(';');
+                    }
+                }
+                List<String> exclusionList =quoteObj.Exclusions__c != null ? quoteObj.Exclusions__c.split(';;') : null; 
+                if(exclusionList != null && exclusionList.size() > 0){
+                    this.dto.exclusionHeader = exclusionList[0] != null ? exclusionList[0] : null;
+                    if(exclusionList.size() >1){
+                        this.dto.exclusionList = exclusionList[1].split(';');
+                    }
                 }
             }
-            List<String> exclusionList =quoteObj.Exclusions__c != null ? quoteObj.Exclusions__c.split(';;') : null; 
-            if(exclusionList != null && exclusionList.size() > 0){
-                    this.dto.exclusionHeader = exclusionList[0] != null ? exclusionList[0] : null;
-                if(exclusionList.size() >1){
-                    this.dto.exclusionList = exclusionList[1].split(';');
+            else if(quoteObj.recordtypeId == QUOTE_IMPORT_RECORDTYPE_Id){
+                List<String> termsList =quoteObj.Terms_and_Conditions__c != null ? quoteObj.Terms_and_Conditions__c.split(';;') : null; 
+                if(termsList != null && termsList.size() > 0){
+                    this.dto.termsNConditionHeader = termsList[0] != null ? termsList[0] : null;
+                    if(termsList.size() >1){
+                        this.dto.termsNConditionList = termsList[1].split(';');
+                    }
                 }
             }
             this.dto.remarks = quoteObj.Remarks__c != null ? quoteObj.Remarks__c : null;
-            this.dto.effectiveFrom = quoteObj.createdDate.day()+'-'+ BAFCOLeadDetailsController.getMonthName(quoteObj.createdDate.month()) +'-'+quoteObj.createdDate.year();
+            if(quoteObj.Effective_From__c != null)
+                this.dto.effectiveFrom = quoteObj.Effective_From__c.day()+'-'+ BAFCOLeadDetailsController.getMonthName(quoteObj.Effective_From__c.month()) +'-'+quoteObj.Effective_From__c.year();
             if(quoteObj.Quotation_Items__r.size() > 0){
                 this.dto.serviceType = quoteObj.Quotation_Items__r[0].Route__r.Service_Type__c;
                 this.dto.shippingTerm =quoteObj.Quotation_Items__r[0].Route__r.INCO_Term__r.name;
             }
             if(quoteObj.Account__c != null){
+                Account acc = [Select id,BillingStreet,BillingCity,BillingState,BillingPostalCode,BillingCountry, Owner.name from Account where id =: quoteObj.Account__c];
+                String Address = acc.BillingStreet != null ? String.valueOf(acc.BillingStreet) :'';
+                Address += acc.BillingCity != null ? ', '+String.valueOf(acc.BillingCity) :'';
+                Address += acc.BillingState != null ? ', '+String.valueOf(acc.BillingState) :'';
+                Address += acc.BillingPostalCode != null ? ', '+String.valueOf(acc.BillingPostalCode) :'';
+                Address += acc.BillingCountry != null ? ', '+String.valueOf(acc.BillingCountry) :'';
+                this.dto.address = Address != '' ? Address : '-';
+                this.dto.salesResponsible = acc.Owner.name;
                 List<Contact> contlist = [Select name,email,Phone,fax,Account.BillingStreet, Account.BillingCity, Account.BillingState, Account.BillingPostalCode,
                                           Account.BillingCountry from contact where AccountId = : quoteObj.Account__c order by createddate desc];
                 if(contlist.size() >0){
                     Contact cont = contlist[0];
-                    this.dto.contactPerson = cont.Name;
-                    String Address = cont.Account.BillingStreet != null ? String.valueOf(cont.Account.BillingStreet) :'';
-                    Address += cont.Account.BillingCity != null ? ', '+String.valueOf(cont.Account.BillingCity) :'';
-                    Address += cont.Account.BillingState != null ? ', '+String.valueOf(cont.Account.BillingState) :'';
-                    Address += cont.Account.BillingPostalCode != null ? ', '+String.valueOf(cont.Account.BillingPostalCode) :'';
-                    Address += cont.Account.BillingCountry != null ? ', '+String.valueOf(cont.Account.BillingCountry) :'';
-                    this.dto.address = Address != '' ? Address : '-';
+                    this.dto.contactPerson = cont.Name;                    
                     this.dto.phone = cont.Phone;
                     this.dto.email =cont.Email;
                 }
+                else{
+                    this.dto.contactPerson = '-';
+                    this.dto.phone = '-';
+                    this.dto.email ='-';
+                }
+            }
+            else{
+                this.dto.contactPerson = '-';
+                this.dto.address =  '-';
+                this.dto.phone = '-';
+                this.dto.email ='-';
             }
             List<Quotation_Item__c> quoteItem = [Select Route__r.Service_Type__c,Ex_Works_Charge__c,Ex_Works_Charge_Name__r.name,Place_of_Discharge__r.Name,Place_of_Pickup__r.Name,Port_of_Discharge__r.name,Port_of_Loading__r.name,BAF__c,Bayan__c,Bayan_cancellation_charge__c,Bunker_surcharge__c,Cleaning_charges__c,
                                                  CMC__c,Container_movement_charges__c,Container_stripping__c,
@@ -131,6 +164,20 @@ public without sharing class BAFCOGeneratePDFController {
                                 serviceChargeObj.sealCharges = dcQuoteItem.Seal_Charges__c > 0 ? dcQuoteItem.Seal_Charges__c : null;
                                 serviceChargeObj.warRiskSurcharges = dcQuoteItem.War_Risk_Surcharge__c > 0 ? dcQuoteItem.War_Risk_Surcharge__c : null;
                                 serviceChargeObj.totalSl = dcQuoteItem.Total_SL__c > 0 ? dcQuoteItem.Total_SL__c : null;
+                                if(dcQuoteItem.BAF__c > 0 || dcQuoteItem.Bunker_surcharge__c  > 0 || 
+                                   dcQuoteItem.Cleaning_charges__c > 0 || dcQuoteItem.CMC__c > 0 || 
+                                   dcQuoteItem.Carriage_Congestion_Surcharge__c > 0 || dcQuoteItem.Carrier_Security_Fees__c > 0 || 
+                                   dcQuoteItem.DG_Surcharge__c > 0 || dcQuoteItem.DTHC__c > 0 || dcQuoteItem.EIC__c > 0 || 
+                                   dcQuoteItem.Inland_Fuel_Surcharge__c > 0 || dcQuoteItem.Inland_Handling_Fees__c > 0 || 
+                                   dcQuoteItem.Inland_haulage__c > 0 || dcQuoteItem.ISPS__c > 0 || 
+                                   dcQuoteItem.Low_Sulphur_Surcharge__c > 0 || dcQuoteItem.Operational_Recovery_Surcharge__c > 0 || 
+                                   dcQuoteItem.OTHC__c > 0 || dcQuoteItem.Overweight_surcharge__c > 0 || dcQuoteItem.Seal_Charges__c > 0 || 
+                                   dcQuoteItem.War_Risk_Surcharge__c > 0 ){
+                                       serviceChargeObj.shippTotalChanged = false;
+                                   }
+                                else{
+                                    serviceChargeObj.shippTotalChanged = true;
+                                }
                                 dcObj.servichargesObj = serviceChargeObj;
                                 
                                 // origin Charges 
@@ -155,6 +202,19 @@ public without sharing class BAFCOGeneratePDFController {
                                 orgnChargeObj.lashingCharges = dcQuoteItem.Lashing_Charges__c > 0 ? dcQuoteItem.Lashing_Charges__c : null; 
                                 orgnChargeObj.fuelSurcharge = dcQuoteItem.Fuel_Surcharge__c > 0 ? dcQuoteItem.Fuel_Surcharge__c : null; 
                                 orgnChargeObj.TotalOrigincharges = dcQuoteItem.Total_INCO__c > 0 ? dcQuoteItem.Total_INCO__c : null; 
+                                if(dcQuoteItem.Bayan__c > 0 || dcQuoteItem.BL_Fees__c > 0 ||  
+                                   dcQuoteItem.Origin_Customs_clearance__c > 0 ||   dcQuoteItem.Export_Service_Fees__c > 0 ||   
+                                   dcQuoteItem.Fasah_fee__c > 0 ||   dcQuoteItem.Inspection__c > 0 ||  
+                                   dcQuoteItem.Insurance_charges__c > 0 ||   dcQuoteItem.Lift_on_Lift_off__c > 0 ||   
+                                   dcQuoteItem.Origin_Detention_Demurrage_Charges__c > 0 ||  
+                                   dcQuoteItem.Origin_Loading_Charges__c > 0 ||   dcQuoteItem.Reefer_cntr_plug_in_charges__c > 0 || 
+                                   dcQuoteItem.Tarpauline_charge__c > 0 ||   dcQuoteItem.Truck_idling_charges__c > 0 ||   
+                                   dcQuoteItem.Lashing_Charges__c > 0 ||   dcQuoteItem.Fuel_Surcharge__c  > 0 ){
+                                       orgnChargeObj.originTotalChanged = false;
+                                   }
+                                else{
+                                    orgnChargeObj.originTotalChanged = true;
+                                }
                                 dcObj.originChargesObj = orgnChargeObj;
                                 
                                 //Destination Charges 
@@ -167,6 +227,14 @@ public without sharing class BAFCOGeneratePDFController {
                                 destinObj.destinLOLOCharges = dcQuoteItem.LOLO_Charges__c > 0 ? dcQuoteItem.LOLO_Charges__c : null ;        
                                 //destinObj.destinTransPortationCharges = dcQuoteItem. > 0 ? dcQuoteItem.XXX : null ;        
                                 destinObj.destinTotalCharges = dcQuoteItem.Total_Dest__c > 0 ? dcQuoteItem.Total_Dest__c : null ;
+                                if(dcQuoteItem.Bayan_Charges__c > 0 ||  dcQuoteItem.Destination_Customs_Clearance__c  > 0 ||  
+                                   dcQuoteItem.DO_charges__c > 0 || dcQuoteItem.Fasah_Charges__c  > 0 ||  
+                                   dcQuoteItem.Gate_pass_charges__c  > 0 ||  dcQuoteItem.LOLO_Charges__c > 0 ){
+                                       destinObj.DestinTotalChanged = false;
+                                   }
+                                else{
+                                    destinObj.DestinTotalChanged = true;
+                                }
                                 dcObj.destinChargeObj = destinObj;
                                 
                                 //Additional Charges
@@ -235,6 +303,20 @@ public without sharing class BAFCOGeneratePDFController {
                         serviceChargeObj.sealCharges = item.Seal_Charges__c > 0 ? item.Seal_Charges__c : null;
                         serviceChargeObj.warRiskSurcharges = item.War_Risk_Surcharge__c > 0 ? item.War_Risk_Surcharge__c : null;
                         serviceChargeObj.totalSl = item.Total_SL__c > 0 ? item.Total_SL__c : null;
+                        if(item.BAF__c > 0 || item.Bunker_surcharge__c  > 0 || 
+                           item.Cleaning_charges__c > 0 || item.CMC__c > 0 || 
+                           item.Carriage_Congestion_Surcharge__c > 0 || item.Carrier_Security_Fees__c > 0 || 
+                           item.DG_Surcharge__c > 0 || item.DTHC__c > 0 || item.EIC__c > 0 || 
+                           item.Inland_Fuel_Surcharge__c > 0 || item.Inland_Handling_Fees__c > 0 || 
+                           item.Inland_haulage__c > 0 || item.ISPS__c > 0 || 
+                           item.Low_Sulphur_Surcharge__c > 0 || item.Operational_Recovery_Surcharge__c > 0 || 
+                           item.OTHC__c > 0 || item.Overweight_surcharge__c > 0 || item.Seal_Charges__c > 0 || 
+                           item.War_Risk_Surcharge__c > 0 ){
+                               serviceChargeObj.shippTotalChanged = false;
+                           }
+                        else{
+                            serviceChargeObj.shippTotalChanged = true;
+                        }
                         itemDto.servichargesObj = serviceChargeObj;
                         
                         // origin Charges 
@@ -259,6 +341,19 @@ public without sharing class BAFCOGeneratePDFController {
                         orgnChargeObj.lashingCharges = item.Lashing_Charges__c > 0 ? item.Lashing_Charges__c : null; 
                         orgnChargeObj.fuelSurcharge = item.Fuel_Surcharge__c > 0 ? item.Fuel_Surcharge__c : null; 
                         orgnChargeObj.TotalOrigincharges = item.Total_INCO__c > 0 ? item.Total_INCO__c : null; 
+                        if(item.Bayan__c > 0 || item.BL_Fees__c > 0 ||  
+                           item.Origin_Customs_clearance__c > 0 ||   item.Export_Service_Fees__c > 0 ||   
+                           item.Fasah_fee__c > 0 ||   item.Inspection__c > 0 ||  
+                           item.Insurance_charges__c > 0 ||   item.Lift_on_Lift_off__c > 0 ||   
+                           item.Origin_Detention_Demurrage_Charges__c > 0 ||  
+                           item.Origin_Loading_Charges__c > 0 ||   item.Reefer_cntr_plug_in_charges__c > 0 || 
+                           item.Tarpauline_charge__c > 0 ||   item.Truck_idling_charges__c > 0 ||   
+                           item.Lashing_Charges__c > 0 ||   item.Fuel_Surcharge__c  > 0 ){
+                               orgnChargeObj.originTotalChanged = false;
+                           }
+                        else{
+                            orgnChargeObj.originTotalChanged = true;
+                        }
                         itemDto.originChargesObj = orgnChargeObj;
                         
                         //Destination Charges 
@@ -271,6 +366,14 @@ public without sharing class BAFCOGeneratePDFController {
                         destinObj.destinLOLOCharges = item.LOLO_Charges__c > 0 ? item.LOLO_Charges__c : null ;        
                         //destinObj.destinTransPortationCharges = item. > 0 ? item.XXX : null ;        
                         destinObj.destinTotalCharges = item.Total_Dest__c > 0 ? item.Total_Dest__c : null ;
+                        if(item.Bayan_Charges__c > 0 ||  item.Destination_Customs_Clearance__c  > 0 ||  
+                           item.DO_charges__c > 0 || item.Fasah_Charges__c  > 0 ||  
+                           item.Gate_pass_charges__c  > 0 ||  item.LOLO_Charges__c > 0 ){
+                               destinObj.DestinTotalChanged = false;
+                           }
+                        else{
+                            destinObj.DestinTotalChanged = true;
+                        }
                         itemDto.destinChargeObj = destinObj;
                         
                         //Additional Charges
@@ -346,6 +449,20 @@ public without sharing class BAFCOGeneratePDFController {
                             serviceChargeObj.sealCharges = item.Seal_Charges__c > 0 ? item.Seal_Charges__c : null;
                             serviceChargeObj.warRiskSurcharges = item.War_Risk_Surcharge__c > 0 ? item.War_Risk_Surcharge__c : null;
                             serviceChargeObj.totalSl = item.Total_SL__c > 0 ? item.Total_SL__c : null;
+                            if(item.BAF__c > 0 || item.Bunker_surcharge__c  > 0 || 
+                               item.Cleaning_charges__c > 0 || item.CMC__c > 0 || 
+                               item.Carriage_Congestion_Surcharge__c > 0 || item.Carrier_Security_Fees__c > 0 || 
+                               item.DG_Surcharge__c > 0 || item.DTHC__c > 0 || item.EIC__c > 0 || 
+                               item.Inland_Fuel_Surcharge__c > 0 || item.Inland_Handling_Fees__c > 0 || 
+                               item.Inland_haulage__c > 0 || item.ISPS__c > 0 || 
+                               item.Low_Sulphur_Surcharge__c > 0 || item.Operational_Recovery_Surcharge__c > 0 || 
+                               item.OTHC__c > 0 || item.Overweight_surcharge__c > 0 || item.Seal_Charges__c > 0 || 
+                               item.War_Risk_Surcharge__c > 0 ){
+                                   serviceChargeObj.shippTotalChanged = false;
+                               }
+                            else{
+                                serviceChargeObj.shippTotalChanged = true;
+                            }
                             itemDto.servichargesObj = serviceChargeObj;
                             
                             // origin Charges 
@@ -370,6 +487,19 @@ public without sharing class BAFCOGeneratePDFController {
                             orgnChargeObj.lashingCharges = item.Lashing_Charges__c > 0 ? item.Lashing_Charges__c : null; 
                             orgnChargeObj.fuelSurcharge = item.Fuel_Surcharge__c > 0 ? item.Fuel_Surcharge__c : null; 
                             orgnChargeObj.TotalOrigincharges = item.Total_INCO__c > 0 ? item.Total_INCO__c : null; 
+                            if(item.Bayan__c > 0 || item.BL_Fees__c > 0 ||  
+                               item.Origin_Customs_clearance__c > 0 ||   item.Export_Service_Fees__c > 0 ||   
+                               item.Fasah_fee__c > 0 ||   item.Inspection__c > 0 ||  
+                               item.Insurance_charges__c > 0 ||   item.Lift_on_Lift_off__c > 0 ||   
+                               item.Origin_Detention_Demurrage_Charges__c > 0 ||  
+                               item.Origin_Loading_Charges__c > 0 ||   item.Reefer_cntr_plug_in_charges__c > 0 || 
+                               item.Tarpauline_charge__c > 0 ||   item.Truck_idling_charges__c > 0 ||   
+                               item.Lashing_Charges__c > 0 ||   item.Fuel_Surcharge__c  > 0 ){
+                                   orgnChargeObj.originTotalChanged = false;
+                               }
+                            else{
+                                orgnChargeObj.originTotalChanged = true;
+                            }
                             itemDto.originChargesObj = orgnChargeObj;
                             
                             //Destination Charges 
@@ -382,6 +512,14 @@ public without sharing class BAFCOGeneratePDFController {
                             destinObj.destinLOLOCharges = item.LOLO_Charges__c > 0 ? item.LOLO_Charges__c : null ;        
                             //destinObj.destinTransPortationCharges = item. > 0 ? item.XXX : null ;        
                             destinObj.destinTotalCharges = item.Total_Dest__c > 0 ? item.Total_Dest__c : null ;
+                            if(item.Bayan_Charges__c > 0 ||  item.Destination_Customs_Clearance__c  > 0 ||  
+                               item.DO_charges__c > 0 || item.Fasah_Charges__c  > 0 ||  
+                               item.Gate_pass_charges__c  > 0 ||  item.LOLO_Charges__c > 0 ){
+                                   destinObj.DestinTotalChanged = false;
+                               }
+                            else{
+                                destinObj.DestinTotalChanged = true;
+                            }
                             itemDto.destinChargeObj = destinObj;
                             
                             //Additional Charges

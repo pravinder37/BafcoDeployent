@@ -350,6 +350,8 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
                 this.dispatchEvent(evt);
                 allValid = false;
             }*/
+            console.log(' ddd '+this.lati1)
+            console.log(' ddd '+this.longi1)
             if(allValid){
                 this.isLoading = true
                 updateEventObject({
@@ -369,13 +371,15 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
                     this.isLoading = false;
                     this.displayInitial = true
                     this.displayIntakeForm = false
-                    this[NavigationMixin.GenerateUrl]({
+                    this.getMeetingsRecords();   
+                    /*this[NavigationMixin.GenerateUrl]({
                         type: 'standard__recordPage',
                         attributes: {
                             recordId: result,
                             actionName: 'view'
                         },
-                    }).then(url => { window.open(url,"_self") });
+                    }).then(url => { window.open(url,"_self") });*/
+
                 })
                 .catch(error=>{
                     console.log('error ',error)

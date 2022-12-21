@@ -167,7 +167,12 @@ rmsDto.quotationItemId = quoteItemToIdMap.get(key);
                 quoteObj.Name__c = 'Quote/'+Year1+'/'+1;
             }
             quoteObj.Remarks__c = remarks;
+            quoteObj.Effective_From__c = system.today();
             Insert quoteObj;
+        }
+        else{
+            quoteObj.Id = quotationId;
+            
         }
         Quotation_Item__c quoteItemObj = new Quotation_Item__c();
         quoteItemObj.Route__c = routeId;
@@ -212,8 +217,8 @@ rmsDto.quotationItemId = quoteItemToIdMap.get(key);
             }
             quoteObj.Remarks__c = remarks;
            if(enqObj.Business_Type__c == 'Export') quoteObj.recordtypeId = QUOTE_EXPORT_RECORDTYPE_Id;
-            else if(enqObj.Business_Type__c == 'Import') quoteObj.recordtypeId = QUOTE_IMPORT_RECORDTYPE_Id;                    
-            update quoteObj;
+           else if(enqObj.Business_Type__c == 'Import') quoteObj.recordtypeId = QUOTE_IMPORT_RECORDTYPE_Id;                    
+           update quoteObj;
         }
         if(dto.serviceChargeList != null){
             if(dto.serviceChargeList.servichargesObj != null){

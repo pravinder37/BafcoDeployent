@@ -34,6 +34,7 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
     @track commercialUserName = '';
     @track isLoading = false;
     @track customerErrorClass = '';
+    @track minDate = '';
 
 
     @wire(getPicklistValues, {
@@ -64,8 +65,8 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
     }
 
     connectedCallback(){
-        let todaysDate = new Date().toISOString();
-        //this.closeDate = this.formatDate(todaysDate);
+        let todaysDate = new Date();
+        this.minDate = this.formatDate(todaysDate);
         this.getCommercialUserOnLoad();
         this.getAllRegularRoute();
         this.addRouteEnquiry();
@@ -91,7 +92,7 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
     formatDate(date) {
         let d = new Date(date),
             month = '' + (d.getMonth() + 1),
-            day = '' + (d.getDate()+2),
+            day = '' + (d.getDate()),
             year = d.getFullYear();
     
         if (month.length < 2) 
@@ -200,6 +201,12 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
         if(this.closeDate == '' || this.closeDate == null){
             let closeDateField = this.template.querySelector("[data-field='closeDateField']");
             closeDateField.setCustomValidity("Complete this field");
+            closeDateField.reportValidity();
+            allValid  = false;
+        }
+        else if(this.closeDate < this.minDate){
+            let closeDateField = this.template.querySelector("[data-field='closeDateField']");
+            closeDateField.setCustomValidity("Date should be greater than today.");
             closeDateField.reportValidity();
             allValid  = false;
         }
