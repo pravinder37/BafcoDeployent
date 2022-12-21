@@ -200,26 +200,32 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                 this.routingList.push({value:conts[key], key:key});
                 //this.quotationId = conts[key][0].quotationId
                 let templist = [];
-                //for(let equip in conts[key]){
+                for(let equip in conts[key]){
                     templist.push({
-                        //'equipment' : conts[key][equip].equipmentName,
+                        'equipment' : conts[key][equip].equipmentName,
                         'sellingRate': 0,
                         'profit' : 0,
                         'margin':0,
-                        'validity':conts[key][0].validity,
-                        'quantity':conts[key][0].quantity,
+                        'validity':conts[key][equip].validity,
+                        'quantity':conts[key][equip].quantity,
                        // 'quotationId':conts[key][0].quotationId,
                         'cssClass':'',
                         savedClicked:false
 
                     })
                 //}
-                this.quotationMap.push({value : templist,key:key})
+                let parentKey = key+'-'+conts[key][equip].equipmentName+'-'+this.routeName;
+                let existingIndex = this.quotationMap.findIndex(x=>x.key==parentKey);
+                let newTempListIndex = templist.findIndex(x=>x.equipment==conts[key][equip].equipmentName);
+                let NewTempList = [];
+                NewTempList.push(templist[newTempListIndex])
+                if(existingIndex == -1) this.quotationMap.push({value : NewTempList,key:parentKey})
+                //this.quotationMap.push({value : templist,key:parentKey})
                 let toBeSend = {
                     'routeName':this.routeName,
                     'quotationMap':this.quotationMap
                 }
-                this.dispatchEvent(new CustomEvent('updatecalculation', { detail: toBeSend }));
+                this.dispatchEvent(new CustomEvent('updatecalculation', { detail: toBeSend }));}
             }
             //Loop to hold the update to be updated on Tab change
                 let tempList = [];
@@ -513,9 +519,9 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
           this.profitLabel = '$ '+profit +' Profit.';
             let tempMap = this.quotationMap;
             tempMap.forEach(elem=>{
-                if(elem.key == this.shippingTabSelected){
+                if(elem.key == this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName){
                     elem.value.forEach(el =>{
-                        //if(el.equipment == this.shippingEquipTabSelected){
+                        if(el.equipment == this.shippingEquipTabSelected){
                             el.sellingRate = parseInt(this.sellingRate) 
                             el.profit = parseInt(profit)
                             el.margin =  parseInt(this.margin)
@@ -523,7 +529,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                             el.quantity = this.quantity
                             if(el.savedClicked == true) el.cssClass = 'class2'
                             else el.cssClass = ''
-                        //}
+                        }
                     })
                 }
             })
@@ -643,7 +649,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
 
                 let tempMap = this.quotationMap;
                 tempMap.forEach(elem=>{
-                    if(elem.key == this.shippingTabSelected){
+                    if(elem.key == this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName){
                         elem.value.forEach(el =>{
                             el.cssClass = 'class2'
                         })
