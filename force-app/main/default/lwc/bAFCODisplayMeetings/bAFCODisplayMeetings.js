@@ -273,7 +273,7 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
                 this.whatName1 = result.whatName
                 this.startDate1 = result.startDate
                 this.startTime1 = this.formatTime1(result.startTime)
-                this.endDate1 = result.endDate
+                this.endDate1 = JSON.parse(JSON.stringify(result.endDate))
                 this.endTime1 = this.formatTime1(result.endTime)
                 this.meetinginute1 = result.meetingMinute  
                 console.log('*********** '+result.relatedEnquiryId)

@@ -29,6 +29,7 @@ export default class BAFCOImportQuoteLineItemReviseDetail extends LightningEleme
     @track showServiceChargeModal = false;
     @track rmsId = '';
     @track agentName = '';
+    @track quotationDate ='';
     connectedCallback(){
         this.getQuoteLineItemDetails();
     }
@@ -110,6 +111,7 @@ export default class BAFCOImportQuoteLineItemReviseDetail extends LightningEleme
         if(data[elem].destinTotalCharges > 0) totalSelling=totalSelling+data[elem].destinTotalCharges;
         this.buyingRate = data[elem].totalBuyingRate;
         this.sellingRate = totalSelling;
+        this.quotationDate = data[elem].quotationDate;
         let profit = 0;
             if(this.sellingRate > 0 && !isNaN(this.sellingRate)){
             profit = this.sellingRate - this.buyingRate;
@@ -176,6 +178,7 @@ export default class BAFCOImportQuoteLineItemReviseDetail extends LightningEleme
         if(data[elem].totalSl > 0) totalSelling=totalSelling+data[elem].totalSl;
         if(data[elem].destinTotalCharges > 0) totalSelling=totalSelling+data[elem].destinTotalCharges;
         this.buyingRate = data[elem].totalBuyingRate;
+        this.quotationDate = data[elem].quotationDate;
         this.sellingRate = totalSelling;
         let profit = 0;
             if(this.sellingRate > 0 && !isNaN(this.sellingRate)){
@@ -248,6 +251,7 @@ export default class BAFCOImportQuoteLineItemReviseDetail extends LightningEleme
                 if(ele.totalSl > 0) totalSelling=totalSelling+ele.totalSl;
                 if(ele.destinTotalCharges > 0) totalSelling=totalSelling+ele.destinTotalCharges;
                 this.buyingRate = ele.totalBuyingRate;
+                this.quotationDate = ele.quotationDate;
                 this.sellingRate =totalSelling;
                 this.rmsId = ele.rmsId;
                 let profit = 0;

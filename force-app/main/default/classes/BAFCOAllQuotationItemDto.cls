@@ -7,6 +7,7 @@ public class BAFCOAllQuotationItemDto {
     @AuraEnabled public String rmsId { get; set; }
     @AuraEnabled public String equipmentName { get; set; }
     @AuraEnabled public String equipmentId { get; set; }
+    @AuraEnabled public String quotationDate { get; set; }
     @AuraEnabled public Decimal totaladditionalCharge { get; set; }
     //destiation charge
     @AuraEnabled public Decimal destinBayanCharges { get; set; }

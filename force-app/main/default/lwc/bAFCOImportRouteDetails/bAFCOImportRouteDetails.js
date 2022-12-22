@@ -155,6 +155,11 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
     @track addOriginCharge = true;
     @track addDestinCharge=true;
     @track addAdditionalCharge = true;
+    @track includeServiceCharge=false;
+    @track includeOriginCharge = false;
+    @track includeDestinCharge=false;
+    @track includeAdditionalCharge = false;
+    @track includeExWorksCharge = false;
 
     @track addExWorksCharge=true;
     @track displayExWorksModal = false;
@@ -414,6 +419,11 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                         'addAdditionalCharge':true,
                         'addExWorksCharge':true,
                         'displayExworks':false,
+                        'includeServiceCharge':false,
+                        'includeOriginCharge':false,
+                        'includeDestinCharge':false,
+                        'includeAdditionalCharge':false,
+                        'includeExWorksCharge':false,
                         'exWorksObj':{},
                         'exWorksTotal':null,
                         'quantity':this.equipQuantity,
@@ -447,6 +457,11 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                     this.exWorksObj = elem.value[0].exWorksObj;
                     this.displayExworks = elem.value[0].displayExworks;
                     this.exWorksTotal = elem.value[0].exWorksTotal;
+                    this.includeServiceCharge = elem.value[0].includeServiceCharge;
+                    this.includeOriginCharge = elem.value[0].includeOriginCharge;
+                    this.includeDestinCharge = elem.value[0].includeDestinCharge;
+                    this.includeAdditionalCharge = elem.value[0].includeAdditionalCharge;
+                    this.includeExWorksCharge = elem.value[0].includeExWorksCharge;
                 }
             }
         });
@@ -732,6 +747,11 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                     elem.value[0].addExWorksCharge = this.addExWorksCharge;
                     elem.value[0].displayExworks = this.displayExworks;
                     elem.value[0].exWorksTotal = this.exWorksTotal
+                    elem.value[0].includeServiceCharge = this.includeServiceCharge
+                    elem.value[0].includeOriginCharge = this.includeOriginCharge
+                    elem.value[0].includeDestinCharge = this.includeDestinCharge
+                    elem.value[0].includeAdditionalCharge = this.includeAdditionalCharge
+                    elem.value[0].includeExWorksCharge = this.includeExWorksCharge
                 }
             }
         });        
@@ -1480,6 +1500,36 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
         let value = parseInt(e.target.value)
         this.exWorksObj.LoadCharge = value
         this.exWorksTotal = value
+        this.updateTabsData();
+        this.handleBuyingRate();
+        this.handleUpdateCalculation();
+    }
+    handleincludeServiceChargeChange(e){
+        this.includeServiceCharge = e.target.checked;
+        this.updateTabsData();
+        this.handleBuyingRate();
+        this.handleUpdateCalculation();
+    }
+    handleincludeOriginChargeChange(e){
+        this.includeOriginCharge = e.target.checked;
+        this.updateTabsData();
+        this.handleBuyingRate();
+        this.handleUpdateCalculation();
+    }
+    handleincludeDestinChargeChange(e){
+        this.includeDestinCharge = e.target.checked;
+        this.updateTabsData();
+        this.handleBuyingRate();
+        this.handleUpdateCalculation();
+    }
+    handleincludeAdditionalChargeChange(e){
+        this.includeAdditionalCharge = e.target.checked;
+        this.updateTabsData();
+        this.handleBuyingRate();
+        this.handleUpdateCalculation();
+    }
+    handleincludeExWorksChargeChange(e){
+        this.includeExWorksCharge = e.target.checked;
         this.updateTabsData();
         this.handleBuyingRate();
         this.handleUpdateCalculation();

@@ -26,6 +26,16 @@ public class BAFCOGenerteQuoteDto {
     public serviceChargeList serviceChargeList { get; set; }
     @AuraEnabled
     public exWorksObj exWorksObj  { get; set; }
+    @AuraEnabled public boolean addServiceCharge {get;set;}
+    @AuraEnabled public boolean addOriginCharge {get;set;}
+    @AuraEnabled public boolean addDestinCharge {get;set;}
+    @AuraEnabled public boolean addAdditionalCharge {get;set;}
+    @AuraEnabled public boolean addExWorksCharge {get;set;}
+    @AuraEnabled public boolean includeServiceCharge {get;set;}
+    @AuraEnabled public boolean includeOriginCharge {get;set;}
+    @AuraEnabled public boolean includeDestinCharge {get;set;}
+    @AuraEnabled public boolean includeAdditionalCharge {get;set;}
+    @AuraEnabled public boolean includeExWorksCharge {get;set;}
     
     public Class AdditionalCharge{ 
         @AuraEnabled

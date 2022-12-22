@@ -106,11 +106,16 @@
                                                             <lightning-layout multiple-rows if:true={totalSl}>
                                                                 <lightning-layout-item size="12">
                                                                     <lightning-layout style="padding-bottom: 12px;">
-                                                                        <lightning-layout-item size="8"><b>Shipping Line Charge</b></lightning-layout-item>
+                                                                        <lightning-layout-item size="4"><b>Shipping Line Charge</b></lightning-layout-item>
                                                                         <lightning-layout-item size="4"><lightning-input label="Add To Buying Rate" 
                                                                             type="checkbox"
                                                                             checked={addServiceCharge} 
                                                                             onchange={handleaddServiceChargeChange}></lightning-input>
+                                                                        </lightning-layout-item>
+                                                                        <lightning-layout-item size="4"><lightning-input label="Included (Quotation PDF)" 
+                                                                            type="checkbox"
+                                                                            checked={includeServiceCharge} 
+                                                                            onchange={handleincludeServiceChargeChange}></lightning-input>
                                                                         </lightning-layout-item>
                                                                     </lightning-layout>
                                                                 </lightning-layout-item>
@@ -317,11 +322,16 @@
                                                             <lightning-layout multiple-rows if:true={TotalOrigincharges}>
                                                                 <lightning-layout-item size="12">
                                                                     <lightning-layout style="padding-bottom: 12px;">
-                                                                        <lightning-layout-item size="8"><b>Origin Charges</b></lightning-layout-item>
+                                                                        <lightning-layout-item size="4"><b>Origin Charges</b></lightning-layout-item>
                                                                         <lightning-layout-item size="4"><lightning-input label="Add To Buying Rate" 
                                                                             type="checkbox"
                                                                             checked={addOriginCharge} 
                                                                             onchange={handleaddOriginChargeChange}></lightning-input>
+                                                                        </lightning-layout-item>
+                                                                        <lightning-layout-item size="4"><lightning-input label="Included (Quotation PDF)" 
+                                                                            type="checkbox"
+                                                                            checked={includeOriginCharge} 
+                                                                            onchange={handleincludeOriginChargeChange}></lightning-input>
                                                                         </lightning-layout-item>
                                                                     </lightning-layout>
                                                                 </lightning-layout-item>
@@ -537,11 +547,16 @@
                                                             <lightning-layout multiple-rows if:true={destinTotalCharges}>
                                                                 <lightning-layout-item size="12">
                                                                     <lightning-layout style="padding-bottom: 12px;">
-                                                                        <lightning-layout-item size="8"><b>Destination Charges</b></lightning-layout-item>
+                                                                        <lightning-layout-item size="4"><b>Destination Charges</b></lightning-layout-item>
                                                                         <lightning-layout-item size="4"><lightning-input label="Add To Buying Rate" 
                                                                             type="checkbox"
                                                                             checked={addDestinCharge} 
                                                                             onchange={handleaddDestinChange}></lightning-input>
+                                                                        </lightning-layout-item>
+                                                                        <lightning-layout-item size="4"><lightning-input label="Included (Quotation PDF)" 
+                                                                            type="checkbox"
+                                                                            checked={includeDestinCharge} 
+                                                                            onchange={handleincludeDestinChargeChange}></lightning-input>
                                                                         </lightning-layout-item>
                                                                     </lightning-layout>
                                                                 </lightning-layout-item>
@@ -640,11 +655,16 @@
                                                             <lightning-layout multiple-rows if:true={displayAdditionalCharge}>
                                                                 <lightning-layout-item size="12">
                                                                     <lightning-layout style="padding-bottom: 12px;">
-                                                                        <lightning-layout-item size="8"><b>Additional Charges</b></lightning-layout-item>
+                                                                        <lightning-layout-item size="4"><b>Additional Charges</b></lightning-layout-item>
                                                                         <lightning-layout-item size="4"><lightning-input label="Add To Buying Rate" 
                                                                             type="checkbox"
                                                                             checked={addAdditionalCharge} 
                                                                             onchange={handleaddAdditionalChange}></lightning-input>
+                                                                        </lightning-layout-item>
+                                                                        <lightning-layout-item size="4"><lightning-input label="Included (Quotation PDF)" 
+                                                                            type="checkbox"
+                                                                            checked={includeAdditionalCharge} 
+                                                                            onchange={handleincludeAdditionalChargeChange}></lightning-input>
                                                                         </lightning-layout-item>
                                                                     </lightning-layout>
                                                                 </lightning-layout-item>
@@ -687,11 +707,16 @@
                                                             <lightning-layout multiple-rows if:true={displayExworks}>
                                                                 <lightning-layout-item size="12">
                                                                     <lightning-layout style="padding-bottom: 12px;">
-                                                                        <lightning-layout-item size="8"><b>Ex Works Charge</b></lightning-layout-item>
+                                                                        <lightning-layout-item size="4"><b>Ex Works Charge</b></lightning-layout-item>
                                                                         <lightning-layout-item size="4"><lightning-input label="Add To Buying Rate" 
                                                                             type="checkbox"
                                                                             checked={addExWorksCharge} 
                                                                             onchange={handleaddExWorksChargeChange}></lightning-input>
+                                                                        </lightning-layout-item>
+                                                                        <lightning-layout-item size="4"><lightning-input label="Included (Quotation PDF)" 
+                                                                            type="checkbox"
+                                                                            checked={includeExWorksCharge} 
+                                                                            onchange={handleincludeExWorksChargeChange}></lightning-input>
                                                                         </lightning-layout-item>
                                                                     </lightning-layout>
                                                                 </lightning-layout-item>

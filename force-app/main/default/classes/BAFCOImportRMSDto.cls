@@ -20,6 +20,16 @@ public class BAFCOImportRMSDto {
     public String dischargePlace { get; set; }
     @AuraEnabled
     public exWorksObj exWorksObj  { get; set; }
+    @AuraEnabled public boolean addServiceCharge {get;set;}
+    @AuraEnabled public boolean addOriginCharge {get;set;}
+    @AuraEnabled public boolean addDestinCharge {get;set;}
+    @AuraEnabled public boolean addAdditionalCharge {get;set;}
+    @AuraEnabled public boolean addExWorksCharge {get;set;}
+    @AuraEnabled public boolean includeServiceCharge {get;set;}
+    @AuraEnabled public boolean includeOriginCharge {get;set;}
+    @AuraEnabled public boolean includeDestinCharge {get;set;}
+    @AuraEnabled public boolean includeAdditionalCharge {get;set;}
+    @AuraEnabled public boolean includeExWorksCharge {get;set;}
     @AuraEnabled
     public serviceChargeList serviceChargeList { get; set; }
     @AuraEnabled
@@ -65,6 +75,7 @@ public class BAFCOImportRMSDto {
         public Decimal destinTotalCharges { get; set; }
         @AuraEnabled
         public Boolean DestinTotalChanged { get; set; }
+        @AuraEnabled public Boolean includeDestinCharge { get; set; }
     }
     public class originChargesObj{
         @AuraEnabled Public decimal bayan{get; set;}
@@ -92,6 +103,7 @@ public class BAFCOImportRMSDto {
         @AuraEnabled Public String loadingChargeId{get; set;}
         @AuraEnabled Public Boolean originTotalChanged{get; set;}
         @AuraEnabled Public String loadingChargeName{get; set;}
+        @AuraEnabled public Boolean includeOriginCharge { get; set; }
     }
     public class servichargesObj{
         @AuraEnabled public decimal BAF  {get; set;}
@@ -115,12 +127,14 @@ public class BAFCOImportRMSDto {
         @AuraEnabled public decimal warRiskSurcharges {get; set;}
         @AuraEnabled public decimal totalSl {get; set;}
         @AuraEnabled public boolean shippTotalChanged  {get; set;}
+        @AuraEnabled public Boolean includeServiceCharge { get; set; }
     }
     public class exWorksObj{
         @AuraEnabled public String Id {get; set;}
         @AuraEnabled public String pickup {get; set;}
         @AuraEnabled public String LoadingPort {get; set;}
         @AuraEnabled public decimal LoadCharge {get; set;}
+        @AuraEnabled public Boolean includeExWorksCharge { get; set; }
     }
     public class additionalChargesObj{
         @AuraEnabled public decimal Bayancancellationcharge {get; set;}
@@ -148,6 +162,9 @@ public class BAFCOImportRMSDto {
         @AuraEnabled public decimal Vesselcertificatecharges {get; set;}
         @AuraEnabled public decimal Wrappingpackingcharges {get; set;}
         @AuraEnabled public decimal totalAdditional {get; set;}
-        
+        @AuraEnabled public decimal AlternateDepotReleaseCharges {get; set;}
+        @AuraEnabled public decimal FreightDifference {get; set;}
+        @AuraEnabled public decimal CarrierContainerRepositioningCharges {get; set;}
+        @AuraEnabled public Boolean includeAdditionalCharge { get; set; }
     }
 }

@@ -407,6 +407,8 @@ public class BAFCOLRoutingDetailsController {
                     quoteItemObj.War_Risk_Surcharge__c = servObj.warRiskSurcharges!= null ? servObj.warRiskSurcharges : null;                  
                 }
                 quoteItemObj.Total_SL__c = servObj.totalSl!= null ? servObj.totalSl : null;
+                quoteItemObj.Add_to_Buying_ShippingLine__c =  dto.addServiceCharge != null ? dto.addServiceCharge : false;
+                quoteItemObj.Included_PDF_ShippingLine__c =  dto.includeServiceCharge != null ? dto.includeServiceCharge : false;
             }
             if(dto.serviceChargeList.originChargesObj != null){
                 BAFCOImportRMSDto.originChargesObj originObj = dto.serviceChargeList.originChargesObj;
@@ -432,6 +434,8 @@ public class BAFCOLRoutingDetailsController {
                     quoteItemObj.Lashing_Charges__c = originObj.lashingCharges != null ? originObj.lashingCharges : null;
                 }
                 quoteItemObj.Total_INCO__c = originObj.TotalOrigincharges != null ? originObj.TotalOrigincharges : null;
+                quoteItemObj.Add_to_Buying_Origin__c =  dto.addOriginCharge != null ? dto.addOriginCharge : false;
+                quoteItemObj.Included_PDF_Origin__c =  dto.includeOriginCharge != null ? dto.includeOriginCharge : false;
             }
             if(dto.serviceChargeList.destinChargeObj != null){
                 BAFCOImportRMSDto.destinChargeObj destinObj = dto.serviceChargeList.destinChargeObj;
@@ -444,6 +448,8 @@ public class BAFCOLRoutingDetailsController {
                     quoteItemObj.LOLO_Charges__c = destinObj.destinLOLOCharges != null ? destinObj.destinLOLOCharges : null; 
                 }
                 quoteItemObj.Total_Dest__c = destinObj.destinTotalCharges != null ? destinObj.destinTotalCharges : null; 
+                quoteItemObj.Add_to_Buying_Destination__c =  dto.addDestinCharge != null ? dto.addDestinCharge : false;
+                quoteItemObj.Included_PDF_Destination__c =  dto.includeDestinCharge != null ? dto.includeDestinCharge : false;
             }
         }
         
@@ -463,7 +469,7 @@ public class BAFCOLRoutingDetailsController {
             if(dto2.name == 'Container stripping'){
                 quoteItemObj.Container_stripping__c = dto2.value;
             }
-            if(dto2.name == 'Free time certificate charges'){
+            if(dto2.name == 'Additional Freetime Charges'){
                 quoteItemObj.Free_time_certificate_charges__c = dto2.value;
             }
             if(dto2.name == 'Fumigation'){
@@ -520,6 +526,17 @@ public class BAFCOLRoutingDetailsController {
             if(dto2.name == 'Wrapping/packing charges'){
                 quoteItemObj.Wrappingpacking_charges__c = dto2.value;
             }
+            if(dto2.name == 'Freight Difference(FD)'){
+                quoteItemObj.Freight_Difference_FD__c = dto2.value;
+            }
+            if(dto2.name == 'Carrier container repositioning charges'){
+                quoteItemObj.Carrier_container_repositioning_charges__c = dto2.value;
+            }
+            if(dto2.name == 'Alternate depot release charges'){
+                quoteItemObj.Alternate_depot_release_charges__c = dto2.value;
+            }
+            quoteItemObj.Add_to_Buying_Additional__c =  dto.addAdditionalCharge != null ? dto.addAdditionalCharge : false;
+            quoteItemObj.Included_PDF_Additional__c =  dto.includeAdditionalCharge != null ? dto.includeAdditionalCharge : false;
         }
         quoteItemObj.Total__c = dto.total;
         quoteItemObj.Place_of_Pickup__c = dto.pickupPlace != '' ? dto.pickupPlace : null;
@@ -530,6 +547,10 @@ public class BAFCOLRoutingDetailsController {
         if(dto.exWorksObj != null){
             quoteItemObj.Ex_Works_Charge_Name__c = dto.exWorksObj.Id;
             quoteItemObj.Ex_Works_Charge__c = dto.exWorksObj.LoadCharge;
+            if(dto.exWorksObj.Id != null){
+                quoteItemObj.Add_to_Buying_Ex_works__c =  dto.addExWorksCharge != null ? dto.addExWorksCharge : false;
+                quoteItemObj.Included_PDF_Ex_works__c =  dto.includeExWorksCharge != null ? dto.includeExWorksCharge : false;
+            }
         }
         system.debug('quoteItemObj '+quoteItemObj);
         try{

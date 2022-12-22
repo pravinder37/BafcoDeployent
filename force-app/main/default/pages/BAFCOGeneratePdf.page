@@ -36,10 +36,10 @@
             max-width:168px;
             min-width:168px;
             width:168px;
-            min-height:35px;
-            max-height:35px;
-            height:35px;
-            text-align: center;
+            min-height:40px;
+            max-height:40px;
+            height:40px;
+            //text-align: center;
             // background: #E5F6FE !important;
             //color : #01648E;
             }
@@ -215,6 +215,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="BAF "/>
                                             <apex:outputText value="{!item.servichargesObj.BAF}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -223,6 +224,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Bunker Surcharge "/>
                                             <apex:outputText value="{!item.servichargesObj.bunkerCharges}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -231,6 +233,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Cleaning Charges "/>
                                             <apex:outputText value="{!item.servichargesObj.cleaningCharges}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -239,6 +242,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Container Maintenance Charge "/>
                                             <apex:outputText value="{!item.servichargesObj.CMC}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>                                        
                                     </div>
                                 </apex:panelGroup>
@@ -247,6 +251,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Carriage Congestion Surcharge "/>
                                             <apex:outputText value="{!item.servichargesObj.carriageCongestionSurcharge}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -255,6 +260,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Carrier Security Fees"/>
                                             <apex:outputText value="{!item.servichargesObj.carrierSecurityFees}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -263,6 +269,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="DG Surcharge"/>
                                             <apex:outputText value="{!item.servichargesObj.dgSurcharge}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -271,6 +278,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="DTHC"/>
                                             <apex:outputText value="{!item.servichargesObj.DTHC}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -279,6 +287,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Equipment Imbalance"/>
                                             <apex:outputText value="{!item.servichargesObj.equipmentImbalance}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -287,6 +296,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="InlandFuel Charges"/>
                                             <apex:outputText value="{!item.servichargesObj.inlandFuelCharges}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -295,6 +305,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Inland Handling Fees"/>
                                             <apex:outputText value="{!item.servichargesObj.inlandHandlingfees}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -303,6 +314,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Inland Haulage"/>
                                             <apex:outputText value="{!item.servichargesObj.inlandHaulage}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -311,6 +323,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="ISPS"/>
                                             <apex:outputText value="{!item.servichargesObj.ISPS}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -319,6 +332,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Lower Sulphur Surcharge"/>
                                             <apex:outputText value="{!item.servichargesObj.lowerSulphurSurcharge}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -327,6 +341,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Operational Recovery"/>
                                             <apex:outputText value="{!item.servichargesObj.operationalRecovery}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -335,6 +350,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="OTHC"/>
                                             <apex:outputText value="{!item.servichargesObj.OTHC}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -343,6 +359,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Over Weight Charge"/>
                                             <apex:outputText value="{!item.servichargesObj.overWeightCharge}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -351,6 +368,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Seal Charges"/>
                                             <apex:outputText value="{!item.servichargesObj.sealCharges}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -359,6 +377,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="War Risk Surcharges"/>
                                             <apex:outputText value="{!item.servichargesObj.warRiskSurcharges}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -367,6 +386,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Total Shipping line"/>
                                             <apex:outputText value="{!item.servichargesObj.totalSl}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -378,6 +398,8 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Bayan Charges"/>
                                             <apex:outputText value="{!item.originChargesObj.bayan}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
+                                            
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -386,6 +408,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="BL Fees"/>
                                             <apex:outputText value="{!item.originChargesObj.blFees}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -394,6 +417,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Origin Custom Clearance"/>
                                             <apex:outputText value="{!item.originChargesObj.originCustomClearance}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -402,6 +426,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Export Service Fees"/>
                                             <apex:outputText value="{!item.originChargesObj.exportServiceFees}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -410,6 +435,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Fasah Fees"/>
                                             <apex:outputText value="{!item.originChargesObj.fasahFees}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -418,6 +444,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Inspection"/>
                                             <apex:outputText value="{!item.originChargesObj.inspection}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -426,6 +453,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Insurance Charges"/>
                                             <apex:outputText value="{!item.originChargesObj.insuranceCharges}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -434,6 +462,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Lift OnLift Off"/>
                                             <apex:outputText value="{!item.originChargesObj.liftOnLiftOff}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -442,6 +471,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Origin Detention"/>
                                             <apex:outputText value="{!item.originChargesObj.OriginDetention}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -450,6 +480,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Origin Loading Charges"/>
                                             <apex:outputText value="{!item.originChargesObj.OriginLoadingCharges}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -458,6 +489,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="PickUp Charges"/>
                                             <apex:outputText value="{!item.originChargesObj.pickUpCharges}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -466,6 +498,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Reefer Control PlugIn Charge"/>
                                             <apex:outputText value="{!item.originChargesObj.ReeferControlPlugInCharge}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -474,6 +507,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Tabadul"/>
                                             <apex:outputText value="{!item.originChargesObj.tabadul}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -482,6 +516,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Trapulin Charges"/>
                                             <apex:outputText value="{!item.originChargesObj.trapulinCharges}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -490,6 +525,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="TruckIdling Charges"/>
                                             <apex:outputText value="{!item.originChargesObj.truckIdlingCharges}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -498,6 +534,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="VGM"/>
                                             <apex:outputText value="{!item.originChargesObj.vgm}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -506,6 +543,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="X-Ray"/>
                                             <apex:outputText value="{!item.originChargesObj.xray}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -514,6 +552,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Lashing Charges"/>
                                             <apex:outputText value="{!item.originChargesObj.lashingCharges}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -522,6 +561,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Fuel Surcharge"/>
                                             <apex:outputText value="{!item.originChargesObj.fuelSurcharge}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -530,6 +570,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Total Origin Charges"/>
                                             <apex:outputText value="{!item.originChargesObj.TotalOrigincharges}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -538,8 +579,9 @@
                                 <apex:panelGroup rendered="{!item.destinChargeObj.destinBayanCharges  != NULL}">
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
-                                            <apex:outputText value="Bayan Charges"/>
+                                            <apex:outputText value="Destination Bayan Charges"/>
                                             <apex:outputText value="{!item.destinChargeObj.destinBayanCharges}"/>
+                                            <span style="display:{!if(item.destinChargeObj.includeDestinCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -548,6 +590,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Destination Custom Clearance Charges"/>
                                             <apex:outputText value="{!item.destinChargeObj.destinCustomClearanceCharges}"/>
+                                            <span style="display:{!if(item.destinChargeObj.includeDestinCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -556,6 +599,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="DO Charges"/>
                                             <apex:outputText value="{!item.destinChargeObj.destinDOCharges}"/>
+                                            <span style="display:{!if(item.destinChargeObj.includeDestinCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -564,6 +608,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value=" Fasah Charges"/>
                                             <apex:outputText value="{!item.destinChargeObj.destinFasahCharges}"/>
+                                            <span style="display:{!if(item.destinChargeObj.includeDestinCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -572,6 +617,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Gate Pass Charges"/>
                                             <apex:outputText value="{!item.destinChargeObj.destinGatePassCharges}"/>
+                                            <span style="display:{!if(item.destinChargeObj.includeDestinCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -580,6 +626,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="LOLO Charges"/>
                                             <apex:outputText value="{!item.destinChargeObj.destinLOLOCharges}"/>
+                                            <span style="display:{!if(item.destinChargeObj.includeDestinCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -588,6 +635,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Total Destination Charges"/>
                                             <apex:outputText value="{!item.destinChargeObj.destinTotalCharges}"/>
+                                            <span style="display:{!if(item.destinChargeObj.includeDestinCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -597,7 +645,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Bayan cancellation charge"/>
-                                            <apex:outputText value="{!item.additionalChargesObj.Bayancancellationcharge}"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Bayancancellationcharge}"/>                                            
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -605,7 +654,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Cleaning charges"/>
-                                            <apex:outputText value="{!item.additionalChargesObj.Cleaningcharges}"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Cleaningcharges}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -613,7 +663,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Container Lashing Charges"/>
-                                            <apex:outputText value="{!item.additionalChargesObj.ContainerLashingCharges}"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.ContainerLashingCharges}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -621,7 +672,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Container movement charges"/>
-                                            <apex:outputText value="{!item.additionalChargesObj.Containermovementcharges}"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Containermovementcharges}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -629,15 +681,17 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Container stripping"/>
-                                            <apex:outputText value="{!item.additionalChargesObj.Containerstripping}"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Containerstripping}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.additionalChargesObj.Freetimecertificatecharges  != NULL}">
                                     <div style="background: #EFEFEF;padding: 10px;page-break-before: always">
                                         <apex:panelGrid columns="2">
-                                            <apex:outputText value="Freetime certificate charges"/>
-                                            <apex:outputText value="{!item.additionalChargesObj.Freetimecertificatecharges}"/>
+                                            <apex:outputText value="Additional Freetime Charges"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Freetimecertificatecharges}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -645,7 +699,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Fumigation"/>
-                                            <apex:outputText value="{!item.additionalChargesObj.Fumigation}"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Fumigation}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -653,7 +708,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Inspection"/>
-                                            <apex:outputText value="{!item.additionalChargesObj.Inspection}"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Inspection}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -661,7 +717,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Insurance charges"/>
-                                            <apex:outputText value="{!item.additionalChargesObj.Insurancecharges}"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Insurancecharges}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -669,7 +726,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Ministry clearnce charge for OOG cargo"/>
-                                            <apex:outputText value="{!item.additionalChargesObj.MinistryclearncechargeforOOGcargo}"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.MinistryclearncechargeforOOGcargo}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -677,7 +735,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Miscellaneous"/>
-                                            <apex:outputText value="{!item.additionalChargesObj.Miscellaneous}"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Miscellaneous}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -685,7 +744,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="MOT fine charges"/>
-                                            <apex:outputText value="{!item.additionalChargesObj.MOTfinecharges}"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.MOTfinecharges}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -693,7 +753,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="NonPalletized Surcharge"/>
-                                            <apex:outputText value="{!item.additionalChargesObj.NonPalletizedSurcharge}"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.NonPalletizedSurcharge}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -701,7 +762,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Pest control"/>
-                                            <apex:outputText value="{!item.additionalChargesObj.Pestcontrol}"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Pestcontrol}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -709,7 +771,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Re palletization"/>
-                                            <apex:outputText value="{!item.additionalChargesObj.Repalletization}"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Repalletization}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -717,7 +780,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Reefer control plugin charges"/>
-                                            <apex:outputText value="{!item.additionalChargesObj.Reefercntrplugincharges}"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Reefercntrplugincharges}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -725,7 +789,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Reefer PTI charges"/>
-                                            <apex:outputText value="{!item.additionalChargesObj.ReeferPTIcharges}"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.ReeferPTIcharges}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -733,7 +798,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Reefer steam wash"/>
-                                            <apex:outputText value="{!item.additionalChargesObj.Reefersteamwash}"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Reefersteamwash}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -741,7 +807,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Stuffing Charges"/>
-                                            <apex:outputText value="{!item.additionalChargesObj.StuffingCharges}"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.StuffingCharges}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -749,7 +816,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Sweeping Cleaning"/>
-                                            <apex:outputText value="{!item.additionalChargesObj.SweepingCleaning}"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.SweepingCleaning}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -757,7 +825,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="TruckHead charges"/>
-                                            <apex:outputText value="{!item.additionalChargesObj.TruckHeadcharges}"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.TruckHeadcharges}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -765,7 +834,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Truckidling charges"/>
-                                            <apex:outputText value="{!item.additionalChargesObj.Truckidlingcharges}"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Truckidlingcharges}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -773,7 +843,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Vessel certificate charges"/>
-                                            <apex:outputText value="{!item.additionalChargesObj.Vesselcertificatecharges}"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Vesselcertificatecharges}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -781,15 +852,44 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Wrappig packing charges"/>
-                                            <apex:outputText value="{!item.additionalChargesObj.Wrappingpackingcharges}"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Wrappingpackingcharges}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
-                                <apex:panelGroup rendered="{!item.additionalChargesObj.totalAdditional  != NULL}">
+                                <!--apex:panelGroup rendered="{!item.additionalChargesObj.totalAdditional  != NULL}">
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Total Additional Charge"/>
-                                            <apex:outputText value="{!item.additionalChargesObj.totalAdditional}"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.totalAdditional}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup-->
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.CarrierContainerRepositioningCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Carrier Container Repositioning Charges"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.CarrierContainerRepositioningCharges}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.AlternateDepotReleaseCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Alternate Depot Release Charges"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.AlternateDepotReleaseCharges}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.FreightDifference  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Freight Difference (FD)"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.FreightDifference}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -797,7 +897,8 @@
                                     <div class="boxesCss"  style="background: #EFEFEF;padding: 10px;">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="{!item.exWorksObj.Id} "/>
-                                            <apex:outputText value="{!item.exWorksObj.LoadCharge}"/>
+                                            <apex:outputText value="{!item.exWorksObj.LoadCharge}"/> 
+                                            <span style="display:{!if(item.exWorksObj.includeExWorksCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -812,6 +913,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="BAF "/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.BAF}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -820,6 +922,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Bunker Surcharge "/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.bunkerCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -828,6 +931,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Cleaning Charges "/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.cleaningCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -836,6 +940,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Container Maintenance Charge "/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.CMC}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>                                        
                                     </div>
                                 </apex:panelGroup>
@@ -844,6 +949,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Carriage Congestion Surcharge "/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.carriageCongestionSurcharge}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -852,6 +958,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Carrier Security Fees"/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.carrierSecurityFees}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -860,6 +967,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="DG Surcharge"/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.dgSurcharge}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -868,6 +976,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="DTHC"/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.DTHC}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -876,6 +985,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Equipment Imbalance"/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.equipmentImbalance}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -884,6 +994,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="InlandFuel Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.inlandFuelCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -892,6 +1003,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Inland Handling Fees"/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.inlandHandlingfees}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -900,6 +1012,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Inland Haulage"/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.inlandHaulage}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -908,6 +1021,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="ISPS"/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.ISPS}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -916,6 +1030,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Lower Sulphur Surcharge"/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.lowerSulphurSurcharge}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -924,6 +1039,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Operational Recovery"/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.operationalRecovery}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -932,6 +1048,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="OTHC"/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.OTHC}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -940,6 +1057,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Over Weight Charge"/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.overWeightCharge}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -948,6 +1066,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Seal Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.sealCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -956,6 +1075,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="War Risk Surcharges"/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.warRiskSurcharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -964,6 +1084,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Total Shipping line"/>
                                             <apex:outputText value="{!item.dc20Charges.servichargesObj.totalSl}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -975,6 +1096,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Bayan Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.bayan}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -983,6 +1105,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="BL Fees"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.blFees}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -991,6 +1114,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Origin Custom Clearance"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.originCustomClearance}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -999,6 +1123,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Export Service Fees"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.exportServiceFees}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1007,6 +1132,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Fasah Fees"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.fasahFees}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1015,6 +1141,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Inspection"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.inspection}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1023,6 +1150,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Insurance Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.insuranceCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1031,6 +1159,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Lift OnLift Off"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.liftOnLiftOff}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1039,6 +1168,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Origin Detention"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.OriginDetention}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1047,6 +1177,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Origin Loading Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.OriginLoadingCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1055,6 +1186,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="PickUp Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.pickUpCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1063,6 +1195,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Reefer Control PlugIn Charge"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.ReeferControlPlugInCharge}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1071,6 +1204,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Tabadul"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.tabadul}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1079,6 +1213,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Trapulin Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.trapulinCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1087,6 +1222,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="TruckIdling Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.truckIdlingCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1095,6 +1231,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="VGM"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.vgm}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1103,6 +1240,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="X-Ray"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.xray}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1111,6 +1249,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Lashing Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.lashingCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1119,6 +1258,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Fuel Surcharge"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.fuelSurcharge}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1127,6 +1267,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Total Origin Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.originChargesObj.TotalOrigincharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1135,8 +1276,10 @@
                                 <apex:panelGroup rendered="{!item.dc20Charges.destinChargeObj.destinBayanCharges  != NULL}">
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
-                                            <apex:outputText value="Bayan Charges"/>
+                                            <apex:outputText value="Destination Bayan Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.destinChargeObj.destinBayanCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.destinChargeObj.includeDestinCharge == true,'block','none')}" >INCLUDED</span>
+                                            
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1145,6 +1288,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Destination Custom Clearance Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.destinChargeObj.destinCustomClearanceCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.destinChargeObj.includeDestinCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1153,6 +1297,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="DO Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.destinChargeObj.destinDOCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.destinChargeObj.includeDestinCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1161,6 +1306,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value=" Fasah Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.destinChargeObj.destinFasahCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.destinChargeObj.includeDestinCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1169,6 +1315,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Gate Pass Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.destinChargeObj.destinGatePassCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.destinChargeObj.includeDestinCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1177,6 +1324,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="LOLO Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.destinChargeObj.destinLOLOCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.destinChargeObj.includeDestinCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1185,6 +1333,7 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Total Destination Charges"/>
                                             <apex:outputText value="{!item.dc20Charges.destinChargeObj.destinTotalCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.destinChargeObj.includeDestinCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1194,7 +1343,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Bayan cancellation charge"/>
-                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Bayancancellationcharge}"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Bayancancellationcharge}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1202,7 +1352,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Cleaning charges"/>
-                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Cleaningcharges}"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Cleaningcharges}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1210,7 +1361,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Container Lashing Charges"/>
-                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.ContainerLashingCharges}"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.ContainerLashingCharges}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1218,7 +1370,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Container movement charges"/>
-                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Containermovementcharges}"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Containermovementcharges}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1226,15 +1379,17 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Container stripping"/>
-                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Containerstripping}"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Containerstripping}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Freetimecertificatecharges  != NULL}">
                                     <div style="background: #EFEFEF;padding: 10px;page-break-before: always">
                                         <apex:panelGrid columns="2">
-                                            <apex:outputText value="Freetime certificate charges"/>
-                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Freetimecertificatecharges}"/>
+                                            <apex:outputText value="Additional Freetime Charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Freetimecertificatecharges}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1242,7 +1397,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Fumigation"/>
-                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Fumigation}"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Fumigation}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1250,7 +1406,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Inspection"/>
-                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Inspection}"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Inspection}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1258,7 +1415,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Insurance charges"/>
-                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Insurancecharges}"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Insurancecharges}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1266,7 +1424,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Ministry clearnce charge for OOG cargo"/>
-                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.MinistryclearncechargeforOOGcargo}"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.MinistryclearncechargeforOOGcargo}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1274,7 +1433,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Miscellaneous"/>
-                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Miscellaneous}"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Miscellaneous}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1282,7 +1442,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="MOT fine charges"/>
-                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.MOTfinecharges}"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.MOTfinecharges}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1290,7 +1451,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="NonPalletized Surcharge"/>
-                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.NonPalletizedSurcharge}"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.NonPalletizedSurcharge}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1298,7 +1460,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Pest control"/>
-                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Pestcontrol}"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Pestcontrol}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1306,7 +1469,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Re palletization"/>
-                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Repalletization}"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Repalletization}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1314,7 +1478,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Reefer control plugin charges"/>
-                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Reefercntrplugincharges}"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Reefercntrplugincharges}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1322,7 +1487,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Reefer PTI charges"/>
-                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.ReeferPTIcharges}"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.ReeferPTIcharges}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1330,7 +1496,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Reefer steam wash"/>
-                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Reefersteamwash}"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Reefersteamwash}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1338,7 +1505,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Stuffing Charges"/>
-                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.StuffingCharges}"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.StuffingCharges}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1346,7 +1514,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Sweeping Cleaning"/>
-                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.SweepingCleaning}"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.SweepingCleaning}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1354,7 +1523,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="TruckHead charges"/>
-                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.TruckHeadcharges}"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.TruckHeadcharges}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1362,7 +1532,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Truckidling charges"/>
-                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Truckidlingcharges}"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Truckidlingcharges}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1370,7 +1541,8 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Vessel certificate charges"/>
-                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Vesselcertificatecharges}"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Vesselcertificatecharges}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
@@ -1378,23 +1550,26 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Wrappig packing charges"/>
-                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Wrappingpackingcharges}"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Wrappingpackingcharges}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
-                                <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.totalAdditional  != NULL}">
+                                <!--apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.totalAdditional  != NULL}">
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Total Additional Charge"/>
-                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.totalAdditional}"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.totalAdditional}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
-                                </apex:panelGroup>
+                                </apex:panelGroup-->
                                 <apex:panelGroup rendered="{!item.dc20Charges.exWorksObj.LoadCharge  != NULL}">
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px;">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="{!item.dc20Charges.exWorksObj.Id} "/>
                                             <apex:outputText value="{!item.dc20Charges.exWorksObj.LoadCharge}"/>
+                                            <span style="display:{!if(item.dc20Charges.exWorksObj.includeExWorksCharge == true,'block','none')}" >INCLUDED</span>
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>

@@ -28,6 +28,7 @@ export default class BAFCOQuoteLineItemReviseDetail extends LightningElement {
     @track quotationMap=[];
     @track showServiceChargeModal = false;
     @track rmsId = '';
+    @track quotationDate = '';
 
 
     connectedCallback(){
@@ -87,6 +88,7 @@ export default class BAFCOQuoteLineItemReviseDetail extends LightningElement {
         let elem  = 0;
         this.shippingEquipTabSelected = dedicatedObj[elem].equipmentName; 
         this.buyingRate = dedicatedObj[elem].totalBuyingRate;
+        this.quotationDate = elem.quotationDate;
         let totalSelling = 0;
         if(dedicatedObj[elem].totalSellingRate > 0) totalSelling=totalSelling+dedicatedObj[elem].totalSellingRate;
         if(dedicatedObj[elem].totaladditionalCharge > 0) totalSelling=totalSelling+dedicatedObj[elem].totaladditionalCharge;
@@ -152,6 +154,7 @@ export default class BAFCOQuoteLineItemReviseDetail extends LightningElement {
                 console.log('came '+JSON.stringify(elem,null,2))
                 this.rmsId = elem.rmsId;
                 this.buyingRate = elem.totalBuyingRate;
+                this.quotationDate = elem.quotationDate;
                 let totalSelling = 0;
                 if(elem.totalSellingRate > 0) totalSelling=totalSelling+elem.totalSellingRate;
                 if(elem.totaladditionalCharge > 0) totalSelling=totalSelling+elem.totaladditionalCharge;

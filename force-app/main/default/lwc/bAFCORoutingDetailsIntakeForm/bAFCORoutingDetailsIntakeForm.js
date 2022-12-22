@@ -155,10 +155,15 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
     @track showProcument = false;
     @track destinationChargeList={};
     @track addServiceCharge=true;
+    @track includeServiceCharge=false;
     @track addOriginCharge = true;
+    @track includeOriginCharge = false;
     @track addDestinCharge=true;
+    @track includeDestinCharge=false;
     @track addAdditionalCharge = true;
+    @track includeAdditionalCharge = false;
     @track addExWorksCharge=true;
+    @track includeExWorksCharge=false;
     @track displayExWorksModal = false;
     @track exWorksObj;
     @track exWorksTotal = 0;
@@ -337,6 +342,11 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
         this.exWorksObj = {};
         this.displayExworks =false;
         this.exWorksTotal = null;
+        this.includeServiceCharge=false
+        this.includeOriginCharge=false
+        this.includeDestinCharge=false
+        this.includeAdditionalCharge=false
+        this.includeExWorksCharge=false
     }
     handleshippingLineActive(e){
         this.margin = 0;        
@@ -801,6 +811,11 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                     elem.value[0].addExWorksCharge = this.addExWorksCharge;
                     elem.value[0].displayExworks = this.displayExworks;
                     elem.value[0].exWorksTotal = this.exWorksTotal
+                    elem.value[0].includeServiceCharge = this.includeServiceCharge
+                    elem.value[0].includeOriginCharge = this.includeOriginCharge
+                    elem.value[0].includeDestinCharge = this.includeDestinCharge
+                    elem.value[0].includeAdditionalCharge = this.includeAdditionalCharge
+                    elem.value[0].includeExWorksCharge = this.includeExWorksCharge
                 }
             }
         });
@@ -821,6 +836,11 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                         'addAdditionalCharge':true,
                         'addExWorksCharge':true,
                         'displayExworks':false,
+                        'includeServiceCharge':false,
+                        'includeOriginCharge':false,
+                        'includeDestinCharge':false,
+                        'includeAdditionalCharge':false,
+                        'includeExWorksCharge':false,
                         'exWorksObj':{},
                         'exWorksTotal':null,
                         'incoChargList':{},
@@ -852,6 +872,11 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                     this.exWorksObj = elem.value[0].exWorksObj;
                     this.displayExworks = elem.value[0].displayExworks;
                     this.exWorksTotal = elem.value[0].exWorksTotal;
+                    this.includeServiceCharge = elem.value[0].includeServiceCharge;
+                    this.includeOriginCharge = elem.value[0].includeOriginCharge;
+                    this.includeDestinCharge = elem.value[0].includeDestinCharge;
+                    this.includeAdditionalCharge = elem.value[0].includeAdditionalCharge;
+                    this.includeExWorksCharge = elem.value[0].includeExWorksCharge;
                 }
             }
         });
@@ -1432,6 +1457,31 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
     }
     handleaddExWorksChargeChange(e){
         this.addExWorksCharge = e.target.checked;
+        this.updateTabsData();
+        this.handleBuyingRate();
+    }
+    handleincludeServiceChargeChange(e){
+        this.includeServiceCharge = e.target.checked;
+        this.updateTabsData();
+        this.handleBuyingRate();
+    }
+    handleincludeOriginChargeChange(e){
+        this.includeOriginCharge = e.target.checked;
+        this.updateTabsData();
+        this.handleBuyingRate();
+    }
+    handleincludeDestinChargeChange(e){
+        this.includeDestinCharge = e.target.checked;
+        this.updateTabsData();
+        this.handleBuyingRate();
+    }
+    handleincludeAdditionalChargeChange(e){
+        this.includeAdditionalCharge = e.target.checked;
+        this.updateTabsData();
+        this.handleBuyingRate();
+    }
+    handleincludeExWorksChargeChange(e){
+        this.includeExWorksCharge = e.target.checked;
         this.updateTabsData();
         this.handleBuyingRate();
     }
