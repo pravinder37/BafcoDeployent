@@ -271,7 +271,23 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                             carrierSecurityFees : shipValue.carrierSecurityFees,
                             recordtypeId : shipValue.recordtypeId,
                             pickupPlace:shipValue.pickupPlace,
-                            dischargePlace:shipValue.dischargePlace
+                            dischargePlace:shipValue.dischargePlace,
+                            addServiceCharge:shipValue.addServiceCharge,
+                            addOriginCharge:shipValue.addOriginCharge,
+                            addDestinCharge:shipValue.addDestinCharge,
+                            addAdditionalCharge:shipValue.addAdditionalCharge,
+                            addExWorksCharge:shipValue.addExWorksCharge,
+                            includeServiceCharge:shipValue.includeServiceCharge,
+                            includeOriginCharge:shipValue.includeOriginCharge,
+                            includeDestinCharge:shipValue.includeDestinCharge,
+                            includeAdditionalCharge:shipValue.includeAdditionalCharge,
+                            includeExWorksCharge:shipValue.includeExWorksCharge,
+                            exWorksId:shipValue.exWorksId,
+                            exWorksCharge:shipValue.exWorksCharge,
+                            AlternateDepotReleaseCharges:shipValue.AlternateDepotReleaseCharges,
+                            FreightDifference:shipValue.FreightDifference,
+                            CarrierContainerRepositioningCharges:shipValue.CarrierContainerRepositioningCharges,
+
 
                         })
                         elem.equipment.push({
@@ -377,7 +393,22 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 carrierSecurityFees : shipValue.carrierSecurityFees,
                                 recordtypeId : shipValue.recordtypeId,
                                 pickupPlace:shipValue.pickupPlace,
-                                dischargePlace:shipValue.dischargePlace
+                                dischargePlace:shipValue.dischargePlace,
+                                addServiceCharge:shipValue.addServiceCharge,
+                                addOriginCharge:shipValue.addOriginCharge,
+                                addDestinCharge:shipValue.addDestinCharge,
+                                addAdditionalCharge:shipValue.addAdditionalCharge,
+                                addExWorksCharge:shipValue.addExWorksCharge,
+                                includeServiceCharge:shipValue.includeServiceCharge,
+                                includeOriginCharge:shipValue.includeOriginCharge,
+                                includeDestinCharge:shipValue.includeDestinCharge,
+                                includeAdditionalCharge:shipValue.includeAdditionalCharge,
+                                includeExWorksCharge:shipValue.includeExWorksCharge,
+                                exWorksId:shipValue.exWorksId,
+                                exWorksCharge:shipValue.exWorksCharge,
+                                AlternateDepotReleaseCharges:shipValue.AlternateDepotReleaseCharges,
+                                FreightDifference:shipValue.FreightDifference,
+                                CarrierContainerRepositioningCharges:shipValue.CarrierContainerRepositioningCharges,
                             })
                             elem.equipment.push({
                                 key:equip,
@@ -481,6 +512,21 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 tempList[shipIndex].recordtypeId = shipValue.recordtypeId
                                 tempList[shipIndex].pickupPlace=shipValue.pickupPlace
                                 tempList[shipIndex].dischargePlace=shipValue.dischargePlace
+                                tempList[shipIndex].addServiceCharge=shipValue.addServiceCharge
+                                tempList[shipIndex].addOriginCharge=shipValue.addOriginCharge
+                                tempList[shipIndex].addDestinCharge=shipValue.addDestinCharge
+                                tempList[shipIndex].addAdditionalCharge=shipValue.addAdditionalCharge
+                                tempList[shipIndex].addExWorksCharge=shipValue.addExWorksCharge
+                                tempList[shipIndex].includeServiceCharge=shipValue.includeServiceCharge
+                                tempList[shipIndex].includeOriginCharge=shipValue.includeOriginCharge
+                                tempList[shipIndex].includeDestinCharge=shipValue.includeDestinCharge
+                                tempList[shipIndex].includeAdditionalCharge=shipValue.includeAdditionalCharge
+                                tempList[shipIndex].includeExWorksCharge=shipValue.includeExWorksCharge
+                                tempList[shipIndex].exWorksId=shipValue.exWorksId
+                                tempList[shipIndex].exWorksCharge=shipValue.exWorksCharge
+                                tempList[shipIndex].AlternateDepotReleaseCharges=shipValue.AlternateDepotReleaseCharges
+                                tempList[shipIndex].FreightDifference=shipValue.FreightDifference
+                                tempList[shipIndex].CarrierContainerRepositioningCharges=shipValue.CarrierContainerRepositioningCharges
                             }
                             else{
                                 tempList.push({
@@ -576,7 +622,22 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                     carrierSecurityFees : shipValue.carrierSecurityFees,
                                     recordtypeId : shipValue.recordtypeId,
                                     pickupPlace:shipValue.pickupPlace,
-                                    dischargePlace:shipValue.dischargePlace
+                                    dischargePlace:shipValue.dischargePlace,
+                                    addServiceCharge:shipValue.addServiceCharge,
+                                    addOriginCharge:shipValue.addOriginCharge,
+                                    addDestinCharge:shipValue.addDestinCharge,
+                                    addAdditionalCharge:shipValue.addAdditionalCharge,
+                                    addExWorksCharge:shipValue.addExWorksCharge,
+                                    includeServiceCharge:shipValue.includeServiceCharge,
+                                    includeOriginCharge:shipValue.includeOriginCharge,
+                                    includeDestinCharge:shipValue.includeDestinCharge,
+                                    includeAdditionalCharge:shipValue.includeAdditionalCharge,
+                                    includeExWorksCharge:shipValue.includeExWorksCharge,
+                                    exWorksId:shipValue.exWorksId,
+                                    exWorksCharge:shipValue.exWorksCharge,
+                                    AlternateDepotReleaseCharges:shipValue.AlternateDepotReleaseCharges,
+                                    FreightDifference:shipValue.FreightDifference,
+                                    CarrierContainerRepositioningCharges:shipValue.CarrierContainerRepositioningCharges,
                                 })
                             }
                             elem.equipment[index].value = tempList

@@ -170,6 +170,21 @@ public class BAFCOOrderCreationDto {
         @AuraEnabled public Decimal carrierSecurityFees{ get; set; }
         @AuraEnabled public String pickupPlace { get; set; }
         @AuraEnabled public String dischargePlace { get; set; }
-        
+        @AuraEnabled public boolean addServiceCharge {get;set;}
+        @AuraEnabled public boolean addOriginCharge {get;set;}
+        @AuraEnabled public boolean addDestinCharge {get;set;}
+        @AuraEnabled public boolean addAdditionalCharge {get;set;}
+        @AuraEnabled public boolean addExWorksCharge {get;set;}
+        @AuraEnabled public boolean includeServiceCharge {get;set;}
+        @AuraEnabled public boolean includeOriginCharge {get;set;}
+        @AuraEnabled public boolean includeDestinCharge {get;set;}
+        @AuraEnabled public boolean includeAdditionalCharge {get;set;}
+        @AuraEnabled public boolean includeExWorksCharge {get;set;}
+        @AuraEnabled public String exWorksId {get;set;}
+        @AuraEnabled public Decimal exWorksCharge {get;set;}
+        @AuraEnabled public decimal AlternateDepotReleaseCharges {get; set;}
+        @AuraEnabled public decimal FreightDifference {get; set;}
+        @AuraEnabled public decimal CarrierContainerRepositioningCharges {get; set;}
     }
+   
 }

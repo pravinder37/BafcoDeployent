@@ -43,7 +43,7 @@ public class BAFCOSalesOrderController {
         }
         system.debug('mapequipNameToQty '+mapequipNameToQty);
         Integer index = 1;
-        for(Quotation_Item__c item : [Select BAF__c,Bayan__c,Bayan_cancellation_charge__c,Bunker_surcharge__c,Cleaning_charges__c,
+        for(Quotation_Item__c item : [Select Alternate_depot_release_charges__c,Freight_Difference_FD__c,Carrier_container_repositioning_charges__c,Ex_Works_Charge__c,Ex_Works_Charge_Name__c,Included_PDF_Ex_works__c,Included_PDF_Additional__c,Included_PDF_Destination__c,Included_PDF_Origin__c,Included_PDF_ShippingLine__c,Add_to_Buying_Ex_works__c,Add_to_Buying_Additional__c,Add_to_Buying_Destination__c,Add_to_Buying_Origin__c,Add_to_Buying_ShippingLine__c,BAF__c,Bayan__c,Bayan_cancellation_charge__c,Bunker_surcharge__c,Cleaning_charges__c,
                                       /*Container_Lashing_Charges__c,*/CMC__c,Container_movement_charges__c,Container_stripping__c,
                                       Destination_Customs_Clearance__c,Destination_Loading_Charges__c,DTHC__c,EIC__c,Equipment_Type__c,
                                       Fasah_fee__c,Free_time_certificate_charges__c,Fumigation__c,Inspection__c,Insurance_charges__c,
@@ -165,6 +165,22 @@ public class BAFCOSalesOrderController {
                                                   dto.carrierSecurityFees = item.Carrier_Security_Fees__c != null ? item.Carrier_Security_Fees__c : 0;
                                                   dto.pickupPlace = item.Place_of_Pickup__c;
                                                   dto.dischargePlace = item.Place_of_Discharge__c;
+                                                  
+                                                  dto.addServiceCharge = item.Add_to_Buying_ShippingLine__c;
+                                                  dto.addOriginCharge = item.Add_to_Buying_Origin__c;
+                                                  dto.addDestinCharge = item.Add_to_Buying_Destination__c;
+                                                  dto.addAdditionalCharge = item.Add_to_Buying_Additional__c;
+                                                  dto.addExWorksCharge = item.Add_to_Buying_Ex_works__c;
+                                                  dto.includeServiceCharge = item.Included_PDF_ShippingLine__c;
+                                                  dto.includeOriginCharge = item.Included_PDF_Origin__c;
+                                                  dto.includeDestinCharge = item.Included_PDF_Destination__c;
+                                                  dto.includeAdditionalCharge = item.Included_PDF_Additional__c;
+                                                  dto.includeExWorksCharge = item.Included_PDF_Ex_works__c;
+                                                  dto.exWorksId = item.Ex_Works_Charge_Name__c;
+        										  dto.exWorksCharge = item.Ex_Works_Charge__c;
+                                                  dto.AlternateDepotReleaseCharges = item.Alternate_depot_release_charges__c > 0 ? item.Alternate_depot_release_charges__c : 0;
+                                                  dto.FreightDifference = item.Freight_Difference_FD__c > 0 ? item.Freight_Difference_FD__c : 0;
+                                                  dto.CarrierContainerRepositioningCharges = item.Carrier_container_repositioning_charges__c > 0 ? item.Carrier_container_repositioning_charges__c : 0;
                                                   system.debug('item '+item);
                                                   if(item.Total__c > 0) equipLineToShipData.get(equipName).add(dto);
                                               }
@@ -193,7 +209,7 @@ public class BAFCOSalesOrderController {
                 orderObj.Quotation__c = orderData.quotationId;
                 orderObj.Order_Validity__c = date.valueOf(validityDate);
                 orderObj.recordtypeId = orderData.recordtypeId == QUOTE_EXPORT_RECORDTYPE_Id ? ORDER_EXPORT_RECORDTYPE_Id : ORDER_IMPORT_RECORDTYPE_Id;
-                            
+                
                 insert orderObj;
             }
             // creating OrderItem
@@ -289,6 +305,21 @@ public class BAFCOSalesOrderController {
                             orderitem.Carrier_Security_Fees__c = orderDto.carrierSecurityFees;
                             orderitem.Place_of_Pickup__c = orderDto.pickupPlace;
                             orderitem.Place_of_Discharge__c = orderDto.dischargePlace;
+                            orderitem.Add_to_Buying_ShippingLine__c = orderDto.addServiceCharge;
+                            orderitem.Add_to_Buying_Origin__c = orderDto.addOriginCharge;
+                            orderitem.Add_to_Buying_Destination__c = orderDto.addDestinCharge;
+                            orderitem.Add_to_Buying_Additional__c = orderDto.addAdditionalCharge;
+                            orderitem.Add_to_Buying_Ex_works__c = orderDto.addExWorksCharge;
+                            orderitem.Included_PDF_ShippingLine__c = orderDto.includeServiceCharge ;
+                            orderitem.Included_PDF_Origin__c = orderDto.includeOriginCharge;
+                            orderitem.Included_PDF_Destination__c = orderDto.includeDestinCharge;
+                            orderitem.Included_PDF_Additional__c = orderDto.includeAdditionalCharge;
+                            orderitem.Included_PDF_Ex_works__c = orderDto.includeExWorksCharge;
+                            orderitem.Ex_Works_Charge_Name__c = orderDto.exWorksId;
+                            orderitem.Ex_Works_Charge__c = orderDto.exWorksCharge;
+                            orderitem.Alternate_depot_release_charges__c = orderDto.AlternateDepotReleaseCharges;
+                            orderitem.Freight_Difference_FD__c = orderDto.FreightDifference;
+                            orderitem.Carrier_container_repositioning_charges__c = orderDto.CarrierContainerRepositioningCharges ;
                             system.debug('orderDto '+orderDto);
                             if(orderDto.checkBoxSelected == true) orderItemList.add(orderItem);
                         }
@@ -458,5 +489,20 @@ public class BAFCOSalesOrderController {
         @AuraEnabled public Decimal carrierSecurityFees{ get; set; }
         @AuraEnabled public String pickupPlace { get; set; }
         @AuraEnabled public String dischargePlace { get; set; }
+        @AuraEnabled public boolean addServiceCharge {get;set;}
+        @AuraEnabled public boolean addOriginCharge {get;set;}
+        @AuraEnabled public boolean addDestinCharge {get;set;}
+        @AuraEnabled public boolean addAdditionalCharge {get;set;}
+        @AuraEnabled public boolean addExWorksCharge {get;set;}
+        @AuraEnabled public boolean includeServiceCharge {get;set;}
+        @AuraEnabled public boolean includeOriginCharge {get;set;}
+        @AuraEnabled public boolean includeDestinCharge {get;set;}
+        @AuraEnabled public boolean includeAdditionalCharge {get;set;}
+        @AuraEnabled public boolean includeExWorksCharge {get;set;}
+        @AuraEnabled public String exWorksId {get;set;}
+        @AuraEnabled public Decimal exWorksCharge {get;set;}
+        @AuraEnabled public decimal AlternateDepotReleaseCharges {get; set;}
+        @AuraEnabled public decimal FreightDifference {get; set;}
+        @AuraEnabled public decimal CarrierContainerRepositioningCharges {get; set;}
     }
 }
