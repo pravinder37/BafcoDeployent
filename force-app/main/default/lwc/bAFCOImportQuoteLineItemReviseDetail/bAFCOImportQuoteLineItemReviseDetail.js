@@ -105,10 +105,10 @@ export default class BAFCOImportQuoteLineItemReviseDetail extends LightningEleme
         this.shippingEquipTabSelected = data[elem].equipmentName; 
         let totalSelling = 0;
         if(data[elem].totalSellingRate > 0) totalSelling=totalSelling+data[elem].totalSellingRate;
-        if(data[elem].totaladditionalCharge > 0) totalSelling=totalSelling+data[elem].totaladditionalCharge;
-        if(data[elem].TotalOrigincharges > 0) totalSelling=totalSelling+data[elem].TotalOrigincharges;
-        if(data[elem].totalSl > 0) totalSelling=totalSelling+data[elem].totalSl;
-        if(data[elem].destinTotalCharges > 0) totalSelling=totalSelling+data[elem].destinTotalCharges;
+        //if(data[elem].totaladditionalCharge > 0) totalSelling=totalSelling+data[elem].totaladditionalCharge;
+       // if(data[elem].TotalOrigincharges > 0) totalSelling=totalSelling+data[elem].TotalOrigincharges;
+       // if(data[elem].totalSl > 0) totalSelling=totalSelling+data[elem].totalSl;
+       // if(data[elem].destinTotalCharges > 0) totalSelling=totalSelling+data[elem].destinTotalCharges;
         this.buyingRate = data[elem].totalBuyingRate;
         this.sellingRate = totalSelling;
         this.quotationDate = data[elem].quotationDate;
@@ -173,10 +173,10 @@ export default class BAFCOImportQuoteLineItemReviseDetail extends LightningEleme
         this.shippingEquipTabSelected  =  data[elem].equipmentName;
         let totalSelling = 0;
         if(data[elem].totalSellingRate > 0) totalSelling=totalSelling+data[elem].totalSellingRate;
-        if(data[elem].totaladditionalCharge > 0) totalSelling=totalSelling+data[elem].totaladditionalCharge;
-        if(data[elem].TotalOrigincharges > 0) totalSelling=totalSelling+data[elem].TotalOrigincharges;
-        if(data[elem].totalSl > 0) totalSelling=totalSelling+data[elem].totalSl;
-        if(data[elem].destinTotalCharges > 0) totalSelling=totalSelling+data[elem].destinTotalCharges;
+        //if(data[elem].totaladditionalCharge > 0) totalSelling=totalSelling+data[elem].totaladditionalCharge;
+       // if(data[elem].TotalOrigincharges > 0) totalSelling=totalSelling+data[elem].TotalOrigincharges;
+       // if(data[elem].totalSl > 0) totalSelling=totalSelling+data[elem].totalSl;
+       // if(data[elem].destinTotalCharges > 0) totalSelling=totalSelling+data[elem].destinTotalCharges;
         this.buyingRate = data[elem].totalBuyingRate;
         this.quotationDate = data[elem].quotationDate;
         this.sellingRate = totalSelling;
@@ -246,10 +246,10 @@ export default class BAFCOImportQuoteLineItemReviseDetail extends LightningEleme
             if(ele.equipmentName == this.shippingEquipTabSelected){
                 let totalSelling = 0;
                 if(ele.totalSellingRate > 0) totalSelling=totalSelling+ele.totalSellingRate;
-                if(ele.totaladditionalCharge > 0) totalSelling=totalSelling+ele.totaladditionalCharge;
-                if(ele.TotalOrigincharges > 0) totalSelling=totalSelling+ele.TotalOrigincharges;
-                if(ele.totalSl > 0) totalSelling=totalSelling+ele.totalSl;
-                if(ele.destinTotalCharges > 0) totalSelling=totalSelling+ele.destinTotalCharges;
+                //if(ele.totaladditionalCharge > 0) totalSelling=totalSelling+ele.totaladditionalCharge;
+                //if(ele.TotalOrigincharges > 0) totalSelling=totalSelling+ele.TotalOrigincharges;
+               // if(ele.totalSl > 0) totalSelling=totalSelling+ele.totalSl;
+               // if(ele.destinTotalCharges > 0) totalSelling=totalSelling+ele.destinTotalCharges;
                 this.buyingRate = ele.totalBuyingRate;
                 this.quotationDate = ele.quotationDate;
                 this.sellingRate =totalSelling;

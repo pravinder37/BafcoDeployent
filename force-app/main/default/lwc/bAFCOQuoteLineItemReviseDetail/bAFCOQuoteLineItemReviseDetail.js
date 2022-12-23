@@ -91,10 +91,10 @@ export default class BAFCOQuoteLineItemReviseDetail extends LightningElement {
         this.quotationDate = elem.quotationDate;
         let totalSelling = 0;
         if(dedicatedObj[elem].totalSellingRate > 0) totalSelling=totalSelling+dedicatedObj[elem].totalSellingRate;
-        if(dedicatedObj[elem].totaladditionalCharge > 0) totalSelling=totalSelling+dedicatedObj[elem].totaladditionalCharge;
-        if(dedicatedObj[elem].TotalOrigincharges > 0) totalSelling=totalSelling+dedicatedObj[elem].TotalOrigincharges;
-        if(dedicatedObj[elem].totalSl > 0) totalSelling=totalSelling+dedicatedObj[elem].totalSl;
-        if(dedicatedObj[elem].destinTotalCharges > 0) totalSelling=totalSelling+dedicatedObj[elem].destinTotalCharges;
+        //if(dedicatedObj[elem].totaladditionalCharge > 0) totalSelling=totalSelling+dedicatedObj[elem].totaladditionalCharge;
+        //if(dedicatedObj[elem].TotalOrigincharges > 0) totalSelling=totalSelling+dedicatedObj[elem].TotalOrigincharges;
+        //if(dedicatedObj[elem].totalSl > 0) totalSelling=totalSelling+dedicatedObj[elem].totalSl;
+       // if(dedicatedObj[elem].destinTotalCharges > 0) totalSelling=totalSelling+dedicatedObj[elem].destinTotalCharges;
         this.sellingRate = totalSelling;
         let profit = 0;
             if(this.sellingRate > 0 && !isNaN(this.sellingRate)){
@@ -157,10 +157,10 @@ export default class BAFCOQuoteLineItemReviseDetail extends LightningElement {
                 this.quotationDate = elem.quotationDate;
                 let totalSelling = 0;
                 if(elem.totalSellingRate > 0) totalSelling=totalSelling+elem.totalSellingRate;
-                if(elem.totaladditionalCharge > 0) totalSelling=totalSelling+elem.totaladditionalCharge;
-                if(elem.TotalOrigincharges > 0) totalSelling=totalSelling+elem.TotalOrigincharges;
-                if(elem.totalSl > 0) totalSelling=totalSelling+elem.totalSl;
-                if(elem.destinTotalCharges > 0) totalSelling=totalSelling+elem.destinTotalCharges;
+                //if(elem.totaladditionalCharge > 0) totalSelling=totalSelling+elem.totaladditionalCharge;
+                //if(elem.TotalOrigincharges > 0) totalSelling=totalSelling+elem.TotalOrigincharges;
+               // if(elem.totalSl > 0) totalSelling=totalSelling+elem.totalSl;
+               // if(elem.destinTotalCharges > 0) totalSelling=totalSelling+elem.destinTotalCharges;
                 this.sellingRate = totalSelling;
                 let profit = 0;
                 if(this.sellingRate > 0 && !isNaN(this.sellingRate)){

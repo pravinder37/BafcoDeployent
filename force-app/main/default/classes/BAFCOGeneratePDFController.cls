@@ -29,11 +29,10 @@ public without sharing class BAFCOGeneratePDFController {
         if(this.recordId != null ){
             Quotation__c quoteObj = [Select Recordtype.Name,Terms_and_Conditions__c,RecordtypeId,Effective_From__c,Payment_Terms__c,Inclusions__c,Exclusions__c,Remarks__c,Account__r.Name,Name,(Select Route__r.Service_Type__c,Route__r.INCO_Term__r.name from Quotation_Items__r),createdDate,CreatedBy.Name,Quotation_Validity__c from Quotation__c where id =: this.recordId];
             this.dto.quoteNumber = quoteObj.Name;
-            this.dto.validityTo = quoteObj.Quotation_Validity__c.day()+'-'+ BAFCOLeadDetailsController.getMonthName(quoteObj.Quotation_Validity__c.month()) +'-'+quoteObj.Quotation_Validity__c.year();
+            if(quoteObj.Quotation_Validity__c != null )this.dto.validityTo = quoteObj.Quotation_Validity__c.day()+'-'+ BAFCOLeadDetailsController.getMonthName(quoteObj.Quotation_Validity__c.month()) +'-'+quoteObj.Quotation_Validity__c.year();
             this.dto.customerName = quoteObj.Account__r.Name;
             this.dto.quoteIssued = quoteObj.createdDate.day()+'-'+ BAFCOLeadDetailsController.getMonthName(quoteObj.createdDate.month()) +'-'+quoteObj.createdDate.year();
             this.dto.preparedBy = quoteObj.CreatedBy.Name;
-            //this.dto.salesResponsible=quoteObj.CreatedBy.Name;
             this.dto.paymentTerm = quoteObj.Payment_Terms__c;
             this.dto.recordTypeName = quoteObj.RecordType.Name;
             if(quoteObj.recordtypeId == QUOTE_EXPORT_RECORDTYPE_Id){
@@ -97,7 +96,7 @@ public without sharing class BAFCOGeneratePDFController {
                 this.dto.phone = '-';
                 this.dto.email ='-';
             }
-            List<Quotation_Item__c> quoteItem = [Select Included_PDF_ShippingLine__c,Included_PDF_Origin__c,Included_PDF_Ex_works__c,Included_PDF_Destination__c,Included_PDF_Additional__c,Route__r.Service_Type__c,Ex_Works_Charge__c,Ex_Works_Charge_Name__r.name,Place_of_Discharge__r.Name,Place_of_Pickup__r.Name,Port_of_Discharge__r.name,Port_of_Loading__r.name,BAF__c,Bayan__c,Bayan_cancellation_charge__c,Bunker_surcharge__c,Cleaning_charges__c,
+            List<Quotation_Item__c> quoteItem = [Select Freight_Difference_FD__c,Carrier_container_repositioning_charges__c,Alternate_depot_release_charges__c,Included_PDF_ShippingLine__c,Included_PDF_Origin__c,Included_PDF_Ex_works__c,Included_PDF_Destination__c,Included_PDF_Additional__c,Route__r.Service_Type__c,Ex_Works_Charge__c,Ex_Works_Charge_Name__r.name,Place_of_Discharge__r.Name,Place_of_Pickup__r.Name,Port_of_Discharge__r.name,Port_of_Loading__r.name,BAF__c,Bayan__c,Bayan_cancellation_charge__c,Bunker_surcharge__c,Cleaning_charges__c,
                                                  CMC__c,Container_movement_charges__c,Container_stripping__c,
                                                  Destination_Customs_Clearance__c,Destination_Loading_Charges__c,DTHC__c,EIC__c,Equipment_Type__c,
                                                  Fasah_fee__c,Free_time_certificate_charges__c,Fumigation__c,Inspection__c,Insurance_charges__c,
