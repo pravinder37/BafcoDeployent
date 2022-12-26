@@ -523,7 +523,7 @@ export default class BAFCOAddRMSModel
         Total = Total +  this.incoCharges.portShuttling  ;                 
         Total = Total +  this.incoCharges.tabadul  ;               
         Total = Total +  this.incoCharges.xray ;
-        Total = Total +  this.incoCharges.loadingCharge ;
+        //Total = Total +  this.incoCharges.loadingCharge ;
         Total = Total +  this.incoCharges.bLFees ;
         Total = Total + this.incoCharges.fuelSurcharge;
         Total = Total +  this.incoCharges.exportServiceFees ;
@@ -600,7 +600,7 @@ export default class BAFCOAddRMSModel
             .then(result =>{
                console.log('result '+JSON.stringify(result));
                this.incoCharges.loadingCharge = result[0].Loading_Charge__c;
-               this.loadingCharge = result[0].Loading_Charge__c;
+               //this.loadingCharge = result[0].Loading_Charge__c;
                this.incoCharges.loadingChargeId = result[0].Id;
                this.updaTeIncoChargeTotal();
             })

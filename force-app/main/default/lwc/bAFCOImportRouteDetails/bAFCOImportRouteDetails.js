@@ -6,6 +6,7 @@ import genrateQuotation from '@salesforce/apex/BAFCOImportQuoteController.genrat
 import updateValidityDate from '@salesforce/apex/BAFCOLRoutingDetailsController.updateValidityDate';
 import getDestintionCharges from '@salesforce/apex/BAFCOshippingLineChargesController.getDestintionCharges';
 import { NavigationMixin } from 'lightning/navigation';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class BAFCOImportRouteDetails extends NavigationMixin(LightningElement) {
     @api routeName;
     @api routingRegular;
@@ -209,7 +210,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                  for(let key2 in conts[key]){
                     let templist = [];  
                     for(let key3 in conts[key][key2]){
-                        let dd=key+'-'+key2+'-'+conts[key][key2][key3].equipmentName
+                        let dd=key+'-'+key2+'-'+conts[key][key2][key3].uniqueEquip
                         holdtempList.push({
                             key: dd,
                             value:[]
@@ -218,6 +219,8 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                             'sellingRate': 0,
                             'profit' : 0,
                             'margin':0,
+                            'similarEquipSubmitted':false,
+                            'uniqueEquip':conts[key][key2][key3].uniqueEquip,
                             'validity':conts[key][key2][key3].validity,
                             'quantity':conts[key][key2][key3].quantity,
                             'quotationId':conts[key][key2][key3].quotationId,
@@ -364,7 +367,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
         let elem = 0;
         this.shippingTabSelected = templist[elem].key;
         let data =templist[elem].data;
-        this.shippingEquipTabSelected = data[elem].equipmentName;
+        this.shippingEquipTabSelected = data[elem].uniqueEquip;
        this.processData();
     }
     handleShipLineActive(e){   
@@ -382,7 +385,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
             }
         })
         let elem  = 0;
-        this.shippingEquipTabSelected  =  data[elem].equipmentName;
+        this.shippingEquipTabSelected  =  data[elem].uniqueEquip;
         this.processData();
         
     }
@@ -434,7 +437,12 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                         'offSet':0,
                         'total':0,
                         'pickupPlace' : this.pickupPlace,
-                        'dischargePlace' : this.dischargePlace
+                        'dischargePlace' : this.dischargePlace,
+                        'quoteBuyingRate':0,
+                        'similarEquipSubmitted':false,
+                        'selectedShippLine':this.shippingTabSelected,
+                        'selectedEquipment':this.shippingEquipTabSelected,
+                        'agentTabSelected':this.agentTabSelected
                     })
                     elem.value = tempList;
                 }
@@ -466,6 +474,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
             }
         });
         this.assignServiceChargesData();
+        this.checkSaveQuoteClicked();
     }
     assignServiceChargesData(){
         if(Object.keys(this.serviceChargeList).length > 0){
@@ -609,10 +618,26 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                  
             this.profitLabel = '$ '+profit +' Profit.';
             let tempMap = this.quotationMap;
+            let seletedEquipName = '';
+            let dedicatedRoutingObj = this.routingListMap[this.agentTabSelected];
+            let templist = [];
+            for(let key in dedicatedRoutingObj){
+                templist.push({key:key, data: dedicatedRoutingObj[key]})
+            }
+            let data = [];
+            templist.forEach(elem=>{
+                if(elem.key == this.shippingTabSelected){
+                    data= elem.data
+                }
+            })
+            data.forEach(elem =>{
+                if(elem.uniqueEquip == this.shippingEquipTabSelected)
+                seletedEquipName = elem.equipmentName;
+             })
             tempMap.forEach(elem=>{
-                if(elem.key == this.agentTabSelected+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName){
+                if(elem.key == this.agentTabSelected+'-'+this.shippingTabSelected+'-'+seletedEquipName+'-'+this.routeName){
                     elem.value.forEach(el =>{
-                        if(el.equipment == this.shippingEquipTabSelected){
+                        if(el.equipment == seletedEquipName){
                             el.sellingRate = parseInt(this.sellingRate) 
                             el.profit = parseInt(profit)
                             el.margin =  parseInt(this.margin)
@@ -658,7 +683,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
             }
         })
         data.forEach(elem =>{
-            if(elem.equipmentName == this.shippingEquipTabSelected){
+            if(elem.uniqueEquip == this.shippingEquipTabSelected){
                 this.rmsId = elem.rmsID;
             }
         })
@@ -752,6 +777,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                     elem.value[0].includeDestinCharge = this.includeDestinCharge
                     elem.value[0].includeAdditionalCharge = this.includeAdditionalCharge
                     elem.value[0].includeExWorksCharge = this.includeExWorksCharge
+                    elem.value[0].quoteBuyingRate = this.buyingRate;
                 }
             }
         });        
@@ -762,9 +788,20 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
     handleCloseAdditionalModal(){
         this.showAdditionalChargeModal = false;
     }
+    showErrorToast() {
+        const evt = new ShowToastEvent({
+            title: 'Error',
+            message: 'Similar equipment already submitted.',
+            variant: 'error',
+            mode: 'dismissable'
+        });
+        this.dispatchEvent(evt);
+    }
     handleGenerateQuotaion(e){
+        let allValid = true;
         let keyName = this.agentTabSelected+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected;
         let dto = {}; 
+        console.log('data '+ JSON.stringify(this.toHoldData,null,2))
         this.toHoldData.forEach(elem => {
             if(elem.key == keyName){
                 dto = elem.value[0]
@@ -775,8 +812,14 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
             let sellingRateField = this.template.querySelector("[data-field='sellingRateField']");
             sellingRateField.setCustomValidity("Selling rate should be greater then 0");
             sellingRateField.reportValidity();
+            allValid = false;
         }
-        else{
+        if(dto.similarEquipSubmitted == true){
+            allValid = false;
+            this.showErrorToast();
+            console.log('@@@@ came here')
+        }
+        if(allValid){
             genrateQuotation({
                 routeId: this.routeId,
                 rmsId: this.rmsId,
@@ -799,15 +842,48 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                     }
                 });
                 this.quotationSaved = true;
-
+                // disabling remaining similar equip
+                let seletedEquipName = '';
+                let dedicatedRoutingObj = this.routingListMap[this.agentTabSelected];
+                let templist = [];
+                for(let key in dedicatedRoutingObj){
+                    templist.push({key:key, data: dedicatedRoutingObj[key]})
+                }
+                let data = [];
+                templist.forEach(elem=>{
+                    if(elem.key == this.shippingTabSelected){
+                        data= elem.data
+                    }
+                })
+                data.forEach(elem =>{
+                    if(elem.uniqueEquip == this.shippingEquipTabSelected)
+                    seletedEquipName = elem.equipmentName;
+                })
+                let equipNameList = [];
+                data.forEach(elem =>{
+                    if(elem.equipmentName == seletedEquipName){
+                        equipNameList.push(elem.uniqueEquip)
+                    }
+                })
+                if(equipNameList.length > 0){
+                    equipNameList.forEach(elem=>{
+                        let keyName = this.agentTabSelected+'-'+this.shippingTabSelected+'-'+elem;
+                        this.toHoldData.forEach(elem => {
+                            if(elem.key == keyName){
+                                if(elem.value.length > 0) elem.value[0].similarEquipSubmitted = true;
+                            }
+                        });
+                    })
+                }
                 this.quotationId = result;
                 this.dispatchEvent(new CustomEvent('showquotebtn',{ detail: {quoteId : this.quotationId}}));
 
 
                 let tempMap = this.quotationMap;
                 console.log('TempMap '+JSON.stringify(tempMap,null,2))
+                
                 tempMap.forEach(elem=>{
-                    if(elem.key == this.agentTabSelected+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName){
+                    if(elem.key == this.agentTabSelected+'-'+this.shippingTabSelected+'-'+seletedEquipName+'-'+this.routeName){
                         elem.value.forEach(el =>{
                             el.cssClass = 'class2'
                         })
@@ -1397,7 +1473,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
             }
         })
         data.forEach(elem =>{
-            if(elem.equipmentName == this.shippingEquipTabSelected){
+            if(elem.uniqueEquip == this.shippingEquipTabSelected){
                 if(elem.equipmentId != ''){
                     this.seaFreight = elem.seaFreight;
                     this.validity = elem.validity;
@@ -1533,5 +1609,60 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
         this.updateTabsData();
         this.handleBuyingRate();
         this.handleUpdateCalculation();
+    }
+    checkSaveQuoteClicked(){
+        //console.log('**^ '+JSON.stringify(this.routingListMap,null,2))
+        //console.log('**^^ '+JSON.stringify(this.toHoldData,null,2))
+        let seletedEquipName = '';
+        let foundTrue = false;
+        let dedicatedRoutingObj = this.routingListMap[this.agentTabSelected];
+        let templist = [];
+        for(let key in dedicatedRoutingObj){
+            templist.push({key:key, data: dedicatedRoutingObj[key]})
+        }
+        let data = [];
+        templist.forEach(elem=>{
+            if(elem.key == this.shippingTabSelected){
+                data= elem.data
+            }
+        })
+        data.forEach(elem =>{
+            if(elem.uniqueEquip == this.shippingEquipTabSelected)
+            seletedEquipName = elem.equipmentName;
+        })
+        let equipNameList = [];
+        data.forEach(elem =>{
+            if(elem.equipmentName == seletedEquipName){
+                equipNameList.push(elem.uniqueEquip)
+            }
+        })
+        console.log('## equipNameList '+JSON.stringify(equipNameList,null,2))
+        if(equipNameList.length > 0){
+            equipNameList.forEach(elem=>{
+                let keyName = this.agentTabSelected+'-'+this.shippingTabSelected+'-'+elem;
+                console.log('## keyName '+keyName)
+                this.toHoldData.forEach(elem => {
+                    if(elem.key == keyName){
+                        if(elem.value.length > 0){
+                            if(elem.value[0].similarEquipSubmitted == true) foundTrue = true;
+                        }
+                    }
+                });
+
+            })
+            if(foundTrue){
+                equipNameList.forEach(elem=>{
+                    let keyName = this.agentTabSelected+'-'+this.shippingTabSelected+'-'+elem;
+                    this.toHoldData.forEach(elem => {
+                        if(elem.key == keyName){
+                            if(elem.value.length > 0){
+                                elem.value[0].similarEquipSubmitted = true;
+                            }
+                        }
+                    });
+    
+                })
+            }
+        }
     }
 }

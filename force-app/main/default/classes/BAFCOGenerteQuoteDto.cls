@@ -5,6 +5,8 @@ public class BAFCOGenerteQuoteDto {
     @AuraEnabled
     public Decimal seaFreightSellRate { get; set; }
     @AuraEnabled
+    public Decimal quoteBuyingRate { get; set; }
+    @AuraEnabled
     public Decimal quantity { get; set; }
     @AuraEnabled
     public BAFCOIncoChargesDto incoChargList { get; set; }

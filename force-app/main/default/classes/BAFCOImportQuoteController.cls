@@ -25,7 +25,8 @@ public class BAFCOImportQuoteController {
         List<String> routeEquipmentList = new List<String>();
         Map<String,Decimal> routeEquipmentoquantityMap = new Map<String,Decimal>();
         Date todaysDate = System.today();
-        String QuoteId = '';        
+        String QuoteId = '';    
+        Integer uniqueEquip = 0;
         Map<String,String>  quoteItemToIdMap = new Map<String,String>();
         for(Route_Equipment__c routeEquip : [Select Equipment_Type__r.name,Quantity__c  FROM Route_Equipment__c WHERE Route__c=:routeId]){
             routeEquipmentList.add(routeEquip.Equipment_Type__r.name);
@@ -74,6 +75,8 @@ public class BAFCOImportQuoteController {
                                 rmsDto.equipmentName = rmsObj.Equipment_Type__r.name;
                                 rmsDto.equipmentId = rmsObj.Equipment_Type__c;
                                 rmsDto.seaFreight = rmsObj.Sea_Freight__c ; 
+                                rmsDto.uniqueEquip = uniqueEquip;
+                                uniqueEquip = uniqueEquip+1;
                                 rmsDto.rmsID = rmsObj.id;
                                 rmsDto.quotationId = QuoteId;
                                 rmsDto.agentId = rmsObj.Agent__c;
@@ -105,6 +108,8 @@ rmsDto.quotationItemId = quoteItemToIdMap.get(key);
                         BAFCORMSDto rmsDto = new BAFCORMSDto();
                         rmsDto.equipmentName = equip;
                         rmsDto.equipmentId  = '';
+                        rmsDto.uniqueEquip = uniqueEquip;
+                        uniqueEquip = uniqueEquip+1;
                         rmsDto.rmsID = '';
                         agentToEquipMap.get(key).get(key2).add(rmsDto);
                     }
@@ -388,6 +393,7 @@ quoteItemObj. = dto.value;
         quoteItemObj.Sea_Freight__c = dto.seaFreightSellRate;
         quoteItemObj.Place_of_Pickup__c = dto.pickupPlace != '' ? dto.pickupPlace : null;
         quoteItemObj.Place_of_Discharge__c = dto.dischargePlace != '' ? dto.dischargePlace : null;
+        quoteItemObj.Buying_Rate__c = dto.quoteBuyingRate > 0 ? dto.quoteBuyingRate : null;
         quoteItemObj.Quantity__c = dto.quantity;
         if(dto.exWorksObj != null){
             quoteItemObj.Ex_Works_Charge_Name__c = dto.exWorksObj.Id;

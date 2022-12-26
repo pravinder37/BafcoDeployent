@@ -63,6 +63,7 @@ public class BAFCOLRoutingDetailsController {
         Map<String,String>  quoteItemToIdMap = new Map<String,String>();
         String QuoteId = '';
         Date todaysDate = System.today();
+        Integer uniqueEquip = 0;
         for(Route_Equipment__c routeEquip : [Select Equipment_Type__r.name,Quantity__c  FROM Route_Equipment__c WHERE Route__c=:routeId]){
             routeEquipmentList.add(routeEquip.Equipment_Type__r.name);
             routeEquipmentoquantityMap.put(routeEquip.Equipment_Type__r.name,routeEquip.Quantity__c);
@@ -111,6 +112,8 @@ public class BAFCOLRoutingDetailsController {
                                 }
                                 rmsDto.equipmentName = rmsObj.Equipment_Type__r.name;
                                 rmsDto.equipmentId = rmsObj.Equipment_Type__c;
+                                rmsDto.uniqueEquip = uniqueEquip;
+                                uniqueEquip = uniqueEquip+1;
                                 rmsDto.seaFreight = rmsObj.Sea_Freight__c ; 
                                 rmsDto.rmsID = rmsObj.id;
                                 rmsDto.rateType =rmsObj.Rate_Type__c ;
@@ -139,6 +142,8 @@ public class BAFCOLRoutingDetailsController {
                     rmsDto.equipmentName = equip;
                     rmsDto.equipmentId  = '';
                     rmsDto.rmsID = '';
+                    rmsDto.uniqueEquip = uniqueEquip;
+                    uniqueEquip = uniqueEquip+1;
                     shipLineToEquipMap.get(key).add(rmsDto);
                 }
             }
@@ -544,6 +549,7 @@ public class BAFCOLRoutingDetailsController {
         quoteItemObj.Total_Additional__c = additionalChargeTotal;
         quoteItemObj.Sea_Freight__c = dto.seaFreightSellRate;  
         quoteItemObj.Quantity__c = dto.quantity;
+        quoteItemObj.Buying_Rate__c = dto.quoteBuyingRate > 0 ? dto.quoteBuyingRate : null;
         if(dto.exWorksObj != null){
             quoteItemObj.Ex_Works_Charge_Name__c = dto.exWorksObj.Id;
             quoteItemObj.Ex_Works_Charge__c = dto.exWorksObj.LoadCharge;

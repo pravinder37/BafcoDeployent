@@ -11,6 +11,8 @@ public class BAFCORMSDto {
     @AuraEnabled
     public String equipmentName { get; set; }
     @AuraEnabled
+    public Integer uniqueEquip { get; set; }
+    @AuraEnabled
     public String commodityName { get; set; }
     @AuraEnabled
     public String agentName { get; set; }

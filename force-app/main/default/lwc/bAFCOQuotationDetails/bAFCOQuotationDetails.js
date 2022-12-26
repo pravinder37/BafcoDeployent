@@ -6,9 +6,6 @@ export default class BAFCOQuotationDetails extends NavigationMixin(LightningElem
     handleAddNewShippingLine(){
         this.dispatchEvent(new CustomEvent('addnewshippingline'));
     }
-    renderedCallback(){
-        console.log('qutoad '+JSON.stringify(this.quotationList,null,2))
-    }
     handleGotoQuotation(){
         //this.dispatchEvent(new CustomEvent('gotoquote'));
         console.log('quotationId '+JSON.stringify(this.quotationList,null,2))

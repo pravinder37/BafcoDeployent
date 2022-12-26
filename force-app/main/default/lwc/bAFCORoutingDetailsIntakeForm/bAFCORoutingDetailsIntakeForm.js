@@ -6,6 +6,8 @@ import getClassification from '@salesforce/apex/BAFCOshippingLineChargesControll
 import getDestintionCharges from '@salesforce/apex/BAFCOshippingLineChargesController.getDestintionCharges';
 import updateValidityDate from '@salesforce/apex/BAFCOLRoutingDetailsController.updateValidityDate';
 import { NavigationMixin } from 'lightning/navigation';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+
 export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(LightningElement) {
     @api routeName;
     @api routingRegular;
@@ -209,11 +211,12 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                     templist.push({
                         'equipment' : conts[key][equip].equipmentName,
                         'sellingRate': 0,
+                        'similarEquipSubmitted':false,
                         'profit' : 0,
                         'margin':0,
                         'validity':conts[key][equip].validity,
                         'quantity':conts[key][equip].quantity,
-                       // 'quotationId':conts[key][0].quotationId,
+                        'uniqueEquip':conts[key][equip].uniqueEquip,
                         'cssClass':'',
                         savedClicked:false
 
@@ -236,7 +239,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                 let tempList = [];
                 for(let key in conts){
                     for(let equip in conts[key]){                    
-                        let dd = key+'-'+conts[key][equip].equipmentName
+                        let dd = key+'-'+conts[key][equip].uniqueEquip
                         tempList.push({
                             key: dd,
                             value:[]
@@ -356,7 +359,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
         this.tempshippingTabSelected =   e.target.value;   
         let dedicatedRoutingObj = this.routingListMap[this.shippingTabSelected]; 
         let elem  = 0;
-        this.shippingEquipTabSelected  =   this.seaFreight = dedicatedRoutingObj[elem].equipmentName;
+        this.shippingEquipTabSelected  = dedicatedRoutingObj[elem].uniqueEquip;
         this.processData();
     }
     handleEquipmentActive(e){   
@@ -425,7 +428,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
     getIncoCharges(){
         let dedicatedRoutingObj = this.routingListMap[this.shippingTabSelected];
         dedicatedRoutingObj.forEach(elem =>{
-            if(elem.equipmentName == this.shippingEquipTabSelected)
+            if(elem.uniqueEquip == this.shippingEquipTabSelected)
             this.rmsId = elem.rmsID;
         })
         getIncoCharges({
@@ -527,11 +530,19 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
 
             
           this.profitLabel = '$ '+profit +' Profit.';
-            let tempMap = this.quotationMap;
+          let tempMap = this.quotationMap;
+            let seletedEquipName = '';
+            let dedicatedRoutingObj = this.routingListMap[this.shippingTabSelected];
+            dedicatedRoutingObj.forEach(elem =>{
+                if(elem.uniqueEquip == this.shippingEquipTabSelected)
+                 seletedEquipName = elem.equipmentName;
+             })
+
+
             tempMap.forEach(elem=>{
-                if(elem.key == this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName){
+                if(elem.key == this.shippingTabSelected+'-'+seletedEquipName+'-'+this.routeName){
                     elem.value.forEach(el =>{
-                        if(el.equipment == this.shippingEquipTabSelected){
+                        if(el.equipment == seletedEquipName){
                             el.sellingRate = parseInt(this.sellingRate) 
                             el.profit = parseInt(profit)
                             el.margin =  parseInt(this.margin)
@@ -615,8 +626,18 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
         this.updateTabsData();
         this.handleUpdateCalculation();
     }
+    showErrorToast(error) {
+        const evt = new ShowToastEvent({
+            title: 'Error',
+            message: error,
+            variant: 'error',
+            mode: 'dismissable'
+        });
+        this.dispatchEvent(evt);
+    }
     handleGenerateQuotaion(){
         let keyName = this.shippingTabSelected+'-'+this.shippingEquipTabSelected;
+        let allValid = true;
         let dto = {}; 
         this.toHoldData.forEach(elem => {
             if(elem.key == keyName){
@@ -626,11 +647,19 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
         console.log('dto '+JSON.stringify(dto,null,2))
         if(dto.seaFreightSellRate == 0) {
             //this.showErrorPopup = true;
-            let sellingRateField = this.template.querySelector("[data-field='sellingRateField']");
+            let sellingRateField = this.template.querySelector("[data-field='sellingRateField']")
             sellingRateField.setCustomValidity("Selling rate should be greater then 0");
             sellingRateField.reportValidity();
+            let error= 'Selling rate should be greater then 0.'
+            //this.showErrorToast(error);
+            allValid = false;
         }
-        else{
+        else if(dto.similarEquipSubmitted == true){
+            allValid = false;
+            let error = 'Similar equipment already submitted.'
+            this.showErrorToast(error);
+        }
+        if(allValid){
             genrateQuotation({
                 routeId: this.routeId,
                 rmsId: this.rmsId,
@@ -645,21 +674,52 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
             }).then(result =>{
                 console.log('generate quote result : ', JSON.stringify(result,null,2));
                 let keyName = this.shippingTabSelected+'-'+this.shippingEquipTabSelected;
-
+                
                 this.toHoldData.forEach(elem => {
                     if(elem.key == keyName){
                         elem.value[0].savedClicked = true;
                     }
                 });
-                this.quotationSaved = true;
+                // disabling generate quote for remaining similarEquip
+                let seletedEquipName1 = '';
+                let dedicatedRoutingObj1 = this.routingListMap[this.shippingTabSelected];
+                dedicatedRoutingObj1.forEach(elem =>{
+                    if(elem.uniqueEquip == this.shippingEquipTabSelected)
+                    seletedEquipName1 = elem.equipmentName;
+                })
+                let equipNameList = [];
+                dedicatedRoutingObj1.forEach(elem =>{
+                    if(elem.equipmentName == seletedEquipName1){
+                        equipNameList.push(elem.uniqueEquip)
+                    }
+                })
+                if(equipNameList.length > 0){
+                    equipNameList.forEach(elem=>{
+                        let keyName = this.shippingTabSelected+'-'+elem;
+                        this.toHoldData.forEach(elem => {
+                            if(elem.key == keyName){
+                                if(elem.value.length > 0){
+                                    elem.value[0].similarEquipSubmitted = true;
+                                }
+                            }
+                        });
 
+                    })
+                }
+                this.quotationSaved = true;
                 this.quotationId = result;
                 this.dispatchEvent(new CustomEvent('showquotebtn',{ detail: {quoteId : this.quotationId}}));
 
 
                 let tempMap = this.quotationMap;
+                let seletedEquipName = '';
+                let dedicatedRoutingObj = this.routingListMap[this.shippingTabSelected];
+                dedicatedRoutingObj.forEach(elem =>{
+                    if(elem.uniqueEquip == this.shippingEquipTabSelected)
+                    seletedEquipName = elem.equipmentName;
+                })
                 tempMap.forEach(elem=>{
-                    if(elem.key == this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName){
+                    if(elem.key == this.shippingTabSelected+'-'+seletedEquipName+'-'+this.routeName){
                         elem.value.forEach(el =>{
                             el.cssClass = 'class2'
                         })
@@ -816,6 +876,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                     elem.value[0].includeDestinCharge = this.includeDestinCharge
                     elem.value[0].includeAdditionalCharge = this.includeAdditionalCharge
                     elem.value[0].includeExWorksCharge = this.includeExWorksCharge
+                    elem.value[0].quoteBuyingRate = this.buyingRate;
                 }
             }
         });
@@ -829,6 +890,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                     tempList.push({
                         'seaFreightSellRate':0,
                         'quotationItemId':'',
+                        'quoteBuyingRate':0,
                         'quantity':this.equipQuantity,
                         'addServiceCharge':true,
                         'addOriginCharge':true,
@@ -849,7 +911,10 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                         'savedClicked':false,
                         'pickupPlace':this.pickupPlace,
                         'dischargePlace':this.dischargePlace,
-                        'total':0
+                        'total':0,
+                        'similarEquipSubmitted':false,
+                        'selectedShippLine':this.shippingTabSelected,
+                        'selectedEquipment':this.shippingEquipTabSelected
                     })
                     elem.value = tempList;
                 }
@@ -880,7 +945,9 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                 }
             }
         });
-        this.assignServiceChargesData();       
+
+        this.assignServiceChargesData();    
+        this.checkSaveQuoteClicked();   
     }
     assignServiceChargesData(){
         if(Object.keys(this.serviceChargeList).length > 0){
@@ -1389,7 +1456,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
     processData(){
         let dedicatedRoutingObj = this.routingListMap[this.shippingTabSelected];
         dedicatedRoutingObj.forEach(elem =>{
-            if(elem.equipmentName == this.shippingEquipTabSelected){
+            if(elem.uniqueEquip == this.shippingEquipTabSelected){
                 console.log('elem '+JSON.stringify(elem,null,2))
                 if(elem.equipmentId != ''){
                     this.seaFreight = elem.seaFreight;
@@ -1404,7 +1471,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                     this.rmsRemarks = elem.rmsRemarks
                 }
                 else{
-                    this.shippingEquipTabSelected = this.shippingEquipTabSelected;
+                    //this.shippingEquipTabSelected = this.shippingEquipTabSelected;
                     this.equipNotfound = true ; 
                 }
             }
@@ -1484,5 +1551,46 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
         this.includeExWorksCharge = e.target.checked;
         this.updateTabsData();
         this.handleBuyingRate();
+    }
+    checkSaveQuoteClicked(){
+        let dedicatedRoutingObj1 = this.routingListMap[this.shippingTabSelected];
+        let foundTrue = false;
+        let seletedEquipName1 = '';
+        dedicatedRoutingObj1.forEach(elem =>{
+            if(elem.uniqueEquip == this.shippingEquipTabSelected)
+            seletedEquipName1 = elem.equipmentName;
+        })
+        let equipNameList = [];
+        dedicatedRoutingObj1.forEach(elem =>{
+            if(elem.equipmentName == seletedEquipName1){
+                equipNameList.push(elem.uniqueEquip)
+            }
+        })
+        if(equipNameList.length > 0){
+            equipNameList.forEach(elem=>{
+                let keyName = this.shippingTabSelected+'-'+elem;
+                this.toHoldData.forEach(elem => {
+                    if(elem.key == keyName){
+                        if(elem.value.length > 0){
+                            if(elem.value[0].similarEquipSubmitted == true) foundTrue = true;
+                        }
+                    }
+                });
+
+            })
+            if(foundTrue){
+                equipNameList.forEach(elem=>{
+                    let keyName = this.shippingTabSelected+'-'+elem;
+                    this.toHoldData.forEach(elem => {
+                        if(elem.key == keyName){
+                            if(elem.value.length > 0){
+                                elem.value[0].similarEquipSubmitted = true;
+                            }
+                        }
+                    });
+    
+                })
+            }
+        }
     }
 }

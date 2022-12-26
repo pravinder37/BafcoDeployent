@@ -44,7 +44,7 @@ export default class BAFCOParentComponent extends LightningElement {
         })
         templist.push({key:e.detail.routeName,value:tempList2})        
         this.displayQuotationlist = templist;
-        console.log('map '+JSON.stringify(this.displayQuotationlist,null,2))
+        //console.log('map '+JSON.stringify(this.displayQuotationlist,null,2))
     }
     addNewShippingline(){
         this.template.querySelectorAll("c-b-a-f-c-o-routing-details-intake-form")[0].handleAddShippingline();
@@ -57,8 +57,6 @@ export default class BAFCOParentComponent extends LightningElement {
             if(this.routingDetailsList[i].routeName == section)
             index = i;
         }
-        console.log('index '+index);
-        console.log('section '+section);
         if(index != -1){
             setTimeout(() => {
                 this.template.querySelectorAll("c-b-a-f-c-o-routing-details-intake-form")[index].handleUpdateCalculation();
@@ -67,8 +65,6 @@ export default class BAFCOParentComponent extends LightningElement {
         }
     }
     handleGotoQuote(e){
-        console.log('Section '+this.section)
-        console.log('this.validityDate'+this.validityDate)
         if(this.validityDate == '' || this.validityDate == null){
             let dateField = this.template.querySelector("[data-field='dateField']");
             dateField.setCustomValidity("Complete this field.");

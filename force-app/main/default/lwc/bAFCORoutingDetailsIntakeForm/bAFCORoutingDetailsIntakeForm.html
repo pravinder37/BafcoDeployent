@@ -79,7 +79,7 @@
                         <lightning-tab label={map.key} key={map.key} value={map.key} onactive={handleshippingLineActive}>                            
                             <lightning-tabset class="equipTab" active-tab-value={shippingEquipTabSelected}>                                                           
                                 <template for:each={map.value} for:item="equiptab">
-                                    <lightning-tab label={equiptab.equipmentName} key={equiptab.equipmentName} value={equiptab.equipmentName} onactive={handleEquipmentActive}>
+                                    <lightning-tab label={equiptab.equipmentName} key={equiptab.equipmentName} value={equiptab.uniqueEquip} onactive={handleEquipmentActive}>
                                         <lightning-layout multiple-rows if:false={equipNotfound} >
                                             
                                                     <lightning-layout-item size="4" ><!-- so as to make three columns --></lightning-layout-item>
@@ -97,7 +97,7 @@
                                                         ></lightning-input>
                                                     </lightning-layout-item>
                                                     <lightning-layout-item size="4" >
-                                                        <lightning-input type="number" data-field="sellingRateField" style="padding-right: 10px;" onchange={handleSellRateChange}                                                 
+                                                        <lightning-input type="number" data-id={equiptab.uniqueEquip} data-field="sellingRateField" style="padding-right: 10px;" onchange={handleSellRateChange}                                                 
                                                         value={seaFreightSellRate}></lightning-input>
                                                     </lightning-layout-item>
                                                     <!--Service Charges-->

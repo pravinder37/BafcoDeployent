@@ -82,7 +82,7 @@
                                     <lightning-tab label={shipLine.key2} key={shipLine.key2} value={shipLine.key2} onactive={handleShipLineActive}>
                                         <lightning-tabset class="shipLineTab" active-tab-value={shippingEquipTabSelected}>
                                             <template for:each={shipLine.value2} for:item="equip">
-                                                <lightning-tab label={equip.equipmentName} data-field="EquipTabField" key={equip.equipmentName} value={equip.equipmentName} onactive={handleEquipmentNameActive}>
+                                                <lightning-tab label={equip.equipmentName} key={equip.equipmentName} value={equip.uniqueEquip} onactive={handleEquipmentNameActive}>
                                                     <lightning-layout multiple-rows if:false={equipNotfound} >
                                                         <lightning-layout-item size="4" ><!-- so as to make three columns --></lightning-layout-item>
                                                         <lightning-layout-item size="4" ><b>Buying Rate</b></lightning-layout-item>
