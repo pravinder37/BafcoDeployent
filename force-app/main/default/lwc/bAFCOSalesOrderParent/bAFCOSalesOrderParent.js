@@ -287,6 +287,7 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                             AlternateDepotReleaseCharges:shipValue.AlternateDepotReleaseCharges,
                             FreightDifference:shipValue.FreightDifference,
                             CarrierContainerRepositioningCharges:shipValue.CarrierContainerRepositioningCharges,
+                            orderBuyingRate:shipValue.orderBuyingRate,
 
 
                         })
@@ -409,6 +410,7 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 AlternateDepotReleaseCharges:shipValue.AlternateDepotReleaseCharges,
                                 FreightDifference:shipValue.FreightDifference,
                                 CarrierContainerRepositioningCharges:shipValue.CarrierContainerRepositioningCharges,
+                                orderBuyingRate:shipValue.orderBuyingRate,
                             })
                             elem.equipment.push({
                                 key:equip,
@@ -527,6 +529,7 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 tempList[shipIndex].AlternateDepotReleaseCharges=shipValue.AlternateDepotReleaseCharges
                                 tempList[shipIndex].FreightDifference=shipValue.FreightDifference
                                 tempList[shipIndex].CarrierContainerRepositioningCharges=shipValue.CarrierContainerRepositioningCharges
+                                tempList[shipIndex].orderBuyingRate=shipValue.orderBuyingRate;
                             }
                             else{
                                 tempList.push({
@@ -638,6 +641,7 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                     AlternateDepotReleaseCharges:shipValue.AlternateDepotReleaseCharges,
                                     FreightDifference:shipValue.FreightDifference,
                                     CarrierContainerRepositioningCharges:shipValue.CarrierContainerRepositioningCharges,
+                                    orderBuyingRate:shipValue.orderBuyingRate,
                                 })
                             }
                             elem.equipment[index].value = tempList

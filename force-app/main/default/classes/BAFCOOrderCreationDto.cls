@@ -185,6 +185,7 @@ public class BAFCOOrderCreationDto {
         @AuraEnabled public decimal AlternateDepotReleaseCharges {get; set;}
         @AuraEnabled public decimal FreightDifference {get; set;}
         @AuraEnabled public decimal CarrierContainerRepositioningCharges {get; set;}
+        @AuraEnabled public decimal orderBuyingRate {get; set;}
     }
    
 }

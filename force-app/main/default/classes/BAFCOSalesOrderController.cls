@@ -43,7 +43,7 @@ public class BAFCOSalesOrderController {
         }
         system.debug('mapequipNameToQty '+mapequipNameToQty);
         Integer index = 1;
-        for(Quotation_Item__c item : [Select Alternate_depot_release_charges__c,Freight_Difference_FD__c,Carrier_container_repositioning_charges__c,Ex_Works_Charge__c,Ex_Works_Charge_Name__c,Included_PDF_Ex_works__c,Included_PDF_Additional__c,Included_PDF_Destination__c,Included_PDF_Origin__c,Included_PDF_ShippingLine__c,Add_to_Buying_Ex_works__c,Add_to_Buying_Additional__c,Add_to_Buying_Destination__c,Add_to_Buying_Origin__c,Add_to_Buying_ShippingLine__c,BAF__c,Bayan__c,Bayan_cancellation_charge__c,Bunker_surcharge__c,Cleaning_charges__c,
+        for(Quotation_Item__c item : [Select Buying_Rate__c,Alternate_depot_release_charges__c,Freight_Difference_FD__c,Carrier_container_repositioning_charges__c,Ex_Works_Charge__c,Ex_Works_Charge_Name__c,Included_PDF_Ex_works__c,Included_PDF_Additional__c,Included_PDF_Destination__c,Included_PDF_Origin__c,Included_PDF_ShippingLine__c,Add_to_Buying_Ex_works__c,Add_to_Buying_Additional__c,Add_to_Buying_Destination__c,Add_to_Buying_Origin__c,Add_to_Buying_ShippingLine__c,BAF__c,Bayan__c,Bayan_cancellation_charge__c,Bunker_surcharge__c,Cleaning_charges__c,
                                       /*Container_Lashing_Charges__c,*/CMC__c,Container_movement_charges__c,Container_stripping__c,
                                       Destination_Customs_Clearance__c,Destination_Loading_Charges__c,DTHC__c,EIC__c,Equipment_Type__c,
                                       Fasah_fee__c,Free_time_certificate_charges__c,Fumigation__c,Inspection__c,Insurance_charges__c,
@@ -181,6 +181,7 @@ public class BAFCOSalesOrderController {
                                                   dto.AlternateDepotReleaseCharges = item.Alternate_depot_release_charges__c > 0 ? item.Alternate_depot_release_charges__c : 0;
                                                   dto.FreightDifference = item.Freight_Difference_FD__c > 0 ? item.Freight_Difference_FD__c : 0;
                                                   dto.CarrierContainerRepositioningCharges = item.Carrier_container_repositioning_charges__c > 0 ? item.Carrier_container_repositioning_charges__c : 0;
+                                                  dto.orderBuyingRate = item.Buying_Rate__c > 0 ? item.Buying_Rate__c : 0;
                                                   system.debug('item '+item);
                                                   if(item.Total__c > 0) equipLineToShipData.get(equipName).add(dto);
                                               }
@@ -320,6 +321,7 @@ public class BAFCOSalesOrderController {
                             orderitem.Alternate_depot_release_charges__c = orderDto.AlternateDepotReleaseCharges;
                             orderitem.Freight_Difference_FD__c = orderDto.FreightDifference;
                             orderitem.Carrier_container_repositioning_charges__c = orderDto.CarrierContainerRepositioningCharges ;
+                            orderitem.Buying_Rate__c = orderDto.orderBuyingRate;
                             system.debug('orderDto '+orderDto);
                             if(orderDto.checkBoxSelected == true) orderItemList.add(orderItem);
                         }
@@ -504,5 +506,6 @@ public class BAFCOSalesOrderController {
         @AuraEnabled public decimal AlternateDepotReleaseCharges {get; set;}
         @AuraEnabled public decimal FreightDifference {get; set;}
         @AuraEnabled public decimal CarrierContainerRepositioningCharges {get; set;}
+        @AuraEnabled public decimal orderBuyingRate {get; set;}
     }
 }
