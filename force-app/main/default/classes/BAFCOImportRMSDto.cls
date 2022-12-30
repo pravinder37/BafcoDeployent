@@ -13,6 +13,10 @@ public class BAFCOImportRMSDto {
     @AuraEnabled
     public String quotationItemId { get; set; }
     @AuraEnabled
+    public String selectedShippLine { get; set; }
+    @AuraEnabled
+    public String agentTabSelected { get; set; }
+    @AuraEnabled
     public Decimal offSet { get; set; }
     @AuraEnabled
     public String currencyCode { get; set; }

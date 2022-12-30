@@ -126,9 +126,9 @@
             </div>
            
         </lightning-layout-item>
-        <lightning-layout-item size="12" class="mobilePaddingRight" large-device-size="4" medium-device-size="4" small-device-size="12" if:true={showPickupPlaceField}>
+        <lightning-layout-item size="12" class="mobilePaddingRight labelStyle" large-device-size="4" medium-device-size="4" small-device-size="12" if:true={showPickupPlaceField}>
             <div class={pickupPlaceClass}>
-                <label class="slds-form-element__label">
+                <!--label class="slds-form-element__label">
                     <p style="padding: 0px 20px 0px 20px;" class="labelStyle">Place of Pickup</p>
                 </label>
                 <c-b-a-f-c-o-custom-look-up-component
@@ -137,15 +137,19 @@
                                 icon-name="standard:account"
                                 index={leadIndex} 
                                 onlookupselected={handlePickupPlaceSelection}
-                                onlookupremoved={handlePickupRemoved}></c-b-a-f-c-o-custom-look-up-component>
+                                onlookupremoved={handlePickupRemoved}></c-b-a-f-c-o-custom-look-up-component-->
+                <lightning-input label="Place of Pickup"
+                                 value={placeOfPickup}
+                                 style="padding: 0px 20px 0px 20px;"
+                                 onchange={handlePickupPlaceInputchange} ></lightning-input>               
             </div> 
             <div class="slds-form-element__help" style="color: rgb(234, 0, 30); padding-left: 20px;" if:true={pickupPlaceClass}>
                 Complete this field.
             </div>   
         </lightning-layout-item>
-        <lightning-layout-item size="12" class="mobilePaddingRight" large-device-size="4" medium-device-size="4" small-device-size="12" if:true={showDischargePlaceField}>
+        <lightning-layout-item size="12" class="mobilePaddingRight labelStyle" large-device-size="4" medium-device-size="4" small-device-size="12" if:true={showDischargePlaceField}>
             <div class={dischargePlaceClass}>
-                <label class="slds-form-element__label">
+                <!--label class="slds-form-element__label">
                     <p style="padding: 0px 20px 0px 20px;" class="labelStyle">Place of Discharge</p>
                 </label>
                 <c-b-a-f-c-o-custom-look-up-component
@@ -154,7 +158,11 @@
                                 icon-name="standard:account"
                                 index={leadIndex} 
                                 onlookupselected={handleDischargeSelection}
-                                onlookupremoved={handleDischargeRemoved}></c-b-a-f-c-o-custom-look-up-component>
+                                onlookupremoved={handleDischargeRemoved}></c-b-a-f-c-o-custom-look-up-component-->
+                                <lightning-input label="Place of Discharge"
+                                value={placeOfDischarge}
+                                 style="padding: 0px 20px 0px 20px;"
+                                 onchange={handleDischargePlaceInputchange} ></lightning-input>
                                 <div class="slds-form-element__help" style="color: rgb(234, 0, 30); padding-left: 20px; font-weight: 600;" if:true={dischargePlaceClass}>
                                     Complete this field
                                 </div>

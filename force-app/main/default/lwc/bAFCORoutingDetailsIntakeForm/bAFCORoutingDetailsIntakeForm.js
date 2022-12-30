@@ -34,6 +34,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
     @api businessType = '';
     @api pickupPlaceName = '';
     @api dischargePlaceName = '';
+    @api equipmentType =''
 
 
     @track routingList=[];
@@ -909,8 +910,8 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                         'additionalChargeList':[],
                         'serviceChargeList':{},
                         'savedClicked':false,
-                        'pickupPlace':this.pickupPlace,
-                        'dischargePlace':this.dischargePlace,
+                        'pickupPlaceName':this.pickupPlaceName,
+                        'dischargePlaceName':this.dischargePlaceName,
                         'total':0,
                         'similarEquipSubmitted':false,
                         'selectedShippLine':this.shippingTabSelected,

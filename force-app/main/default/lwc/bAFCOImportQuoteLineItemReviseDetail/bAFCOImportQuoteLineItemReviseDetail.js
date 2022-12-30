@@ -30,6 +30,7 @@ export default class BAFCOImportQuoteLineItemReviseDetail extends LightningEleme
     @track rmsId = '';
     @track agentName = '';
     @track quotationDate ='';
+    @api equipmentType ='';
     connectedCallback(){
         this.getQuoteLineItemDetails();
     }

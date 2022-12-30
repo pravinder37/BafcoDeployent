@@ -288,8 +288,9 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                             FreightDifference:shipValue.FreightDifference,
                             CarrierContainerRepositioningCharges:shipValue.CarrierContainerRepositioningCharges,
                             orderBuyingRate:shipValue.orderBuyingRate,
-
-
+                            shippLine:shipValue.shippLine,
+                            quoteItemId:shipValue.quoteItemId,
+                            agentId:shipValue.agentId,
                         })
                         elem.equipment.push({
                             key:equip,
@@ -411,6 +412,9 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 FreightDifference:shipValue.FreightDifference,
                                 CarrierContainerRepositioningCharges:shipValue.CarrierContainerRepositioningCharges,
                                 orderBuyingRate:shipValue.orderBuyingRate,
+                                shippLine:shipValue.shippLine,
+                                quoteItemId:shipValue.quoteItemId,
+                                agentId:shipValue.agentId,
                             })
                             elem.equipment.push({
                                 key:equip,
@@ -530,6 +534,9 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 tempList[shipIndex].FreightDifference=shipValue.FreightDifference
                                 tempList[shipIndex].CarrierContainerRepositioningCharges=shipValue.CarrierContainerRepositioningCharges
                                 tempList[shipIndex].orderBuyingRate=shipValue.orderBuyingRate;
+                                tempList[shipIndex].shippLine = shipValue.shippLine;
+                                tempList[shipIndex].quoteItemId = shipValue.quoteItemId;
+                                tempList[shipIndex].agentId = shipValue.agentId;
                             }
                             else{
                                 tempList.push({
@@ -642,6 +649,9 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                     FreightDifference:shipValue.FreightDifference,
                                     CarrierContainerRepositioningCharges:shipValue.CarrierContainerRepositioningCharges,
                                     orderBuyingRate:shipValue.orderBuyingRate,
+                                    shippLine:shipValue.shippLine,
+                                    quoteItemId:shipValue.quoteItemId,
+                                    agentId:shipValue.agentId,
                                 })
                             }
                             elem.equipment[index].value = tempList

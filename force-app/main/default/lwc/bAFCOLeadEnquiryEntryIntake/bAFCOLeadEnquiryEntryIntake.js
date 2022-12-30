@@ -161,23 +161,23 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
         }
         if(this.serviceType  == 'D2P' || this.serviceType  == 'D2D'){
             this.showPickupPlaceField = true;
-            setTimeout(() => {
+            /*setTimeout(() => {
                 if(this.placeOfPickup != ''){
                     let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[5];
                     let Obj={Id:this.placeOfPickup,Name:this.placeOfPickupName}
                     if(field != null) field.handleDefaultSelected(Obj);
                 }
-            }, 100);
+            }, 100);*/
         }
         if(this.serviceType  == 'P2D' || this.serviceType  == 'D2D'){
             this.showDischargePlaceField = true;
-            setTimeout(() => {
+            /*setTimeout(() => {
                 if(this.placeOfDischarge != ''){                    
                     let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[5];
                     let Obj={Id:this.placeOfDischarge,Name:this.placeOfDischargeName}
                     if(field != null) field.handleDefaultSelected(Obj);
                 }
-            }, 100);
+            }, 100);*/
         }
        let containerData = this.leadEnquiryList[0].containerRecord;
        let copyCObj={
@@ -316,7 +316,15 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
         this.commodityName = '';
         this.updateEnquiryList();
     }
-    handlePickupPlaceSelection(e){
+    handleDischargePlaceInputchange(e){
+        this.placeOfDischarge = e.target.value
+        this.updateEnquiryList();
+    }
+    handlePickupPlaceInputchange(e){
+        this.placeOfPickup = e.target.value;
+        this.updateEnquiryList();
+    }
+   /* handlePickupPlaceSelection(e){
         let placeOfPickup = e.detail.Id;
         this.placeOfPickup = placeOfPickup;
         this.placeOfPickupName = e.detail.Name
@@ -335,11 +343,12 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
         this.dischargePlaceClass ='';
         this.updateEnquiryList();
     }
+    
     handleDischargeRemoved(e){
         this.placeOfDischarge = '';
         this.placeOfDischargeName ='';
         this.updateEnquiryList();
-    }
+    }*/
     handleCargoChange(e){
         let cargoWeights = e.target.value;
         this.cargoWeights = cargoWeights;

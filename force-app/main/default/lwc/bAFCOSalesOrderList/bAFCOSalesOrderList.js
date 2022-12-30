@@ -8,6 +8,24 @@ export default class BAFCOSalesOrderList extends NavigationMixin(LightningElemen
     isLoading = false;
     validityDate = '';
     errorMsg = '';
+    minDate = '';
+    connectedCallback(){
+        let todaysDate = new Date();
+        this.minDate = this.formatDate(todaysDate);
+    }
+    formatDate(date) {
+        let d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + (d.getDate()),
+            year = d.getFullYear();
+    
+        if (month.length < 2) 
+            month = '0' + month;
+        if (day.length < 2) 
+            day = '0' + day;
+    
+        return [year, month, day].join('-');
+    }
     hideCreateOrder(){
         this.isLoading = true
        if(this.validityDate == '' || this.validityDate == null){
@@ -58,7 +76,10 @@ export default class BAFCOSalesOrderList extends NavigationMixin(LightningElemen
             dateField.setCustomValidity("Complete this field.");            
         }
         else{
-            dateField.setCustomValidity("");  
+            if(this.validityDate < this.minDate){
+                dateField.setCustomValidity("Please select date later than today.");
+            }
+            else dateField.setCustomValidity("");  
         }
         dateField.reportValidity();
     }

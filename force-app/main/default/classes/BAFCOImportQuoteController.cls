@@ -391,10 +391,18 @@ quoteItemObj. = dto.value;
         quoteItemObj.Total__c = dto.total;
         quoteItemObj.Total_Additional__c = additionalChargeTotal;
         quoteItemObj.Sea_Freight__c = dto.seaFreightSellRate;
-        quoteItemObj.Place_of_Pickup__c = dto.pickupPlace != '' ? dto.pickupPlace : null;
-        quoteItemObj.Place_of_Discharge__c = dto.dischargePlace != '' ? dto.dischargePlace : null;
+        quoteItemObj.Pickup_Place__c= dto.pickupPlace;
+        quoteItemObj.Discharge_Place__c = dto.dischargePlace;
         quoteItemObj.Buying_Rate__c = dto.quoteBuyingRate > 0 ? dto.quoteBuyingRate : null;
         quoteItemObj.Quantity__c = dto.quantity;
+        if(dto.selectedShippLine != '' ){
+            List<Shipping_Line__c> shipLine = [Select id from Shipping_Line__c where name =:dto.selectedShippLine limit 1];
+            if(shipLine.size() > 0) quoteItemObj.Shipping_Linee__c = shipLine[0].id;
+        }
+        if(dto.agentTabSelected != ''){
+            List<Agent__c> agentList = [Select id from Agent__c where name =:dto.agentTabSelected limit 1];
+            if(agentList.size() > 0) quoteItemObj.Agent__c = agentList[0].id;
+        }
         if(dto.exWorksObj != null){
             quoteItemObj.Ex_Works_Charge_Name__c = dto.exWorksObj.Id;
             quoteItemObj.Ex_Works_Charge__c = dto.exWorksObj.LoadCharge;

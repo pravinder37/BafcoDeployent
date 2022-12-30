@@ -59,6 +59,8 @@ public class BAFCORoutingDetailsDto {
     @AuraEnabled
     public String parentId { get; set; }
     @AuraEnabled
+    public String equipmentType { get; set; }
+    @AuraEnabled
     public List<BAFCORoutingDetailsDto.containerRecord> containerRecord { get; set; }
     
     public class containerRecord{

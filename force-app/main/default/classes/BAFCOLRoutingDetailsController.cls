@@ -21,7 +21,7 @@ public class BAFCOLRoutingDetailsController {
     public static List<BAFCORoutingDetailsDto> getEnqueryDetails(String enquiryID) {
         List<BAFCORoutingDetailsDto> routingDetailsList = new List<BAFCORoutingDetailsDto>();
         Integer index = 1;
-        for(Route__c enqObj : [SELECT Place_of_Discharge__r.Name,Place_of_Pickup__r.Name,Opportunity_Enquiry__r.AccountId,Regular_Routing_Lookup__r.name,Port_of_loading__c,Place_of_Discharge__c,Place_of_Pickup__c,Id,/*Enquiry__r.Lead__c,*/ Regular_Routing__c,INCO_Term__r.name, Kind_Of_Shipment__c, Service_Type__c, Port_of_loading__r.Name, 
+        for(Route__c enqObj : [SELECT (Select id, Equipment_Type__r.name,Quantity__c from Route_Equipments__r), Place_of_Discharge__r.Name,Place_of_Pickup__r.Name,Opportunity_Enquiry__r.AccountId,Regular_Routing_Lookup__r.name,Port_of_loading__c,Pickup_Place__c,Discharge_Place__c,Id, Regular_Routing__c,INCO_Term__r.name, Kind_Of_Shipment__c, Service_Type__c, Port_of_loading__r.Name, 
                                Port_of_Destination__r.Name, Shipping_Line__r.name, Commodity__r.Name, Cargo_Weight__c, Remarks__c, 
                                Name,Opportunity_Enquiry__r.Business_Type__c,Opportunity_Enquiry__r.Account.Average_Credit_Days__c,Opportunity_Enquiry__r.Account.Best_Margin__c,Opportunity_Enquiry__r.Account.Average_Margin__c /*Enquiry__r.Account__r.Average_Margin__c,Enquiry__r.Account__r.Best_Margin__c,Enquiry__r.Account__r.Average_Credit_Days__c,Enquiry__r.Business_Type__c*/  
                                FROM Route__c WHERE Opportunity_Enquiry__c=:enquiryID]){
@@ -44,11 +44,25 @@ public class BAFCOLRoutingDetailsController {
                                    enqDtoObj.accountAvgMargin = enqObj.Opportunity_Enquiry__r.Account.Average_Margin__c != null ? enqObj.Opportunity_Enquiry__r.Account.Average_Margin__c : 0 ;
                                    enqDtoObj.accountBestMargin = enqObj.Opportunity_Enquiry__r.Account.Best_Margin__c !=null ? enqObj.Opportunity_Enquiry__r.Account.Best_Margin__c : 0;
                                    enqDtoObj.accountAvgCreditDays = enqObj.Opportunity_Enquiry__r.Account.Average_Credit_Days__c != null ?enqObj.Opportunity_Enquiry__r.Account.Average_Credit_Days__c : 0 ;
-                                   enqDtoObj.placeOfPickup = enqObj.Place_of_Pickup__c;
-                                   enqDtoObj.placeOfDischarge = enqObj.Place_of_Discharge__c;
-                                   enqDtoObj.placeOfPickupName = enqObj.Place_of_Pickup__c != null ? enqObj.Place_of_Pickup__r.Name : null;
-                                   enqDtoObj.placeOfDischargeName = enqObj.Place_of_Discharge__c != null ? enqObj.Place_of_Discharge__r.Name : null;
+                                   enqDtoObj.placeOfPickupName = enqObj.Pickup_Place__c;
+                                   enqDtoObj.placeOfDischargeName = enqObj.Discharge_Place__c;
+                                   
+                                   //enqDtoObj.placeOfPickupName = enqObj.Place_of_Pickup__c != null ? enqObj.Place_of_Pickup__r.Name : null;
+                                   //enqDtoObj.placeOfDischargeName = enqObj.Place_of_Discharge__c != null ? enqObj.Place_of_Discharge__r.Name : null;
                                    enqDtoObj.businessType = enqObj.Opportunity_Enquiry__r.Business_Type__c !=  null ? enqObj.Opportunity_Enquiry__r.Business_Type__c : '-';
+                                   if(enqObj.Route_Equipments__r.size() > 0){
+                                       String equipmentType ='';
+                                       for(Route_Equipment__c rr : enqObj.Route_Equipments__r){
+                                           if(rr.Equipment_Type__c != null){
+                                               equipmentType+=rr.Equipment_Type__r.Name+' - '+ rr.Quantity__c;
+                                               equipmentType+=', ';
+                                           }
+                                       }
+                                       if(equipmentType != ''){
+                                           equipmentType = equipmentType.removeEnd(', ');
+                                       }
+                                       enqDtoObj.equipmentType = equipmentType;
+                                   }
                                    index++;
                                    routingDetailsList.add(enqDtoObj);
                                }
@@ -226,8 +240,8 @@ public class BAFCOLRoutingDetailsController {
                 if(!String.isBlank(dto.incoTerm)) routeObj.INCO_Term__c = dto.incoTerm  ;
                 routeObj.Opportunity_Enquiry__c = optyObj.id;
                 routeObj.DG_Class__c = dto.dgClass;
-                if(!String.isBlank(dto.placeOfPickup)) routeObj.Place_of_Pickup__c = dto.placeOfPickup;
-                if(!String.isBlank(dto.placeOfDischarge)) routeObj.Place_of_Discharge__c = dto.placeOfDischarge;
+                if(!String.isBlank(dto.placeOfPickup)) routeObj.Pickup_Place__c = dto.placeOfPickup;
+                if(!String.isBlank(dto.placeOfDischarge)) routeObj.Discharge_Place__c = dto.placeOfDischarge;
                 routeList.add(routeObj);
             }
             if(routeList.size() > 0){
@@ -544,12 +558,16 @@ public class BAFCOLRoutingDetailsController {
             quoteItemObj.Included_PDF_Additional__c =  dto.includeAdditionalCharge != null ? dto.includeAdditionalCharge : false;
         }
         quoteItemObj.Total__c = dto.total;
-        quoteItemObj.Place_of_Pickup__c = dto.pickupPlace != '' ? dto.pickupPlace : null;
-        quoteItemObj.Place_of_Discharge__c = dto.dischargePlace != '' ? dto.dischargePlace : null;
+        quoteItemObj.Pickup_Place__c = dto.pickupPlaceName;
+        quoteItemObj.Discharge_Place__c = dto.dischargePlaceName;
         quoteItemObj.Total_Additional__c = additionalChargeTotal;
         quoteItemObj.Sea_Freight__c = dto.seaFreightSellRate;  
         quoteItemObj.Quantity__c = dto.quantity;
         quoteItemObj.Buying_Rate__c = dto.quoteBuyingRate > 0 ? dto.quoteBuyingRate : null;
+        if(dto.selectedShippLine != '' ){
+            List<Shipping_Line__c> shipLine = [Select id from Shipping_Line__c where name =:dto.selectedShippLine limit 1];
+            if(shipLine.size() > 0) quoteItemObj.Shipping_Linee__c = shipLine[0].id;
+        }
         if(dto.exWorksObj != null){
             quoteItemObj.Ex_Works_Charge_Name__c = dto.exWorksObj.Id;
             quoteItemObj.Ex_Works_Charge__c = dto.exWorksObj.LoadCharge;

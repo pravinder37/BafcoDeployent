@@ -44,9 +44,13 @@
             <p class="slds-m-top_small leadLabel">Place of Discharge</p>
             <span class=leadDetails>{dischargePlaceName}</span>
         </lightning-layout-item>
-        <lightning-layout-item size="2" class="slds-col slds-m-vertical_medium">
+        <lightning-layout-item size="2" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" class="slds-col slds-m-vertical_medium">
             <p class="slds-m-top_small leadLabel">Remarks</p>
             <span class=leadDetails>{remarks}</span>
+        </lightning-layout-item>
+        <lightning-layout-item size="2" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" class="slds-col slds-m-vertical_medium">
+            <p class="slds-m-top_small leadLabel">Equipment Types</p>
+            <span class=leadDetails>{equipmentType}</span>
         </lightning-layout-item>
     </lightning-layout>
     <lightning-layout-item size="12" class="slds-m-left_xx-large" >

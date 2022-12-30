@@ -29,6 +29,7 @@ export default class BAFCOQuoteLineItemReviseDetail extends LightningElement {
     @track showServiceChargeModal = false;
     @track rmsId = '';
     @track quotationDate = '';
+    @api equipmentType =''
 
 
     connectedCallback(){

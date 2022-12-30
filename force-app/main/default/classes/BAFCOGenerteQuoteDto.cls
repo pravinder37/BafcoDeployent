@@ -15,9 +15,15 @@ public class BAFCOGenerteQuoteDto {
     @AuraEnabled
     public String quotationItemId { get; set; }
     @AuraEnabled
+    public String pickupPlaceName { get; set; }
+    @AuraEnabled
+    public String dischargePlaceName { get; set; }
+    @AuraEnabled
     public String pickupPlace { get; set; }
     @AuraEnabled
     public String dischargePlace { get; set; }
+    @AuraEnabled
+    public String selectedShippLine { get; set; }
     @AuraEnabled
     public List<AdditionalCharge> additionalChargeList { get; set; }
     @AuraEnabled

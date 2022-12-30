@@ -21,7 +21,7 @@ public class BAFCOSalesOrderController {
             routeId.add(item.Route__c);
         }
         if(routeId.size()>0){
-            for(Route__c routeObj : [SELECT Opportunity_Enquiry__c ,Port_of_loading__c,Place_of_Discharge__c,Place_of_Pickup__c,Id, Regular_Routing__c,INCO_Term__r.name, Kind_Of_Shipment__c, Service_Type__c, Port_of_loading__r.Name, 
+            for(Route__c routeObj : [SELECT Opportunity_Enquiry__c ,Port_of_loading__c,/*Place_of_Discharge__c,Place_of_Pickup__c*/Discharge_Place__c,Pickup_Place__c,Id, Regular_Routing__c,INCO_Term__r.name, Kind_Of_Shipment__c, Service_Type__c, Port_of_loading__r.Name, 
                                      Port_of_Destination__r.Name, Shipping_Line__r.name, Commodity__r.Name, Cargo_Weight__c, Remarks__c, Name  
                                      FROM Route__c WHERE  Id in : routeId]){
                                          if(!mapRouteIdToName.containsKey(routeObj.Id)){
@@ -43,7 +43,7 @@ public class BAFCOSalesOrderController {
         }
         system.debug('mapequipNameToQty '+mapequipNameToQty);
         Integer index = 1;
-        for(Quotation_Item__c item : [Select Buying_Rate__c,Alternate_depot_release_charges__c,Freight_Difference_FD__c,Carrier_container_repositioning_charges__c,Ex_Works_Charge__c,Ex_Works_Charge_Name__c,Included_PDF_Ex_works__c,Included_PDF_Additional__c,Included_PDF_Destination__c,Included_PDF_Origin__c,Included_PDF_ShippingLine__c,Add_to_Buying_Ex_works__c,Add_to_Buying_Additional__c,Add_to_Buying_Destination__c,Add_to_Buying_Origin__c,Add_to_Buying_ShippingLine__c,BAF__c,Bayan__c,Bayan_cancellation_charge__c,Bunker_surcharge__c,Cleaning_charges__c,
+        for(Quotation_Item__c item : [Select Agent__c,Id,Shipping_Linee__c,Buying_Rate__c,Alternate_depot_release_charges__c,Freight_Difference_FD__c,Carrier_container_repositioning_charges__c,Ex_Works_Charge__c,Ex_Works_Charge_Name__c,Included_PDF_Ex_works__c,Included_PDF_Additional__c,Included_PDF_Destination__c,Included_PDF_Origin__c,Included_PDF_ShippingLine__c,Add_to_Buying_Ex_works__c,Add_to_Buying_Additional__c,Add_to_Buying_Destination__c,Add_to_Buying_Origin__c,Add_to_Buying_ShippingLine__c,BAF__c,Bayan__c,Bayan_cancellation_charge__c,Bunker_surcharge__c,Cleaning_charges__c,
                                       /*Container_Lashing_Charges__c,*/CMC__c,Container_movement_charges__c,Container_stripping__c,
                                       Destination_Customs_Clearance__c,Destination_Loading_Charges__c,DTHC__c,EIC__c,Equipment_Type__c,
                                       Fasah_fee__c,Free_time_certificate_charges__c,Fumigation__c,Inspection__c,Insurance_charges__c,
@@ -57,7 +57,7 @@ public class BAFCOSalesOrderController {
                                       Quotation__r.Leadc__c,Quotation__r.Opportunity__c,Quotation__r.Account__c,Total__c,Agent_Name__c,
                                       Remarks_SL_Charges__c,Remarks_Origin_Charges__c,Remarks_Destination_Charges__c,Remarks_Additional_Charges__c,Total_Additional__c,War_Risk_Surcharge__c,VGM__c,Total_Dest__c,Pickup_Charges__c,Overweight_surcharge__c,Origin_Detention_Demurrage_Charges__c,Lashing_Charges__c,Operational_Recovery_Surcharge__c,Low_Sulphur_Surcharge__c,Inland_haulage__c,Inland_Handling_Fees__c,Inland_Fuel_Surcharge__c,Gate_pass_charges__c,Fuel_Surcharge__c,Fasah_Charges__c,Export_Service_Fees__c,DG_Surcharge__c,Carriage_Congestion_Surcharge__c,BL_Fees__c,Bayan_Charges__c,
                                       Container_Lashing_Charges__c,DO_charges__c,LOLO_Charges__c,Carrier_Security_Fees__c,
-                                      Shipping_Line__c,Equipment_Type__r.Name,Place_of_Pickup__c,Place_of_Discharge__c   
+                                      Shipping_Line__c,Equipment_Type__r.Name,Pickup_Place__c,Discharge_Place__c   
                                       from Quotation_Item__c 
                                       where Quotation__c =: quoteId 
                                       And Route__c =:routeId]){
@@ -163,8 +163,8 @@ public class BAFCOSalesOrderController {
                                                   dto.dOcharges = item.DO_charges__c != null ? item.DO_charges__c : 0;
                                                   dto.lOLOCharges = item.LOLO_Charges__c != null ? item.LOLO_Charges__c : 0;
                                                   dto.carrierSecurityFees = item.Carrier_Security_Fees__c != null ? item.Carrier_Security_Fees__c : 0;
-                                                  dto.pickupPlace = item.Place_of_Pickup__c;
-                                                  dto.dischargePlace = item.Place_of_Discharge__c;
+                                                  dto.pickupPlace = item.Pickup_Place__c;
+                                                  dto.dischargePlace = item.Discharge_Place__c;
                                                   
                                                   dto.addServiceCharge = item.Add_to_Buying_ShippingLine__c;
                                                   dto.addOriginCharge = item.Add_to_Buying_Origin__c;
@@ -182,6 +182,9 @@ public class BAFCOSalesOrderController {
                                                   dto.FreightDifference = item.Freight_Difference_FD__c > 0 ? item.Freight_Difference_FD__c : 0;
                                                   dto.CarrierContainerRepositioningCharges = item.Carrier_container_repositioning_charges__c > 0 ? item.Carrier_container_repositioning_charges__c : 0;
                                                   dto.orderBuyingRate = item.Buying_Rate__c > 0 ? item.Buying_Rate__c : 0;
+                                                  dto.shippLine = item.Shipping_Linee__c;
+                                                  dto.quoteItemId = item.id;
+                                                  dto.agentId = item.Agent__c;
                                                   system.debug('item '+item);
                                                   if(item.Total__c > 0) equipLineToShipData.get(equipName).add(dto);
                                               }
@@ -304,8 +307,8 @@ public class BAFCOSalesOrderController {
                             orderitem.DO_charges__c = orderDto.dOcharges;
                             orderitem.LOLO_Charges__c = orderDto.lOLOCharges;
                             orderitem.Carrier_Security_Fees__c = orderDto.carrierSecurityFees;
-                            orderitem.Place_of_Pickup__c = orderDto.pickupPlace;
-                            orderitem.Place_of_Discharge__c = orderDto.dischargePlace;
+                            orderitem.Pickup_Place__c = orderDto.pickupPlace;
+                            orderitem.Discharge_Place__c = orderDto.dischargePlace;
                             orderitem.Add_to_Buying_ShippingLine__c = orderDto.addServiceCharge;
                             orderitem.Add_to_Buying_Origin__c = orderDto.addOriginCharge;
                             orderitem.Add_to_Buying_Destination__c = orderDto.addDestinCharge;
@@ -322,6 +325,9 @@ public class BAFCOSalesOrderController {
                             orderitem.Freight_Difference_FD__c = orderDto.FreightDifference;
                             orderitem.Carrier_container_repositioning_charges__c = orderDto.CarrierContainerRepositioningCharges ;
                             orderitem.Buying_Rate__c = orderDto.orderBuyingRate;
+                            orderItem.Shipping_Line__c = orderDto.shippLine;
+                            orderItem.Quotation_Item__c = orderDto.quoteItemId;
+                            orderItem.Agent__c = orderDto.agentId;
                             system.debug('orderDto '+orderDto);
                             if(orderDto.checkBoxSelected == true) orderItemList.add(orderItem);
                         }
@@ -507,5 +513,8 @@ public class BAFCOSalesOrderController {
         @AuraEnabled public decimal FreightDifference {get; set;}
         @AuraEnabled public decimal CarrierContainerRepositioningCharges {get; set;}
         @AuraEnabled public decimal orderBuyingRate {get; set;}
+        @AuraEnabled public String shippLine {get; set;}
+        @AuraEnabled public String quoteItemId {get; set;}
+        @AuraEnabled public String agentId {get; set;}
     }
 }

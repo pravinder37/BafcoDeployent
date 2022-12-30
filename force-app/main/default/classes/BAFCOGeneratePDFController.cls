@@ -110,7 +110,7 @@ public without sharing class BAFCOGeneratePDFController {
                                                  Quotation__r.Leadc__c,Quotation__r.Opportunity__c,Quotation__r.Account__c,Total__c,Agent_Name__c,
                                                  Remarks_SL_Charges__c,Remarks_Origin_Charges__c,Remarks_Destination_Charges__c,Remarks_Additional_Charges__c,Total_Additional__c,War_Risk_Surcharge__c,VGM__c,Total_Dest__c,Pickup_Charges__c,Overweight_surcharge__c,Origin_Detention_Demurrage_Charges__c,Lashing_Charges__c,Operational_Recovery_Surcharge__c,Low_Sulphur_Surcharge__c,Inland_haulage__c,Inland_Handling_Fees__c,Inland_Fuel_Surcharge__c,Gate_pass_charges__c,Fuel_Surcharge__c,Fasah_Charges__c,Export_Service_Fees__c,DG_Surcharge__c,Carriage_Congestion_Surcharge__c,BL_Fees__c,Bayan_Charges__c,
                                                  Container_Lashing_Charges__c,DO_charges__c,LOLO_Charges__c,Carrier_Security_Fees__c,
-                                                 Shipping_Line__c,Equipment_Type__r.Name,Place_of_Pickup__c,Place_of_Discharge__c   
+                                                 Shipping_Line__c,Equipment_Type__r.Name,/*Place_of_Pickup__c,Place_of_Discharge__c*/Pickup_Place__c,Discharge_Place__c    
                                                  from Quotation_Item__c 
                                                  where Quotation__c =: this.recordId];
             if(quoteItem.size()>0){
@@ -129,8 +129,10 @@ public without sharing class BAFCOGeneratePDFController {
                         itemDto.shippingLine = item.Shipping_Line__c ;
                         itemDto.serviceType = item.Route__r.Service_Type__c;
                         itemDto.transitTime = '** (Not Mapped) **';
-                        itemDto.placeOfPickup = item.Place_of_Pickup__c != null ? item.Place_of_Pickup__r.Name : null;
-                        itemDto.placeOfDischarge = item.Place_of_Discharge__c != null ? item.Place_of_Discharge__r.Name : null;
+                        //itemDto.placeOfPickup = item.Place_of_Pickup__c != null ? item.Place_of_Pickup__r.Name : null;
+                        //itemDto.placeOfDischarge = item.Place_of_Discharge__c != null ? item.Place_of_Discharge__r.Name : null;
+                        itemDto.placeOfPickup = item.Pickup_Place__c;
+                        itemDto.placeOfDischarge = item.Discharge_Place__c;
                         itemDto.portOfLoading = item.Port_of_Loading__r.name;
                         itemDto.portOfDestination = item.Port_of_Discharge__r.name;
                         itemDto.total = item.Total__c;
@@ -439,8 +441,10 @@ public without sharing class BAFCOGeneratePDFController {
                             itemDto.shippingLine = item.Shipping_Line__c ;
                             itemDto.transitTime = '** (Not Mapped) **';
                             itemDto.serviceType = item.Route__r.Service_Type__c;
-                            itemDto.placeOfPickup = item.Place_of_Pickup__c != null ? item.Place_of_Pickup__r.Name : null;
-                            itemDto.placeOfDischarge = item.Place_of_Discharge__c != null ? item.Place_of_Discharge__r.Name : null;
+                            //itemDto.placeOfPickup = item.Place_of_Pickup__c != null ? item.Place_of_Pickup__r.Name : null;
+                            //itemDto.placeOfDischarge = item.Place_of_Discharge__c != null ? item.Place_of_Discharge__r.Name : null;
+                            itemDto.placeOfPickup = item.Pickup_Place__c;
+                        	itemDto.placeOfDischarge = item.Discharge_Place__c;
                             itemDto.portOfLoading = item.Port_of_Loading__r.name;
                             itemDto.portOfDestination = item.Port_of_Discharge__r.name;
                             itemDto.total = item.Total__c;

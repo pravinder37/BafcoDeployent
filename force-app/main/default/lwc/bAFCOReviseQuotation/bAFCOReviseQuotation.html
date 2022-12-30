@@ -80,8 +80,9 @@
                                                                 commodity={prod.commodity}
                                                                 cargo-weights={prod.cargoWeights}
                                                                 dangerous-goods={prod.dangerousGoods}
-                                                                remarks={prod.routeName}
+                                                                remarks={prod.remarks}
                                                                 route-id={prod.routeId}
+                                                                equipment-type={prod.equipmentType}
                                                                 pickup-place-name={prod.placeOfPickupName}
                                                                 discharge-place-name={prod.placeOfDischargeName}
                                                                 active-quote-id={activeQuoteId}
@@ -125,11 +126,12 @@
                                     came-revise-compt={cameReviseCompt}
                                     onupdatecalculation={handleUpdateCalculation}
                                     quotation-list={displayQuotationlist}
-                                    pickup-place={prod.placeOfPickup}
-                                    discharge-place={prod.placeOfDischarge}
+                                    pickup-place-name={prod.placeOfPickupName}
+                                    discharge-place-name={prod.placeOfDischargeName}
                                     port-loading-id={prod.portLoadingId}
                                     onshowquotebtn={handleShowquoteBtn}
                                     quotation-id={quoteID}
+                                    equipment-type={prod.equipmentType}
                                     same-route={sameRoute}
                                     ></c-b-a-f-c-o-routing-details-intake-form>
                                 </lightning-accordion-section>

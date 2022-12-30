@@ -64,8 +64,21 @@ public class BAFCOAllQuotationItemDto {
     @AuraEnabled public decimal sealCharges {get; set;}
     @AuraEnabled public decimal warRiskSurcharges {get; set;}
     @AuraEnabled public decimal totalSl {get; set;}
+    @AuraEnabled public String exWorksCharge {get; set;}
+    @AuraEnabled public decimal LoadCharge {get; set;}
     @AuraEnabled
     public list<additionalChargeList> additionalChargeList { get; set; }
+    
+    @AuraEnabled public boolean addServiceCharge {get;set;}
+    @AuraEnabled public boolean addOriginCharge {get;set;}
+    @AuraEnabled public boolean addDestinCharge {get;set;}
+    @AuraEnabled public boolean addAdditionalCharge {get;set;}
+    @AuraEnabled public boolean addExWorksCharge {get;set;}
+    @AuraEnabled public boolean includeServiceCharge {get;set;}
+    @AuraEnabled public boolean includeOriginCharge {get;set;}
+    @AuraEnabled public boolean includeDestinCharge {get;set;}
+    @AuraEnabled public boolean includeAdditionalCharge {get;set;}
+    @AuraEnabled public boolean includeExWorksCharge {get;set;}
     
     public class additionalChargeList{
         @AuraEnabled

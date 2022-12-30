@@ -379,7 +379,11 @@ export default class BAFCOAddRMSModel
             this.validity = this.formatDate(this.todaysDate,0)
         }
         else if(this.rateType == 'Contract'){
-            this.validity = this.formatDate(this.todaysDate,15)
+            let ddd = new Date();
+            let year = ddd.getFullYear();
+            let month = ddd.getMonth();
+            let lastdate = new Date(year, month +1, 0);
+            this.validity = this.formatDate(lastdate,0)
         }
         this.rmsDetail.validity = this.validity 
     }

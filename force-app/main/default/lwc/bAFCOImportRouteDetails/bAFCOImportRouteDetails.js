@@ -34,6 +34,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
     @api pickupPlaceName = '';
     @api dischargePlaceName = '';
     @api quotationId = '';
+    @api equipmentType = ''
 
     @track addAgentModel = false;
     @track agentTabSelected = '';
@@ -436,8 +437,8 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                         'currencyCode':'',
                         'offSet':0,
                         'total':0,
-                        'pickupPlace' : this.pickupPlace,
-                        'dischargePlace' : this.dischargePlace,
+                        'pickupPlace' : this.pickupPlaceName,
+                        'dischargePlace' : this.dischargePlaceName,
                         'quoteBuyingRate':0,
                         'similarEquipSubmitted':false,
                         'selectedShippLine':this.shippingTabSelected,

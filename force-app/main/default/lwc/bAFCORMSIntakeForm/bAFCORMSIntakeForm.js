@@ -462,9 +462,11 @@ export default class BAFCORMSIntakeForm extends LightningElement {
             this.validity = this.formatDate(this.todaysDate,0)
         }
         else if(this.rateType == 'Contract'){
-            let date = new Date(), y = date.getFullYear(), m = date.getMonth();
-            let lastDay = new Date(y, m + 1, 0);
-            this.validity = this.formatDate(lastDay)
+            let ddd = new Date();
+            let year = ddd.getFullYear();
+            let month = ddd.getMonth();
+            let lastdate = new Date(year, month +1, 0);
+            this.validity = this.formatDate(lastdate,0)
         }
         this.rmsDetail.validity = this.validity 
     }
