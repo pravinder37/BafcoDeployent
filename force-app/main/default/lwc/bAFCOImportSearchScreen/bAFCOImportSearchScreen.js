@@ -41,22 +41,19 @@ export default class BAFCOImportSearchScreen extends NavigationMixin(LightningEl
        this.quoteItemId = e.target.value;
        let item = this.quoteList.filter(x=>x.Id == this.quoteItemId);
        this.buyingRate = item[0].Buying_Rate__c;
-       this.totalSellingRate = item[0].Total__c;
+       this.totalSellingRate = item[0].Total_Order__c;
        this.displayModal = true;
     }
     handleNewQuote(e){
         this.isLoading =true
         let quoteId = e.target.value;
-        let item = this.quoteList.filter(x=>x.Quotation__c == quoteId);
-        let accId = item[0].Quotation__r.Opportunity__r.AccountId;
         this[NavigationMixin.Navigate]({
             type: "standard__component",
             attributes: {
-                componentName: "c__ImportReviseQuoteTab"
+                componentName: "c__DisplaySalesOrderTab"
             },
             state: {
-                c__refRecordId: quoteId,
-                c__leadId:accId
+                c__refRecordId: quoteId
             }
         });
     }
@@ -101,5 +98,35 @@ export default class BAFCOImportSearchScreen extends NavigationMixin(LightningEl
             })
             .catch(error=>{console.log('error '+JSON.stringify(error));})
         }
+    }
+    handleOrderItemClicked(e){
+        let Id = e.target.dataset.value
+        this[NavigationMixin.GenerateUrl]({
+            type: 'standard__recordPage',
+            attributes: {
+                recordId: Id,
+                actionName: 'view'
+            },
+        }).then(url => { window.open(url,'_blank') });
+    }
+    handleOrderClicked(e){
+        let Id = e.target.dataset.value
+        this[NavigationMixin.GenerateUrl]({
+            type: 'standard__recordPage',
+            attributes: {
+                recordId: Id,
+                actionName: 'view'
+            },
+        }).then(url => { window.open(url,'_blank') });
+    }
+    handleQuotationClicked(e){
+        let Id = e.target.dataset.value
+        this[NavigationMixin.GenerateUrl]({
+            type: 'standard__recordPage',
+            attributes: {
+                recordId: Id,
+                actionName: 'view'
+            },
+        }).then(url => { window.open(url,'_blank') });
     }
 }

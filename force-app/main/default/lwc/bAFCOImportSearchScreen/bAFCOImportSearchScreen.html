@@ -2,17 +2,14 @@
     <lightning-spinner size="large" variant="brand" if:true={isLoading}></lightning-spinner>
     <div style="background: white;">
         <lightning-layout multiple-rows>
-            <lightning-layout-item size="12" large-device-size="12" medium-device-size="12" small-device-size="12" style="font-size: 14px; font-weight: 600;padding: 27px 0px 10px 20px;">
-                <h1>Quotation Item</h1>
-            </lightning-layout-item>
-            <lightning-layout-item size="12" large-device-size="6" medium-device-size="6" small-device-size="12">
+            <lightning-layout-item size="12" style="padding-top: 22px;" large-device-size="6" medium-device-size="6" small-device-size="12">
                 <div class={selectedAgentError}>
                     <label class="slds-form-element__label">
-                        <p style="padding-left: 22px">Agent</p>
+                        <p style="padding-left: 22px">Customer Name</p>
                     </label>
                     <c-b-a-f-c-o-custom-look-up-component
-                                    obj-name="Agent__c"
-                                    search-placeholder="Search agent" 
+                                    obj-name="Account"
+                                    search-placeholder="Search customer name" 
                                     icon-name="standard:account"
                                     onlookupselected={handleAgentSelection}
                                     onlookupremoved={handleAgentRemoved}></c-b-a-f-c-o-custom-look-up-component>
@@ -21,7 +18,7 @@
                     </div>
                 </div>
             </lightning-layout-item>
-            <lightning-layout-item size="12" style="padding-top: 22px;" large-device-size="6" medium-device-size="6" small-device-size="12">
+            <lightning-layout-item size="12" style="padding-top: 42px;" large-device-size="6" medium-device-size="6" small-device-size="12">
                 <lightning-button label="Search" variant="brand" onclick={handleSearchItem}></lightning-button>
             </lightning-layout-item>
             <lightning-layout-item style="padding: 20px;" size="12" large-device-size="12" medium-device-size="12" small-device-size="12" if:true={noRecord}>
@@ -33,9 +30,13 @@
                 <table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-labelledby="element-with-table-label other-element-with-table-label">
                     <thead>
                         <tr class="slds-line-height_reset">
-                            <th>Quotation</th>
-                            <th>Shipping line</th>
-                            <th>Equipment Type</th>
+                            <th>Order Item Name</th>
+                            <th>Order Name</th>
+                            <th>Quotation Name</th>
+                            <th>Port Of Loading</th>
+                            <th>Port Of Destination</th>
+                            <th>Shipping Line</th>
+                            <th>Vessel ETD</th>
                             <th>Buying Rate</th>
                             <th>Total</th>
                             <th>Action</th>
@@ -44,11 +45,15 @@
                     <tbody>
                         <template for:each={quoteList} for:item="item">
                             <tr key={item} class="slds-hint-parent">
-                                <td>{item.Quotation__r.Name}</td>
-                                <td>{item.Shipping_Linee__r.Name}</td>
-                                <td>{item.Equipment_Type__r.Name}</td>
+                                <td><a data-value={item.Id} onclick={handleOrderItemClicked}>{item.Name}</a></td>
+                                <td><a data-value={item.Order__c} onclick={handleOrderClicked}>{item.Order__r.Name}</a></td>
+                                <td><a data-value={item.Order__r.Quotation__c} onclick={handleQuotationClicked}>{item.Order__r.Quotation__r.Name}</a></td>
+                                <td>{item.Port_of_Loading_Order__r.Name}</td>
+                                <td>{item.Port_of_Discharge_Order__r.Name}</td>
+                                <td>{item.Shipping_Line__r.Name}</td>
+                                <td><lightning-formatted-date-time value={item.Vessel_ETD__c}></lightning-formatted-date-time></td>
                                 <td>{item.Buying_Rate__c}</td>
-                                <td>{item.Total__c}</td>
+                                <td>{item.Total_Order__c}</td>
                                 <td>
                                     <span>
                                         <lightning-button variant="base"
@@ -60,7 +65,7 @@
                                     <span>
                                         <lightning-button variant="base"
                                                         icon-name="utility:new" 
-                                                        value={item.Quotation__c}
+                                                        value={item.Order__r.Quotation__c}
                                                         style="padding-left: 4px;"
                                                         onclick={handleNewQuote}></lightning-button>
                                     </span>
