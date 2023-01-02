@@ -1,0 +1,60 @@
+<template>
+    <lightning-spinner size="large" variant="brand" if:true={isLoading}></lightning-spinner>
+    <div style="background: white;">
+        <lightning-layout multiple-rows>
+            <lightning-layout-item size="12" large-device-size="12" medium-device-size="12" small-device-size="12" style="font-size: 14px; font-weight: 600;padding: 27px 0px 10px 20px;">
+                <h1>Quotation Item</h1>
+            </lightning-layout-item>
+            <lightning-layout-item size="12" large-device-size="6" medium-device-size="6" small-device-size="12">
+                <div class={selectedAgentError}>
+                    <label class="slds-form-element__label">
+                        <p style="padding-left: 22px">Agent</p>
+                    </label>
+                    <c-b-a-f-c-o-custom-look-up-component
+                                    obj-name="Agent__c"
+                                    search-placeholder="Search agent" 
+                                    icon-name="standard:account"
+                                    onlookupselected={handleAgentSelection}
+                                    onlookupremoved={handleAgentRemoved}></c-b-a-f-c-o-custom-look-up-component>
+                    <div class="slds-form-element__help" style="color: rgb(234, 0, 30); padding-left: 20px; font-weight: 600;" if:true={selectedAgentError}>
+                        Complete this field
+                    </div>
+                </div>
+            </lightning-layout-item>
+            <lightning-layout-item size="12" style="padding-top: 22px;" large-device-size="6" medium-device-size="6" small-device-size="12">
+                <lightning-button label="Search" variant="brand" onclick={handleSearchItem}></lightning-button>
+            </lightning-layout-item>
+            <lightning-layout-item style="padding: 20px;" size="12" large-device-size="12" medium-device-size="12" small-device-size="12" if:true={noRecord}>
+                <lightning-card>
+                    <p style="text-align:center;">No Records were found.</p>
+                </lightning-card>
+            </lightning-layout-item>
+            <lightning-layout-item size="12" style="padding: 20px 0px 20px 0px;" large-device-size="12" medium-device-size="12" small-device-size="12" if:false={noRecord}>
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-labelledby="element-with-table-label other-element-with-table-label">
+                    <thead>
+                        <tr class="slds-line-height_reset">
+                            <th>Quotation</th>
+                            <th>Shipping line</th>
+                            <th>Equipment Type</th>
+                            <th>Buying Rate</th>
+                            <th>Total</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={quoteList} for:item="item">
+                            <tr key={item} class="slds-hint-parent">
+                                <td>{item.Quotation__r.Name}</td>
+                                <td>{item.Shipping_Linee__r.Name}</td>
+                                <td>{item.Equipment_Type__r.Name}</td>
+                                <td>{item.Buying_Rate__c}</td>
+                                <td>{item.Total__c}</td>
+                                <td>add</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </lightning-layout-item>
+        </lightning-layout>
+    </div>
+</template>

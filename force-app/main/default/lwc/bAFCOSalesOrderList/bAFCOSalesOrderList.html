@@ -34,7 +34,26 @@
                 </lightning-accordion>
             </lightning-layout-item>            
         </lightning-layout>
-            <lightning-layout>
+        <lightning-layout multiple-rows>
+            <lightning-layout-item size="12" if:true={displayShipConsignee}>
+                <lightning-button label =' + Add Shipper & Consignee'
+                                  variant="Base"
+                                  onclick={handleAddShipperConsignee}></lightning-button>
+            </lightning-layout-item>
+        </lightning-layout>
+            <lightning-layout multiple-rows>
+                <lightning-layout-item size="8">
+                    <lightning-input 
+                                label="Customer Refrence Number"
+                                value={custRefNumber}
+                                onchange={handleCustomerNumberChange}></lightning-input>
+                </lightning-layout-item>
+                <lightning-layout-item size="8">
+                    <lightning-input 
+                                label="Booking Refrence Number"
+                                value={bookRefNumber}
+                                onchange={handleBookingNumberChange}></lightning-input>
+                </lightning-layout-item>
                 <lightning-layout-item size="6">
                     <lightning-input name="Validity"
                                              label="Validity"
@@ -51,5 +70,44 @@
             <div class="slds-form-element__help" id="form-error-01" style="color: rgb(194, 57, 52);" if:true={errorMsg}>
                 {errorMsg}
             </div>
+        <template if:true={displayAddConsigneeModal} >
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                 <!-- modal header start -->
+                   <header class="slds-modal__header">
+                      <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={hideModalDoneBox}>
+                         <lightning-icon icon-name="utility:close"
+                            alternative-text="close"
+                            variant="inverse"
+                            size="small" ></lightning-icon>
+                         <span class="slds-assistive-text">Close</span>
+                      </button>
+                      <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Add Shipper & Consignee</h2>
+                   </header>
+               
+                   <!-- modal body start -->
+                   <div class="slds-modal__content slds-p-around_medium" style="overflow-y: scroll !important;" id="modal-content-id-1">
+                    <lightning-accordion active-section-name="consignee">
+                        <lightning-accordion-section name="consignee" label="Consignee">
+                            <c-b-a-f-c-o-order-add-consignee onconsigneeupdate={handleConsigneeUpdate} parent-consignee-list={consigneeList}></c-b-a-f-c-o-order-add-consignee>
+                        </lightning-accordion-section>
+                        <lightning-accordion-section name="shipper" label="Shipper">
+                            <c-b-a-f-c-o-order-add-shipper onshipperupdate={handleShipperUpdate} parent-shipper-list={shipperList} ></c-b-a-f-c-o-order-add-shipper>
+                        </lightning-accordion-section>
+                    </lightning-accordion>
+                   </div>
+         
+                   <!-- modal footer start-->
+                   <footer class="slds-modal__footer">
+                      <button class="slds-button slds-button_neutral" onclick={hideModalCancelBox}>Cancel</button>
+                      <button class="slds-button slds-button_brand" onclick={hideModalDoneBox}>Done</button>
+                   </footer>
+                
+                </div>
+             </section>
+             <div class="slds-backdrop slds-backdrop_open"></div>
+          <!-- modal end -->
+            
+        </template>
     </div>
 </template>

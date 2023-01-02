@@ -13,6 +13,8 @@ export default class BAFCOSalesOrderParent extends LightningElement {
     @track equipList = [];
     @track activeTab = '';
     @track quantityDatalist = [];
+    @track displayShip_consignee = false;
+    @track customerAccount ;
     //@track quantityData = [];
 
     @track selectedRouteId ='';
@@ -31,6 +33,15 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                 this.accountAvgCreditDays = this.quoteObj.accountAvgCreditDays
                 this.accountBestMargin = this.quoteObj.accountBestMargin
                 this.accountAvgMargin = this.quoteObj.accountAvgMargin
+                if(this.quoteObj.recordTypeName == 'Import') {
+                    this.displayShip_consignee = true;
+                    let accountobj = {
+                        'accountId':this.quoteObj.companyId,
+                        'accountName':this.quoteObj.company,
+                    }
+                    this.customerAccount = accountobj;
+                    console.log('# '+JSON.stringify(this.customerAccount,null,2))
+                }
                 this.getRouteItem();
             }            
         }).catch(error=>{

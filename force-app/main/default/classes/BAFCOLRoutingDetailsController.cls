@@ -913,6 +913,15 @@ public class BAFCOLRoutingDetailsController {
         if(exWorksList.size() > 0 ) return exWorksList;
         else return null;
     }
+    @AuraEnabled
+    public static Route_Equipment__c addRouteEquipment(String containerId , Decimal quantity, String routeId){
+        Route_Equipment__c routeQuipobj = new Route_Equipment__c();
+        routeQuipobj.Equipment_Type__c = containerId;
+        routeQuipobj.Quantity__c = quantity;
+        routeQuipobj.Route__c = routeId;
+        insert routeQuipobj;
+        return routeQuipobj;
+    }
     public class SObjectResult {
         @AuraEnabled
         public String recName;

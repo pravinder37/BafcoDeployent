@@ -4,11 +4,15 @@ public class BAFCOReviseQuoteDto {
     @AuraEnabled
     public String company {get; set;}
     @AuraEnabled
+    public String companyId {get; set;}
+    @AuraEnabled
     public String businessType {get; set;}
     @AuraEnabled
     public String mode {get; set;}
     @AuraEnabled
     public String enquiryId {get; set;}
+    @AuraEnabled
+    public String recordTypeName {get; set;}
     @AuraEnabled
     public String contactMobile {get; set;}
     @AuraEnabled

@@ -1,17 +1,41 @@
-import { LightningElement,api } from 'lwc';
+import { LightningElement,api,track } from 'lwc';
 import createOrder from '@salesforce/apex/BAFCOSalesOrderController.createOrder';
 import { NavigationMixin } from 'lightning/navigation';
 export default class BAFCOSalesOrderList extends NavigationMixin(LightningElement) {
     @api displaySelectedQuoteItem = [];
     @api activeSection;
     @api quantityData = [];
+    @api displayShipConsignee = false
+    @api customerAccount ;
+    custRefNumber = ''
     isLoading = false;
     validityDate = '';
     errorMsg = '';
     minDate = '';
+    bookRefNumber ='';
+    displayAddConsigneeModal = false;
+    @track consigneeList = [];
+    @track shipperList = [];
     connectedCallback(){
         let todaysDate = new Date();
         this.minDate = this.formatDate(todaysDate);
+        setTimeout(() => {
+            if(this.customerAccount != null){
+                let consigneeObj = {
+                    'consigneeId':this.customerAccount.accountId,
+                    'consigneeName':this.customerAccount.accountName,
+                    'index':0
+                }
+                this.consigneeList.push(consigneeObj);
+                let shipperObj = {
+                    'shipperId':this.customerAccount.accountId,
+                    'shipperName':this.customerAccount.accountName,
+                    'index':0
+                }
+                this.shipperList.push(shipperObj);
+            }
+        }, 1000);
+        
     }
     formatDate(date) {
         let d = new Date(date),
@@ -48,7 +72,14 @@ export default class BAFCOSalesOrderList extends NavigationMixin(LightningElemen
                 this.isLoading = true;
                 let saveDto = [];
                 saveDto = JSON.parse(JSON.stringify(this.displaySelectedQuoteItem))                
-                createOrder({orderCreationList : saveDto, validityDate:this.validityDate})
+                createOrder({
+                     orderCreationList : saveDto,
+                     validityDate : this.validityDate,
+                     custRefNumber : this.custRefNumber,
+                     bookRefNumber : this.bookRefNumber,
+                     consigneeList : this.consigneeList,
+                     shipperList : this.shipperList
+                    })
                 .then(result=>{
                     console.log('createOrder result',JSON.stringify(result,null,2))
                     this.isLoading = false;
@@ -83,8 +114,34 @@ export default class BAFCOSalesOrderList extends NavigationMixin(LightningElemen
         }
         dateField.reportValidity();
     }
+    handleCustomerNumberChange(e){
+        this.custRefNumber = e.target.value;
+    }
+    handleBookingNumberChange(e){
+        this.bookRefNumber = e.target.value;
+    }
     @api
     handlecheckBoxSelected(){
         this.errorMsg = '';
+    }
+    handleAddShipperConsignee(){
+        this.displayAddConsigneeModal = true;
+        if(this.shipperList.length > 0){
+            this.shipperList.forEach()
+        }
+    }
+    hideModalCancelBox(){
+        this.displayAddConsigneeModal = false;
+        this.consigneeList = [];
+        this.shipperList = [];
+    }
+    hideModalDoneBox(){
+        this.displayAddConsigneeModal = false;
+    }
+    handleConsigneeUpdate(e){
+        this.consigneeList = e.detail
+    }
+    handleShipperUpdate(e){
+        this.shipperList = e.detail
     }
 }

@@ -8,16 +8,18 @@ public class BAFCOQuotationReviseController {
                                  Opportunity__r.Account.Best_Margin__c,Opportunity__r.Account.Average_credit_days__c,
                                  Opportunity__r.Business_Type__c, Opportunity__r.Account.Modes__c,Opportunity__r.AccountId,
                                  Opportunity__r.Account.Name, 
-                                 Name, Id FROM Quotation__c where id =: quoteId];        
+                                 Name,Recordtype.name, Id FROM Quotation__c where id =: quoteId];        
         BAFCOReviseQuoteDto dto = new BAFCOReviseQuoteDto();
         dto.quoteNumber = quoteObj.Name__c;
         dto.enquiryId = quoteObj.Opportunity__c;
         dto.company = quoteObj.Opportunity__r.Account.Name;
+        dto.companyId = quoteObj.Opportunity__r.AccountId;
         dto.accountAvgMargin = quoteObj.Opportunity__r.Account.Average_margin__c;
         dto.accountBestMargin = quoteObj.Opportunity__r.Account.Best_Margin__c;
         dto.accountAvgCreditDays = quoteObj.Opportunity__r.Account.Average_credit_days__c;
         dto.businessType = quoteObj.Opportunity__r.Business_Type__c;
         dto.mode = quoteObj.Opportunity__r.Account.Modes__c;
+        dto.recordTypeName = quoteObj.RecordType.name;
         system.debug('dto  *********** '+quoteObj.Opportunity__r.AccountId);
         if(quoteObj.Opportunity__r.AccountId != null){
             dto.leadId = quoteObj.Opportunity__r.AccountId;

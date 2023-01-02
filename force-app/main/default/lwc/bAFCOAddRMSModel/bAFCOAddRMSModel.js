@@ -9,6 +9,7 @@ import DIRECTION_FIELD from '@salesforce/schema/Loading_Charge__c.Direction__c';
 import BUSINESS_TYPE_FIELD from '@salesforce/schema/RMS__c.Business_Type__c';
 import getDefualtValueForRMS from '@salesforce/apex/BAFCOLRoutingDetailsController.getDefualtValueForRMS';
 import getDefaultImportAddRate from '@salesforce/apex/BAFCOLRoutingDetailsController.getDefaultImportAddRate';
+import addRouteEquipment from '@salesforce/apex/BAFCOLRoutingDetailsController.addRouteEquipment';
 export default class BAFCOAddRMSModel
  extends LightningElement {
     @api portLoading ='';
@@ -94,6 +95,13 @@ export default class BAFCOAddRMSModel
     @track disableIncoOffSet = true;
     @track disableDestinOffSet = true;
     @track agentName ='';
+
+    //Container Var
+    @track displayAddRouteEquip = false;
+    @track containerTypeErrorClass = '';
+    @track containerQuantityErrorClass ='';
+    @track quantity = null;
+    @track containerId = '';
 
     @wire(getPicklistValues, {
         recordTypeId : '012000000000000AAA',
@@ -863,5 +871,49 @@ export default class BAFCOAddRMSModel
         .catch(error=>{
             console.log('getDefaultImportAddRate error',JSON.stringify(error))
         })
+    }
+    handleAddRouteEuip(){
+        this.displayAddRouteEquip = true;
+    }
+    hideModalBox(){
+        this.displayAddRouteEquip = false;
+    }
+    handleContainerTypeSelection(e){
+        this.containerId = e.detail.Id
+        this.containerTypeErrorClass = ''
+    }
+    handleContainerTypeRemoved(e){
+        this.containerId = ''
+    }
+    handleQuantityChange(e){
+        this.quantity = e.target.value;
+        this.containerQuantityErrorClass = '';
+    }
+    hideAddRoute(){
+        let allValid = true;
+        console.log('this.quantity '+this.quantity)
+        if(this.containerId == ''){
+            this.containerTypeErrorClass = 'slds-has-error'
+            allValid = false
+        }
+        if(this.quantity <= 0){
+            this.containerQuantityErrorClass = 'slds-has-error'
+            allValid = false
+        }
+        if(allValid){
+            addRouteEquipment({
+                containerId : this.containerId,
+                quantity : this.quantity,
+                routeId : this.routeId
+            })
+            .then(result=>{
+                console.log('Route Equip Added ' +JSON.stringify(result));
+                this.getRouteEquipType();
+                this.displayAddRouteEquip = false;
+            })
+            .catch(error=>{
+                console.log('Route Equip error ' +JSON.stringify(error));
+            })
+        }
     }
 }

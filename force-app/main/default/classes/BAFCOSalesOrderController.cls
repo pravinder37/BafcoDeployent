@@ -177,7 +177,7 @@ public class BAFCOSalesOrderController {
                                                   dto.includeAdditionalCharge = item.Included_PDF_Additional__c;
                                                   dto.includeExWorksCharge = item.Included_PDF_Ex_works__c;
                                                   dto.exWorksId = item.Ex_Works_Charge_Name__c;
-        										  dto.exWorksCharge = item.Ex_Works_Charge__c;
+                                                  dto.exWorksCharge = item.Ex_Works_Charge__c;
                                                   dto.AlternateDepotReleaseCharges = item.Alternate_depot_release_charges__c > 0 ? item.Alternate_depot_release_charges__c : 0;
                                                   dto.FreightDifference = item.Freight_Difference_FD__c > 0 ? item.Freight_Difference_FD__c : 0;
                                                   dto.CarrierContainerRepositioningCharges = item.Carrier_container_repositioning_charges__c > 0 ? item.Carrier_container_repositioning_charges__c : 0;
@@ -193,7 +193,7 @@ public class BAFCOSalesOrderController {
         return equipLineToShipData;
     }
     @AuraEnabled
-    public static Order__c createOrder(List<BAFCOOrderCreationDto> orderCreationList, String validityDate){
+    public static Order__c createOrder(List<BAFCOOrderCreationDto> orderCreationList, String validityDate, String custRefNumber, String bookRefNumber, List<consigneeList> consigneeList, List<shipperList> shipperList){
         // creating order
         Order__c orderObj = new Order__c();
         List<Order_Item__c> orderItemList = new List<Order_Item__c>();
@@ -213,7 +213,8 @@ public class BAFCOSalesOrderController {
                 orderObj.Quotation__c = orderData.quotationId;
                 orderObj.Order_Validity__c = date.valueOf(validityDate);
                 orderObj.recordtypeId = orderData.recordtypeId == QUOTE_EXPORT_RECORDTYPE_Id ? ORDER_EXPORT_RECORDTYPE_Id : ORDER_IMPORT_RECORDTYPE_Id;
-                
+                orderObj.Customer_Reference_Number__c = custRefNumber;
+                orderObj.Booking_Reference_Number__c = bookRefNumber;
                 insert orderObj;
             }
             // creating OrderItem
@@ -336,6 +337,32 @@ public class BAFCOSalesOrderController {
             }
             if(orderItemList.size()>0){
                 insert orderItemList;
+                List<Consignee__c> conList = new List<Consignee__c>();
+                List<Shipper__c> shipList = new List<Shipper__c>();
+                for(Order_Item__c item : orderItemList){
+                    if(consigneeList.size() > 0){
+                        for(consigneeList consObj : consigneeList){
+                            if(consObj.consigneeId != null){
+                                Consignee__c coObj = new Consignee__c();
+                                coObj.name= consObj.consigneeName;
+                                coObj.Consignee__c=consObj.consigneeId;
+                                coObj.Order_Item__c = item.id;
+                                conList.add(coObj);
+                            }
+                        }
+                    }
+                    if(shipperList.size() > 0){
+                        for(shipperList ssObj : shipperList){
+                            Shipper__c shipObj = new Shipper__c();
+                            shipObj.name =ssObj.shipperName;
+                            shipObj.Shipper__c = ssObj.shipperId;
+                            shipObj.Order_Item__c= item.id;
+                            shipList.add(shipObj);
+                        }
+                    }
+                }
+                if(conList.size() > 0) insert conList;
+                if(shipList.size() > 0) insert shipList;
             }
         }
         return orderObj;
@@ -516,5 +543,13 @@ public class BAFCOSalesOrderController {
         @AuraEnabled public String shippLine {get; set;}
         @AuraEnabled public String quoteItemId {get; set;}
         @AuraEnabled public String agentId {get; set;}
+    }
+    public class consigneeList{
+        @AuraEnabled public String consigneeId {get; set;}
+        @AuraEnabled public String consigneeName {get; set;}
+    }
+    public class shipperList{
+        @AuraEnabled public String shipperId {get; set;}
+        @AuraEnabled public String shipperName {get; set;}
     }
 }
