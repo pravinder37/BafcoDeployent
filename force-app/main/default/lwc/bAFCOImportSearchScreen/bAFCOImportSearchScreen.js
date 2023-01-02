@@ -45,10 +45,10 @@ export default class BAFCOImportSearchScreen extends NavigationMixin(LightningEl
        this.displayModal = true;
     }
     handleNewQuote(e){
+        this.isLoading =true
         let quoteId = e.target.value;
         let item = this.quoteList.filter(x=>x.Quotation__c == quoteId);
         let accId = item[0].Quotation__r.Opportunity__r.AccountId;
-        console.log('e.target.value; '+quoteId)
         this[NavigationMixin.Navigate]({
             type: "standard__component",
             attributes: {
