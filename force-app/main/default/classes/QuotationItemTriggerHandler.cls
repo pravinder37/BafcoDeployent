@@ -233,6 +233,13 @@ public class QuotationItemTriggerHandler {
         }
         
     }
+    public static void afterUpdate(Map<Id,Quotation_Item__c> oldMap , List<Quotation_Item__c> quoteItemList){
+        List<Quotation_Item__c> newItemList = new List<Quotation_Item__c>();
+        for(Quotation_Item__c item : quoteItemList){
+            if(item.Total__c != oldMap.get(item.id).Total__c) newItemList.add(item);
+        }
+        if(quoteItemList.size() > 0) updateQuotationDetails(newItemList);
+    }
     public static void updateQuotationDetails(List<Quotation_Item__c> quoteItemList){
         List<Quotation__c> quoteList = new List<Quotation__c>();
         set<Id> routeId = new set<Id>();
