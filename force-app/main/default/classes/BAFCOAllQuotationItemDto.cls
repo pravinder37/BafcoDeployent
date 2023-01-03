@@ -5,6 +5,7 @@ public class BAFCOAllQuotationItemDto {
     @AuraEnabled public Decimal totalBuyingRate { get; set; }
     @AuraEnabled public String validity { get; set; }
     @AuraEnabled public String rmsId { get; set; }
+    @AuraEnabled public String currencyCode { get; set; }
     @AuraEnabled public String equipmentName { get; set; }
     @AuraEnabled public String equipmentId { get; set; }
     @AuraEnabled public String quotationDate { get; set; }

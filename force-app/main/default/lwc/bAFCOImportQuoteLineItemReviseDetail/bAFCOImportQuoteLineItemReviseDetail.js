@@ -202,7 +202,7 @@ export default class BAFCOImportQuoteLineItemReviseDetail extends LightningEleme
                 this.margin = 0;
                 profit = 0;
             }
-        this.profitLabel = '$ '+profit +' Profit.';
+        this.profitLabel = this.currencyCode+' '+profit +' Profit.';
         let tempMap = this.quotationMap;
         let key = this.agentName+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName
             tempMap.forEach(elem=>{
@@ -264,6 +264,7 @@ export default class BAFCOImportQuoteLineItemReviseDetail extends LightningEleme
                 this.quotationDate = ele.quotationDate;
                 this.sellingRate =totalSelling;
                 this.rmsId = ele.rmsId;
+                this.currencyCode = ele.currencyCode;
                 let profit = 0;
                 if(this.sellingRate > 0 && !isNaN(this.sellingRate)){
                     profit = this.sellingRate - this.buyingRate;
@@ -276,7 +277,7 @@ export default class BAFCOImportQuoteLineItemReviseDetail extends LightningEleme
                     this.margin = 0;
                     profit = 0;
                 }
-                this.profitLabel = '$ '+profit +' Profit.';
+                this.profitLabel = this.currencyCode+' '+profit +' Profit.';
                 let tempMap = this.quotationMap;
                 let key = this.agentName+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName
                 tempMap.forEach(elem=>{

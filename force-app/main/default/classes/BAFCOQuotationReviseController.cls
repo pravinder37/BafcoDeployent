@@ -151,6 +151,7 @@ public class BAFCOQuotationReviseController {
                 itemDto.validity = String.valueof(rmsObjectToSeaFreightMap.get(uniqueObj).Validity__c);
                 itemDto.rmsId = rmsObjectToSeaFreightMap.get(uniqueObj).Id;
                 itemDto.totalBuyingRate = buyingTotal + (rmsObjectToSeaFreightMap.get(uniqueObj).Sea_Freight__c > 0 ? rmsObjectToSeaFreightMap.get(uniqueObj).Sea_Freight__c : 0);
+                itemDto.currencyCode = item.CurrencyIsoCode;
                 // Destin Charges
                 itemdto.destinBayanCharges= item.Bayan_Charges__c > 0 ? item.Bayan_Charges__c : null;
                 itemdto.destinCustomClearanceCharges= item.Destination_Customs_Clearance__c > 0 ? item.Destination_Customs_Clearance__c : null;
