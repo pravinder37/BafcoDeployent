@@ -46,7 +46,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
 
     @track buyingRate = 0;
     @track sellingRate = 0;
-    @track profitLabel = '$ 0 Profit'
+    @track profitLabel = 'USD 0 Profit'
     @track shippingTabSelected = '';
     @track shippingEquipTabSelected = '';
     @track seaFreight = '';
@@ -171,6 +171,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
     @track exWorksObj;
     @track exWorksTotal = 0;
     @track displayExworks = false;
+    @track currencyCode = 'USD';
     connectedCallback(){
         this.margin = 0;
         if(this.routeId){
@@ -218,23 +219,25 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                         'validity':conts[key][equip].validity,
                         'quantity':conts[key][equip].quantity,
                         'uniqueEquip':conts[key][equip].uniqueEquip,
+                        'currencyCode':'USD',
                         'cssClass':'',
                         savedClicked:false
 
                     })
-                //}
-                let parentKey = key+'-'+conts[key][equip].equipmentName+'-'+this.routeName;
-                let existingIndex = this.quotationMap.findIndex(x=>x.key==parentKey);
-                let newTempListIndex = templist.findIndex(x=>x.equipment==conts[key][equip].equipmentName);
-                let NewTempList = [];
-                NewTempList.push(templist[newTempListIndex])
-                if(existingIndex == -1) this.quotationMap.push({value : NewTempList,key:parentKey})
-                //this.quotationMap.push({value : templist,key:parentKey})
-                let toBeSend = {
-                    'routeName':this.routeName,
-                    'quotationMap':this.quotationMap
+                    //}
+                    let parentKey = key+'-'+conts[key][equip].equipmentName+'-'+this.routeName;
+                    let existingIndex = this.quotationMap.findIndex(x=>x.key==parentKey);
+                    let newTempListIndex = templist.findIndex(x=>x.equipment==conts[key][equip].equipmentName);
+                    let NewTempList = [];
+                    NewTempList.push(templist[newTempListIndex])
+                    if(existingIndex == -1) this.quotationMap.push({value : NewTempList,key:parentKey})
+                    //this.quotationMap.push({value : templist,key:parentKey})
+                    let toBeSend = {
+                        'routeName':this.routeName,
+                        'quotationMap':this.quotationMap
+                    }
+                    this.dispatchEvent(new CustomEvent('updatecalculation', { detail: toBeSend }));
                 }
-                this.dispatchEvent(new CustomEvent('updatecalculation', { detail: toBeSend }));}
             }
             //Loop to hold the update to be updated on Tab change
                 let tempList = [];
@@ -351,6 +354,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
         this.includeDestinCharge=false
         this.includeAdditionalCharge=false
         this.includeExWorksCharge=false
+        this.currencyCode = 'USD';
     }
     handleshippingLineActive(e){
         this.margin = 0;        
@@ -530,7 +534,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
             }, 100);
 
             
-          this.profitLabel = '$ '+profit +' Profit.';
+          this.profitLabel = this.currencyCode+' '+profit +' Profit.';
           let tempMap = this.quotationMap;
             let seletedEquipName = '';
             let dedicatedRoutingObj = this.routingListMap[this.shippingTabSelected];
@@ -549,6 +553,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                             el.margin =  parseInt(this.margin)
                             el.validity = this.validity
                             el.quantity = this.quantity
+                            el.currencyCode = this.currencyCode
                             if(el.savedClicked == true) el.cssClass = 'class2'
                             else el.cssClass = ''
                         }
@@ -820,6 +825,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                     elem.value[0].serviceChargeList = dto;
                     elem.value[0].currencyCode = dto.currencyCode;
                     elem.value[0].offSet = dto.offset;
+                    this.currencyCode = dto.currencyCode;
                 }
             }
         });
@@ -878,6 +884,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                     elem.value[0].includeAdditionalCharge = this.includeAdditionalCharge
                     elem.value[0].includeExWorksCharge = this.includeExWorksCharge
                     elem.value[0].quoteBuyingRate = this.buyingRate;
+                    elem.value[0].currencyCode = this.currencyCode
                 }
             }
         });
@@ -915,7 +922,8 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                         'total':0,
                         'similarEquipSubmitted':false,
                         'selectedShippLine':this.shippingTabSelected,
-                        'selectedEquipment':this.shippingEquipTabSelected
+                        'selectedEquipment':this.shippingEquipTabSelected,
+                        'currencyCode':'USD'
                     })
                     elem.value = tempList;
                 }
@@ -943,6 +951,8 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                     this.includeDestinCharge = elem.value[0].includeDestinCharge;
                     this.includeAdditionalCharge = elem.value[0].includeAdditionalCharge;
                     this.includeExWorksCharge = elem.value[0].includeExWorksCharge;
+                    let allData = this.serviceChargeList;
+                    if(allData.currencyCode != undefined) this.currencyCode = allData.currencyCode;
                 }
             }
         });

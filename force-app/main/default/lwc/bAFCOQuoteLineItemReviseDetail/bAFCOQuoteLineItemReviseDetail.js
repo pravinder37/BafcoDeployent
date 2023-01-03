@@ -30,6 +30,7 @@ export default class BAFCOQuoteLineItemReviseDetail extends LightningElement {
     @track rmsId = '';
     @track quotationDate = '';
     @api equipmentType =''
+    @track currencyCode='USD'
 
 
     connectedCallback(){
@@ -56,22 +57,32 @@ export default class BAFCOQuoteLineItemReviseDetail extends LightningElement {
                     if(conts[key].length > 0){
                         this.quoteLineItemList.push({value:conts[key], key:key});
                         let templist = [];
-                        templist.push({
-                            'sellingRate': 0,
-                            'profit' : 0,
+                        for(let equip in conts[key]){
+                            let profit = conts[key][equip].totalSellingRate - conts[key][equip].totalBuyingRate
+                            templist.push({
+                            'sellingRate': conts[key][equip].totalSellingRate,
+                            'profit' : profit,
                             'margin':0,
-                            'validity':conts[key][0].validity,
+                            'validity':conts[key][equip].validity,
                             'quantity':0,
                             'quotationId':0,
+                            'currencyCode':conts[key][equip].currencyCode,
+                            'equipment' : conts[key][equip].equipmentName,
                             'cssClass':''
                         })
-                        this.quotationMap.push({value : templist,key:key})
+                        let parentKey = key+'-'+conts[key][equip].equipmentName+'-'+this.routeName;
+                        let existingIndex = this.quotationMap.findIndex(x=>x.key==parentKey);
+                        let newTempListIndex = templist.findIndex(x=>x.equipment==conts[key][equip].equipmentName);
+                        let NewTempList = [];
+                        NewTempList.push(templist[newTempListIndex])
+                        if(existingIndex == -1) this.quotationMap.push({value : NewTempList,key:parentKey})
                         let toBeSend = {
                             'routeName':this.routeName,
                             'quotationMap':this.quotationMap
                         }
                         this.dispatchEvent(new CustomEvent('updatecalculation', { detail: toBeSend }));
                     }
+                }
                 }
                 console.log('quoteLineItemList '+JSON.stringify(this.quoteLineItemList,null,2));
                 this.shippingEquipTabSelected = this.quoteLineItemList[0].value[0].equipmentName;
@@ -89,6 +100,7 @@ export default class BAFCOQuoteLineItemReviseDetail extends LightningElement {
         let elem  = 0;
         this.shippingEquipTabSelected = dedicatedObj[elem].equipmentName; 
         this.buyingRate = dedicatedObj[elem].totalBuyingRate;
+        this.currencyCode = dedicatedObj[elem].currencyCode;
         this.quotationDate = elem.quotationDate;
         let totalSelling = 0;
         if(dedicatedObj[elem].totalSellingRate > 0) totalSelling=totalSelling+dedicatedObj[elem].totalSellingRate;
@@ -109,10 +121,11 @@ export default class BAFCOQuoteLineItemReviseDetail extends LightningElement {
                 this.margin = 0;
                 profit = 0;
             }
-        this.profitLabel = '$ '+profit +' Profit.';
-        let tempMap = this.quotationMap;
-            tempMap.forEach(elem=>{
-                if(elem.key == this.shippingTabSelected){
+        this.profitLabel = this.currencyCode+' '+profit +' Profit.';
+        let tempMap = JSON.parse(JSON.stringify(this.quotationMap));
+        let parentKey = this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName;
+        tempMap.forEach(elem=>{
+                if(elem.key == parentKey){
                     elem.value.forEach(el =>{
                             el.sellingRate = parseInt(this.sellingRate) 
                             el.profit = parseInt(profit)
@@ -122,7 +135,7 @@ export default class BAFCOQuoteLineItemReviseDetail extends LightningElement {
                     })
                 }
             })
-            this.quotationMap = tempMap;
+            this.quotationMap = JSON.parse(JSON.stringify(tempMap));
             let toBeSend = {
                 'routeName':this.routeName,
                 'quotationMap':this.quotationMap
@@ -155,6 +168,7 @@ export default class BAFCOQuoteLineItemReviseDetail extends LightningElement {
                 console.log('came '+JSON.stringify(elem,null,2))
                 this.rmsId = elem.rmsId;
                 this.buyingRate = elem.totalBuyingRate;
+                this.currencyCode = elem.currencyCode
                 this.quotationDate = elem.quotationDate;
                 let totalSelling = 0;
                 if(elem.totalSellingRate > 0) totalSelling=totalSelling+elem.totalSellingRate;
@@ -175,15 +189,17 @@ export default class BAFCOQuoteLineItemReviseDetail extends LightningElement {
                     this.margin = 0;
                     profit = 0;
                 }
-                this.profitLabel = '$ '+profit +' Profit.';
+                this.profitLabel = this.currencyCode+' '+profit +' Profit.';
                 let tempMap = this.quotationMap;
+                let parentKey = this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName;
                 tempMap.forEach(elem=>{
-                    if(elem.key == this.shippingTabSelected){
+                    if(elem.key == parentKey){
                         elem.value.forEach(el =>{
                                 el.sellingRate = parseInt(this.sellingRate) 
                                 el.profit = parseInt(profit)
                                 el.margin =  parseInt(this.margin)
                                 el.validity = el.validity
+                                el.currencyCode = el.currencyCode
                                 el.quantity = 0
                         })
                     }

@@ -65,7 +65,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
     @track total;
     @track margin;
     @track quotationMap=[];
-    @track profitLabel = '$ 0 Profit'
+    @track profitLabel = 'USD 0 Profit'
     @track showServiceChargeModal = false
     @track incoChargList = [];
     @track showAddRatesModel = false
@@ -168,6 +168,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
     @track exWorksObj;
     @track exWorksTotal = 0;
     @track displayExworks = false;
+    @track currencyCode = 'USD';
 
     connectedCallback(){     
         if(this.routeId){
@@ -226,6 +227,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                             'quantity':conts[key][key2][key3].quantity,
                             'quotationId':conts[key][key2][key3].quotationId,
                             'cssClass':'',
+                            'currencyCode':'USD',
                             'equipment':conts[key][key2][key3].equipmentName,
                             savedClicked:false
                         })
@@ -325,6 +327,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
         this.exWorksObj = {};
         this.displayExworks =false;
         this.exWorksTotal = null;
+        this.currencyCode = 'USD';
     }
     
     @api handleShowaddAgentModel(){
@@ -443,7 +446,8 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                         'similarEquipSubmitted':false,
                         'selectedShippLine':this.shippingTabSelected,
                         'selectedEquipment':this.shippingEquipTabSelected,
-                        'agentTabSelected':this.agentTabSelected
+                        'agentTabSelected':this.agentTabSelected,
+                        'currencyCode':'USD'
                     })
                     elem.value = tempList;
                 }
@@ -471,6 +475,8 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                     this.includeDestinCharge = elem.value[0].includeDestinCharge;
                     this.includeAdditionalCharge = elem.value[0].includeAdditionalCharge;
                     this.includeExWorksCharge = elem.value[0].includeExWorksCharge;
+                    let allData = this.serviceChargeList;
+                    if(allData.currencyCode != undefined) this.currencyCode = allData.currencyCode;
                 }
             }
         });
@@ -617,7 +623,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                 }
             }, 100);
                  
-            this.profitLabel = '$ '+profit +' Profit.';
+            this.profitLabel = this.currencyCode+' '+profit +' Profit.';
             let tempMap = this.quotationMap;
             let seletedEquipName = '';
             let dedicatedRoutingObj = this.routingListMap[this.agentTabSelected];
@@ -644,6 +650,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                             el.margin =  parseInt(this.margin)
                             el.validity = this.validity
                             el.quantity = this.quantity
+                            el.currencyCode = this.currencyCode
                             if(el.savedClicked == true) el.cssClass = 'class2'
                             else el.cssClass = ''
                         }
@@ -779,6 +786,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                     elem.value[0].includeAdditionalCharge = this.includeAdditionalCharge
                     elem.value[0].includeExWorksCharge = this.includeExWorksCharge
                     elem.value[0].quoteBuyingRate = this.buyingRate;
+                    elem.value[0].currencyCode = this.currencyCode
                 }
             }
         });        
@@ -1087,6 +1095,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                     elem.value[0].serviceChargeList = dto;
                     elem.value[0].currencyCode = dto.currencyCode;
                     elem.value[0].offSet = dto.offset;
+                    this.currencyCode = dto.currencyCode;
                 }
             }
         });

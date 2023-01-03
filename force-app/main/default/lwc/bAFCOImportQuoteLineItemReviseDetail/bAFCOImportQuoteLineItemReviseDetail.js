@@ -31,6 +31,7 @@ export default class BAFCOImportQuoteLineItemReviseDetail extends LightningEleme
     @track agentName = '';
     @track quotationDate ='';
     @api equipmentType ='';
+    @track currencyCode='USD'
     connectedCallback(){
         this.getQuoteLineItemDetails();
     }
@@ -70,11 +71,17 @@ export default class BAFCOImportQuoteLineItemReviseDetail extends LightningEleme
                                 'validity':conts[key][key2][key3].validity,
                                 'quantity':conts[key][key2][key3].quantity,
                                 'quotationId':conts[key][key2][key3].quotationId,
+                                'currencyCode':conts[key][key2][key3].currencyCode,
+                                'equipment' : conts[key][key2][key3].equipmentName,
                                 'cssClass':'',
                                 savedClicked:false
                             })
-                            let parentKey = key+'-'+key2;
-                            this.quotationMap.push({value : templist,key:parentKey})
+                            let parentKey = key+'-'+key2+'-'+conts[key][key2][key3].equipmentName+'-'+this.routeName;
+                            let existingIndex = this.quotationMap.findIndex(x=>x.key==parentKey);
+                            let newTempListIndex = templist.findIndex(x=>x.equipment==conts[key][key2][key3].equipmentName);
+                            let NewTempList = [];
+                            NewTempList.push(templist[newTempListIndex])
+                            if(existingIndex == -1) this.quotationMap.push({value : NewTempList,key:parentKey})
                             let toBeSend = {
                                 'routeName':this.routeName,
                                 'quotationMap':this.quotationMap
@@ -113,6 +120,7 @@ export default class BAFCOImportQuoteLineItemReviseDetail extends LightningEleme
         this.buyingRate = data[elem].totalBuyingRate;
         this.sellingRate = totalSelling;
         this.quotationDate = data[elem].quotationDate;
+        this.currencyCode = data[elem].currencyCode;
         let profit = 0;
             if(this.sellingRate > 0 && !isNaN(this.sellingRate)){
             profit = this.sellingRate - this.buyingRate;
@@ -125,9 +133,9 @@ export default class BAFCOImportQuoteLineItemReviseDetail extends LightningEleme
                 this.margin = 0;
                 profit = 0;
             }
-        this.profitLabel = '$ '+profit +' Profit.';
+        this.profitLabel = this.currencyCode+' '+profit +' Profit.';
         let tempMap = this.quotationMap;
-        let key = this.agentName+'-'+this.shippingTabSelected
+        let key = this.agentName+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName         
         tempMap.forEach(elem=>{
             if(elem.key == key){
                 elem.value.forEach(el =>{
@@ -180,6 +188,7 @@ export default class BAFCOImportQuoteLineItemReviseDetail extends LightningEleme
        // if(data[elem].destinTotalCharges > 0) totalSelling=totalSelling+data[elem].destinTotalCharges;
         this.buyingRate = data[elem].totalBuyingRate;
         this.quotationDate = data[elem].quotationDate;
+        this.currencyCode = data[elem].currencyCode
         this.sellingRate = totalSelling;
         let profit = 0;
             if(this.sellingRate > 0 && !isNaN(this.sellingRate)){
@@ -195,7 +204,7 @@ export default class BAFCOImportQuoteLineItemReviseDetail extends LightningEleme
             }
         this.profitLabel = '$ '+profit +' Profit.';
         let tempMap = this.quotationMap;
-        let key = this.agentName+'-'+this.shippingTabSelected
+        let key = this.agentName+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName
             tempMap.forEach(elem=>{
                 if(elem.key == key){
                     elem.value.forEach(el =>{
@@ -269,8 +278,9 @@ export default class BAFCOImportQuoteLineItemReviseDetail extends LightningEleme
                 }
                 this.profitLabel = '$ '+profit +' Profit.';
                 let tempMap = this.quotationMap;
+                let key = this.agentName+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName
                 tempMap.forEach(elem=>{
-                    if(elem.key == this.shippingTabSelected){
+                    if(elem.key == key){
                         elem.value.forEach(el =>{
                                 el.sellingRate = parseInt(this.sellingRate) 
                                 el.profit = parseInt(profit)

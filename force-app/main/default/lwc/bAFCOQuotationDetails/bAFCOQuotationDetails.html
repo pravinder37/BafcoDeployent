@@ -18,12 +18,12 @@
                         <template for:each={shippingLine.data} for:item="shippingData"><lightning-layout multiple-rows class={shippingData.cssClass} key={shippingData.cssClass}>
                             <lightning-layout-item size="12" >
                                 <span style="font-weight: 500; color: #5A5A5A;"> Selling : </span><span style="color: #119c1b; background: white;">
-                                    &nbsp; &nbsp;&nbsp; $ {shippingData.sellingRate} &nbsp; &nbsp;&nbsp; </span>
+                                    &nbsp; &nbsp;&nbsp; {shippingData.currencyCode} {shippingData.sellingRate} &nbsp; &nbsp;&nbsp; </span>
                             </lightning-layout-item>
                             <lightning-layout-item size="12" >
                                 <span style="font-weight: 500; color: #5A5A5A;">Profit :</span> 
                                 <span style="color: white;background: #4CAF50;margin-left: 7%;border-radius: 2px">
-                                    &nbsp; &nbsp;&nbsp; $ {shippingData.profit} &nbsp; &nbsp;&nbsp;
+                                    &nbsp; &nbsp;&nbsp; {shippingData.currencyCode} {shippingData.profit} &nbsp; &nbsp;&nbsp;
                                 </span>
                                 <span style="color: #4CAF50 ;background: #E8F5E9;margin-left: 5%; border-radius: 2px">
                                     &nbsp;&nbsp;{shippingData.margin}%&nbsp; &nbsp;&nbsp;
@@ -32,7 +32,7 @@
                             <lightning-layout-item size="12" >
                                 <span style="font-weight: 500;">Valid till :</span> 
                                 <span style="color: #F44336;background: white;margin-left: 7%;border-radius: 2px;font-size: 12px;font-weight: 900;">
-                                     $ {shippingData.validity} 
+                                      {shippingData.validity} 
                                 </span>
                             </lightning-layout-item></lightning-layout>
                         </template>
