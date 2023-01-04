@@ -26,6 +26,7 @@ public without sharing class BAFCOGeneratePDFController {
     public void getQuoteData(){
         system.debug(' recordid '+this.recordId);
         Boolean has40HCEquip = false;
+        Boolean DC20Added = false;
         if(this.recordId != null ){
             Quotation__c quoteObj = [Select Recordtype.Name,Terms_and_Conditions__c,RecordtypeId,Effective_From__c,Payment_Terms__c,Inclusions__c,Exclusions__c,Remarks__c,Account__r.Name,Name,(Select Route__r.Service_Type__c,Route__r.INCO_Term__r.name from Quotation_Items__r),createdDate,CreatedBy.Name,Quotation_Validity__c from Quotation__c where id =: this.recordId];
             this.dto.quoteNumber = quoteObj.Name;
@@ -119,7 +120,6 @@ public without sharing class BAFCOGeneratePDFController {
                 for(Quotation_Item__c item  : quoteItem){
                     if(item.Equipment_Type__r.Name == '20DC'){
                         String UniqKey = item.Shipping_Line__c+'-'+item.Port_of_Loading__c+'-'+item.Port_of_Discharge__c;
-                        system.debug('UniqKey '+UniqKey);
                         shipLineToitem.put(UniqKey,item);
                     }
                 }
@@ -143,6 +143,7 @@ public without sharing class BAFCOGeneratePDFController {
                                 Quotation_Item__c dcQuoteItem = shipLineToitem.get(UniqKey);
                                 //itemDto.equipmentType = item.Equipment_Type__r.name+' - '+ '20DC';
                                 itemDto.equipmentType = item.Equipment_Type__r.name;
+                                DC20Added = true;
                                 itemDto.ShowtotalDC = True;
                                 itemDto.totalDC = dcQuoteItem.Total__c;
                                 BAFCOGeneratePDFDto.DC20Charges dcObj = new BAFCOGeneratePDFDto.DC20Charges(); 
@@ -589,7 +590,7 @@ public without sharing class BAFCOGeneratePDFController {
                             Boolean alreadyAdded = false;
                             if(shipLineToitem.size() > 0 && shipLineToitem.containskey(UniqKey)){
                                Quotation_item__c  dc20item = shipLineToitem.get(UniqKey);
-                                if(has40HCEquip == true && dc20item.id == item.id) alreadyAdded = true;
+                                if(has40HCEquip == true && dc20item.id == item.id && DC20Added == true) alreadyAdded = true;
                             }
                             if(alreadyAdded == false)quoteItemDto.add(itemDto);
                         }

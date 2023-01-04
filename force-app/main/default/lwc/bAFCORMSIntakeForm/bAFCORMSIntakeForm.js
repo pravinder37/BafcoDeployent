@@ -247,7 +247,15 @@ export default class BAFCORMSIntakeForm extends LightningElement {
                 this.rmsDetail.validity = this.validity;
                 let index = this.equipmentTypeOption.findIndex((x) => x.label =='40HC')
                 this.rmsDetail.equipmentId = this.equipmentTypeOption[index].value
-                this.equipmentType = this.equipmentTypeOption[index].value
+                this.equipmentType = this.equipmentTypeOption[index].value;
+                if(result.businessType == 'Export') {
+                    this.rmsDetail.loadingPortId = result.polId != undefined ? result.polId : null;
+                    this.rmsDetail.loadingPortName = result.polId != undefined ? result.polName : null;
+                }
+                if(result.businessType =='Import'){
+                    this.rmsDetail.loadingDestinationId = result.polId != undefined ? result.polId : null;
+                    this.rmsDetail.loadingDestinationName = result.polId != undefined ? result.polName : null;
+                }
                 this.isLoading = false
             }
         })

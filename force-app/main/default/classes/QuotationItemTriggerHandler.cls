@@ -148,8 +148,8 @@ public class QuotationItemTriggerHandler {
                 chargesIncluded +='Bayan cancellation charge : '+quote.Bayan_cancellation_charge__c +' '+ quote.CurrencyIsoCode + '\r\n';
             }
             /*if(quote.Container_Lashing_Charges__c!=0.0 && quote.Container_Lashing_Charges__c!=NULL){
-                chargesIncluded +='Container Lashing Charges : '+quote.Container_Lashing_Charges__c +' '+ quote.CurrencyIsoCode + '\r\n';
-            }*/
+chargesIncluded +='Container Lashing Charges : '+quote.Container_Lashing_Charges__c +' '+ quote.CurrencyIsoCode + '\r\n';
+}*/
             if(quote.Container_movement_charges__c!=0.0 && quote.Container_movement_charges__c!=NULL){
                 chargesIncluded +='Container movement charges : '+quote.Container_movement_charges__c +' '+ quote.CurrencyIsoCode + '\r\n';
             }
@@ -204,11 +204,11 @@ public class QuotationItemTriggerHandler {
             
             //Ex Works Charges Computation
             /*if(quote.Place_of_Pickup__c!=0.0 && quote.Place_of_Pickup__c!=NULL){
-                chargesIncluded +='Place of Pickup : '+quote.Place_of_Pickup__c +' '+ quote.Place_of_Pickup__c + '\r\n';
-            }
-            if(quote.Place_of_Discharge__c!=0.0 && quote.Place_of_Discharge__c!=NULL){
-                chargesIncluded +='Place of Discharge : '+quote.Place_of_Discharge__c +' '+ quote.CurrencyIsoCode + '\r\n';
-            }*/
+chargesIncluded +='Place of Pickup : '+quote.Place_of_Pickup__c +' '+ quote.Place_of_Pickup__c + '\r\n';
+}
+if(quote.Place_of_Discharge__c!=0.0 && quote.Place_of_Discharge__c!=NULL){
+chargesIncluded +='Place of Discharge : '+quote.Place_of_Discharge__c +' '+ quote.CurrencyIsoCode + '\r\n';
+}*/
             if(quote.Ex_Works_Charge__c!=0.0 && quote.Ex_Works_Charge__c!=NULL){
                 chargesIncluded +='Ex Works Charge : '+quote.Ex_Works_Charge__c +' '+ quote.CurrencyIsoCode + '\r\n';
             }
@@ -238,7 +238,7 @@ public class QuotationItemTriggerHandler {
         for(Quotation_Item__c item : quoteItemList){
             if(item.Total__c != oldMap.get(item.id).Total__c) newItemList.add(item);
         }
-        if(quoteItemList.size() > 0) updateQuotationDetails(newItemList);
+        if(newItemList.size() > 0) updateQuotationDetails(newItemList);
     }
     public static void updateQuotationDetails(List<Quotation_Item__c> quoteItemList){
         List<Quotation__c> quoteList = new List<Quotation__c>();
@@ -248,19 +248,28 @@ public class QuotationItemTriggerHandler {
             if(item.Route__c != null) routeId.add(item.Route__c);
             if(item.Quotation__c != null) quoteId.add(item.Quotation__c);
         }
-        if(routeId.size() > 0){
-            Map<Id, Route__c> routeIdToNameMap = new Map<Id, Route__c>([SELECT Id, name FROM Route__c where id in : routeId]);
-            Map<Id, Quotation__c> quoteIdToNameMap = new Map<Id, Quotation__c>([SELECT Id, name,Details__c FROM Quotation__c where id in : quoteId]);
-            for(Quotation_Item__c item : quoteItemList){
-                if(item.Route__c != null && item.Quotation__c != null){
-                    Quotation__c quoteObj = new Quotation__c();
-                    quoteObj.Id = item.Quotation__c;
-                    if(quoteIdToNameMap.get(item.Quotation__c).Details__c == null) quoteObj.Details__c = routeIdToNameMap.get(item.Route__c).Name +' - '+ item.Total__c+'\n';
-                    else quoteObj.Details__c = quoteIdToNameMap.get(item.Quotation__c).Details__c+'\n'+routeIdToNameMap.get(item.Route__c).Name +' - '+ item.Total__c+'\n';
-                    quoteList.add(quoteObj);
+        if(quoteId.size()>0){
+            Map<Id,String> quoteIdToDetails = new Map<Id,String>();
+            for(Quotation_Item__c item : [Select id,Quotation__c,Route__r.name,Total__c from Quotation_Item__c where Quotation__c in :quoteId ]){
+                if(item.Route__c != null){
+                    String details = '';
+                    if(!quoteIdToDetails.containsKey(item.Quotation__c)){
+                         details = item.Route__r.Name+'-'+item.Total__c;
+                    }
+                    else{
+                        details = quoteIdToDetails.get(item.Quotation__c);
+                        details += '\n'+item.Route__r.Name+'-'+item.Total__c;
+                    }
+                     quoteIdToDetails.put(item.Quotation__c,details);
                 }
             }
-            if(quoteList.size() > 0) update quoteList;
+            for(Quotation__c obj : [Select id,Details__c from Quotation__c where id in : quoteId]){
+                Quotation__c o =new Quotation__c();
+                o.id = obj.id;
+                o.Details__c = quoteIdToDetails.get(obj.id);
+                quoteList.add(o);
+            }
+            update quoteList;
         }
     }
 }

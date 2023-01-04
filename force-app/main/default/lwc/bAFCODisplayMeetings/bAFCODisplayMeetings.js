@@ -31,6 +31,7 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
     @track displayIntakeForm = false;
     @track eventId = '';
     @track displayInitial = true;
+    @track accountObjectChoosed = false
     get radioOptions() {
         return [
             { label: 'Lead', value: 'Lead' },
@@ -65,6 +66,7 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
         this.startTime  = this.formatTime(this.todaysDate);
         this.filteredDate = this.formatDate(this.todaysDate);
         this.objectChoosed = 'Lead';
+        this.accountObjectChoosed = false;
         this.placeholder ='Search Lead';
         this.objecticon = 'standard:lead';
         this.displayInitial = true;
@@ -108,11 +110,13 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
             this.objectApiName = 'Lead'
             this.placeholder ='Search Lead'
             this.objecticon = 'standard:lead';
+            this.accountObjectChoosed = false;
         }
         else if(this.objectChoosed == 'Account'){
             this.objectApiName = 'Account'
             this.placeholder ='Search Account'
             this.objecticon = 'standard:account';
+            this.accountObjectChoosed = true;
         }
     }
     handleEventCardClicked(e){

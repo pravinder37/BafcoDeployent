@@ -15,6 +15,18 @@
        
            <!-- modal body start -->
            <div class="slds-modal__content slds-p-around_medium" style="overflow-y: scroll !important;" id="modal-content-id-1">
+            <lightning-layout>
+               <lightning-layout-item style="padding-left: 13px;" size="6">
+                  <lightning-input label="Search Ex-works Charge" value={exWorksSearchTerm} onchange={handleExWorksChange}></lightning-input>
+               </lightning-layout-item>
+               <lightning-layout-item style="padding-left: 13px;padding-top: 20px;" size="5">
+                  <lightning-button variant="brand" onclick={handleSearchClicked} label="Search"></lightning-button>
+               </lightning-layout-item>
+               <lightning-layout-item size="1">
+                  <lightning-button variant="base" icon-name="utility:refresh" onclick={handleResetClicked} label="Reset"></lightning-button>
+               </lightning-layout-item>
+            </lightning-layout>
+            <hr style="margin-bottom: 8px;"/>
             <template if:true={noRecordFound} >
                <p class="slds-align_absolute-center">No Record found</p>
            </template>

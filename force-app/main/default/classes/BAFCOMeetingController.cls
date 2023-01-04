@@ -134,6 +134,34 @@ public class BAFCOMeetingController {
         update ev;
         return ev.id;
     }
+    @AuraEnabled(cacheable=true)
+    public static List<sObject> search(String searchTerm, string myObject, String filter, Boolean cameFromDisplayMeeting) {
+        String myQuery = null;
+        if(filter != null && filter != ''){
+            if(cameFromDisplayMeeting == true && myObject == 'Lead'){
+                myQuery = 'Select Id, Search__c from '+myObject+' Where Search__c Like  \'%' + searchTerm + '%\' AND '+filter+' LIMIT  5';
+            }
+            else{
+                myQuery = 'Select Id, Search__c from '+myObject+' Where Search__c Like  \'%' + searchTerm + '%\' AND '+filter+' LIMIT  5';
+            }
+        }
+        else {
+            if(searchTerm == null || searchTerm == ''){
+                myQuery = 'Select Id, Search__c from '+myObject+' Where LastViewedDate != NULL ORDER BY LastViewedDate DESC LIMIT  5';
+            }
+            else {
+                if(cameFromDisplayMeeting == true && myObject == 'Lead'){
+                    myQuery = 'Select Id, Search__c from '+myObject+' Where Search__c Like  \'%' + searchTerm + '%\' LIMIT  5';
+                }
+                else{
+                    myQuery = 'Select Id, Search__c from '+myObject+' Where Search__c Like  \'%' + searchTerm + '%\' LIMIT  5';
+                }
+            }
+        }
+        system.debug('myQuery '+myQuery);
+        List<sObject> lookUpList = database.query(myQuery);
+        return lookUpList;
+    }
     public class EventList{
         @AuraEnabled 
         public string recordId{get;set;}

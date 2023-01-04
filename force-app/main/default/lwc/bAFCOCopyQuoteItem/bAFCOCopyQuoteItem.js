@@ -31,14 +31,17 @@ export default class BAFCOCopyQuoteItem extends LightningElement {
                     content +='\nWe look forward to a positive response from your end.';
                     let recordtype = result[0].recordtypeName;
                     if(recordtype == 'Export'){
-                        content +='\n\nExclusions:\n\n'+result[0].exportHeader+':\n';
+                        content +='\n\nExclusions:\n\n'
+                        content += result[0].exportHeader+':\n';
                         content +=result[0].exportHeaderList
-                        content +='\n\nInclusions:\n\n'+result[0].header+':\n';
+                        content +='\n\nInclusions:\n\n'
+                        content +=result[0].header+':\n';
                         content +=result[0].headerList
                     }
                     else if(recordtype == 'Import'){
-                        content +='\n\nTerms & Conditions:\n\n'+result[0].header+':\n';
-                        content +=result[0].headerList
+                        content +='\n\nTerms & Conditions:\n\n';
+                        if(result[0].header != undefined) content +=result[0].header+':\n';
+                        if(result[0].headerList != undefined)  content +=result[0].headerList
                     }
                 }
                 if (navigator.clipboard && window.isSecureContext) {

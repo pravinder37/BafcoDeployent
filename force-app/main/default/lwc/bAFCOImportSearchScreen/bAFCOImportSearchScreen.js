@@ -47,13 +47,16 @@ export default class BAFCOImportSearchScreen extends NavigationMixin(LightningEl
     handleNewQuote(e){
         this.isLoading =true
         let quoteId = e.target.value;
+        let item = this.quoteList.filter(x=>x.Order__r.Quotation__c == quoteId);
+        let accId = item[0].Order__r.Account_Order__c;
         this[NavigationMixin.Navigate]({
             type: "standard__component",
             attributes: {
-                componentName: "c__DisplaySalesOrderTab"
+                componentName: "c__ImportReviseQuoteTab"
             },
             state: {
-                c__refRecordId: quoteId
+                c__refRecordId: quoteId,
+                c__leadId: accId
             }
         });
     }

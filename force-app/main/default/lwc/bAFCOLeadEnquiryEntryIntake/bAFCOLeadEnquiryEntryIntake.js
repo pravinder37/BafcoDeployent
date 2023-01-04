@@ -388,7 +388,7 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
             this.shippingLine = result.Shipping_Line__c != undefined ? result.Shipping_Line__c : '';
             this.commodity = result.Commodity__c != undefined ? result.Commodity__c : '';
             this.dangerousGoods = result.Dangerous_Goods__c != undefined ? result.Dangerous_Goods__c : '';
-            this.shipmentKind = result.Kind_of_Shipment__c != undefined ? result.Kind_of_Shipment__c : '';
+            this.shipmentKind = 'FCL';
             if(result.Dangerous_Goods__c == true){
                 this.showDGClassField = true;
                 this.dgClass = result.DG_Class__c != undefined ? result.DG_Class__c : '';

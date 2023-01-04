@@ -33,6 +33,7 @@
                             <th>Order Item Name</th>
                             <th>Order Name</th>
                             <th>Quotation Name</th>
+                            <th>Agent Name</th>
                             <th>Port Of Loading</th>
                             <th>Port Of Destination</th>
                             <th>Shipping Line</th>
@@ -48,6 +49,7 @@
                                 <td><a data-value={item.Id} onclick={handleOrderItemClicked}>{item.Name}</a></td>
                                 <td><a data-value={item.Order__c} onclick={handleOrderClicked}>{item.Order__r.Name}</a></td>
                                 <td><a data-value={item.Order__r.Quotation__c} onclick={handleQuotationClicked}>{item.Order__r.Quotation__r.Name}</a></td>
+                                <td>{item.Agent__r.Name}</td>
                                 <td>{item.Port_of_Loading_Order__r.Name}</td>
                                 <td>{item.Port_of_Discharge_Order__r.Name}</td>
                                 <td>{item.Shipping_Line__r.Name}</td>

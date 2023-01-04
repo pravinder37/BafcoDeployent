@@ -5,6 +5,8 @@ export default class BAFCOSelectExWorks extends LightningElement {
     noRecordFound = false;
     errorClass = 'slds-accordion'
     noneSelected = false
+    exWorksSearchTerm = '';
+    totalRecords = [];
     connectedCallback(){
         this.getExWorksOnLoad();
     }
@@ -17,6 +19,7 @@ export default class BAFCOSelectExWorks extends LightningElement {
             console.log('getExWorksOnLoad result'+JSON.stringify(result,null,2));
             if(result != null) {
                 this.exWorksList = result;
+                this.totalRecords = result;
                 let tempvar = JSON.parse(JSON.stringify(this.exWorksList));
                 this.exWorksList = tempvar.map(row => ({
                     ...row,
@@ -71,5 +74,36 @@ export default class BAFCOSelectExWorks extends LightningElement {
             this.noneSelected = true;
             this.errorClass = 'slds-accordion slds-has-error'
         }
+    }
+    handleExWorksChange(e){
+        this.exWorksSearchTerm = e.target.value;
+        if(this.exWorksSearchTerm != '') this.handleSearchClicked();
+        else this.handleResetClicked();
+    }
+    handleResetClicked(){
+        this.exWorksSearchTerm = '';
+        if(this.totalRecords.length > 0){
+            let tempvar = JSON.parse(JSON.stringify(this.totalRecords));
+            this.exWorksList = tempvar.map(row => ({
+                ...row,
+                displayRow:false,
+                selected:false
+            }));
+            this.noRecordFound = false;
+        }
+        else this.noRecordFound = true;
+    }
+    handleSearchClicked(){
+        if(this.exWorksSearchTerm != '' && this.totalRecords.length > 0){
+            let tempList = this.totalRecords.filter(x=>x.Name.toLowerCase().includes(this.exWorksSearchTerm.toLowerCase()))
+            if(tempList.length > 0){
+                this.exWorksList = tempList.map(row => ({
+                    ...row,
+                    displayRow:false,
+                    selected:false
+                }));
+                this.noRecordFound = false;
+            }else this.noRecordFound = true;
+        }else this.noRecordFound = true;
     }
 }
