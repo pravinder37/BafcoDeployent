@@ -53,6 +53,17 @@ export default class BAFCORMSIntakeForm extends LightningElement {
     @track oceanfreightCheckbox = false;
 
 
+    @track loadingPortError = '';
+    @track loadingDischargeError = '';
+    @track commodityError = '';
+    @track shippingLineError = '';
+    @track incoTermError = '';
+    @track equipmentTypeError = '';
+    @track rateTypeError = '';
+    @track validityError = '';
+    @track seaFreightError = '';
+    @track businessTypeError = '';
+
     @wire(getPicklistValues, {
         recordTypeId : '012000000000000AAA',
         fieldApiName : DIRECTION_FIELD
@@ -184,7 +195,10 @@ export default class BAFCORMSIntakeForm extends LightningElement {
                 if(result.commodityId != undefined){
                     let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[2];
                     let Obj={Id:result.commodityId,Name:result.commodityName}
-                    field.handleDefaultSelected(Obj);
+                    setTimeout(() => {
+                        field.handleDefaultSelected(Obj);
+                    }, 100);
+                    
                 }
                 if(result.businessType != undefined){
                     this.businessType = result.businessType != null ? result.businessType : '';
@@ -194,7 +208,9 @@ export default class BAFCORMSIntakeForm extends LightningElement {
                         if(result.incoTermId != undefined && this.businessType == 'Export'){
                             let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[4];
                             let Obj={Id:result.incoTermId,Name:result.incoTermName}
-                            field.handleDefaultSelected(Obj);
+                            setTimeout(() => {
+                                field.handleDefaultSelected(Obj);
+                            }, 100);
                         }
                         
                     }
@@ -203,9 +219,17 @@ export default class BAFCORMSIntakeForm extends LightningElement {
                     if(result.polId != null){
                         let Obj={Id:result.polId,Name:result.polName}
                         let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[0];
-                        if(result.businessType == 'Export') field.handleDefaultSelected(Obj);
+                        if(result.businessType == 'Export') {
+                            setTimeout(() => {
+                                field.handleDefaultSelected(Obj);
+                            }, 100);
+                        }
                         let field2 = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[1];
-                        if(result.businessType =='Import') field2.handleDefaultSelected(Obj);
+                        if(result.businessType =='Import') {
+                            setTimeout(() => {
+                                field2.handleDefaultSelected(Obj);
+                            }, 100);
+                        }
                     }
                 }
                 if(result.equipmentList != null){
@@ -228,7 +252,7 @@ export default class BAFCORMSIntakeForm extends LightningElement {
                     'shippingLineId':'',
                     'equipmentId':'',
                     'agentName':'',
-                    'businessType':'',
+                    'businessType':this.businessType,
                     'loadingPortName':'',
                     'loadingDestinationName':'',
                     'allInRate':false,
@@ -280,6 +304,7 @@ export default class BAFCORMSIntakeForm extends LightningElement {
             field.handleRemovePill();
         }
         else this.displayAgentField = false;
+        this.businessTypeError = '';
     }
     handleBAFChange(e){
         this.shipp.BAF = parseInt(e.target.value);
@@ -415,40 +440,87 @@ export default class BAFCORMSIntakeForm extends LightningElement {
     }
     submitDetails(){
         this.isLoading = true;
-        submitRMS({
-            rmsDetail : this.rmsDetail,
-            shippingChargeDto : this.shipp,
-            incocharges : this.incoCharges,
-            totalShippChanged : this.shippTotalChanged,
-            totalIncoChanged : this.incoChargeTotalChange,
-            destinTotalChanged : this.destinTotalChanged,
-            destinCharges:this.destinCharges
-        })
-        .then(result =>{
-            console.log('submitRMS result',JSON.stringify(result));
-            this.isLoading = false;
-           let disPatchObj = {
-                loadingPort : result.loadingPortName,
-                loadingDestination : result.loadingDestinationName,
-                validity : result.validity,
-                loadingPortId:result.loadingPortId,
-                loadingDestinationId : result.loadingDestinationId
-            }
-            const selectedEvent = new CustomEvent('success', { detail: {disPatchObj}});
-            this.dispatchEvent(selectedEvent);
+        let allValid = true;
+        console.log('rms '+JSON.stringify(this.rmsDetail,null,2))
+        if(this.rmsDetail.loadingPortId == ''){
+            allValid = false;
+            this.loadingPortError = 'slds-has-error';
+        }
+        if(this.rmsDetail.loadingDestinationId == ''){
+            allValid = false;
+            this.loadingDischargeError = 'slds-has-error';
+        }
+        if(this.rmsDetail.commodityName == ''){
+            allValid = false;
+            this.commodityError = 'slds-has-error';
+        }
+        if(this.rmsDetail.shippingLineId == ''){
+            allValid = false;
+            this.shippingLineError = 'slds-has-error';
+        }
+        if(this.rmsDetail.incoTermId == ''){
+            allValid = false;
+            this.incoTermError = 'slds-has-error';
+        }
+        if(this.rmsDetail.equipmentId == ''){
+            allValid = false;
+            this.equipmentTypeError = 'slds-has-error';
+        }
+        if(this.rmsDetail.rateType == ''){
+            allValid = false;
+            this.rateTypeError = 'slds-has-error';
+        }
+        if(this.rmsDetail.validity == null){
+            allValid = false;
+            this.validityError = 'slds-has-error';
+        }
+        if(this.rmsDetail.seaFreight <= 0){
+            allValid = false;
+            this.seaFreightError = 'slds-has-error';
+        }
+        if(this.rmsDetail.businessType == ''){
+            allValid = false;
+            this.businessTypeError = 'slds-has-error';
+        }
+        if(allValid){
+            submitRMS({
+                rmsDetail : this.rmsDetail,
+                shippingChargeDto : this.shipp,
+                incocharges : this.incoCharges,
+                totalShippChanged : this.shippTotalChanged,
+                totalIncoChanged : this.incoChargeTotalChange,
+                destinTotalChanged : this.destinTotalChanged,
+                destinCharges:this.destinCharges
+            })
+            .then(result =>{
+                console.log('submitRMS result',JSON.stringify(result));
+                this.isLoading = false;
+            let disPatchObj = {
+                    loadingPort : result.loadingPortName,
+                    loadingDestination : result.loadingDestinationName,
+                    validity : result.validity,
+                    loadingPortId:result.loadingPortId,
+                    loadingDestinationId : result.loadingDestinationId
+                }
+                const selectedEvent = new CustomEvent('success', { detail: {disPatchObj}});
+                this.dispatchEvent(selectedEvent);
 
-        })
-        .catch(error=>{
-            console.log('submitRMS ',JSON.stringify(error,null,2))
+            })
+            .catch(error=>{
+                console.log('submitRMS ',JSON.stringify(error,null,2))
+                this.isLoading = false;
+                let err = error.body.pageErrors[0].message
+                const evt = new ShowToastEvent({
+                    title: 'Missing Field :',
+                    message: err,
+                    variant: 'error',
+                });
+                this.dispatchEvent(evt);
+            })
+        }
+        else{
             this.isLoading = false;
-            let err = error.body.pageErrors[0].message
-            const evt = new ShowToastEvent({
-                title: 'Missing Field :',
-                message: err,
-                variant: 'error',
-            });
-            this.dispatchEvent(evt);
-        })
+        }
     }
     handletotalChange(e){
         this.incoCharges.total = parseInt(e.target.value);
@@ -462,6 +534,7 @@ export default class BAFCORMSIntakeForm extends LightningElement {
     handleValidityChange(e){
         this.validity = e.target.value;
         this.rmsDetail.validity = this.validity;
+        this.validityError = '';
     }
     handleRateTypeChange(e){
         this.rateType = e.target.value;
@@ -477,6 +550,8 @@ export default class BAFCORMSIntakeForm extends LightningElement {
             this.validity = this.formatDate(lastdate,0)
         }
         this.rmsDetail.validity = this.validity 
+        this.rateTypeError = '';
+        this.validityError = '';
     }
     formatDate(date,days) {
         let date1 = new Date(date);
@@ -494,12 +569,15 @@ export default class BAFCORMSIntakeForm extends LightningElement {
         return [year, month, day].join('-');
     }
     handleSeaFreightChange(e){
-        this.seaFreight = parseInt(e.target.value);
+        if(e.target.value != '') this.seaFreight = parseInt(e.target.value);
+        else this.seaFreight = 0;
         this.rmsDetail.seaFreight = this.seaFreight;
+        this.seaFreightError ='';
     }    
     handlePortSelection(e){
         this.rmsDetail.loadingPortId = e.detail.Id;
         this.rmsDetail.loadingPortName = e.detail.Name;
+        this.loadingPortError = '';
     }
     handlePortRemoved(e){
         this.rmsDetail.loadingPortId = '';
@@ -508,6 +586,7 @@ export default class BAFCORMSIntakeForm extends LightningElement {
     handleDestinationSelection(e){
         this.rmsDetail.loadingDestinationId = e.detail.Id;
         this.rmsDetail.loadingDestinationName = e.detail.Name;
+        this.loadingDischargeError = '';
     }
     handleDestinationRemoved(e){
         this.rmsDetail.loadingDestinationId = '';
@@ -515,12 +594,14 @@ export default class BAFCORMSIntakeForm extends LightningElement {
     }
     handleCommoditySelection(e){
         this.rmsDetail.commodityName = e.detail.Id;
+        this.commodityError = '';
     }
     handleCommodityRemoved(e){
         this.rmsDetail.commodityName = '';
     }
     handleShippingLineSelection(e){
         this.rmsDetail.shippingLineId = e.detail.Id;
+        this.shippingLineError = '';
     }
     handleShippingRemoved(e){
         this.rmsDetail.shippingLineId = '';
@@ -531,6 +612,7 @@ export default class BAFCORMSIntakeForm extends LightningElement {
     handleEquipmentChange(e){
         this.rmsDetail.equipmentId = e.target.value;
         this.equipmentType = e.target.value;
+        this.equipmentTypeError = '';
     }
     handleEquipmentRemoved(e){
         this.rmsDetail.equipmentId = '';
@@ -846,9 +928,10 @@ export default class BAFCORMSIntakeForm extends LightningElement {
     }
     handleIncoTermSelection(e){
         this.rmsDetail.incoTermId = e.detail.Id;
+        this.incoTermError = '';
     }
     handleIncoRemoved(e){
-        this.rmsDetail.incoTermId = null;
+        this.rmsDetail.incoTermId = '';
     }
     handleCustomerSelection(e){
         this.rmsDetail.customerName = e.detail.Id;

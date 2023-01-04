@@ -212,11 +212,11 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
         }
         this.leadEnquiryList.forEach(elem=>{
             let tempErrorList = [];
-            if(elem.shipmentKind == '') {
+            /*if(elem.shipmentKind == '') {
                 tempErrorList.push('Please fill kind of shipment')
                 elem.shipmentKindClass = 'slds-has-error';
 
-            }
+            }*/
             if(elem.serviceType == '') {
                 tempErrorList.push('Please fill Service Type')
                 elem.serviceTypeClass = 'slds-has-error';

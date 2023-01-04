@@ -103,6 +103,13 @@ export default class BAFCOAddRMSModel
     @track quantity = null;
     @track containerId = '';
 
+    @track commodityError = '';
+    @track incoTermError = '';
+    @track equipmentTypeError = '';
+    @track rateTypeError = '';
+    @track validityError = '';
+    @track seaFreightError = '';
+
     @wire(getPicklistValues, {
         recordTypeId : '012000000000000AAA',
         fieldApiName : DIRECTION_FIELD
@@ -236,6 +243,7 @@ export default class BAFCOAddRMSModel
     handleValidityChange(e){
         this.validity = e.target.value;
         this.rmsDetail.validity = this.validity;
+        this.validityError = '';
     }    
     handleShippCurrencyCodeSelection(e){
         this.shipp.currencyCode = e.target.value;
@@ -394,6 +402,8 @@ export default class BAFCOAddRMSModel
             this.validity = this.formatDate(lastdate,0)
         }
         this.rmsDetail.validity = this.validity 
+        this.rateTypeError = '';
+        this.validityError = '';
     }
     formatDate(date,days) {
         let date1 = new Date(date);
@@ -411,8 +421,10 @@ export default class BAFCOAddRMSModel
         return [year, month, day].join('-');
     }
     handleSeaFreightChange(e){
-        this.seaFreight = parseInt(e.target.value);
+        if(e.target.value != '') this.seaFreight = parseInt(e.target.value);
+        else this.seaFreight = 0;
         this.rmsDetail.seaFreight = this.seaFreight;
+        this.seaFreightError = '';
     }
     handleBusinessTypeChange(e){
         this.businessType = e.target.value;
@@ -425,6 +437,33 @@ export default class BAFCOAddRMSModel
     }
     submitDetails(){
         this.isLoading = true
+        let allValid = true;
+        if(this.rmsDetail.commodity == ''){
+            allValid = false;
+            this.commodityError = 'slds-has-error';
+        }
+        if(this.rmsDetail.incoTermId == ''){
+            allValid = false;
+            this.incoTermError = 'slds-has-error';
+        }
+        if(this.rmsDetail.equipmentId == ''){
+            allValid = false;
+            this.equipmentTypeError = 'slds-has-error';
+        }
+        if(this.rmsDetail.rateType == ''){
+            allValid = false;
+            this.rateTypeError = 'slds-has-error';
+        }
+        if(this.rmsDetail.validity == null){
+            allValid = false;
+            this.validityError = 'slds-has-error';
+        }
+        if(this.rmsDetail.seaFreight == null || this.rmsDetail.seaFreight <= 0 ){
+            allValid = false;
+            this.seaFreightError = 'slds-has-error';
+        }
+        console.log('rms '+JSON.stringify(this.rmsDetail,null,2))
+        if(allValid){
         addRates({
             rmsDetail: this.rmsDetail,
             routeId : this.routeId,
@@ -446,6 +485,10 @@ export default class BAFCOAddRMSModel
             this.isLoading = false
             console.log('error add rate : ', JSON.stringify(error));
         });
+    }
+    else{
+        this.isLoading = false
+    }
     }
     handleBAFChange(e){
         this.shipp.BAF = parseInt(e.target.value);
@@ -597,6 +640,7 @@ export default class BAFCOAddRMSModel
     }
     handleEquipSelection(e){
         this.equipmentType = e.detail.value;
+        this.equipmentTypeError = '';
     }
     handleDirectionChange(event){
         this.directionValue  = event.target.value;
@@ -798,12 +842,14 @@ export default class BAFCOAddRMSModel
     }
     handleCommoditySelection(e){
         this.rmsDetail.commodity =e.detail.Id
+        this.commodityError = '';
     }
     handleCommodityRemoved(e){
         this.rmsDetail.commodity = ''
     }
     handleIncoTermSelection(e){
         this.rmsDetail.incoTermId =e.detail.Id
+        this.incoTermError = '';
     }
     handleIncoRemoved(e){
         this.rmsDetail.incoTermId = ''

@@ -67,11 +67,14 @@
                                 <lightning-combobox label="" 
                                                 variant="label-hidden"
                                                 required
-                                                data-fie
                                                 options={pickListvalues}
                                                 value={equipmentType} 
+                                                class={equipmentTypeError}
                                                 onchange={handleEquipSelection}
                                                 placeholder="Select"></lightning-combobox>
+                                                <div class="slds-form-element__help"  style="color: rgb(194, 57, 52);" if:true={equipmentTypeError}>
+                                                    Complete this field.
+                                                </div>
                             </lightning-layout-item>
                             <lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;">
                                 <lightning-combobox label="Business Type" 
@@ -88,6 +91,7 @@
                                         disabled></lightning-input>
                             </lightning-layout-item>
                             <lightning-layout-item size="4">
+                                <div class={commodityError}>
                                 <label class="slds-form-element__label">
                                     <p style="padding-left: 22px">Commodity</p>
                                 </label>
@@ -97,8 +101,13 @@
                                                 icon-name="standard:account"
                                                 onlookupselected={handleCommoditySelection}
                                                 onlookupremoved={handleCommodityRemoved}></c-b-a-f-c-o-custom-look-up-component>
+                                                <div class="slds-form-element__help"  style="color: rgb(194, 57, 52);padding-left: 20px;" if:true={commodityError}>
+                                                    Complete this field.
+                                                </div>
+                                            </div>
                             </lightning-layout-item>
                             <lightning-layout-item size="4">
+                                <div class={incoTermError}>
                                 <label class="slds-form-element__label">
                                     <p style="padding-left: 22px">Inco Term</p>
                                 </label>
@@ -108,27 +117,43 @@
                                                 icon-name="standard:account"
                                                 onlookupselected={handleIncoTermSelection}
                                                 onlookupremoved={handleIncoRemoved}></c-b-a-f-c-o-custom-look-up-component>
+                                                <div class="slds-form-element__help"  style="color: rgb(194, 57, 52);padding-left: 20px;" if:true={incoTermError}>
+                                                    Complete this field.
+                                                </div>
+                                            </div>
                             </lightning-layout-item>
                             <lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;">
                                 <lightning-combobox label="Rate Type" 
                                         options={rateTypeOption}
+                                        class={rateTypeError}
                                         value={rateType} 
                                         onchange={handleRateTypeChange}
                                         placeholder="Select"></lightning-combobox>
+                                        <div class="slds-form-element__help"  style="color: rgb(194, 57, 52);" if:true={rateTypeError}>
+                                            Complete this field.
+                                        </div>
                             </lightning-layout-item>
                             <lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;">
                                 <lightning-input name="Validity"
                                     label="Validity"
                                     value={validity}
+                                    class={validityError}
                                     type="date"
                                     onchange={handleValidityChange}></lightning-input>
+                                    <div class="slds-form-element__help"  style="color: rgb(194, 57, 52);" if:true={validityError}>
+                                        Complete this field.
+                                    </div>
                             </lightning-layout-item>                            
                             <lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;">
                                 <lightning-input name="seaFreight"
                                     type="number"
                                     label="Sea Freight"
                                     value={seaFreight}
+                                    class={seaFreightError}
                                     onchange={handleSeaFreightChange}></lightning-input>
+                                    <div class="slds-form-element__help"  style="color: rgb(194, 57, 52);" if:true={seaFreightError}>
+                                        Complete this field.
+                                    </div>
                             </lightning-layout-item>                            
                             <lightning-layout-item size="4" style="padding: 4px 20px 0px 20px;">
                                 <lightning-input label="Free Time POL" 

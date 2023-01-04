@@ -124,6 +124,8 @@ public class BAFCOLRoutingDetailsController {
                                 if(routeEquipmentoquantityMap.containsKey(rmsObj.Equipment_Type__r.name)){
                                     rmsDto.quantity = routeEquipmentoquantityMap.get(rmsObj.Equipment_Type__r.name);
                                 }
+                                system.debug(rmsObj.Equipment_Type__r.name+'_'+rmsObj.Shipping_Line__r.name);
+                                system.debug(rmsObj.Equipment_Type__c+'_'+rmsObj.Shipping_Line__c);
                                 rmsDto.equipmentName = rmsObj.Equipment_Type__r.name;
                                 rmsDto.equipmentId = rmsObj.Equipment_Type__c;
                                 rmsDto.uniqueEquip = uniqueEquip;
@@ -226,7 +228,7 @@ public class BAFCOLRoutingDetailsController {
                 Route__c routeObj = new Route__c();
                 routeObj.Cargo_Weight__c = dto.cargoWeights;
                 if(!String.isBlank(dto.commodity)) routeObj.Commodity__c =dto.commodity;
-                routeObj.Kind_Of_Shipment__c = dto.shipmentKind;
+                routeObj.Kind_Of_Shipment__c = 'FCL';
                 routeObj.Regular_Routing__c = dto.routingRegular;
                 String ObjectName = '';
                 routeObj.Regular_Routing_Lookup__c = dto.routingRegular != '' ? dto.routingRegular : null;

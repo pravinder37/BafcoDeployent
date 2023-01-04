@@ -231,6 +231,7 @@ Equipment_Type__r.Name, Sea_Freight__c, Validity__c, Agent__r.Name, Shipping_Lin
             rmsObj.Free_time__c = rmsDetail.FreeTime != null ? Decimal.valueOf(rmsDetail.FreeTime) : 0;
             rmsObj.Free_time_POD__c = rmsDetail.FreeTimePOD != null ? Decimal.valueOf(rmsDetail.FreeTimePOD) : 0;
             rmsObj.Remarks__c = rmsDetail.remarks;
+            rmsobj.INCO_Term__c = rmsDetail.incoTermId != '' ? rmsDetail.incoTermId : null;
             
             if(rmsDetail.businessType == 'Export') rmsObj.RecordTypeId = ExportRecordTypeId;
             else if(rmsDetail.businessType == 'Import')rmsObj.RecordTypeId = ImportRecordTypeId;

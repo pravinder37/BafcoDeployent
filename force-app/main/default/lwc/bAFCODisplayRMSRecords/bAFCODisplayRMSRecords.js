@@ -116,5 +116,6 @@ export default class BAFCODisplayRMSRecords extends NavigationMixin(LightningEle
         laodingPortField.handleRemovePill(); 
         let defaultLoadingDestinationField = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[1]
         defaultLoadingDestinationField.handleRemovePill();
+        this.validity = '';
     }
 }
