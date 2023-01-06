@@ -22,6 +22,7 @@ public without sharing class BAFCOGeneratePDFController {
         else this.showCharges = false;
         this.recordId = recordId;
         dto =new BAFCOGeneratePDFDto();
+        System.debug('show charges '+this.showCharges);
     }
     public void getQuoteData(){
         system.debug(' recordid '+this.recordId);

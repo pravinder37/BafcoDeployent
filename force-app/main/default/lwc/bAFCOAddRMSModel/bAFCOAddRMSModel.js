@@ -10,6 +10,7 @@ import BUSINESS_TYPE_FIELD from '@salesforce/schema/RMS__c.Business_Type__c';
 import getDefualtValueForRMS from '@salesforce/apex/BAFCOLRoutingDetailsController.getDefualtValueForRMS';
 import getDefaultImportAddRate from '@salesforce/apex/BAFCOLRoutingDetailsController.getDefaultImportAddRate';
 import addRouteEquipment from '@salesforce/apex/BAFCOLRoutingDetailsController.addRouteEquipment';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class BAFCOAddRMSModel
  extends LightningElement {
     @api portLoading ='';
@@ -98,10 +99,11 @@ export default class BAFCOAddRMSModel
 
     //Container Var
     @track displayAddRouteEquip = false;
-    @track containerTypeErrorClass = '';
-    @track containerQuantityErrorClass ='';
-    @track quantity = null;
-    @track containerId = '';
+    @track containerRecord = [];
+    @track contrIndex = 0;
+    @track noRecord = false;
+    @track toDeleteRecord = [];
+
 
     @track commodityError = '';
     @track incoTermError = '';
@@ -129,8 +131,6 @@ export default class BAFCOAddRMSModel
     }
 
     connectedCallback(){
-        console.log('*equipmentType '+JSON.stringify(this.equipmentType))
-        console.log('*route '+JSON.stringify(this.routeId))
         this.getRouteEquipType();
         this.getExchangeRate();
         this.getDefualtValueForRMS();
@@ -625,14 +625,29 @@ export default class BAFCOAddRMSModel
         .then(result =>{
             //console.log('getRouteEquipType '+JSON.stringify(result,null,2));
             let temp = [];
+            let tempList =[];
+            this.contrIndex = 0;
             result.forEach(element => {
                 temp.push({
                     label : element.Equipment_Type__r.Name,
                     value:element.Equipment_Type__r.Name
                 })
+                let obj={
+                    'index':this.contrIndex++,
+                    'containerType':element.Equipment_Type__c,
+                    'containerTypeName':element.Equipment_Type__r.Name,
+                    'containerTypeErrorClass':'',
+                    'containerQuantityErrorClass':'',
+                    'id':element.Id,
+                    'quantity':element.Quantity__c
+                }
+                tempList.push(obj);
             });
             this.pickListvalues = temp;
             this.equipmentType = this.pickListvalues[0].value;
+            this.containerRecord = tempList;
+            if(this.containerRecord.length > 0) this.noRecord = false 
+            else this.noRecord = true 
         })
         .catch(error =>{
             console.log('get equip Error '+JSON.stringify(error))
@@ -922,44 +937,89 @@ export default class BAFCOAddRMSModel
         this.displayAddRouteEquip = true;
     }
     hideModalBox(){
+        this.getRouteEquipType();
         this.displayAddRouteEquip = false;
-    }
-    handleContainerTypeSelection(e){
-        this.containerId = e.detail.Id
-        this.containerTypeErrorClass = ''
-    }
-    handleContainerTypeRemoved(e){
-        this.containerId = ''
-    }
-    handleQuantityChange(e){
-        this.quantity = e.target.value;
-        this.containerQuantityErrorClass = '';
     }
     hideAddRoute(){
         let allValid = true;
-        console.log('this.quantity '+this.quantity)
-        if(this.containerId == ''){
-            this.containerTypeErrorClass = 'slds-has-error'
-            allValid = false
+        console.log('toDelete '+JSON.stringify(this.toDeleteRecord,null,2));
+        console.log('containerRecord '+JSON.stringify(this.containerRecord,null,2));
+        if(this.containerRecord.length > 0){
+            this.containerRecord.forEach(elem2=>{
+                if(elem2.containerType == '' ){
+                    elem2.containerTypeErrorClass = 'slds-has-error';
+                    allValid = false
+                }
+                if(elem2.quantity <= 0){
+                    elem2.containerQuantityErrorClass = 'slds-has-error';
+                    allValid = false
+                }
+            })
         }
-        if(this.quantity <= 0){
-            this.containerQuantityErrorClass = 'slds-has-error'
+        else{
             allValid = false
+            const evt = new ShowToastEvent({
+                title: 'Error',
+                message: 'Please add route equipment.',
+                variant: 'error',
+            });
+            this.dispatchEvent(evt);
         }
         if(allValid){
             addRouteEquipment({
-                containerId : this.containerId,
-                quantity : this.quantity,
+                containerList : this.containerRecord,
+                toDeleteRecord : this.toDeleteRecord,
                 routeId : this.routeId
             })
             .then(result=>{
-                console.log('Route Equip Added ' +JSON.stringify(result));
+                console.log('addRouteEquipment result '+result)
                 this.getRouteEquipType();
                 this.displayAddRouteEquip = false;
             })
             .catch(error=>{
-                console.log('Route Equip error ' +JSON.stringify(error));
+                console.log('addRouteEquipment error '+JSON.stringify(error,null,2))
             })
         }
+    }
+    handleContainerTypeSelection(e){
+        let dto = JSON.parse(JSON.stringify(e.detail.dto))
+        let index = this.containerRecord.findIndex(x=>x.index == dto.index)
+        if(index != -1){
+            this.containerRecord[index].containerType = dto.containerTypeID
+            this.containerRecord[index].containerTypeName = dto.containerTypeName
+        }
+    }
+    handleQuantityChange(e){
+        let dto = JSON.parse(JSON.stringify(e.detail.dto))
+        let index = this.containerRecord.findIndex(x=>x.index == dto.index)
+        if(index != -1){
+            this.containerRecord[index].quantity = dto.quantity
+        }
+    }
+    handleRemoveContainer(e){
+        let index = JSON.parse(JSON.stringify(e.detail))
+        let removeIndex = this.containerRecord.findIndex(x=>x.index == index)
+        if(index != -1){
+            if(this.containerRecord[removeIndex].id != ''){
+                this.toDeleteRecord.push(this.containerRecord[removeIndex].id);
+            }
+            this.containerRecord.splice(removeIndex,1)
+            if(this.containerRecord.length == 0) this.noRecord = true
+        }
+    }
+    handleAddRouteClicked(){
+        let tempList = JSON.parse(JSON.stringify(this.containerRecord))
+        let obj={
+            'index':this.contrIndex++,
+            'containerType':'',
+            'containerTypeName':'',
+            'containerTypeErrorClass':'',
+            'containerQuantityErrorClass':'',
+            'quantity':null,
+            'id':''
+        }
+        tempList.push(obj);
+        this.containerRecord = JSON.parse(JSON.stringify(tempList));
+        this.noRecord = false
     }
 }

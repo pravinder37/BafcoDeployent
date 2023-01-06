@@ -327,7 +327,7 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
                 startTimeField.reportValidity();
                 allValid = false;
             }
-            if(this.endDate1 == null ){
+           /* if(this.endDate1 == null ){
                 let endDateField = this.template.querySelector("[data-field='endDate1']");
                 endDateField.setCustomValidity('Complete this field.'); 
                 endDateField.reportValidity();
@@ -338,7 +338,7 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
                 endTimeField.setCustomValidity('Complete this field.'); 
                 endTimeField.reportValidity();
                 allValid = false;
-            }
+            }*/
             if(this.meetinginute1 == '' || this.meetinginute1 == undefined || this.meetinginute1 == ''){
                 let meetingMinuteField = this.template.querySelector("[data-field='meetingMinute1']");
                 meetingMinuteField.setCustomValidity('Complete this field.'); 
@@ -363,8 +363,6 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
                     enquiryId:this.enquiryId1,
                     startDate:this.startDate1,
                     startTime:this.startTime1,
-                    endDate:this.endDate1,
-                    endTime:this.endTime1,
                     meetingMinute:this.meetinginute1,
                     lati:this.lati1,
                     longi:this.longi1

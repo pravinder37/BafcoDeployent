@@ -41,6 +41,27 @@ public without sharing class BAFCOQuoteCopyContentController {
         }
         return quoteItemList;
     }
+    @AuraEnabled 
+    public static void  sendEmail(String toSend,String toCCSend, String toBCCSend, String subject,String body){ 
+        List<Messaging.SingleEmailMessage> mails = new List<Messaging.SingleEmailMessage>();
+        Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+        System.debug('body '+body);
+		
+        List<String> sendTo = toSend.split(',');
+        if(toCCSend != '') {
+            List<String> ccTo = toCCSend.split(',');
+            mail.setCcAddresses(ccTo);
+        }
+        if(toBCCSend != ''){
+            List<String> bccTo = toBCCSend.split(',');
+            mail.setBccAddresses(bccTo);
+        }
+        mail.setToAddresses(sendTo);
+        mail.setSubject(subject); 
+        mail.setHtmlBody(body);
+        mails.add(mail);
+        Messaging.sendEmail(mails);
+    }
     public class QuoteLineList{
         @AuraEnabled public String loadingPort{get;set;}
         @AuraEnabled public String dischargePort{get;set;}

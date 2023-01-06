@@ -70,5 +70,7 @@ public class BAFCORoutingDetailsDto {
         public Decimal quantity { get; set; }
         @AuraEnabled
         public String index { get; set; }
+        @AuraEnabled
+        public String id { get; set; }
     }
 }

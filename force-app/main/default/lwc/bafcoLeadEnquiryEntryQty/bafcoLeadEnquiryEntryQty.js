@@ -8,12 +8,15 @@ export default class BafcoLeadEnquiryEntryQty extends LightningElement {
     @api containerTypeName;
     @api containerTypeErrorClass = '';
     @api containerQuantityErrorClass = '';
+    @api cameFromAddRate = false
     connectedCallback(){
-        console.log('index '+this.index)
-        console.log('containerType '+this.containerType)
-        console.log('quantity '+this.quantity)
-        console.log('quantity '+this.containerTypeName)
-        console.log('contr '+JSON.stringify(this.contr,null,2))
+        if(this.cameFromAddRate == 'true' && this.containerType != ''){
+            setTimeout(() => {
+                let field = this.template.querySelector('c-b-a-f-c-o-custom-look-up-component');
+                let Obj={Id:this.containerType,Name:this.containerTypeName,index:this.index}
+                if(field != undefined) field.handleDefaultSelected(Obj);
+            }, 100);
+        }
     }
     handleContainerTypeSelection(event){
         console.log('came '+JSON.stringify(event.detail))

@@ -224,20 +224,19 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                         savedClicked:false
 
                     })
-                    //}
-                    let parentKey = key+'-'+conts[key][equip].equipmentName+'-'+this.routeName;
-                    let existingIndex = this.quotationMap.findIndex(x=>x.key==parentKey);
-                    let newTempListIndex = templist.findIndex(x=>x.equipment==conts[key][equip].equipmentName);
-                    let NewTempList = [];
-                    NewTempList.push(templist[newTempListIndex])
-                    if(existingIndex == -1) this.quotationMap.push({value : NewTempList,key:parentKey})
-                    //this.quotationMap.push({value : templist,key:parentKey})
-                    let toBeSend = {
-                        'routeName':this.routeName,
-                        'quotationMap':this.quotationMap
-                    }
-                    this.dispatchEvent(new CustomEvent('updatecalculation', { detail: toBeSend }));
+                //}
+                let parentKey = key+'-'+conts[key][equip].equipmentName+'-'+this.routeName;
+                let existingIndex = this.quotationMap.findIndex(x=>x.key==parentKey);
+                let newTempListIndex = templist.findIndex(x=>x.equipment==conts[key][equip].equipmentName);
+                let NewTempList = [];
+                NewTempList.push(templist[newTempListIndex])
+                if(existingIndex == -1) this.quotationMap.push({value : NewTempList,key:parentKey})
+                //this.quotationMap.push({value : templist,key:parentKey})
+                let toBeSend = {
+                    'routeName':this.routeName,
+                    'quotationMap':this.quotationMap
                 }
+                this.dispatchEvent(new CustomEvent('updatecalculation', { detail: toBeSend }));}
             }
             //Loop to hold the update to be updated on Tab change
                 let tempList = [];

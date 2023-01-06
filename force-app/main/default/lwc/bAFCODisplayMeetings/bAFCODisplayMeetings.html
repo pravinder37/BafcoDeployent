@@ -143,30 +143,13 @@
                          <lightning-layout-item size="12" class="paddingCss" large-device-size="6" medium-device-size="6" small-device-size="12">
                                <lightning-input type="time" data-field="startTime1" value={startTime1} label="Meeting start time" onchange={handleStarttimeChange}></lightning-input>
                          </lightning-layout-item>
-                         <lightning-layout-item size="12" class="paddingCss" large-device-size="6" medium-device-size="6" small-device-size="12">
+                         <!--lightning-layout-item size="12" class="paddingCss" large-device-size="6" medium-device-size="6" small-device-size="12">
                             <lightning-input type="date" data-field="endDate1" value={endDate1} label="Meeting end date" onchange={handleEndDateChange}></lightning-input>
                       </lightning-layout-item> 
                       <lightning-layout-item size="12" class="paddingCss" large-device-size="6" medium-device-size="6" small-device-size="12">
                             <lightning-input type="time" data-field="endTime1" value={endTime1} label="Meeting end time" onchange={handleEndtimeChange}></lightning-input>
-                      </lightning-layout-item>
-                      <!--lightning-layout-item size="12" class="lookupField" large-device-size="6" medium-device-size="6" small-device-size="12">
-                         <div class={enquiryErrorClass}>
-                            <label class="slds-form-element__label" style="padding-left: 7%;">
-                                <p class="inputFieldClass">Enquiry</p>
-                            </label>
-                                <c-b-a-f-c-o-custom-look-up-component
-                                            obj-name="Enquiry__c"
-                                            search-placeholder="Select Enquiry"
-                                            icon-name="standard:account"
-                                            filter={filter1}
-                                            onlookupselected={handleEnquirySelection}
-                                            onlookupremoved={handleEnquiryRemoved}></c-b-a-f-c-o-custom-look-up-component>
-                            <div class="slds-form-element__help" style="color: rgb(234, 0, 30);padding-left: 5%;" if:true={enquiryErrorMsg}>
-                                {enquiryErrorMsg}
-                            </div>
-                        </div>      
                       </lightning-layout-item-->
-                      <lightning-layout-item size="12" class="paddingCss" large-device-size="6" medium-device-size="6" small-device-size="12">
+                     <lightning-layout-item size="12" class="paddingCss" large-device-size="6" medium-device-size="6" small-device-size="12">
                          <lightning-textarea data-field="meetingMinute1" placeholder="Enter Minute of Meeting..." label="Minute of meeting" value={meetinginute1} onchange={handleMeetingMinuteChange}></lightning-textarea>
                       </lightning-layout-item>
                      </lightning-layout>

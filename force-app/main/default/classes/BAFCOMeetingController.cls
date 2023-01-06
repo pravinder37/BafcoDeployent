@@ -91,8 +91,6 @@ public class BAFCOMeetingController {
         String enquiryId,
         String startDate,
         String startTime,
-        String endDate,
-        String endTime,
         String meetingMinute,
         String lati,
         String longi
@@ -104,30 +102,14 @@ public class BAFCOMeetingController {
 		Time myTime = Time.newInstance(integer.valueOf(timeList[0]), integer.valueOf(timeList[1]),0,0);
         Datetime startDate3 = Datetime.newInstanceGmt(myDate,myTime);
         String startDate2 = startDate3.formatGmt('yyyy-MM-dd\'T\'HH:mm:ss') + '+00:00';	   
-        
-        
-        
-        List<String> dateList2 = endDate.split('-');
-        List<String> timeList2 = endTime.split(':');
-        String endDateDay = '';
-        if(dateList2[2].contains(' ')){
-            List<String> temp = dateList2[2].split(' ');
-            endDateDay = temp[0];
-        }
-        else{
-            endDateDay = dateList2[2];
-        }
-        Date myDate2 = Date.newInstance(integer.valueOf(dateList2[0]), integer.valueOf(dateList2[1]), integer.valueOf(endDateDay));
-		Time myTime2 = Time.newInstance(integer.valueOf(timeList2[0]), integer.valueOf(timeList2[1]),0,0);
-        Datetime endDate4 = Datetime.newInstanceGmt(myDate2,myTime2);
-        String endDate2 = endDate4.formatGmt('yyyy-MM-dd\'T\'HH:mm:ss') + '+00:00';	
-        
         Event ev =new Event();
         ev.Id = recordId;
         ev.Related_Enquiry__c = enquiryId != '' ? enquiryId : null;
         ev.StartDateTime = DateTime.valueOf(startDate2.replace('T', ' '));
-        ev.EndDateTime = DateTime.valueOf(endDate2.replace('T', ' '));
+       // ev.EndDateTime = DateTime.valueOf(endDate2.replace('T', ' '));
+        ev.EndDateTime = ev.StartDateTime.addHours(1);
         ev.Start_Date__c = Date.valueOf(startDate);
+        ev.End_Date__c = Date.valueOf(startDate);
         ev.Checkin_Location__Latitude__s = lati != '' ? Decimal.valueOf(lati) : null;
         ev.Checkin_Location__Longitude__s = longi !='' ?  Decimal.valueOf(longi) : null;
         ev.Minutes_of_Meeting__c = meetingMinute;

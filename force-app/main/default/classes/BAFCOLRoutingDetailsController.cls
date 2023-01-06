@@ -761,7 +761,7 @@ public class BAFCOLRoutingDetailsController {
     }
     @AuraEnabled
     public static List<Route_Equipment__c> getRouteEquipType( String routeId){
-        return [Select Id, Equipment_Type__r.name from Route_Equipment__c where Route__c =:routeId ];
+        return [Select Id, Equipment_Type__r.name,Quantity__c from Route_Equipment__c where Route__c =:routeId ];
     }
     @AuraEnabled
     public static List<template__c> getTemplatesData(){
@@ -916,13 +916,30 @@ public class BAFCOLRoutingDetailsController {
         else return null;
     }
     @AuraEnabled
-    public static Route_Equipment__c addRouteEquipment(String containerId , Decimal quantity, String routeId){
-        Route_Equipment__c routeQuipobj = new Route_Equipment__c();
-        routeQuipobj.Equipment_Type__c = containerId;
-        routeQuipobj.Quantity__c = quantity;
-        routeQuipobj.Route__c = routeId;
-        insert routeQuipobj;
-        return routeQuipobj;
+    public static void addRouteEquipment(List<BAFCORoutingDetailsDto.containerRecord> containerList,List<String> toDeleteRecord,String routeId){
+        if(toDeleteRecord.size() > 0){
+            List<Route_Equipment__c> toDelete = new List<Route_Equipment__c>();
+            for(String dd : toDeleteRecord){
+                Route_Equipment__c routeQuipobj = new Route_Equipment__c();
+                routeQuipobj.id = dd;
+                toDelete.add(routeQuipobj);
+            }
+            delete toDelete ;
+        }
+        List<Route_Equipment__c> routeEquipmentList = new List<Route_Equipment__c>();
+        for(BAFCORoutingDetailsDto.containerRecord cont : containerList){
+            Route_Equipment__c routeQuipobj = new Route_Equipment__c();
+            routeQuipobj.Equipment_Type__c = cont.containerType;
+            routeQuipobj.Quantity__c = cont.quantity;
+            if(cont.id != ''){
+                routeQuipobj.Id = cont.id;
+            }
+            else{
+                routeQuipobj.Route__c = routeId;
+            }
+            routeEquipmentList.add(routeQuipobj);
+        }
+        upsert routeEquipmentList;
     }
     public class SObjectResult {
         @AuraEnabled
