@@ -35,12 +35,19 @@ export default class BAFCOQuotationSendEmail extends LightningElement {
                 content +='\n\nPlease find below the details:\n';
 
                 if(result.length > 0){
+                    this.subject = result[0].customerName != undefined ? result[0].customerName+'-' : '';
+                    this.subject += result[0].subjectLine;
+                    console.log('subject '+this.subject)
                     result.forEach(elem => {
                         content += 'Port of Loading: '+elem.loadingPort;
                         content += '\nPort of Discharge: '+elem.dischargePort;
                         content += '\nEquipment Type: '+elem.equipmentType;
-                        content += '\nTotal: '+elem.total;
-                        content += '\n\n'
+                        content += '\nCargo Weight: '+elem.cargoWeight;
+                        content += '\nQuantity: '+elem.quantity;
+                        content += '\nShipping Line: '+elem.shippingLine;
+                        content += '\nCustomer refrence number: '+elem.customerRefNo;
+                        content += '\nCustomer PO number: '+elem.customerPONo;
+                        content += '\n\n';
                     });
                     content +='\nWe look forward to a positive response from your end.';
                     this.body = content;

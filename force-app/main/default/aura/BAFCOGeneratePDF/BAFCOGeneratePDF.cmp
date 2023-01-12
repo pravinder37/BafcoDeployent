@@ -1,6 +1,7 @@
 <aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,force:lightningQuickActionWithoutHeader,force:hasRecordId" access="global" >
     <aura:attribute name="value" type="List"/>
     <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="device" type="String" />
     <aura:attribute name="options" type="List" default="[
     {'label': 'Show Shipping Line', 'value': 'showShippLine'},
     {'label': 'Show Break-up of Charges', 'value': 'showCharges'}

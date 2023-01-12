@@ -123,9 +123,6 @@ public class BAFCOMeetingController {
             if(cameFromDisplayMeeting == true && myObject == 'Lead'){
                 myQuery = 'Select Id, Search__c from '+myObject+' Where Search__c Like  \'%' + searchTerm + '%\' AND '+filter+' LIMIT  5';
             }
-            else{
-                myQuery = 'Select Id, Search__c from '+myObject+' Where Search__c Like  \'%' + searchTerm + '%\' AND '+filter+' LIMIT  5';
-            }
         }
         else {
             if(searchTerm == null || searchTerm == ''){
@@ -133,9 +130,6 @@ public class BAFCOMeetingController {
             }
             else {
                 if(cameFromDisplayMeeting == true && myObject == 'Lead'){
-                    myQuery = 'Select Id, Search__c from '+myObject+' Where Search__c Like  \'%' + searchTerm + '%\' LIMIT  5';
-                }
-                else{
                     myQuery = 'Select Id, Search__c from '+myObject+' Where Search__c Like  \'%' + searchTerm + '%\' LIMIT  5';
                 }
             }

@@ -9,6 +9,12 @@ public class BAFCOMeetingControllerTest {
         acc.Best_Margin__c = 1;
         acc.name = 'test';
         insert acc;
+        
+        Lead ld = new Lead();
+        ld.Business_Type__c = 'Import';
+        ld.Company ='test';
+        ld.LastName='name';
+        insert ld;
     }
     testMethod static void submitMeetingsRecords(){
         Account acc = [Select id from Account limit 1];
@@ -24,7 +30,33 @@ public class BAFCOMeetingControllerTest {
         String eventId = BAFCOMeetingController.submitMeetingsRecords(acc.id, 'test', validityDate, timed, visitFor);
         BAFCOMeetingController.getIntakeMeetingObj(eventId);
         BAFCOMeetingController.getMeetingsRecords(validityDate);
-        BAFCOMeetingController.updateEventObject(eventId, enq.id, validityDate, timed, validityDate, timed, 'test', '28.65', '77.4');
+        BAFCOMeetingController.updateEventObject(eventId, enq.id, validityDate, timed,  'test', '28.65', '77.4');
+        test.stopTest();
+    }
+    testMethod static void searchTest01(){
+        String searchTerm='test';
+        String myObject ='Account';
+        String filter = 'test';
+        test.startTest();
+        try{
+            BAFCOMeetingController.search(searchTerm, myObject, null,false);
+            BAFCOMeetingController.search(null, myObject, null,false);
+            BAFCOMeetingController.search(searchTerm, myObject, filter,false);
+        }
+        catch(Exception e){}
+        test.stopTest();
+    }
+    testMethod static void searchTest012(){
+        String searchTerm='test ( name )';
+        String myObject ='Lead';
+        String filter = 'test';
+        test.startTest();
+        try{
+            BAFCOMeetingController.search(searchTerm, myObject, null,true);
+            BAFCOMeetingController.search(null, myObject, null,true);
+            BAFCOMeetingController.search(searchTerm, myObject, filter,true);
+        }
+        catch(Exception e){}
         test.stopTest();
     }
 }

@@ -9,20 +9,29 @@ public without sharing class BAFCOGeneratePDFController {
     public Boolean showPickupPlace {get;set;}
     public Boolean showPickupDischarge {get;set;}
     public Boolean showCharges {get;set;}
+    public Boolean isPhone {get;set;}
     public String recordId {get;set;}
+    
+     public String subject { get; set; }
+ public String body { get; set; }
+ public String emailid{get; set;}
+    
     public BAFCOGeneratePDFDto dto {get;set;}
     public BAFCOGeneratePDFController(ApexPages.StandardController controller){
         Map<String, String> pageParameters = ApexPages.currentPage().getParameters();
         String showShippLine = pageParameters.get('showShippLine');
         String showCharges = pageParameters.get('showCharges');
         String recordId = pageParameters.get('recordId');
+        String device = pageParameters.get('device');
         if(showShippLine == 'true') this.showShippLine = true; 
         else this.showShippLine = false;
         if(showCharges == 'true') this.showCharges = true; 
         else this.showCharges = false;
         this.recordId = recordId;
+        if(device == 'PHONE') this.isPhone = true;
+        else this.isPhone = false;
         dto =new BAFCOGeneratePDFDto();
-        System.debug('show charges '+this.showCharges);
+        System.debug('device '+device);
     }
     public void getQuoteData(){
         system.debug(' recordid '+this.recordId);
@@ -98,7 +107,7 @@ public without sharing class BAFCOGeneratePDFController {
                 this.dto.phone = '-';
                 this.dto.email ='-';
             }
-            List<Quotation_Item__c> quoteItem = [Select Freight_Difference_FD__c,Carrier_container_repositioning_charges__c,Alternate_depot_release_charges__c,Included_PDF_ShippingLine__c,Included_PDF_Origin__c,Included_PDF_Ex_works__c,Included_PDF_Destination__c,Included_PDF_Additional__c,Route__r.Service_Type__c,Ex_Works_Charge__c,Ex_Works_Charge_Name__r.name,Place_of_Discharge__r.Name,Place_of_Pickup__r.Name,Port_of_Discharge__r.name,Port_of_Loading__r.name,BAF__c,Bayan__c,Bayan_cancellation_charge__c,Bunker_surcharge__c,Cleaning_charges__c,
+            List<Quotation_Item__c> quoteItem = [Select Tank_Rental_Charges__c,Freight_Difference_FD__c,Carrier_container_repositioning_charges__c,Alternate_depot_release_charges__c,Included_PDF_ShippingLine__c,Included_PDF_Origin__c,Included_PDF_Ex_works__c,Included_PDF_Destination__c,Included_PDF_Additional__c,Route__r.Service_Type__c,Ex_Works_Charge__c,Ex_Works_Charge_Name__r.name,Place_of_Discharge__r.Name,Place_of_Pickup__r.Name,Port_of_Discharge__r.name,Port_of_Loading__r.name,BAF__c,Bayan__c,Bayan_cancellation_charge__c,Bunker_surcharge__c,Cleaning_charges__c,
                                                  CMC__c,Container_movement_charges__c,Container_stripping__c,
                                                  Destination_Customs_Clearance__c,Destination_Loading_Charges__c,DTHC__c,EIC__c,Equipment_Type__c,
                                                  Fasah_fee__c,Free_time_certificate_charges__c,Fumigation__c,Inspection__c,Insurance_charges__c,
@@ -276,6 +285,7 @@ public without sharing class BAFCOGeneratePDFController {
                                 addnObj.AlternateDepotReleaseCharges = dcQuoteItem.Alternate_depot_release_charges__c > 0 ? dcQuoteItem.Alternate_depot_release_charges__c : null;
                                 addnObj.FreightDifference = dcQuoteItem.Freight_Difference_FD__c > 0 ? dcQuoteItem.Freight_Difference_FD__c : null;
                                 addnObj.CarrierContainerRepositioningCharges = dcQuoteItem.Carrier_container_repositioning_charges__c > 0 ? dcQuoteItem.Carrier_container_repositioning_charges__c : null;
+                                addnObj.tankRentalCharge = dcQuoteItem.Tank_Rental_Charges__c > 0 ? dcQuoteItem.Tank_Rental_Charges__c : null;
                                 
                                 dcObj.additionalChargesObj = addnObj;
                                 
@@ -423,6 +433,7 @@ public without sharing class BAFCOGeneratePDFController {
                         addnObj.AlternateDepotReleaseCharges = item.Alternate_depot_release_charges__c > 0 ? item.Alternate_depot_release_charges__c : null;
                         addnObj.FreightDifference = item.Freight_Difference_FD__c > 0 ? item.Freight_Difference_FD__c : null;
                         addnObj.CarrierContainerRepositioningCharges = item.Carrier_container_repositioning_charges__c > 0 ? item.Carrier_container_repositioning_charges__c : null;
+                        addnObj.tankRentalCharge = item.Tank_Rental_Charges__c > 0 ? item.Tank_Rental_Charges__c : null;
                                 
                         itemDto.additionalChargesObj = addnObj;
                         
@@ -579,6 +590,7 @@ public without sharing class BAFCOGeneratePDFController {
                             addnObj.AlternateDepotReleaseCharges = item.Alternate_depot_release_charges__c > 0 ? item.Alternate_depot_release_charges__c : null;
                         	addnObj.FreightDifference = item.Freight_Difference_FD__c > 0 ? item.Freight_Difference_FD__c : null;
                         	addnObj.CarrierContainerRepositioningCharges = item.Carrier_container_repositioning_charges__c > 0 ? item.Carrier_container_repositioning_charges__c : null;
+                            addnObj.tankRentalCharge = item.Tank_Rental_Charges__c > 0 ? item.Tank_Rental_Charges__c : null;
                             itemDto.additionalChargesObj = addnObj;
                             
                             //ExWorks Charges

@@ -25,6 +25,10 @@ export default class BAFCOCopyQuoteItem extends LightningElement {
                         content += 'Port of Loading: '+elem.loadingPort;
                         content += '\nPort of Discharge: '+elem.dischargePort;
                         content += '\nEquipment Type: '+elem.equipmentType;
+                        content += '\nService Type: '+elem.serviceType;
+                        content += '\nINCO Term: '+elem.incoterm;
+                        content += '\nFreetime at POD: '+elem.freeTimePOD;
+                        content += '\nFreetime at POL: '+elem.freeTimePOL;
                         content += '\nTotal: '+elem.total;
                         content += '\n\n'
                     });

@@ -43,7 +43,7 @@ public class BAFCOSalesOrderController {
         }
         system.debug('mapequipNameToQty '+mapequipNameToQty);
         Integer index = 1;
-        for(Quotation_Item__c item : [Select Agent__c,Id,Shipping_Linee__c,Buying_Rate__c,Alternate_depot_release_charges__c,Freight_Difference_FD__c,Carrier_container_repositioning_charges__c,Ex_Works_Charge__c,Ex_Works_Charge_Name__c,Included_PDF_Ex_works__c,Included_PDF_Additional__c,Included_PDF_Destination__c,Included_PDF_Origin__c,Included_PDF_ShippingLine__c,Add_to_Buying_Ex_works__c,Add_to_Buying_Additional__c,Add_to_Buying_Destination__c,Add_to_Buying_Origin__c,Add_to_Buying_ShippingLine__c,BAF__c,Bayan__c,Bayan_cancellation_charge__c,Bunker_surcharge__c,Cleaning_charges__c,
+        for(Quotation_Item__c item : [Select Tank_Rental_Charges__c,Agent__c,Id,Shipping_Linee__c,Buying_Rate__c,Alternate_depot_release_charges__c,Freight_Difference_FD__c,Carrier_container_repositioning_charges__c,Ex_Works_Charge__c,Ex_Works_Charge_Name__c,Included_PDF_Ex_works__c,Included_PDF_Additional__c,Included_PDF_Destination__c,Included_PDF_Origin__c,Included_PDF_ShippingLine__c,Add_to_Buying_Ex_works__c,Add_to_Buying_Additional__c,Add_to_Buying_Destination__c,Add_to_Buying_Origin__c,Add_to_Buying_ShippingLine__c,BAF__c,Bayan__c,Bayan_cancellation_charge__c,Bunker_surcharge__c,Cleaning_charges__c,
                                       /*Container_Lashing_Charges__c,*/CMC__c,Container_movement_charges__c,Container_stripping__c,
                                       Destination_Customs_Clearance__c,Destination_Loading_Charges__c,DTHC__c,EIC__c,Equipment_Type__c,
                                       Fasah_fee__c,Free_time_certificate_charges__c,Fumigation__c,Inspection__c,Insurance_charges__c,
@@ -182,6 +182,7 @@ public class BAFCOSalesOrderController {
                                                   dto.FreightDifference = item.Freight_Difference_FD__c > 0 ? item.Freight_Difference_FD__c : 0;
                                                   dto.CarrierContainerRepositioningCharges = item.Carrier_container_repositioning_charges__c > 0 ? item.Carrier_container_repositioning_charges__c : 0;
                                                   dto.orderBuyingRate = item.Buying_Rate__c > 0 ? item.Buying_Rate__c : 0;
+                                                  dto.tankRentalCharge = item.Tank_Rental_Charges__c > 0? item.Tank_Rental_Charges__c : 0;
                                                   dto.shippLine = item.Shipping_Linee__c;
                                                   dto.quoteItemId = item.id;
                                                   dto.agentId = item.Agent__c;
@@ -194,19 +195,27 @@ public class BAFCOSalesOrderController {
     }
     @AuraEnabled
     public static Order__c createOrder(List<BAFCOOrderCreationDto> orderCreationList, String validityDate, String custRefNumber, String bookRefNumber, List<consigneeList> consigneeList, List<shipperList> shipperList){
-        // creating order
-        Order__c orderObj = new Order__c();
-        List<Order_Item__c> orderItemList = new List<Order_Item__c>();
+        Map<String,List<BAFCOOrderCreationDto.value>> routeIdToValueMap = new Map<String,List<BAFCOOrderCreationDto.value>>();
+        Map<String,String> orderIdToOrderData = new  Map<String,String>();
+        List<Order_Item__c> orderItemList = new  List<Order_Item__c>();
+        list<Order__c> orderList = new List<Order__c>();
         if(orderCreationList.size() > 0){
-            Integer index = -1;
-            for(Integer i = 0; i<orderCreationList.size();i++){
-                if(orderCreationList[i].equipment.size() > 0) {index = i; break;}
+            for(BAFCOOrderCreationDto dto : orderCreationList){
+                for(BAFCOOrderCreationDto.equipment item  : dto.equipment){
+                    for(BAFCOOrderCreationDto.value vv : item.value){
+                        if(!routeIdToValueMap.containsKey(vv.routeID+'-'+vv.shippLine)){
+                            routeIdToValueMap.put(vv.routeID+'-'+vv.shippLine,new List<BAFCOOrderCreationDto.value>());
+                        }
+                        routeIdToValueMap.get(vv.routeID+'-'+vv.shippLine).add(vv);
+                    }
+                }                
             }
-            BAFCOOrderCreationDto firstRouteData = orderCreationList[index];
-            BAFCOOrderCreationDto.equipment firstEquipmentData = firstRouteData.equipment[0];
-            if(firstEquipmentData.value.size() > 0){
-                BAFCOOrderCreationDto.value orderData = firstEquipmentData.value[0]; 
-                system.debug('orderData '+orderData);
+        }
+        for(String key : routeIdToValueMap.keySet()){
+            List<BAFCOOrderCreationDto.value> valueList = routeIdToValueMap.get(key);
+            if(valueList.size() > 0){
+                BAFCOOrderCreationDto.value orderData =valueList[0];
+                Order__c orderObj = new Order__c();
                 orderObj.Account_Order__c = orderData.accountId;
                 orderObj.Opportunity_Order__c = orderData.enquiryId;
                 orderObj.Leadc_Order__c = orderData.leadId;
@@ -215,9 +224,15 @@ public class BAFCOSalesOrderController {
                 orderObj.recordtypeId = orderData.recordtypeId == QUOTE_EXPORT_RECORDTYPE_Id ? ORDER_EXPORT_RECORDTYPE_Id : ORDER_IMPORT_RECORDTYPE_Id;
                 orderObj.Customer_Reference_Number__c = custRefNumber;
                 orderObj.Booking_Reference_Number__c = bookRefNumber;
-                insert orderObj;
+                orderObj.Order_Item_Link__c = key;
+                orderList.add(orderObj);
             }
-            // creating OrderItem
+        }
+        if(orderList.size() > 0){
+            insert orderList;
+            for(Order__c ord : orderList){
+                orderIdToOrderData.put(ord.Order_Item_Link__c,ord.Id);
+            }
             for(BAFCOOrderCreationDto routeDto : orderCreationList){
                 if(routeDto.equipment.size()>0){
                     for(BAFCOOrderCreationDto.equipment equipData : routeDto.equipment){
@@ -249,7 +264,7 @@ public class BAFCOSalesOrderController {
                             orderItem.Miscellaneous_Order__c = orderDto.miscallenous;
                             orderItem.MOT_fine_charges_Order__c = orderDto.mot;
                             orderItem.Non_Palletized_Surcharge_Order__c = orderDto.nonPatellized;
-                            orderItem.Order__c = orderObj.id;
+                            orderItem.Order__c = orderIdToOrderData.get(orderDto.routeID+'-'+orderDto.shippLine);
                             orderItem.Origin_Customs_clearance_Order__c=orderDto.originCustomClearance;
                             orderItem.Origin_Loading_Charges_Order__c = orderDto.originloadingCharges;
                             orderItem.OTHC_Order__c = orderDto.othc;
@@ -326,15 +341,17 @@ public class BAFCOSalesOrderController {
                             orderitem.Freight_Difference_FD__c = orderDto.FreightDifference;
                             orderitem.Carrier_container_repositioning_charges__c = orderDto.CarrierContainerRepositioningCharges ;
                             orderitem.Buying_Rate__c = orderDto.orderBuyingRate;
+                            orderitem.Tank_Rental_Charges__c = orderDto.tankRentalCharge;
                             orderItem.Shipping_Line__c = orderDto.shippLine;
                             orderItem.Quotation_Item__c = orderDto.quoteItemId;
                             orderItem.Agent__c = orderDto.agentId;
-                            system.debug('orderDto '+orderDto);
                             if(orderDto.checkBoxSelected == true) orderItemList.add(orderItem);
                         }
                     }
                 }
             }
+            ////
+            system.debug('orderItemList '+orderItemList.size());
             if(orderItemList.size()>0){
                 insert orderItemList;
                 List<Consignee__c> conList = new List<Consignee__c>();
@@ -364,8 +381,11 @@ public class BAFCOSalesOrderController {
                 if(conList.size() > 0) insert conList;
                 if(shipList.size() > 0) insert shipList;
             }
+        } 
+        if(orderList.size() > 0){
+            return orderList[0];
         }
-        return orderObj;
+        return null;
     }
     public class EquipData{
         @AuraEnabled
@@ -540,6 +560,7 @@ public class BAFCOSalesOrderController {
         @AuraEnabled public decimal FreightDifference {get; set;}
         @AuraEnabled public decimal CarrierContainerRepositioningCharges {get; set;}
         @AuraEnabled public decimal orderBuyingRate {get; set;}
+        @AuraEnabled public decimal tankRentalCharge {get; set;}
         @AuraEnabled public String shippLine {get; set;}
         @AuraEnabled public String quoteItemId {get; set;}
         @AuraEnabled public String agentId {get; set;}

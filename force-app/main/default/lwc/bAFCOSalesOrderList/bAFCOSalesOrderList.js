@@ -71,7 +71,8 @@ export default class BAFCOSalesOrderList extends NavigationMixin(LightningElemen
             else{
                 this.isLoading = true;
                 let saveDto = [];
-                saveDto = JSON.parse(JSON.stringify(this.displaySelectedQuoteItem))                
+                saveDto = JSON.parse(JSON.stringify(this.displaySelectedQuoteItem))   
+                console.log('saveDto ',JSON.stringify(saveDto,null,2))             
                 createOrder({
                      orderCreationList : saveDto,
                      validityDate : this.validityDate,

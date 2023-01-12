@@ -6,23 +6,40 @@ public class BAFCOLRoutingDetailsControllerTest {
         ld.Business_Type__c = 'Import';
         insert ld;
         
+        List<Port__c> portList = new List<Port__c>();
         Port__c port = new Port__c();
         port.City__c = 'Test';
         port.Name ='PortName';
         port.sector__c = 'Africa';
-        Insert port;
+        portList.add(port);
         
+        Port__c port2 = new Port__c();
+        port2.City__c = 'Test 2';
+        port2.Name ='PortName 2';
+        port2.sector__c = 'Africa';
+        portList.add(port2);
+        
+        insert portList;
+        
+        List<Commodity__c> comodityLis = new List<Commodity__c>();
         Commodity__c comd = new Commodity__c();
         comd.Name = 'CommodityName';
         comd.DG_Class__c = 'test';
-        insert comd;
+        comodityLis.add(comd);
+        Commodity__c comd2 = new Commodity__c();
+        comd2.Name = 'FAK';
+        comd2.DG_Class__c = 'test2';
+        comodityLis.add(comd2);
+        insert comodityLis;
         
         Shipping_Line__c shipLine = new  Shipping_Line__c();
         shipLine.Name = 'ShipLine';
+        shipLine.BSLS_ID__c = 'test';
         Insert shipLine;
         
         Equipment_Type__c equip = new Equipment_Type__c();
         equip.Name='EquipName';
+         equip.BSLS_ID__c = 'test';
         Insert equip;
         
         Account acc = new Account();
@@ -39,6 +56,14 @@ public class BAFCOLRoutingDetailsControllerTest {
         opty.Name ='testopty';
         opty.Business_Type__c = 'Export';
         insert opty;
+        Task tsk = new Task();
+        tsk.Subject = 'Provide Quotation';
+        tsk.Status = 'Open';
+        tsk.OwnerId = UserInfo.getUserId();
+        tsk.WhatId = opty.Id;
+        tsk.IsReminderSet = true;
+        tsk.ActivityDate = Date.valueOf(DateTime.now());
+        insert tsk;
         Regular_Routing__c regObj = new Regular_Routing__c();
         regObj.Account__c = acc.id;
         regObj.Name = 'test';
@@ -68,7 +93,7 @@ public class BAFCOLRoutingDetailsControllerTest {
         Agent__c agentObj = new Agent__c();
         agentObj.name =  'test';
         insert agentObj;
-        
+        List<RMS__c> rmsList = new List<RMS__c>();
         RMS__c rmsObj = new RMS__c();
         rmsObj.Name ='Test';
         rmsObj.Port_Of_Discharge__c = port.Id;
@@ -77,7 +102,18 @@ public class BAFCOLRoutingDetailsControllerTest {
         rmsObj.Shipping_Line__c = shipLine.id;
         rmsObj.Equipment_Type__c = equip.id;
         rmsObj.Validity__c = System.today().addDays(5);
-        insert rmsObj;
+        rmsList.add(rmsObj);
+        
+        RMS__c rmsObj2 = new RMS__c();
+        rmsObj2.Name ='Test2';
+        rmsObj2.Port_Of_Discharge__c = port2.Id;
+        rmsObj2.Port_Of_Loading__c = port2.Id;
+        rmsObj2.Commodity__c =comd.Id;
+        rmsObj2.Shipping_Line__c = shipLine.id;
+        rmsObj2.Equipment_Type__c = equip.id;
+        rmsObj2.Validity__c = System.today().addDays(7);
+        rmsList.add(rmsObj2);
+        insert  rmsList;
         
         integer year =  Date.Today().Year();
         string s1=string.valueof(year).right(2);
@@ -85,6 +121,8 @@ public class BAFCOLRoutingDetailsControllerTest {
         Quotation__c quoteObj = new Quotation__c();
         quoteObj.Name__c= 'Quote/'+Year1+'/'+1;
         quoteObj.opportunity__c = opty.id;
+        quoteObj.Customer_Name__c = 'test';
+        quoteObj.Account__c = acc.id;
         quoteObj.Leadc__c = ld.id;
         Insert quoteObj;
         
@@ -93,6 +131,7 @@ public class BAFCOLRoutingDetailsControllerTest {
         quoteItem.Route__c = route.id;
         quoteItem.Quotation__c = quoteObj.Id;
         quoteItem.Equipment_Type__c = equip.id;
+        quoteItem.Sea_Freight__c = 100;
         Insert quoteItem;
         
         Exchange_Rate__c exc = new Exchange_Rate__c ();
@@ -104,24 +143,66 @@ public class BAFCOLRoutingDetailsControllerTest {
         routeEquip.Quantity__c = 12;
         insert routeEquip;
         
+        List<INCO_Term__c> incOList = new List<INCO_Term__c>();
         INCO_Term__c incoTerm = new INCO_Term__c();
         incoTerm.Name = 'IncoTerm';
-        insert incoTerm;
+        incOList.add(incoTerm);
         
         INCO_Term__c incoTerm2 = new INCO_Term__c();
         incoTerm2.Name = 'IncoTerm2';
-        insert incoTerm2;
+        incOList.add(incoTerm2);
         
+        INCO_Term__c incoTerm3 = new INCO_Term__c();
+        incoTerm3.Name = 'Ocean Freight';
+        incOList.add(incoTerm3);
+        
+        INCO_Term__c incoTerm4 = new INCO_Term__c();
+        incoTerm4.Name = 'CFR';
+        incOList.add(incoTerm4);
+        
+        insert incOList;
+        
+        List<INCO_Charge__c> incoChargeLsit = new List<INCO_Charge__c>();
         INCO_Charge__c incoCharge = new INCO_Charge__c();
         incoCharge.INCO_Term__c = incoTerm.id;
         incoCharge.RMS__c = rmsObj.Id;
         incoCharge.Bayan__c=12;        
-        insert incoCharge;
+        incoChargeLsit.add(incoCharge);
         
         INCO_Charge__c incoCharge2 = new INCO_Charge__c();
         incoCharge2.INCO_Term__c = incoTerm2.id;
         incoCharge2.RMS__c = rmsObj.Id;
-        insert incoCharge2;
+        incoChargeLsit.add(incoCharge2);
+        
+         INCO_Charge__c incoCharge3 = new INCO_Charge__c();
+        incoCharge3.INCO_Term__c = incoTerm2.id;
+        incoCharge3.RMS__c = rmsObj2.Id;
+        incoCharge3.Total__c = 110;
+        incoChargeLsit.add(incoCharge3);
+         insert incoChargeLsit;
+        
+        List<Destination_Charges__c> destinList = new List<Destination_Charges__c>();
+        Destination_Charges__c destinbj = new Destination_Charges__c();
+        destinbj.RMS__c = rmsObj.Id;
+        destinbj.Total__c =10;
+        destinList.add(destinbj);
+        Destination_Charges__c destinbj1 = new Destination_Charges__c();
+        destinbj1.RMS__c = rmsObj2.Id;
+        destinbj1.DO_charges__c = 1;
+        destinList.add(destinbj1);
+        insert destinList;
+        
+        List<Shipping_Line_Charge__c> shipList = new List<Shipping_Line_Charge__c>();
+        Shipping_Line_Charge__c shiObj = new Shipping_Line_Charge__c();
+        shiObj.Total__c = 10;
+        shiObj.RMS__c = rmsObj.id;
+        shipList.add(shiObj);
+        
+        Shipping_Line_Charge__c shiObj1 = new Shipping_Line_Charge__c();
+        shiObj1.BAF__c = 10;
+        shiObj1.RMS__c = rmsObj2.id;
+        shipList.add(shiObj1);
+        insert shipList;
         
         Additional_Charge__c addCharge = new Additional_Charge__c();
         addCharge.Name = 'AdditionalCharge';
@@ -132,6 +213,14 @@ public class BAFCOLRoutingDetailsControllerTest {
         templateObj.Field10_Name__c = 'test';
         templateObj.Field10_Value__c = 12;
         Insert templateObj;
+        
+        Loading_Charge__c exWorks= new Loading_Charge__c();
+        exWorks.Name  = 'tes';
+        exWorks.Loading_Charge__c = 100;
+        exWorks.Port_of_Loading__c = port.id;
+        exWorks.Direction__c = 'One Way';
+        exWorks.Place_of_Pickup__c = placeObj.id;
+        insert exWorks;
         
     }
     testmethod static void getEnqueryDetailsTest01(){
@@ -238,7 +327,7 @@ public class BAFCOLRoutingDetailsControllerTest {
         a5.value =12;
         addList.add(a5);
         BAFCOGenerteQuoteDto.AdditionalCharge a6 = new BAFCOGenerteQuoteDto.AdditionalCharge(); 
-        a6.name = 'Free time certificate charges';
+        a6.name = 'Additional Freetime Charges';
         a6.value =12;
         addList.add(a6);
         BAFCOGenerteQuoteDto.AdditionalCharge a7 = new BAFCOGenerteQuoteDto.AdditionalCharge(); 
@@ -313,6 +402,18 @@ public class BAFCOLRoutingDetailsControllerTest {
         a24.name = 'Wrapping/packing charges';
         a24.value =12;
         addList.add(a24);
+        BAFCOGenerteQuoteDto.AdditionalCharge a25 = new BAFCOGenerteQuoteDto.AdditionalCharge(); 
+        a25.name = 'Freight Difference(FD)';
+        a25.value =12;
+        addList.add(a25);
+        BAFCOGenerteQuoteDto.AdditionalCharge a26 = new BAFCOGenerteQuoteDto.AdditionalCharge(); 
+        a26.name = 'Carrier container repositioning charges';
+        a26.value =12;
+        addList.add(a26);
+        BAFCOGenerteQuoteDto.AdditionalCharge a27 = new BAFCOGenerteQuoteDto.AdditionalCharge(); 
+        a27.name = 'Alternate depot release charges';
+        a27.value =12;
+        addList.add(a27);
         
         BAFCOIncoChargesDto incoChargeList = new BAFCOIncoChargesDto();
         incoChargeList.bayan=12;
@@ -336,6 +437,14 @@ public class BAFCOLRoutingDetailsControllerTest {
         dto1.incoChargList = incoChargeList;
         dto1.additionalChargeList = addList;
         dto1.serviceChargeList = servList1;
+        
+        Loading_charge__c exWorks = [Select id from Loading_charge__c limit 1];
+        BAFCOGenerteQuoteDto.exWorksObj exWorksDto = new BAFCOGenerteQuoteDto.exWorksObj();
+        exWorksDto.Id = exWorks.id;
+        exWorksDto.LoadCharge  = 100;
+        
+        dto1.exWorksObj = exWorksDto;
+        
         String validityDate = String.valueOf(System.today());
         test.startTest();
         String QuoteId = BAFCOLRoutingDetailsController.genrateQuotation(routeId, rmsId, enquiryId, quotationId, dto1, incoTerm,false,false,'test',1);
@@ -389,9 +498,9 @@ public class BAFCOLRoutingDetailsControllerTest {
         test.stopTest();
     }
     testMethod static void getLoadingChargesTest(){
-        String pickupPlace = '';
-        String portLoading = '';
-        String directionValue = '';
+        String pickupPlace = 'test';
+        String portLoading = 'PortName';
+        String directionValue = 'One Way';
         test.startTest();
         BAFCOLRoutingDetailsController.getLoadingCharges(pickupPlace, portLoading, directionValue);
         test.stopTest();
@@ -423,4 +532,66 @@ public class BAFCOLRoutingDetailsControllerTest {
         BAFCOLRoutingDetailsController.createRateProcument(portObj.name, 'commodity', shipLine.id, portObj.name, 1, enquiryId, roue.id, agent.id);
         test.stopTest();
     }
+    testMethod static void getDefualtValueForRMSTest(){
+        test.startTest();
+        BAFCOLRoutingDetailsController.getDefualtValueForRMS();
+        test.stopTest();
+    }
+    testMethod static void getDefualtValueForEnquiryTest(){
+        test.startTest();
+        BAFCOLRoutingDetailsController.getDefualtValueForEnquiry();
+        test.stopTest();
+    }
+    testMethod static void getDefaultImportAddRateTest(){
+        test.startTest();
+        String RouteId = [Select id from Route__c limit 1].id; 
+        BAFCOLRoutingDetailsController.getDefaultImportAddRate(RouteId);
+        test.stopTest();
+    }
+    testMethod static void getExWorksOnLoad(){
+        test.startTest();
+        BAFCOLRoutingDetailsController.getExWorksOnLoad();
+        test.stopTest();
+    }
+     testMethod static void copyExistingRMSTest(){
+        test.startTest();
+       List<RMS__c> rmsList = [Select id from RMS__c]; 
+        BAFCOLRoutingDetailsController.copyExistingRMS(rmsList[0].id);
+        test.stopTest();
+    }
+    testMethod static void copyExistingRMSTest2(){
+        test.startTest();
+        List<RMS__c> rmsList = [Select id from RMS__c]; 
+        BAFCOLRoutingDetailsController.copyExistingRMS(rmsList[1].id);
+        test.stopTest();
+    }
+    testMethod static void addRouteEquipmentTest(){
+        test.startTest();
+        String routeId = [Select id from Route__c limit 1].id;
+        String equip = [Select id from Equipment_Type__c limit 1].id;
+        Route_Equipment__c rEquip = new Route_Equipment__c();
+        rEquip.Route__c = routeId;
+        rEquip.Equipment_Type__c = equip;
+        Insert rEquip;
+        
+        Route_Equipment__c rEquip1 = new Route_Equipment__c();
+        rEquip1.Route__c = routeId;
+        rEquip1.Equipment_Type__c = equip;
+        Insert rEquip1;
+        
+        List<BAFCORoutingDetailsDto.containerRecord> containerList = new List<BAFCORoutingDetailsDto.containerRecord>();
+        BAFCORoutingDetailsDto.containerRecord obj1 = new BAFCORoutingDetailsDto.containerRecord();
+		obj1.containerType =   equip;
+        obj1.quantity = 1;
+        obj1.id = rEquip1.id;
+        containerList.add(obj1);
+        BAFCORoutingDetailsDto.containerRecord obj2 = new BAFCORoutingDetailsDto.containerRecord();
+		obj2.containerType =   equip;
+        obj2.quantity = 12;
+        obj2.id = '';
+        containerList.add(obj2);
+        BAFCOLRoutingDetailsController.addRouteEquipment(containerList, new List<String>{rEquip.id}, routeId);
+        test.stopTest();
+    }
+    
 }

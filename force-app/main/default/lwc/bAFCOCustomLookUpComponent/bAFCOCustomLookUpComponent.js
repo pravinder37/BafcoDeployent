@@ -15,7 +15,7 @@ export default class BAFCOCustomLookUpComponent extends LightningElement {
     //css
     @track boxClass = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-has-focus';
     @track inputClass = '';
-    @wire(lookUp, {searchTerm : '$searchTerm', myObject : '$objName', filter : '$filter',cameFromDisplayMeeting : '$cameFromDisplayMeeting'})
+    @wire(lookUp, {searchTerm : '$searchTerm', myObject : '$objName', filter : '$filter'})
     wiredRecords({ error, data }) {
         if (data) {
             this.error = undefined;

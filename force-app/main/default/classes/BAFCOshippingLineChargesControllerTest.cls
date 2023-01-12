@@ -6,11 +6,16 @@ public class BAFCOshippingLineChargesControllerTest {
         port.City__c = 'Test';
         port.Sector__c='Africa';
         Insert port;
+        Equipment_Type__c equip = new Equipment_Type__c();
+        equip.Name='EquipName';
+        equip.BSLS_ID__c = 'test';
+        Insert equip;
         
         RMS__c rmsObj = new RMS__c();
         rmsObj.Name ='Test';
         rmsObj.Port_Of_Discharge__c = port.Id;
         rmsObj.Port_Of_Loading__c = port.Id;
+        rmsObj.Equipment_Type__c = equip.id;
         insert rmsObj;
         
         Shipping_Line_Charge__c shipLine = new Shipping_Line_Charge__c();

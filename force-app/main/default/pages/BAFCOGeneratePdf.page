@@ -1,4 +1,4 @@
-<apex:page renderAs="pdf" standardController="Quotation__c" extensions="BAFCOGeneratePDFController" applyHtmlTag="false" standardStylesheets="false" showHeader="false" applyBodyTag="false" action="{!getQuoteData}" >
+<apex:page title="Generate Pdf" renderAs="pdf" standardController="Quotation__c" extensions="BAFCOGeneratePDFController" applyHtmlTag="false" standardStylesheets="false" showHeader="false" applyBodyTag="false" action="{!getQuoteData}" >
     
     <head>
         <style >
@@ -966,6 +966,16 @@
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.tankRentalCharge  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Tank Rental Charges"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.tankRentalCharge}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.exWorksObj.LoadCharge  != NULL}">
                                     <div class="boxesCss"  style="background: #EFEFEF;padding: 10px;">
                                         <apex:panelGrid columns="2">
@@ -981,7 +991,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <apex:panelGrid style="display: block;" rendered="{!item.ShowtotalDC == true}" columns="4">
+                            <apex:panelGrid style="display: block;" rendered="{!AND(item.ShowtotalDC == true,showCharges==true)}" columns="4">
                                 <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.BAF  != NULL}">
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
@@ -1734,6 +1744,16 @@
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Freight Difference (FD)"/>
                                             <apex:outputText value="{!item.dc20Charges.additionalChargesObj.FreightDifference}"/>                                          
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.tankRentalCharge  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Tank Rental Charge"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.tankRentalCharge}"/>                                          
                                             <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
                                             <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
                                         </apex:panelGrid>

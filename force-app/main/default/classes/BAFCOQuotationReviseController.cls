@@ -338,6 +338,12 @@ public class BAFCOQuotationReviseController {
                     obj.value = item.Alternate_depot_release_charges__c;
                     additionalChargeList.add(obj);
                 }
+                if(item.Tank_Rental_Charges__c > 0){
+                    BAFCOAllQuotationItemDto.additionalChargeList obj = new BAFCOAllQuotationItemDto.additionalChargeList();
+                    obj.Name = 'Tank Rental Charges';
+                    obj.value = item.Tank_Rental_Charges__c;
+                    additionalChargeList.add(obj);
+                }
                 if(additionalChargeList.size() > 0){
                     itemDto.additionalChargeList = additionalChargeList;
                 }

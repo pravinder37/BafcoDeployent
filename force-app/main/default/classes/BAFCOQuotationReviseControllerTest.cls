@@ -17,6 +17,16 @@ public class BAFCOQuotationReviseControllerTest {
         opty.Name ='testopty';
         opty.Business_Type__c = 'Export';
         insert opty;
+        
+        Task tsk = new Task();
+        tsk.Subject = 'Provide Quotation';
+        tsk.Status = 'Open';
+        tsk.OwnerId = UserInfo.getUserId();
+        tsk.WhatId = opty.Id;
+        tsk.IsReminderSet = true;
+        tsk.ActivityDate = Date.valueOf(DateTime.now());
+        insert tsk;
+        
         Contact cont = new Contact();
         cont.AccountId = acc.id;
         cont.LastName = 'test';
@@ -38,10 +48,12 @@ public class BAFCOQuotationReviseControllerTest {
         
         Shipping_Line__c shipLine = new  Shipping_Line__c();
         shipLine.Name = 'ShipLine';
+        shipLine.BSLS_ID__c = 'test';
         Insert shipLine;
         
         Equipment_Type__c equip = new Equipment_Type__c();
         equip.Name='EquipName';
+         equip.BSLS_ID__c = 'test';
         Insert equip;
         
         Enquiry__c enq = new Enquiry__c();
@@ -59,6 +71,14 @@ public class BAFCOQuotationReviseControllerTest {
         Route_Equipment__c rEquip = new Route_Equipment__c();
         rEquip.Route__c = route.id;
         Insert rEquip;
+        
+        Loading_Charge__c exWorks= new Loading_Charge__c();
+        exWorks.Name  = 'tes';
+        exWorks.Loading_Charge__c = 100;
+        exWorks.Port_of_Loading__c = port.id;
+        exWorks.Direction__c = 'One Way';
+        insert exWorks;
+        
         
         RMS__c rmsObj = new RMS__c();
         rmsObj.Name ='Test';
@@ -103,6 +123,7 @@ public class BAFCOQuotationReviseControllerTest {
         quoteObj.Opportunity__c = opty.id;
         quoteObj.Leadc__c = ld.id;
         quoteObj.Account__c = acc.id;
+        quoteObj.Customer_Name__c = 'test';
         Insert quoteObj;
         
         Quotation_Item__c quoteItem = new Quotation_Item__c();
@@ -147,6 +168,16 @@ public class BAFCOQuotationReviseControllerTest {
         quoteItem.Truck_idling_charges__c = 10;        
         quoteItem.Vessel_certificate_charges__c = 10;        
         quoteItem.Wrappingpacking_charges__c = 10;
+        quoteItem.Sea_Freight__c = 1;
+        quoteItem.Freight_Difference_FD__c = 12;
+        quoteItem.Carrier_container_repositioning_charges__c = 10;
+        quoteItem.Alternate_depot_release_charges__c = 120;
+        quoteItem.Ex_Works_Charge_Name__c = exWorks.id;
+        quoteItem.Ex_Works_Charge__c =10;
+        quoteItem.Total_Additional__c = 10;
+        quoteItem.Total_Dest__c = 10;
+        quoteItem.Total_INCO__c = 10;
+        quoteItem.Total_SL__c = 10;
         Insert quoteItem;
         
     }

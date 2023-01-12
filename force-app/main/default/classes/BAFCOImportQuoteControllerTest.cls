@@ -19,10 +19,12 @@ public class BAFCOImportQuoteControllerTest {
         
         Shipping_Line__c shipLine = new  Shipping_Line__c();
         shipLine.Name = 'ShipLine';
+        shipLine.BSLS_ID__c = 'test';
         Insert shipLine;
         
         Equipment_Type__c equip = new Equipment_Type__c();
         equip.Name='EquipName';
+        equip.BSLS_ID__c = 'test';
         Insert equip;
         
         Account acc = new Account();
@@ -32,6 +34,7 @@ public class BAFCOImportQuoteControllerTest {
         acc.Best_Margin__c = 1;
         acc.name = 'test';
         insert acc;
+        
         opportunity opty = new Opportunity();
         opty.AccountId = acc.id;
         opty.StageName = 'Qualification';
@@ -39,6 +42,16 @@ public class BAFCOImportQuoteControllerTest {
         opty.Name ='testopty';
         opty.Business_Type__c = 'Export';
         insert opty;
+        
+        Task tsk = new Task();
+        tsk.Subject = 'Provide Quotation';
+        tsk.Status = 'Open';
+        tsk.OwnerId = UserInfo.getUserId();
+        tsk.WhatId = opty.Id;
+        tsk.IsReminderSet = true;
+        tsk.ActivityDate = Date.valueOf(DateTime.now());
+        insert tsk;
+        
         Regular_Routing__c regObj = new Regular_Routing__c();
         regObj.Account__c = acc.id;
         regObj.Name = 'test';
@@ -89,6 +102,8 @@ public class BAFCOImportQuoteControllerTest {
         quoteObj.Name__c= 'Quote/'+Year1+'/'+1;
         quoteObj.Opportunity__c = opty.id;
         quoteObj.Leadc__c = ld.id;
+         quoteObj.Customer_Name__c = 'test';
+        quoteObj.Account__c = acc.id;
         Insert quoteObj;
         
         Quotation_Item__c quoteItem = new Quotation_Item__c();
@@ -96,6 +111,7 @@ public class BAFCOImportQuoteControllerTest {
         quoteItem.Route__c = route.id;
         quoteItem.Quotation__c = quoteObj.Id;
         quoteItem.Equipment_Type__c = equip.id;
+        quoteItem.Sea_Freight__c = 10;
         Insert quoteItem;
         
         Exchange_Rate__c exc = new Exchange_Rate__c ();
@@ -136,6 +152,14 @@ public class BAFCOImportQuoteControllerTest {
         templateObj.Field10_Value__c = 12;
         Insert templateObj;
         
+         Loading_Charge__c exWorks= new Loading_Charge__c();
+        exWorks.Name  = 'tes';
+        exWorks.Loading_Charge__c = 100;
+        exWorks.Port_of_Loading__c = port.id;
+        exWorks.Direction__c = 'One Way';
+        exWorks.Place_of_Pickup__c = placeObj.id;
+        insert exWorks;
+        
     }
     testmethod static void generateQuote(){
         String routeId = [Select id from Route__c limit 1].Id;
@@ -168,7 +192,7 @@ public class BAFCOImportQuoteControllerTest {
         a5.value =12;
         addList.add(a5);
         BAFCOImportRMSDto.AdditionalCharge a6 = new BAFCOImportRMSDto.AdditionalCharge(); 
-        a6.name = 'Free time certificate charges';
+        a6.name = 'Additional Freetime Charges';
         a6.value =12;
         addList.add(a6);
         BAFCOImportRMSDto.AdditionalCharge a7 = new BAFCOImportRMSDto.AdditionalCharge(); 
@@ -243,6 +267,18 @@ public class BAFCOImportQuoteControllerTest {
         a24.name = 'Wrapping/packing charges';
         a24.value =12;
         addList.add(a24);
+        BAFCOImportRMSDto.AdditionalCharge a25 = new BAFCOImportRMSDto.AdditionalCharge(); 
+        a25.name = 'Freight Difference(FD)';
+        a25.value =12;
+        addList.add(a25);
+        BAFCOImportRMSDto.AdditionalCharge a26 = new BAFCOImportRMSDto.AdditionalCharge(); 
+        a26.name = 'Carrier container repositioning charges';
+        a26.value =12;
+        addList.add(a26);
+        BAFCOImportRMSDto.AdditionalCharge a27 = new BAFCOImportRMSDto.AdditionalCharge(); 
+        a27.name = 'Alternate depot release charges';
+        a27.value =12;
+        addList.add(a27);
         
         BAFCOImportRMSDto dto = new BAFCOImportRMSDto();
         BAFCOIncoChargesDto incoChargeList = new BAFCOIncoChargesDto();
@@ -262,6 +298,14 @@ public class BAFCOImportQuoteControllerTest {
         servList1.servichargesObj = servObj;
         dto.serviceChargeList = servList1;
         dto.additionalChargeList = addList;
+        
+        Loading_charge__c exWorks = [Select id from Loading_charge__c limit 1];
+        BAFCOImportRMSDto.exWorksObj exWorksDto = new BAFCOImportRMSDto.exWorksObj();
+        exWorksDto.Id = exWorks.id;
+        exWorksDto.LoadCharge  = 100;
+        
+        dto.exWorksObj = exWorksDto;
+        
         test.startTest();
         String QuoteId = BAFCOImportQuoteController.genrateQuotation(routeId, rmsId, enquiryId, quotationId, dto, incoTerm, 'test', 1, false, false, agentId);
         String QuoteId1 = BAFCOImportQuoteController.genrateQuotation(routeId, rmsId, enquiryId, quotationId, dto, incoTerm, 'test', 1, true, true, agentId);

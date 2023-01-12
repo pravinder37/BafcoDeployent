@@ -17,6 +17,14 @@ public class BAFCOSalesOrderControllerTest {
         opty.Name ='testopty';
         opty.Business_Type__c = 'Export';
         insert opty;
+        Task tsk = new Task();
+        tsk.Subject = 'Provide Quotation';
+        tsk.Status = 'Open';
+        tsk.OwnerId = UserInfo.getUserId();
+        tsk.WhatId = opty.Id;
+        tsk.IsReminderSet = true;
+        tsk.ActivityDate = Date.valueOf(DateTime.now());
+        insert tsk;
         Port__c port = new Port__c();
         port.City__c = 'Test';
         port.Name ='PortName';
@@ -30,10 +38,12 @@ public class BAFCOSalesOrderControllerTest {
         
         Shipping_Line__c shipLine = new  Shipping_Line__c();
         shipLine.Name = 'ShipLine';
+        shipLine.BSLS_ID__c = 'test';
         Insert shipLine;
         
         Equipment_Type__c equip = new Equipment_Type__c();
         equip.Name='EquipName';
+        equip.BSLS_ID__c = 'test';
         Insert equip;
         
         Enquiry__c enq = new Enquiry__c();
@@ -70,6 +80,7 @@ public class BAFCOSalesOrderControllerTest {
         quoteObj.Opportunity__c = opty.id;
         quoteObj.Leadc__c = ld.id;
         quoteObj.Account__c = acc.id;
+        quoteObj.Customer_Name__c = 'test';
         Insert quoteObj;
         
         Quotation_Item__c quoteItem = new Quotation_Item__c();
@@ -77,6 +88,7 @@ public class BAFCOSalesOrderControllerTest {
         quoteItem.Route__c = route.id;
         quoteItem.Quotation__c = quoteObj.Id;
         quoteItem.Equipment_Type__c = equip.id;
+        quoteItem.Sea_freight__c =12;
         Insert quoteItem;
         
     }
@@ -98,11 +110,25 @@ public class BAFCOSalesOrderControllerTest {
         String dd = String.valueOF(System.today());
         List<BAFCOOrderCreationDto> dtoList = getOrderCreationDto();
         system.debug('dtoList '+dtoList);
-        BAFCOSalesOrderController.createOrder(dtoList,dd);        
+        String accountId = getAccountId();
+        
+        List<BAFCOSalesOrderController.consigneeList> consigneeList = new  List<BAFCOSalesOrderController.consigneeList>();
+        BAFCOSalesOrderController.consigneeList obj = new BAFCOSalesOrderController.consigneeList();
+        obj.consigneeId = accountId;
+        obj.consigneeName = 'test';
+        consigneeList.add(obj);
+        
+        List<BAFCOSalesOrderController.shipperList> shipperList = new List<BAFCOSalesOrderController.shipperList>();
+        BAFCOSalesOrderController.shipperList obj2 = new BAFCOSalesOrderController.shipperList();
+        obj2.shipperId = accountId;
+        obj2.shipperName = 'test';
+        shipperList.add(obj2);
+        
+        BAFCOSalesOrderController.createOrder(dtoList,dd,'test','test2',consigneeList,shipperList);        
         test.stopTest();
     }
     static List<BAFCOOrderCreationDto> getOrderCreationDto(){
-		List<BAFCOOrderCreationDto.value> valueList = new List<BAFCOOrderCreationDto.value>();        
+        List<BAFCOOrderCreationDto.value> valueList = new List<BAFCOOrderCreationDto.value>();        
         BAFCOOrderCreationDto.value valueObj = new BAFCOOrderCreationDto.value();
         valueObj.accountId = getAccountId();
         valueObj.baf = 0;
@@ -112,6 +138,18 @@ public class BAFCOSalesOrderControllerTest {
         valueObj.quotationId = getQuoteId();
         valueObj.shipName = 'COSCO';
         valueObj.sellingTotal = 1100;
+        valueObj.addAdditionalCharge = false;
+        valueObj.checkBoxSelected = true;
+        valueObj.addServiceCharge  = false;
+        valueObj.addOriginCharge  = false;
+        valueObj.addDestinCharge  = false;
+        valueObj.addAdditionalCharge  = false;
+        valueObj.addExWorksCharge  = false;
+        valueObj.includeServiceCharge  = false;
+        valueObj.includeOriginCharge  = false;
+        valueObj.includeDestinCharge  = false;
+        valueObj.includeAdditionalCharge  = false;
+        valueObj.includeExWorksCharge  = false;
         valueList.add(valueObj);
         
         List<BAFCOOrderCreationDto.equipment> equipList = new List<BAFCOOrderCreationDto.equipment>();

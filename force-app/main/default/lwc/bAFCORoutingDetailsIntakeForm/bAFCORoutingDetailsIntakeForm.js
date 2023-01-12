@@ -1603,4 +1603,11 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
             }
         }
     }
+    @api getValidityDate(){
+        let ToReturnValidity = null;
+        let dedicatedRoutingObj = this.routingListMap[this.shippingTabSelected];
+        let index  = dedicatedRoutingObj.findIndex(x=>x.uniqueEquip == this.shippingEquipTabSelected);
+        ToReturnValidity = dedicatedRoutingObj[index].buyingRateValidity;
+        return ToReturnValidity;
+    }
 }

@@ -1,0 +1,1856 @@
+<apex:page title="Generate Pdf" renderAs="pdf" standardController="Order__c" extensions="BAFCOGenerateOrderPDFController" applyHtmlTag="false" standardStylesheets="false" showHeader="false" applyBodyTag="false" action="{!getQuoteData}">
+        
+    <head>
+        <style >
+            @page {
+            size: a4 portrait;
+            margin: 0px 0px 12px 0px;
+            @top-center {
+            content: element(header);
+            } 
+            @bottom-center {
+            content: element(footer);
+            width:100%
+            }
+            margin-top: 75px;
+            }
+            div.header {
+            padding: 12px;
+            position: running(header);
+            }
+            div.footer {
+            display: block;
+            padding:0px 0px 0px 0px;
+            position: running(footer);
+            }
+            table{ width:100%;}
+            @font-face {
+            font-family: "MontserratCustomfont";
+            src: url('{!URLFOR($Resource.Montserrat, 'static/Montserrat-Medium.ttf')}') format('truetype');
+            }
+            * {
+            font-family: Helvetica,Dialog;
+            font-size: 12px;
+            }
+            .boxesCss{
+            max-width:168px;
+            min-width:168px;
+            width:168px;
+            min-height:40px;
+            max-height:40px;
+            height:40px;
+            //text-align: center;
+            // background: #E5F6FE !important;
+            //color : #01648E;
+            }
+        </style>
+    </head>
+    <body>
+        <!--div style="height: 8px ;background: #E39E25;"></div-->
+        <div class="header" style="background: #01648E;height: 48px;">
+            <apex:image url="{!$Resource.QuoteCombinedHeaderLogo}" style="height: 50px;"/><!--apex:image url="{!$Resource.QuotePdfLogo02}" style="padding-top :4px"/-->
+        </div>
+        <div class="footer">
+            <div style="background: #E39E25;height:8px;"></div>
+        </div>
+        <br/>
+        <div style="background: #F1FAFF; font-family:MontserratCustomfont" >
+            <apex:image url="{!$Resource.QuotePdfBookIcon}" style="padding:3px 0px 2px 3px;"/>
+            <span style="color: #01648E; position: absolute;margin-top:0px;left: 36px;"><b style="font-size: large;">ORDER</b></span>
+            <span style="color: #212121; position: absolute;margin-top:3px;left: 14%;font-size: 13px;">
+                (Thank you for giving BAFCO the opportunity to quote on your business.)
+            </span>
+        </div>
+        <div style="margin-top: 1%;">
+            <table class="customFont">
+                <tr >
+                    <td><!-- first Column -->
+                        <table>
+                            <tr>
+                                <td>Customer Name</td>
+                                <td><b>{!dto.customerName}</b></td></tr>
+                            <tr><td>Contact Person</td>
+                                <td><b>{!dto.contactPerson}</b></td></tr>
+                            <tr><td>Address</td>
+                                <td><b>{!dto.address}</b></td></tr>
+                            <tr><td>Phone</td>
+                                <td><b>{!dto.phone}</b></td></tr>
+                            <tr><td>Email</td>
+                                <td><b>{!dto.email}</b></td>
+                            </tr>
+                            <tr style="visibility:hidden"><td>rough data</td><td><b>#####</b></td></tr>
+                            <tr style="visibility:hidden"><td>rough data</td><td><b>#####</b></td></tr>
+                        </table>
+                    </td> 
+                    <td><!-- Second Column -->
+                        <table >
+                            <tr>
+                                <td>Order No.</td>
+                                <td><b>{!dto.quoteNumber}</b></td>
+                            </tr>
+                            <tr>
+                                <td>Quotation Issued</td>
+                                <td><b>{!dto.quoteIssued}</b></td>
+                            </tr>
+                            <tr>
+                                <td>Prepared by</td>
+                                <td><b>{!dto.preparedBy}</b></td>
+                            </tr>
+                            <tr>
+                                <td>Sales responsible</td>
+                                <td style="min-width: 120px;"><b>{!dto.salesResponsible}</b></td>
+                            </tr>
+                            <tr style="background: #E5F6FE;color: #01648E;">
+                                <td colspan="2">
+                                    <table>
+                                        <tr>
+                                            <td style="width: 44%;">Effective from</td>
+                                            <td><b>{!dto.effectiveFrom}</b></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 44%;">Validity to</td>
+                                            <td><b>{!dto.validityTo}</b></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 44%;">Service Type / Shipping Term</td>
+                                            <td><b>{!dto.serviceType} / {!dto.shippingTerm}</b></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 44%;">Payment Term</td>
+                                            <td><b>{!dto.paymentTerm}</b></td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div style="height:29px;background: #F1FAFF;border-radius: 4px;color: #01648E; margin-top:1%">
+            <table>
+                <tr>
+                    <td style="width:20px"><apex:image url="{!$Resource.QuoteDollerIcon}" style="padding:3px 0px 2px 5px;"/></td>
+                    <td><sapn><b style="font-size: large;">FREIGHT RATES</b></sapn></td>
+                </tr>
+            </table>
+        </div>
+        <!-- quoteItems data--->
+        <div style="margin-top:1%; ">
+            <table>
+                <apex:repeat value="{!dto.serviceChargeList}" var="item" >
+                    <tr style="background: #F9FAFB;">
+                        <td>
+                            <apex:panelGrid rendered="{!item.serviceType == 'P2P'}" columns="4">
+                                <b>Port of Loading :</b><apex:outputText value="{!item.portOfLoading}"/>
+                                <b>Transit Time :</b><apex:outputText value="** not Mapped **"/>
+                                <b>Port of Destination :</b><apex:outputText value="{!item.portOfDestination}"/>
+                                <apex:outputText rendered="{!showShippLine == true}"><b>ShippingLine :</b></apex:outputText> <apex:outputText rendered="{!showShippLine == true}" value="{!item.shippingLine}"/>
+                            </apex:panelGrid>
+                            <apex:panelGrid rendered="{!item.serviceType == 'P2D'}" columns="6">
+                                <b>Port of Loading :</b><apex:outputText value="{!item.portOfLoading}"/>
+                                <apex:outputText rendered="{!item.placeOfDischarge  != NULL}"><b>Place of Discharge :</b></apex:outputText><apex:outputText rendered="{!item.placeOfDischarge  != NULL}" value="{!item.placeOfDischarge}"/>
+                                <b>Transit Time :</b><apex:outputText value="** not Mapped **"/>
+                                <b>Port of Destination :</b><apex:outputText value="{!item.portOfDestination}"/>
+                                <apex:outputText rendered="{!showShippLine == true}"><b>ShippingLine :</b></apex:outputText> <apex:outputText rendered="{!showShippLine == true}" value="{!item.shippingLine}"/>
+                            </apex:panelGrid>
+                            <apex:panelGrid rendered="{!item.serviceType == 'D2P'}" columns="6">
+                                <b>Port of Loading :</b><apex:outputText value="{!item.portOfLoading}"/>
+                                <apex:outputText rendered="{!item.placeOfPickup  != NULL}"><b>Place of Pickup :</b></apex:outputText><apex:outputText rendered="{!item.placeOfPickup  != NULL}" value="{!item.placeOfPickup}"/>
+                                <b>Transit Time :</b><apex:outputText value="** not Mapped **"/>
+                                <b>Port of Destination :</b><apex:outputText value="{!item.portOfDestination}"/>
+                                <apex:outputText rendered="{!showShippLine == true}"><b>ShippingLine :</b></apex:outputText> <apex:outputText rendered="{!showShippLine == true}" value="{!item.shippingLine}"/>
+                            </apex:panelGrid>
+                            <apex:panelGrid rendered="{!item.serviceType == 'D2D'}" columns="6">
+                                <b>Port of Loading :</b><apex:outputText value="{!item.portOfLoading}"/>
+                                <apex:outputText rendered="{!item.placeOfPickup  != NULL}"><b>Place of Pickup :</b></apex:outputText><apex:outputText rendered="{!item.placeOfPickup  != NULL}" value="{!item.placeOfPickup}"/>
+                                <b>Transit Time :</b><apex:outputText value="** not Mapped **"/>
+                                <b>Port of Destination :</b><apex:outputText value="{!item.portOfDestination}"/>
+                                 <apex:outputText rendered="{!item.placeOfDischarge  != NULL}"><b>Place of Discharge :</b></apex:outputText><apex:outputText rendered="{!item.placeOfDischarge  != NULL}" value="{!item.placeOfDischarge}"/> 
+                                <apex:outputText rendered="{!showShippLine == true}"><b>ShippingLine :</b></apex:outputText> <apex:outputText rendered="{!showShippLine == true}" value="{!item.shippingLine}"/>
+                                
+                            </apex:panelGrid>
+                        </td>
+                    </tr>
+                  <!--  <tr style="background: #F9FAFB;">
+                        <td>
+                            <b><apex:outputText style="padding-left:3px;" value="{!item.equipmentType}"/></b> : 
+                            <apex:outputText style="padding-left:3px;" value="{!item.total}"/>                                
+                        </td>
+                    </tr>
+                    <tr style="background: #F9FAFB;">
+                        <td><b><apex:outputText style="padding-left:3px;" rendered="{!item.ShowtotalDC == true}" value="20DC : "/></b>
+                            <apex:outputText style="padding-left:3px;" rendered="{!item.ShowtotalDC == true}" value="{!item.totalDC}"/></td>
+                    </tr>-->
+                    <tr style="background:#F5FCFF;color:#01648E;">
+                        <td style="padding-left:280px;font-size:large !important;" >
+                            <span><b style="font-size:large !important;"><apex:outputText value="{!item.equipmentType}"/></b></span>
+                            <span><b><apex:outputText rendered="{!item.ShowtotalDC == true}" style="padding-left:72px;font-size:large !important;" value="20DC"/></b></span>
+                        </td>
+                    </tr >
+                    <tr style="background: #F5FCFF;color:#01648E;">
+                        <td style="padding-left:280px;">
+                            <span>
+                                <b>
+                                    <apex:outputText style="font-size:large !important"  value="{0, number, #########.##} $">
+                                        <apex:param value="{!item.total}" />
+                                    </apex:outputText>
+                                </b>
+                            </span>
+                            <span>
+                                <b>
+                                    <apex:outputText rendered="{!item.ShowtotalDC == true}" style="padding-left:62px;font-size:large !important;" value="{0, number, #########.##} $">
+                                    <apex:param value="{!item.totalDC}" />
+                                    </apex:outputText>
+                                </b>
+                            </span>
+                        </td>
+                    </tr>
+                    <hr style="border: 1px solid #E7E7E7;"/>
+                    <tr class="itemCss" >
+                        <td>
+                            <apex:panelGrid style="display: block;" rendered="{!showCharges == true}" columns="4">
+                                <apex:panelGroup rendered="{!item.servichargesObj.BAF  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="BAF "/>
+                                            <apex:outputText value="{!item.servichargesObj.BAF}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.servichargesObj.bunkerCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Bunker Surcharge "/>
+                                            <apex:outputText value="{!item.servichargesObj.bunkerCharges}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.servichargesObj.cleaningCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Cleaning Charges "/>
+                                            <apex:outputText value="{!item.servichargesObj.cleaningCharges}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.servichargesObj.CMC  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Container Maintenance Charge "/>
+                                            <apex:outputText value="{!item.servichargesObj.CMC}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>                                        
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.servichargesObj.carriageCongestionSurcharge  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Carriage Congestion Surcharge "/>
+                                            <apex:outputText value="{!item.servichargesObj.carriageCongestionSurcharge}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.servichargesObj.carrierSecurityFees  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Carrier Security Fees"/>
+                                            <apex:outputText value="{!item.servichargesObj.carrierSecurityFees}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.servichargesObj.dgSurcharge  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="DG Surcharge"/>
+                                            <apex:outputText value="{!item.servichargesObj.dgSurcharge}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.servichargesObj.DTHC  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="DTHC"/>
+                                            <apex:outputText value="{!item.servichargesObj.DTHC}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.servichargesObj.equipmentImbalance  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Equipment Imbalance"/>
+                                            <apex:outputText value="{!item.servichargesObj.equipmentImbalance}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.servichargesObj.inlandFuelCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="InlandFuel Charges"/>
+                                            <apex:outputText value="{!item.servichargesObj.inlandFuelCharges}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.servichargesObj.inlandHandlingfees  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Inland Handling Fees"/>
+                                            <apex:outputText value="{!item.servichargesObj.inlandHandlingfees}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.servichargesObj.inlandHaulage  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Inland Haulage"/>
+                                            <apex:outputText value="{!item.servichargesObj.inlandHaulage}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.servichargesObj.ISPS  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="ISPS"/>
+                                            <apex:outputText value="{!item.servichargesObj.ISPS}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.servichargesObj.lowerSulphurSurcharge  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Lower Sulphur Surcharge"/>
+                                            <apex:outputText value="{!item.servichargesObj.lowerSulphurSurcharge}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.servichargesObj.operationalRecovery  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Operational Recovery"/>
+                                            <apex:outputText value="{!item.servichargesObj.operationalRecovery}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.servichargesObj.OTHC  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="OTHC"/>
+                                            <apex:outputText value="{!item.servichargesObj.OTHC}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.servichargesObj.overWeightCharge  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Over Weight Charge"/>
+                                            <apex:outputText value="{!item.servichargesObj.overWeightCharge}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.servichargesObj.sealCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Seal Charges"/>
+                                            <apex:outputText value="{!item.servichargesObj.sealCharges}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.servichargesObj.warRiskSurcharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="War Risk Surcharges"/>
+                                            <apex:outputText value="{!item.servichargesObj.warRiskSurcharges}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!AND(item.servichargesObj.totalSl  != NULL,item.servichargesObj.shippTotalChanged==true)}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Total Shipping line"/>
+                                            <apex:outputText value="{!item.servichargesObj.totalSl}"/>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                
+                                <!-- origin Charges -->
+                                
+                                <apex:panelGroup rendered="{!item.originChargesObj.bayan  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Bayan Charges"/>
+                                            <apex:outputText value="{!item.originChargesObj.bayan}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.originChargesObj.blFees  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="BL Fees"/>
+                                            <apex:outputText value="{!item.originChargesObj.blFees}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.originChargesObj.originCustomClearance  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Origin Custom Clearance"/>
+                                            <apex:outputText value="{!item.originChargesObj.originCustomClearance}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.originChargesObj.exportServiceFees  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Export Service Fees"/>
+                                            <apex:outputText value="{!item.originChargesObj.exportServiceFees}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.originChargesObj.fasahFees  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Fasah Fees"/>
+                                            <apex:outputText value="{!item.originChargesObj.fasahFees}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.originChargesObj.inspection  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Inspection"/>
+                                            <apex:outputText value="{!item.originChargesObj.inspection}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.originChargesObj.insuranceCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Insurance Charges"/>
+                                            <apex:outputText value="{!item.originChargesObj.insuranceCharges}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.originChargesObj.liftOnLiftOff  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Lift OnLift Off"/>
+                                            <apex:outputText value="{!item.originChargesObj.liftOnLiftOff}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.originChargesObj.OriginDetention  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Origin Detention"/>
+                                            <apex:outputText value="{!item.originChargesObj.OriginDetention}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.originChargesObj.OriginLoadingCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Origin Loading Charges"/>
+                                            <apex:outputText value="{!item.originChargesObj.OriginLoadingCharges}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.originChargesObj.pickUpCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="PickUp Charges"/>
+                                            <apex:outputText value="{!item.originChargesObj.pickUpCharges}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.originChargesObj.ReeferControlPlugInCharge  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Reefer Control PlugIn Charge"/>
+                                            <apex:outputText value="{!item.originChargesObj.ReeferControlPlugInCharge}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.originChargesObj.tabadul  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Tabadul"/>
+                                            <apex:outputText value="{!item.originChargesObj.tabadul}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.originChargesObj.trapulinCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Trapulin Charges"/>
+                                            <apex:outputText value="{!item.originChargesObj.trapulinCharges}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.originChargesObj.truckIdlingCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="TruckIdling Charges"/>
+                                            <apex:outputText value="{!item.originChargesObj.truckIdlingCharges}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.originChargesObj.vgm  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="VGM"/>
+                                            <apex:outputText value="{!item.originChargesObj.vgm}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.originChargesObj.xray  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="X-Ray"/>
+                                            <apex:outputText value="{!item.originChargesObj.xray}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.originChargesObj.lashingCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Lashing Charges"/>
+                                            <apex:outputText value="{!item.originChargesObj.lashingCharges}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.originChargesObj.fuelSurcharge  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Fuel Surcharge"/>
+                                            <apex:outputText value="{!item.originChargesObj.fuelSurcharge}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!AND(item.originChargesObj.TotalOrigincharges  != NULL,item.originChargesObj.originTotalChanged ==true)}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Total Origin Charges"/>
+                                            <apex:outputText value="{!item.originChargesObj.TotalOrigincharges}"/>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                
+                                <!-- Destination Charges -->
+                                <apex:panelGroup rendered="{!item.destinChargeObj.destinBayanCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Destination Bayan Charges"/>
+                                            <apex:outputText value="{!item.destinChargeObj.destinBayanCharges}"/>
+                                            <span style="display:{!if(item.destinChargeObj.includeDestinCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.destinChargeObj.includeDestinCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.destinChargeObj.destinCustomClearanceCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Destination Custom Clearance Charges"/>
+                                            <apex:outputText value="{!item.destinChargeObj.destinCustomClearanceCharges}"/>
+                                            <span style="display:{!if(item.destinChargeObj.includeDestinCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.destinChargeObj.includeDestinCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.destinChargeObj.destinDOCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="DO Charges"/>
+                                            <apex:outputText value="{!item.destinChargeObj.destinDOCharges}"/>
+                                            <span style="display:{!if(item.destinChargeObj.includeDestinCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.destinChargeObj.includeDestinCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.destinChargeObj.destinFasahCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value=" Fasah Charges"/>
+                                            <apex:outputText value="{!item.destinChargeObj.destinFasahCharges}"/>
+                                            <span style="display:{!if(item.destinChargeObj.includeDestinCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.destinChargeObj.includeDestinCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.destinChargeObj.destinGatePassCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Gate Pass Charges"/>
+                                            <apex:outputText value="{!item.destinChargeObj.destinGatePassCharges}"/>
+                                            <span style="display:{!if(item.destinChargeObj.includeDestinCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.destinChargeObj.includeDestinCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.destinChargeObj.destinLOLOCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="LOLO Charges"/>
+                                            <apex:outputText value="{!item.destinChargeObj.destinLOLOCharges}"/>
+                                            <span style="display:{!if(item.destinChargeObj.includeDestinCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.destinChargeObj.includeDestinCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!AND(item.destinChargeObj.destinTotalCharges  != NULL,item.destinChargeObj.DestinTotalChanged == true)}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Total Destination Charges"/>
+                                            <apex:outputText value="{!item.destinChargeObj.destinTotalCharges}"/>
+                                            <span style="display:{!if(item.destinChargeObj.includeDestinCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.destinChargeObj.includeDestinCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                
+                                <!-- Additional Charges --->
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.Bayancancellationcharge  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Bayan cancellation charge"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Bayancancellationcharge}"/>                                            
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.Cleaningcharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Cleaning charges"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Cleaningcharges}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.ContainerLashingCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Container Lashing Charges"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.ContainerLashingCharges}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.Containermovementcharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Container movement charges"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Containermovementcharges}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.Containerstripping  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Container stripping"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Containerstripping}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.Freetimecertificatecharges  != NULL}">
+                                    <div style="background: #EFEFEF;padding: 10px;page-break-before: always">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Additional Freetime Charges"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Freetimecertificatecharges}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.Fumigation  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Fumigation"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Fumigation}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.Inspection  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Inspection"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Inspection}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.Insurancecharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Insurance charges"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Insurancecharges}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.MinistryclearncechargeforOOGcargo  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Ministry clearnce charge for OOG cargo"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.MinistryclearncechargeforOOGcargo}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.Miscellaneous  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Miscellaneous"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Miscellaneous}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.MOTfinecharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="MOT fine charges"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.MOTfinecharges}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.NonPalletizedSurcharge  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="NonPalletized Surcharge"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.NonPalletizedSurcharge}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.Pestcontrol  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Pest control"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Pestcontrol}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.Repalletization  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Re palletization"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Repalletization}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.Reefercntrplugincharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Reefer control plugin charges"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Reefercntrplugincharges}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.ReeferPTIcharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Reefer PTI charges"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.ReeferPTIcharges}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.Reefersteamwash  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Reefer steam wash"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Reefersteamwash}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.StuffingCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Stuffing Charges"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.StuffingCharges}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.SweepingCleaning  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Sweeping Cleaning"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.SweepingCleaning}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.TruckHeadcharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="TruckHead charges"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.TruckHeadcharges}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.Truckidlingcharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Truckidling charges"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Truckidlingcharges}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.Vesselcertificatecharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Vessel certificate charges"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Vesselcertificatecharges}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.Wrappingpackingcharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Wrappig packing charges"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.Wrappingpackingcharges}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <!--apex:panelGroup rendered="{!item.additionalChargesObj.totalAdditional  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Total Additional Charge"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.totalAdditional}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup-->
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.CarrierContainerRepositioningCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Carrier Container Repositioning Charges"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.CarrierContainerRepositioningCharges}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.AlternateDepotReleaseCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Alternate Depot Release Charges"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.AlternateDepotReleaseCharges}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.FreightDifference  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Freight Difference (FD)"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.FreightDifference}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.additionalChargesObj.tankRentalCharge  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Tank Rental Charges"/>
+                                            <apex:outputText value="{!item.additionalChargesObj.tankRentalCharge}"/>                                          
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.exWorksObj.LoadCharge  != NULL}">
+                                    <div class="boxesCss"  style="background: #EFEFEF;padding: 10px;">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="{!item.exWorksObj.Id} "/>
+                                            <apex:outputText value="{!item.exWorksObj.LoadCharge}"/> 
+                                            <span style="display:{!if(item.exWorksObj.includeExWorksCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.exWorksObj.includeExWorksCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                            </apex:panelGrid>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <apex:panelGrid style="display: block;" rendered="{!AND(item.ShowtotalDC == true,showCharges==true)}" columns="4">
+                                <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.BAF  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="BAF "/>
+                                            <apex:outputText value="{!item.dc20Charges.servichargesObj.BAF}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.bunkerCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Bunker Surcharge "/>
+                                            <apex:outputText value="{!item.dc20Charges.servichargesObj.bunkerCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.cleaningCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Cleaning Charges "/>
+                                            <apex:outputText value="{!item.dc20Charges.servichargesObj.cleaningCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.CMC  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Container Maintenance Charge "/>
+                                            <apex:outputText value="{!item.dc20Charges.servichargesObj.CMC}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>                                        
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.carriageCongestionSurcharge  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Carriage Congestion Surcharge "/>
+                                            <apex:outputText value="{!item.dc20Charges.servichargesObj.carriageCongestionSurcharge}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.carrierSecurityFees  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Carrier Security Fees"/>
+                                            <apex:outputText value="{!item.dc20Charges.servichargesObj.carrierSecurityFees}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.dgSurcharge  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="DG Surcharge"/>
+                                            <apex:outputText value="{!item.dc20Charges.servichargesObj.dgSurcharge}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.DTHC  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="DTHC"/>
+                                            <apex:outputText value="{!item.dc20Charges.servichargesObj.DTHC}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.equipmentImbalance  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Equipment Imbalance"/>
+                                            <apex:outputText value="{!item.dc20Charges.servichargesObj.equipmentImbalance}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.inlandFuelCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="InlandFuel Charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.servichargesObj.inlandFuelCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.inlandHandlingfees  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Inland Handling Fees"/>
+                                            <apex:outputText value="{!item.dc20Charges.servichargesObj.inlandHandlingfees}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.inlandHaulage  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Inland Haulage"/>
+                                            <apex:outputText value="{!item.dc20Charges.servichargesObj.inlandHaulage}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.ISPS  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="ISPS"/>
+                                            <apex:outputText value="{!item.dc20Charges.servichargesObj.ISPS}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.lowerSulphurSurcharge  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Lower Sulphur Surcharge"/>
+                                            <apex:outputText value="{!item.dc20Charges.servichargesObj.lowerSulphurSurcharge}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.operationalRecovery  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Operational Recovery"/>
+                                            <apex:outputText value="{!item.dc20Charges.servichargesObj.operationalRecovery}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.OTHC  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="OTHC"/>
+                                            <apex:outputText value="{!item.dc20Charges.servichargesObj.OTHC}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.overWeightCharge  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Over Weight Charge"/>
+                                            <apex:outputText value="{!item.dc20Charges.servichargesObj.overWeightCharge}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.sealCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Seal Charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.servichargesObj.sealCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.servichargesObj.warRiskSurcharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="War Risk Surcharges"/>
+                                            <apex:outputText value="{!item.dc20Charges.servichargesObj.warRiskSurcharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!AND(item.dc20Charges.servichargesObj.totalSl  != NULL,item.dc20Charges.servichargesObj.shippTotalChanged == true)}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Total Shipping line"/>
+                                            <apex:outputText value="{!item.dc20Charges.servichargesObj.totalSl}"/>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.servichargesObj.includeServiceCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                
+                                <!-- origin Charges -->
+                                
+                                <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.bayan  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Bayan Charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.originChargesObj.bayan}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.blFees  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="BL Fees"/>
+                                            <apex:outputText value="{!item.dc20Charges.originChargesObj.blFees}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.originCustomClearance  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Origin Custom Clearance"/>
+                                            <apex:outputText value="{!item.dc20Charges.originChargesObj.originCustomClearance}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.exportServiceFees  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Export Service Fees"/>
+                                            <apex:outputText value="{!item.dc20Charges.originChargesObj.exportServiceFees}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.fasahFees  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Fasah Fees"/>
+                                            <apex:outputText value="{!item.dc20Charges.originChargesObj.fasahFees}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.inspection  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Inspection"/>
+                                            <apex:outputText value="{!item.dc20Charges.originChargesObj.inspection}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.insuranceCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Insurance Charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.originChargesObj.insuranceCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.liftOnLiftOff  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Lift OnLift Off"/>
+                                            <apex:outputText value="{!item.dc20Charges.originChargesObj.liftOnLiftOff}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.OriginDetention  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Origin Detention"/>
+                                            <apex:outputText value="{!item.dc20Charges.originChargesObj.OriginDetention}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.OriginLoadingCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Origin Loading Charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.originChargesObj.OriginLoadingCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.pickUpCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="PickUp Charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.originChargesObj.pickUpCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.ReeferControlPlugInCharge  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Reefer Control PlugIn Charge"/>
+                                            <apex:outputText value="{!item.dc20Charges.originChargesObj.ReeferControlPlugInCharge}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.tabadul  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Tabadul"/>
+                                            <apex:outputText value="{!item.dc20Charges.originChargesObj.tabadul}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.trapulinCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Trapulin Charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.originChargesObj.trapulinCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.truckIdlingCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="TruckIdling Charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.originChargesObj.truckIdlingCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.vgm  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="VGM"/>
+                                            <apex:outputText value="{!item.dc20Charges.originChargesObj.vgm}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.xray  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="X-Ray"/>
+                                            <apex:outputText value="{!item.dc20Charges.originChargesObj.xray}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.lashingCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Lashing Charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.originChargesObj.lashingCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.originChargesObj.fuelSurcharge  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Fuel Surcharge"/>
+                                            <apex:outputText value="{!item.dc20Charges.originChargesObj.fuelSurcharge}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!AND(item.dc20Charges.originChargesObj.TotalOrigincharges  != NULL,item.dc20Charges.originChargesObj.originTotalChanged == true)}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Total Origin Charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.originChargesObj.TotalOrigincharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                
+                                <!-- Destination Charges -->
+                                <apex:panelGroup rendered="{!item.dc20Charges.destinChargeObj.destinBayanCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Destination Bayan Charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.destinChargeObj.destinBayanCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.destinChargeObj.includeDestinCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.destinChargeObj.includeDestinCharge == false,'block','none')}" >(Excluded)</span>
+                                            
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.destinChargeObj.destinCustomClearanceCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Destination Custom Clearance Charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.destinChargeObj.destinCustomClearanceCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.destinChargeObj.includeDestinCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.destinChargeObj.includeDestinCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.destinChargeObj.destinDOCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="DO Charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.destinChargeObj.destinDOCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.destinChargeObj.includeDestinCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.destinChargeObj.includeDestinCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.destinChargeObj.destinFasahCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value=" Fasah Charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.destinChargeObj.destinFasahCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.destinChargeObj.includeDestinCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.destinChargeObj.includeDestinCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.destinChargeObj.destinGatePassCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Gate Pass Charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.destinChargeObj.destinGatePassCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.destinChargeObj.includeDestinCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.destinChargeObj.includeDestinCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.destinChargeObj.destinLOLOCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="LOLO Charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.destinChargeObj.destinLOLOCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.destinChargeObj.includeDestinCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.destinChargeObj.includeDestinCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!AND(item.dc20Charges.destinChargeObj.destinTotalCharges  != NULL,item.dc20Charges.destinChargeObj.DestinTotalChanged == true)}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Total Destination Charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.destinChargeObj.destinTotalCharges}"/>
+                                            <span style="display:{!if(item.dc20Charges.destinChargeObj.includeDestinCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.destinChargeObj.includeDestinCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                
+                                <!-- Additional Charges --->
+                                <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Bayancancellationcharge  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Bayan cancellation charge"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Bayancancellationcharge}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Cleaningcharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Cleaning charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Cleaningcharges}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.ContainerLashingCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Container Lashing Charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.ContainerLashingCharges}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Containermovementcharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Container movement charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Containermovementcharges}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Containerstripping  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Container stripping"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Containerstripping}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Freetimecertificatecharges  != NULL}">
+                                    <div style="background: #EFEFEF;padding: 10px;page-break-before: always">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Additional Freetime Charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Freetimecertificatecharges}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Fumigation  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Fumigation"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Fumigation}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Inspection  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Inspection"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Inspection}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Insurancecharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Insurance charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Insurancecharges}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.MinistryclearncechargeforOOGcargo  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Ministry clearnce charge for OOG cargo"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.MinistryclearncechargeforOOGcargo}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Miscellaneous  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Miscellaneous"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Miscellaneous}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.MOTfinecharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="MOT fine charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.MOTfinecharges}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.NonPalletizedSurcharge  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="NonPalletized Surcharge"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.NonPalletizedSurcharge}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Pestcontrol  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Pest control"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Pestcontrol}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Repalletization  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Re palletization"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Repalletization}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Reefercntrplugincharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Reefer control plugin charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Reefercntrplugincharges}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.ReeferPTIcharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Reefer PTI charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.ReeferPTIcharges}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Reefersteamwash  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Reefer steam wash"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Reefersteamwash}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.StuffingCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Stuffing Charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.StuffingCharges}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.SweepingCleaning  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Sweeping Cleaning"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.SweepingCleaning}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.TruckHeadcharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="TruckHead charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.TruckHeadcharges}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Truckidlingcharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Truckidling charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Truckidlingcharges}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Vesselcertificatecharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Vessel certificate charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Vesselcertificatecharges}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.Wrappingpackingcharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Wrappig packing charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.Wrappingpackingcharges}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <!--apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.totalAdditional  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Total Additional Charge"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.totalAdditional}"/>                                            
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup-->
+                                <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.CarrierContainerRepositioningCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Carrier Container Repositioning Charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.CarrierContainerRepositioningCharges}"/>                                          
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.AlternateDepotReleaseCharges  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Alternate Depot Release Charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.AlternateDepotReleaseCharges}"/>                                          
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.FreightDifference  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Freight Difference (FD)"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.FreightDifference}"/>                                          
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.tankRentalCharge  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="Tank Rental Charges"/>
+                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.tankRentalCharge}"/>                                          
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                                <apex:panelGroup rendered="{!item.dc20Charges.exWorksObj.LoadCharge  != NULL}">
+                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px;">
+                                        <apex:panelGrid columns="2">
+                                            <apex:outputText value="{!item.dc20Charges.exWorksObj.Id} "/>
+                                            <apex:outputText value="{!item.dc20Charges.exWorksObj.LoadCharge}"/>
+                                            <span style="display:{!if(item.dc20Charges.exWorksObj.includeExWorksCharge == true,'block','none')}" >(Included)</span>
+                                            <span style="display:{!if(item.dc20Charges.exWorksObj.includeExWorksCharge == false,'block','none')}" >(Excluded)</span>
+                                        </apex:panelGrid>
+                                    </div>
+                                </apex:panelGroup>
+                            </apex:panelGrid>
+                            <br/>
+                        </td>
+                    </tr>
+                    <hr/>
+                </apex:repeat>
+            </table>
+        </div>
+        <div style="margin-top1%;margin-bottom:1%; background: #FFF3E0;height: 36px;padding-left:20px;padding-top:20px;">
+            <span><b style="font-size:larger">REMARKS : </b><apex:outputText value="{!dto.remarks} "/></span>
+        </div>
+        <div style="margin-top1%;">
+            <apex:panelGrid columns="2">
+                <apex:image url="{!$Resource.QuoteQRCode}"/>
+                <div>
+                    <span style="color:#01648E;font-size:large !important;font-weight:600;">Standard Operating Procedures</span>
+                    <p>
+                        Scan the QR code provided to understand all the details
+                        of standard operating procedures.
+                    </p>
+                </div>
+            </apex:panelGrid>
+        </div>
+        <div style="display:{!if(dto.recordTypeName == 'Export','block','none')}" >
+            <!--apex:include pageName="BAFCOGeneratePDFFooterPage"/-->
+            <br/>
+            <div style="background: #F1FAFF; font-family:MontserratCustomfont" >
+                <table>
+                    <tr>
+                        <td style="width:20px;"><apex:image url="{!$Resource.AstrickPng}" style="padding: 5px 0px 3px 3px"/></td>
+                        <td ><span style="color:#01648E;padding-top:0px"><b style="font-size: large;">TERMS &amp; CONDITIONS</b></span></td>
+                    </tr>
+                </table>
+            </div>
+            <div style="margin-top: 5px; ">
+                
+                <span style="color:#01648E"><b>Exclusions:</b></span>
+                <p>
+                    <!--span>Above rates does not include the following charges which are additional.</span-->
+                    <span>{!dto.exclusionHeader}</span>
+                </p>
+                <ul>
+                    <apex:repeat value="{!dto.exclusionList}" var="item" >
+                        <li>{!item}</li>
+                    </apex:repeat>
+                </ul>
+            </div>
+            <div style="margin-top: 5px; ">
+                <span style="color:#01648E"><b>Inclusions:</b></span>
+            </div>
+            <p>
+                <span>{!dto.inclusionHeader}</span>
+            </p>
+            <ul>
+                <apex:repeat value="{!dto.inclusionList}" var="item" >
+                    <li>{!item}</li>
+                </apex:repeat>
+            </ul>
+        </div>
+        <div style="display:{!if(dto.recordTypeName == 'Import','block','none')}" >
+        	<br/>
+            <div style="background: #F1FAFF; font-family:MontserratCustomfont" >
+                <table>
+                    <tr>
+                        <td style="width:20px;"><apex:image url="{!$Resource.AstrickPng}" style="padding: 5px 0px 3px 3px"/></td>
+                        <td ><span style="color:#01648E;padding-top:0px"><b style="font-size: large;">TERMS &amp; CONDITIONS</b></span></td>
+                    </tr>
+                </table>
+            </div>
+            <div style="margin-top: 5px; ">
+                
+                <!--span style="color:#01648E"><b>Exclusions:</b></span-->
+                <p>
+                    <!--span>Above rates does not include the following charges which are additional.</span-->
+                    <span>{!dto.termsNConditionHeader}</span>
+                </p>
+                <ul>
+                    <apex:repeat value="{!dto.termsNConditionList}" var="item" >
+                        <li>{!item}</li>
+                    </apex:repeat>
+                </ul>
+            </div>
+        </div>
+    </body>
+</apex:page>

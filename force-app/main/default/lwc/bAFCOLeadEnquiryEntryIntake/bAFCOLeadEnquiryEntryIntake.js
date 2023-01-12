@@ -351,6 +351,8 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
     }*/
     handleCargoChange(e){
         let cargoWeights = e.target.value;
+        console.log('cargoWeights '+cargoWeights)
+        if(cargoWeights == '') cargoWeights = null;
         this.cargoWeights = cargoWeights;
         this.cargoweightClass ='';
         this.updateEnquiryList();
@@ -389,6 +391,8 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
             this.commodity = result.Commodity__c != undefined ? result.Commodity__c : '';
             this.dangerousGoods = result.Dangerous_Goods__c != undefined ? result.Dangerous_Goods__c : '';
             this.shipmentKind = 'FCL';
+            this.placeOfPickup = result.Pickup_Place__c != undefined ? result.Pickup_Place__c : '';
+            this.placeOfDischarge = result.Discharge_Place__c != undefined ? result.Discharge_Place__c : '';
             if(result.Dangerous_Goods__c == true){
                 this.showDGClassField = true;
                 this.dgClass = result.DG_Class__c != undefined ? result.DG_Class__c : '';
@@ -419,24 +423,24 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
                 field.handleDefaultSelected(Obj);
             }
             if(this.serviceType  == 'D2P' || this.serviceType  == 'D2D'){
-                this.showPickupPlaceField = true;
-                setTimeout(() => {
+                this.showPickupPlaceField = true;                
+                /*setTimeout(() => {
                     if(result.Place_of_Pickup__c != undefined){
                         let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[5];
                         let Obj={Id:result.Place_of_Pickup__c,Name:result.Place_of_Pickup__r.Name,index:index}
                         if(field != null) field.handleDefaultSelected(Obj);
                     }
-                }, 100);
+                }, 100);*/
             }
             if(this.serviceType  == 'P2D' || this.serviceType  == 'D2D'){
                 this.showDischargePlaceField = true;
-                setTimeout(() => {
+                /*setTimeout(() => {
                     if(result.Place_of_Discharge__c != undefined){                    
                         let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[5];
                         let Obj={Id:result.Place_of_Discharge__c,Name:result.Place_of_Discharge__r.Name,index:index}
                         if(field != null) field.handleDefaultSelected(Obj);
                     }
-                }, 100);
+                }, 100);*/
             }
 
             setTimeout(() => {

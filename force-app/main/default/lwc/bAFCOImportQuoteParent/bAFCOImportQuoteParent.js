@@ -1,6 +1,7 @@
 import { LightningElement,api,track } from 'lwc';
 import getEnqueryDetails from '@salesforce/apex/BAFCOLRoutingDetailsController.getEnqueryDetails';
 import VECTOR from '@salesforce/resourceUrl/Vector';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class BAFCOImportQuoteParent extends LightningElement {
     @api enquiryId;
     @track routingDetailsList = [];
@@ -86,7 +87,20 @@ export default class BAFCOImportQuoteParent extends LightningElement {
             }
             if(index != -1){
                 setTimeout(() => {
-                    this.template.querySelectorAll("c-b-a-f-c-o-import-route-details")[index].handleGotoQuotation(this.validityDate);
+                    let validityDateRms = this.template.querySelectorAll("c-b-a-f-c-o-import-route-details")[index].getValidityDate();
+                   if(this.validityDate > validityDateRms){
+                        const evt = new ShowToastEvent({
+                            title: 'Error',
+                            message: 'Buying rate is only valid until '+validityDateRms,
+                            variant: 'error',
+                            mode: 'dismissable'
+                        });
+                        this.dispatchEvent(evt);
+                    }
+                    else{
+                        console.log('OK')
+                        this.template.querySelectorAll("c-b-a-f-c-o-import-route-details")[index].handleGotoQuotation(this.validityDate);
+                    }
                 }, 200);
                 
             }

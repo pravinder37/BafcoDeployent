@@ -2,10 +2,7 @@
 public class QuotationItemTriggerHandlerTest {
     @TestSetup
     static void setup() {
-        Lead__c ld = new Lead__c();
-        ld.Business_Type__c = 'Import';
-        insert ld;
-        
+       
         Account acc = new Account();
         acc.name = 'test';
         acc.Branch__c = 'Jeddah';
@@ -17,9 +14,16 @@ public class QuotationItemTriggerHandlerTest {
         opty.Name ='testopty';
         opty.Business_Type__c = 'Export';
         insert opty;
+        Task tsk = new Task();
+        tsk.Subject = 'Provide Quotation';
+        tsk.Status = 'Open';
+        tsk.OwnerId = UserInfo.getUserId();
+        tsk.WhatId = opty.Id;
+        tsk.IsReminderSet = true;
+        tsk.ActivityDate = Date.valueOf(DateTime.now());
+        insert tsk;
         Enquiry__c enq = new Enquiry__c();
         enq.Name = 'Test';
-        enq.Lead__c = ld.id;
         insert enq;
         
         Port__c port = new Port__c();
@@ -35,10 +39,12 @@ public class QuotationItemTriggerHandlerTest {
         
         Shipping_Line__c shipLine = new  Shipping_Line__c();
         shipLine.Name = 'ShipLine';
+        shipLine.BSLS_ID__c = 'test';
         Insert shipLine;
         
         Equipment_Type__c equip = new Equipment_Type__c();
         equip.Name='EquipName';
+        equip.BSLS_ID__c = 'test';
         Insert equip;
         RMS__c rmsObj = new RMS__c();
         rmsObj.Name ='Test';
@@ -64,11 +70,17 @@ public class QuotationItemTriggerHandlerTest {
         Quotation__c quoteObj = new Quotation__c();
         quoteObj.Name__c= 'Quote/'+Year1+'/'+1;
         quoteObj.Opportunity__c = opty.id;
-       // quoteObj.Enquiry__c = enq.id;
-        quoteObj.Leadc__c = ld.id;
+        // quoteObj.Enquiry__c = enq.id;
         quoteObj.Account__c = acc.id;
         Insert quoteObj;
         
+        Loading_Charge__c exWorks= new Loading_Charge__c();
+        exWorks.Name  = 'tes';
+        exWorks.Loading_Charge__c = 100;
+        exWorks.Port_of_Loading__c = port.id;
+        exWorks.Direction__c = 'One Way';
+        insert exWorks;
+        List<Quotation_Item__c> quoteItemList = new List<Quotation_Item__c>();
         Quotation_Item__c quoteItem = new Quotation_Item__c();
         quoteItem.RMS__c = rmsObj.id;
         quoteItem.Route__c = route.id;
@@ -111,7 +123,26 @@ public class QuotationItemTriggerHandlerTest {
         quoteItem.Truck_idling_charges__c = 10;        
         quoteItem.Vessel_certificate_charges__c = 10;        
         quoteItem.Wrappingpacking_charges__c = 10;
-        Insert quoteItem;
+        quoteItem.Sea_Freight__c = 1;
+        quoteItem.Freight_Difference_FD__c = 12;
+        quoteItem.Carrier_container_repositioning_charges__c = 10;
+        quoteItem.Alternate_depot_release_charges__c = 120;
+        quoteItem.Ex_Works_Charge_Name__c = exWorks.id;
+        quoteItem.Ex_Works_Charge__c =10;
+        quoteItem.Total_Additional__c = 10;
+        quoteItem.Total_Dest__c = 10;
+        quoteItem.Total_INCO__c = 10;
+        quoteItem.Total_SL__c = 10;
+        quoteItemList.add(quoteItem);
+        
+        Quotation_Item__c quoteItem1 = new Quotation_Item__c();
+        quoteItem1.RMS__c = rmsObj.id;
+        quoteItem1.Route__c = route.id;
+        quoteItem1.Quotation__c = quoteObj.Id;
+        quoteItem1.Equipment_Type__c = equip.id;
+        quoteItem1.Sea_Freight__c = 100;
+        quoteItemList.add(quoteItem1);
+        Insert quoteItemList;
     }
     testmethod static void updateTriggerTest(){
         Quotation_Item__c quoteItem = [Select id from Quotation_Item__c limit 1];

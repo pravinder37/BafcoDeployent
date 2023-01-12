@@ -171,6 +171,7 @@ public class BAFCOImportRMSDto {
         @AuraEnabled public decimal AlternateDepotReleaseCharges {get; set;}
         @AuraEnabled public decimal FreightDifference {get; set;}
         @AuraEnabled public decimal CarrierContainerRepositioningCharges {get; set;}
+        @AuraEnabled public decimal tankRentalCharge {get; set;}
         @AuraEnabled public Boolean includeAdditionalCharge { get; set; }
     }
 }

@@ -1675,4 +1675,18 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
             }
         }
     }
+    @api getValidityDate(){
+        let ToReturnValidity = null;
+        let dedicatedRoutingObj = this.routingListMap[this.agentTabSelected];
+        let templist = [];
+        for(let key in dedicatedRoutingObj){
+            templist.push({key:key, data: dedicatedRoutingObj[key]})
+        }
+        let data = [];
+        let index = templist.findIndex(x=>x.key == this.shippingTabSelected);
+        data = templist[index].data;
+        let index2 = data.findIndex(x=>x.uniqueEquip == this.shippingEquipTabSelected);
+        ToReturnValidity = data[index2].buyingRateValidity;
+        return ToReturnValidity;
+    }
 }

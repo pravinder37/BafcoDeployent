@@ -186,6 +186,7 @@ public class BAFCOOrderCreationDto {
         @AuraEnabled public decimal FreightDifference {get; set;}
         @AuraEnabled public decimal CarrierContainerRepositioningCharges {get; set;}
         @AuraEnabled public decimal orderBuyingRate {get; set;}
+        @AuraEnabled public decimal tankRentalCharge {get; set;}
         @AuraEnabled public String shippLine {get;set;}
         @AuraEnabled public String quoteItemId {get; set;}
         @AuraEnabled public String agentId {get; set;}

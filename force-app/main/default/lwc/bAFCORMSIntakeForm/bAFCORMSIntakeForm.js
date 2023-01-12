@@ -1,4 +1,4 @@
-import { LightningElement,track,wire } from 'lwc';
+import { LightningElement,track,wire,api } from 'lwc';
 import { getPicklistValues } from 'lightning/uiObjectInfoApi';
 import DIRECTION_FIELD from '@salesforce/schema/Loading_Charge__c.Direction__c';
 import RATE_TYPE_FIELD from '@salesforce/schema/RMS__c.Rate_Type__c';
@@ -6,9 +6,10 @@ import BUSINESS_TYPE_FIELD from '@salesforce/schema/RMS__c.Business_Type__c';
 import submitRMS from '@salesforce/apex/BAFCOLeadDetailsController.submitRMS';
 import getExchangeRate from '@salesforce/apex/BAFCOLRoutingDetailsController.getExchangeRate';
 import getDefualtValueForRMS from '@salesforce/apex/BAFCOLRoutingDetailsController.getDefualtValueForRMS';
+import copyExistingRMS from '@salesforce/apex/BAFCOLRoutingDetailsController.copyExistingRMS';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class BAFCORMSIntakeForm extends LightningElement {
-    
+    @api copyRmsId = '';
     @track shippTotalChanged = false; 
     @track shipp = {};
     @track incoCharges ={};
@@ -114,7 +115,6 @@ export default class BAFCORMSIntakeForm extends LightningElement {
     }
     connectedCallback(){
         this.getExchangeRate();
-        this.getDefualtValueForRMS();
         let templist = {
             'BAF':null,
             'BunkerSurcharge':null,
@@ -184,6 +184,40 @@ export default class BAFCORMSIntakeForm extends LightningElement {
         }
         this.destinCharges = templist3;
         this.todaysDate = new Date().toISOString();
+        if(this.copyRmsId != '') {
+            let rmsDetail = {
+                'rateType':'',
+                'validity':'',
+                'seaFreight':null,
+                'loadingPortId':'',
+                'loadingDestinationId':'',
+                'commodityName':'',
+                'shippingLineId':'',
+                'equipmentId':'',
+                'agentName':'',
+                'businessType':this.businessType,
+                'loadingPortName':'',
+                'loadingDestinationName':'',
+                'allInRate':false,
+                'FOBAllIn':false,
+                'ExWorksIn':false,
+                'FreeTime':null,
+                'FreeTimePOD':null,
+                'remarks':'',
+                'currencyCode':'',
+                'customerName':'',
+                'incoTermId':null,
+                'oceanfreightCheckbox':false
+            }
+            this.rmsDetail = rmsDetail;
+            setTimeout(() => {
+                this.isLoading = true;
+                this.handleCopyExistingRms();
+            }, 500);
+        }
+        else{
+            this.getDefualtValueForRMS();
+        }
         
     }
     getDefualtValueForRMS(){
@@ -345,7 +379,6 @@ export default class BAFCORMSIntakeForm extends LightningElement {
     }
     updateShippingTotal(){
         let Total = 0 ;
-        console.log('total '+Total)
         Total = Total + this.shipp.BAF;
         Total = Total +   this.shipp.BunkerSurcharge;
         Total = Total +   this.shipp. ISPS;
@@ -368,7 +401,6 @@ export default class BAFCORMSIntakeForm extends LightningElement {
 
         this.shipp.total = parseInt( Total);
         this.shippTotal = parseInt(Total);
-        console.log('total 2'+Total)
 
     }
     handlebayanChange(e){
@@ -442,6 +474,9 @@ export default class BAFCORMSIntakeForm extends LightningElement {
         this.isLoading = true;
         let allValid = true;
         console.log('rms '+JSON.stringify(this.rmsDetail,null,2))
+        console.log('shipp '+JSON.stringify(this.shipp,null,2))
+        console.log('inco '+JSON.stringify(this.incoCharges,null,2))
+        console.log('dest '+JSON.stringify(this.destinCharges,null,2))
         if(this.rmsDetail.loadingPortId == ''){
             allValid = false;
             this.loadingPortError = 'slds-has-error';
@@ -938,5 +973,395 @@ export default class BAFCORMSIntakeForm extends LightningElement {
     }
     handleCustomerRemoved(e){
         this.rmsDetail.customerName = '';
+    }
+    handleCopyExistingRms(){
+        copyExistingRMS({rmsId : this.copyRmsId})
+        .then(result=>{
+            console.log('copyExistingRMS '+JSON.stringify(result,null,2))
+            if(result != null){ 
+                if(result.equipmentList != null){
+                    let templist = [];
+                    result.equipmentList.forEach(elem=>{
+                        templist.push({
+                            label:elem.Name,
+                            value:elem.Id
+                        })
+                    })
+                    this.equipmentTypeOption = templist
+                }               
+                if(result.rmsObj.Commodity__c != undefined){
+                    this.rmsDetail.commodityName = result.rmsObj.Commodity__c;
+                    let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[2];
+                    let Obj={Id:result.rmsObj.Commodity__c,Name:result.rmsObj.Commodity__r.Name}
+                    setTimeout(() => {
+                        field.handleDefaultSelected(Obj);
+                    }, 100);
+                    
+                }
+                if(result.rmsObj.Business_Type__c != undefined){
+                    this.businessType = result.rmsObj.Business_Type__c != null ? result.rmsObj.Business_Type__c : '';
+                    this.rmsDetail.businessType = this.businessType;
+                    if(this.businessType == 'Import') {
+                        this.displayAgentField = true;
+                        setTimeout(() => {
+                            if(result.rmsObj.Agent__c != undefined){
+                                if(result.rmsObj.Agent__c != null){
+                                    this.rmsDetail.agentName = result.rmsObj.Agent__c;
+                                    let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[5];
+                                    let Obj={Id:result.rmsObj.Agent__c,Name:result.rmsObj.Agent__r.Name}
+                                    setTimeout(() => {
+                                        field.handleDefaultSelected(Obj);
+                                    }, 100);
+                                }
+                            }
+                        }, 300);
+                    }
+                    else this.displayAgentField = false;
+                }
+                if(result.rmsObj.INCO_Term__c != undefined){
+                    this.rmsDetail.incoTermId = result.rmsObj.INCO_Term__c;
+                    let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[4];
+                    let Obj={Id:result.rmsObj.INCO_Term__c,Name:result.rmsObj.INCO_Term__r.Name}
+                    setTimeout(() => {
+                        field.handleDefaultSelected(Obj);
+                    }, 100);
+                }
+                
+                if(result.rmsObj.Port_Of_Loading__c != undefined){
+                    if(result.rmsObj.Port_Of_Loading__c != null){
+                        this.rmsDetail.loadingPortId = result.rmsObj.Port_Of_Loading__c;
+                        let Obj={Id:result.rmsObj.Port_Of_Loading__c,Name:result.rmsObj.Port_Of_Loading__r.Name}
+                        let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[0];
+                            setTimeout(() => {
+                                field.handleDefaultSelected(Obj);
+                            }, 100);
+                    }
+                }
+                if(result.rmsObj.Port_Of_Discharge__c != undefined){
+                    if(result.rmsObj.Port_Of_Discharge__c != null){
+                        this.rmsDetail.loadingDestinationId = result.rmsObj.Port_Of_Discharge__c;
+                        let Obj={Id:result.rmsObj.Port_Of_Discharge__c,Name:result.rmsObj.Port_Of_Discharge__r.Name}
+                        let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[1];
+                            setTimeout(() => {
+                                field.handleDefaultSelected(Obj);
+                            }, 100);
+                    }
+                }
+                if(result.rmsObj.Shipping_Line__c != undefined){
+                    if(result.rmsObj.Shipping_Line__c != null){
+                        this.rmsDetail.shippingLineId = result.rmsObj.Shipping_Line__c;
+                        let Obj={Id:result.rmsObj.Shipping_Line__c,Name:result.rmsObj.Shipping_Line__r.Name}
+                        let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[3];
+                            setTimeout(() => {
+                                field.handleDefaultSelected(Obj);
+                            }, 100);
+                    }
+                }
+                if(result.rmsObj.Equipment_Type__c != undefined){
+                    this.equipmentType = result.rmsObj.Equipment_Type__c != null ? result.rmsObj.Equipment_Type__c : null;
+                    this.rmsDetail.equipmentId = this.equipmentType;
+                }
+                if(result.rmsObj.Rate_Type__c != undefined){
+                    this.rateType = result.rmsObj.Rate_Type__c != null ? result.rmsObj.Rate_Type__c : null;
+                    this.rmsDetail.rateType = this.rateType;
+                }
+                if(result.rmsObj.Validity__c != undefined){
+                    this.validity = result.rmsObj.Validity__c != null ? result.rmsObj.Validity__c : null;
+                    this.rmsDetail.validity = this.validity;
+                }
+                if(result.rmsObj.Sea_Freight__c != undefined){
+                    this.seaFreight = result.rmsObj.Sea_Freight__c != null ? result.rmsObj.Sea_Freight__c : null;
+                    this.rmsDetail.seaFreight = this.seaFreight;
+                }
+                if(result.rmsObj.Business_Type__c != undefined){
+                    this.businessType = result.rmsObj.Business_Type__c != null ? result.rmsObj.Business_Type__c : null;
+                    this.rmsDetail.businessType = this.businessType;
+                }
+                if(result.rmsObj.Free_time__c != undefined){
+                    this.FreeTime = result.rmsObj.Free_time__c != null ? result.rmsObj.Free_time__c : null;
+                    this.rmsDetail.FreeTime = this.FreeTime;
+                }
+                if(result.rmsObj.Free_time_POD__c != undefined){
+                    this.FreeTimePOD = result.rmsObj.Free_time_POD__c != null ? result.rmsObj.Free_time_POD__c : null;
+                    this.rmsDetail.FreeTime = this.FreeTimePOD;
+                }
+                if(result.rmsObj.All_in_Rate__c != undefined){
+                    this.allInRate = result.rmsObj.All_in_Rate__c;
+                    this.rmsDetail.allInRate = this.allInRate;
+                }
+                if(result.rmsObj.Ex_Works_All_In__c != undefined){
+                    this.ExWorksIn = result.rmsObj.Ex_Works_All_In__c;
+                    this.rmsDetail.ExWorksIn = this.ExWorksIn;
+                }
+                if(result.rmsObj.FOB_All_In__c != undefined){
+                    this.FOBAllIn = result.rmsObj.FOB_All_In__c;
+                    this.rmsDetail.FOBAllIn = this.FOBAllIn;
+                }
+                this.updateRMSCheckBox();
+                if(result.rmsObj.Remarks__c != undefined){
+                    this.remarks = result.rmsObj.Remarks__c;
+                    this.rmsDetail.remarks = this.remarks;
+                }
+                if(result.rmsObj.Shipping_Line_Charges__r != undefined && result.rmsObj.Shipping_Line_Charges__r.length > 0){
+                    let tempObj = result.rmsObj.Shipping_Line_Charges__r[0];
+                    this.shippTotalChanged = result.shippTotalChanged != null ? result.shippTotalChanged : false;
+                    if(tempObj.BAF__c != undefined){
+                        this.BAF = tempObj.BAF__c > 0 ? tempObj.BAF__c: null;
+                        this.shipp.BAF = this.BAF;
+                    }
+                    if(tempObj.Bunker_surcharge__c != undefined){
+                        this.BunkerSurcharge = tempObj.Bunker_surcharge__c > 0 ? tempObj.Bunker_surcharge__c: null;
+                        this.shipp.BunkerSurcharge = this.BunkerSurcharge;
+                    }
+                    if(tempObj.CMC__c != undefined){
+                        this.CMC = tempObj.CMC__c > 0 ? tempObj.CMC__c: null;
+                        this.shipp.CMC = this.CMC;
+                    }
+                    if(tempObj.DTHC__c != undefined){
+                        this.DTHC = tempObj.DTHC__c > 0 ? tempObj.DTHC__c: null;
+                        this.shipp.DTHC = this.DTHC;
+                    }
+                    if(tempObj.EIC__c != undefined){
+                        this.EIC = tempObj.EIC__c > 0 ? tempObj.EIC__c: null;
+                        this.shipp.EIC = this.EIC;
+                    }
+                    if(tempObj.ISPS__c != undefined){
+                        this.ISPS = tempObj.ISPS__c > 0 ? tempObj.ISPS__c: null;
+                        this.shipp.ISPS = this.ISPS;
+                    }
+                    if(tempObj.OTHC__c != undefined){
+                        this.shipp.OTHC = tempObj.OTHC__c > 0 ? tempObj.OTHC__c: null;
+                    }
+                    if(tempObj.Seal_Charges__c != undefined){
+                        this.sealCharges = tempObj.Seal_Charges__c > 0 ? tempObj.Seal_Charges__c: null;
+                        this.shipp.sealCharges = this.sealCharges;
+                    }
+                    if(tempObj.Carriage_Congestion_Surcharge__c != undefined){
+                        this.shipp.carriageCongestionSurcharg = tempObj.Carriage_Congestion_Surcharge__c > 0 ? tempObj.Carriage_Congestion_Surcharge__c: null;
+                    }
+                    if(tempObj.Carrier_Security_Fees__c != undefined){
+                        this.shipp.carrierSecurityFees = tempObj.Carrier_Security_Fees__c > 0 ? tempObj.Carrier_Security_Fees__c: null;
+                    }
+                    if(tempObj.Cleaning_Charges__c != undefined){
+                        this.shipp.cleaningCharges = tempObj.Cleaning_Charges__c > 0 ? tempObj.Cleaning_Charges__c: null;
+                    }
+                    if(tempObj.DG_Surcharge__c != undefined){
+                        this.shipp.DGSurcharge = tempObj.DG_Surcharge__c > 0 ? tempObj.DG_Surcharge__c: null;
+                    }
+                    if(tempObj.Inland_Handling_Fees__c != undefined){
+                        this.shipp.inlandHandlingFees = tempObj.Inland_Handling_Fees__c > 0 ? tempObj.Inland_Handling_Fees__c: null;
+                    }
+                    if(tempObj.Inland_Fuel_Surcharge__c != undefined){
+                        this.shipp.inlandFuelSurcharge = tempObj.Inland_Fuel_Surcharge__c > 0 ? tempObj.Inland_Fuel_Surcharge__c: null;
+                    }
+                    if(tempObj.Inland_haulage__c != undefined){
+                        this.shipp.inlandhaulage = tempObj.Inland_haulage__c > 0 ? tempObj.Inland_haulage__c: null;
+                    }
+                    if(tempObj.Low_Sulphur_Surcharge__c != undefined){
+                        this.shipp.lowSulphurSurcharge = tempObj.Low_Sulphur_Surcharge__c > 0 ? tempObj.Low_Sulphur_Surcharge__c: null;
+                    }
+                    if(tempObj.Operational_Recovery_Surcharge__c != undefined){
+                        this.shipp.operationalRecoverySurcharge = tempObj.Operational_Recovery_Surcharge__c > 0 ? tempObj.Operational_Recovery_Surcharge__c: null;
+                    }
+                    if(tempObj.Overweight_surcharge__c != undefined){
+                        this.shipp.overweightsurcharge = tempObj.Overweight_surcharge__c > 0 ? tempObj.Overweight_surcharge__c: null;
+                    }
+                    if(tempObj.War_Risk_Surcharge__c != undefined){
+                        this.shipp.warRiskSurcharge = tempObj.War_Risk_Surcharge__c > 0 ? tempObj.War_Risk_Surcharge__c: null;
+                    }
+                    if(tempObj.Total__c != undefined){
+                        this.shippTotal = tempObj.Total__c > 0 ? tempObj.Total__c: null;
+                    }
+                    if(tempObj.CurrencyIsoCode != undefined){
+                        this.shipp.currencyCode = tempObj.CurrencyIsoCode;
+                        if(this.curencyCodeOption.length > 0){
+                            let index = this.curencyCodeOption.findIndex(x=>x.label == tempObj.CurrencyIsoCode);
+                            if(index != -1){
+                               this.shippExchangeRate = this.curencyCodeOption[index].exchangeRate
+                            }
+                        }
+                        if(this.shipp.currencyCode == 'USD') {
+                            this.disableShippOffSet = true;
+                            this.shipp.offSet = 0;
+                        }
+                        else{
+                            this.disableShippOffSet = false;
+                        }
+                    }
+                    if(tempObj.Offset_Value__c != undefined){
+                        this.shipp.offSet = tempObj.Offset_Value__c > 0 ? tempObj.Offset_Value__c: null;
+                    }
+                    this.updateShippingTotal();
+                }
+                if(result.rmsObj.INCO_Charges__r != undefined && result.rmsObj.INCO_Charges__r.length > 0){
+                    let tempObj = result.rmsObj.INCO_Charges__r[0];
+                    this.incoChargeTotalChange = result.incoChargeTotalChange != null ? result.incoChargeTotalChange : false;
+                    if(tempObj.CurrencyIsoCode != undefined){
+                        this.incoCharges.currencyCode = tempObj.CurrencyIsoCode;
+                        if(this.curencyCodeOption.length > 0){
+                            let index = this.curencyCodeOption.findIndex(x=>x.label == tempObj.CurrencyIsoCode);
+                            if(index != -1){
+                               this.incoExchangeRate = this.curencyCodeOption[index].exchangeRate
+                            }
+                        }
+                        if(this.incoCharges.currencyCode == 'USD') {
+                            this.disableIncoOffSet = true;
+                            this.incoCharges.offSet = 0;
+                        }
+                        else{
+                            this.disableIncoOffSet = false;
+                        }
+                    }
+                    if(tempObj.Offset_Value__c != undefined){
+                        this.incoCharges.offSet = tempObj.Offset_Value__c > 0 ? tempObj.Offset_Value__c: null;
+                    }
+                    if(tempObj.Bayan__c != undefined){
+                        this.bayan = tempObj.Bayan__c > 0 ? tempObj.Bayan__c: null;
+                        this.incoCharges.bayan= this.bayan;  
+                    }
+                    if(tempObj.Fasah_fee__c != undefined){
+                        this.fasahFee = tempObj.Fasah_fee__c > 0 ? tempObj.Fasah_fee__c: null;
+                        this.incoCharges.fasahFee= this.fasahFee;
+                    }
+                    if(tempObj.Inspection__c != undefined){
+                        this.inspection = tempObj.Inspection__c > 0 ? tempObj.Inspection__c: null;
+                        this.incoCharges.inspection= this.inspection;   
+                    }
+                    if(tempObj.Lift_on_Lift_off__c != undefined){
+                        this.liftOnLiftOff = tempObj.Lift_on_Lift_off__c > 0 ? tempObj.Lift_on_Lift_off__c: null;
+                        this.incoCharges.liftOnLiftOff= this.liftOnLiftOff;  
+                    }
+                    if(tempObj.Origin_Customs_clearance__c != undefined){
+                        this.originCustomsclearance = tempObj.Origin_Customs_clearance__c > 0 ? tempObj.Origin_Customs_clearance__c: null;
+                        this.incoCharges.originCustomsclearance= this.originCustomsclearance; 
+                    }
+                    if(tempObj.Origin_Loading_Charges__c != undefined){
+                        this.originLoadingCharges = tempObj.Origin_Loading_Charges__c > 0 ? tempObj.Origin_Loading_Charges__c: null;
+                        this.incoCharges.originLoadingCharges= this.originLoadingCharges;  
+                    }
+                    if(tempObj.Port_Shuttling__c != undefined){
+                        this.portShuttling = tempObj.Port_Shuttling__c > 0 ? tempObj.Port_Shuttling__c: null;
+                        this.incoCharges.portShuttling= this.portShuttling; 
+                    }
+                    if(tempObj.Tabadul__c != undefined){
+                        this.tabadul = tempObj.Tabadul__c > 0 ? tempObj.Tabadul__c: null;
+                        this.incoCharges.tabadul= this.tabadul;   
+                    }
+                    if(tempObj.Xray__c != undefined){
+                        this.xray = tempObj.Xray__c > 0 ? tempObj.Xray__c: null;
+                        this.incoCharges.xray= this.xray; 
+                    }
+                    if(tempObj.Loading_Charges__c != undefined){
+                        this.loadingCharge = tempObj.Loading_Charges__c > 0 ? tempObj.Loading_Charges__c: null;
+                        this.incoCharges.loadingCharge= this.loadingCharge;
+                    }
+                    if(tempObj.BL_Fees__c != undefined){
+                        this.bLFees = tempObj.BL_Fees__c > 0 ? tempObj.BL_Fees__c: null;
+                        this.incoCharges.bLFees= this.bLFees;
+                    }
+                    if(tempObj.Export_Service_Fees__c != undefined){
+                        this.exportServiceFees = tempObj.Export_Service_Fees__c > 0 ? tempObj.Export_Service_Fees__c: null;
+                        this.incoCharges.exportServiceFees= this.exportServiceFees;
+                    }
+                    if(tempObj.Fuel_Surcharge__c != undefined){
+                        this.fuelSurcharge = tempObj.Fuel_Surcharge__c > 0 ? tempObj.Fuel_Surcharge__c: null;
+                        this.incoCharges.fuelSurcharge= this.fuelSurcharge;
+                    }
+                    if(tempObj.Insurance_Charges__c != undefined){
+                        this.insuranceCharges = tempObj.Insurance_Charges__c > 0 ? tempObj.Insurance_Charges__c: null;
+                        this.incoCharges.insuranceCharges= this.insuranceCharges;
+                    }
+                    if(tempObj.Lashing_Charges__c != undefined){
+                        this.lashingCharges = tempObj.Lashing_Charges__c > 0 ? tempObj.Lashing_Charges__c: null;
+                        this.incoCharges.lashingCharges= this.lashingCharges;
+                    }
+                    if(tempObj.Origin_Detention_Demurrage_Charges__c != undefined){
+                        this.originDetentionDemurrageCharges = tempObj.Origin_Detention_Demurrage_Charges__c > 0 ? tempObj.Origin_Detention_Demurrage_Charges__c: null;
+                        this.incoCharges.originDetentionDemurrageCharges= this.originDetentionDemurrageCharges;
+                    }
+                    if(tempObj.OTHC__c != undefined){
+                        this.OTHC = tempObj.OTHC__c > 0 ? tempObj.OTHC__c: null;
+                        this.incoCharges.OTHC= this.OTHC;
+                    }
+                    if(tempObj.Pickup_Charges__c != undefined){
+                        this.pickupCharges = tempObj.Pickup_Charges__c > 0 ? tempObj.Pickup_Charges__c: null;
+                        this.incoCharges.pickupCharges= this.pickupCharges;
+                    }
+                    if(tempObj.Reefer_Plugin_Charges__c != undefined){
+                        this.reeferPluginCharges = tempObj.Reefer_Plugin_Charges__c > 0 ? tempObj.Reefer_Plugin_Charges__c: null;
+                        this.incoCharges.reeferPluginCharges= this.reeferPluginCharges;
+                    }
+                    if(tempObj.Tarpaulin_Charges__c != undefined){
+                        this.tarpaulinCharges = tempObj.Tarpaulin_Charges__c > 0 ? tempObj.Tarpaulin_Charges__c: null;
+                        this.incoCharges.tarpaulinCharges= this.tarpaulinCharges;
+                    }
+                    if(tempObj.Truck_idling_Charges__c != undefined){
+                        this.truckidlingCharges = tempObj.Truck_idling_Charges__c > 0 ? tempObj.Truck_idling_Charges__c: null;
+                        this.incoCharges.truckidlingCharges= this.truckidlingCharges;
+                    }
+                    if(tempObj.VGM__c != undefined){
+                        this.vGM = tempObj.VGM__c > 0 ? tempObj.VGM__c: null;
+                        this.incoCharges.vGM= this.vGM;
+                    }
+                    if(tempObj.Total__c != undefined){
+                        this.incoTotal = tempObj.Total__c > 0 ? tempObj.Total__c: null;
+                        this.incoCharges.total= this.incoTotal;
+                    }
+                    this.updaTeIncoChargeTotal();
+                }
+                if(result.rmsObj.Clearance_and_Delivery__r != undefined && result.rmsObj.Clearance_and_Delivery__r.length > 0){
+                    let tempObj = result.rmsObj.Clearance_and_Delivery__r[0];
+                    if(tempObj.CurrencyIsoCode != undefined){
+                        this.destinCharges.currencyCode = tempObj.CurrencyIsoCode ;
+                        this.destinTotalChanged = result.destinTotalChanged != null ? result.destinTotalChanged : false;
+                        if(this.curencyCodeOption.length > 0){
+                            let index = this.curencyCodeOption.findIndex(x=>x.label == tempObj.CurrencyIsoCode);
+                            if(index != -1){
+                               this.destinExchangeRate = this.curencyCodeOption[index].exchangeRate
+                            }
+                        }
+                        if(this.destinCharges.currencyCode == 'USD') {
+                            this.disableShippOffSet = true;
+                            this.destinCharges.offSet = 0;
+                        }
+                        else{
+                            this.disableShippOffSet = false;
+                        }
+                    }
+                    if(tempObj.Offset_Value__c != undefined){
+                        this.destinCharges.offSet = tempObj.Offset_Value__c > 0 ? tempObj.Offset_Value__c: null;
+                    }
+                    if(tempObj.Bayan_Charges__c != undefined){
+                        this.destinCharges.bayanCharges = tempObj.Bayan_Charges__c > 0 ? tempObj.Bayan_Charges__c: null;
+                    }
+                    if(tempObj.Custom_Clearance__c != undefined){
+                        this.destinCharges.customClearance = tempObj.Custom_Clearance__c > 0 ? tempObj.Custom_Clearance__c: null;
+                    }
+                    if(tempObj.DO_charges__c != undefined){
+                        this.destinCharges.doCharges = tempObj.DO_charges__c > 0 ? tempObj.DO_charges__c: null;
+                    }
+                    if(tempObj.Fasah_Charges__c != undefined){
+                        this.destinCharges.fasahCharges = tempObj.Fasah_Charges__c > 0 ? tempObj.Fasah_Charges__c: null;
+                    }
+                    if(tempObj.Gate_pass_charges__c != undefined){
+                        this.destinCharges.gatePassCharges = tempObj.Gate_pass_charges__c > 0 ? tempObj.Gate_pass_charges__c: null;
+                    }
+                    if(tempObj.LOLO_Charges__c != undefined){
+                        this.destinCharges.LOLOCharges = tempObj.LOLO_Charges__c > 0 ? tempObj.LOLO_Charges__c: null;
+                    }
+                    if(tempObj.Total__c != undefined){
+                        this.destinCharges.total = tempObj.Total__c > 0 ? tempObj.Total__c: null;
+                    }
+                    if(tempObj.Transportation__c != undefined){
+                        this.destinCharges.transportation = tempObj.Transportation__c > 0 ? tempObj.Transportation__c: null;
+                    }
+                }
+                this.isLoading = false
+            }
+        })
+        .catch(erro=>{
+            this.isLoading = false
+            console.log('copyExistingRMS error'+JSON.stringify(erro,null,2))
+        })
     }
 }

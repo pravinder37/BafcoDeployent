@@ -20,6 +20,14 @@ public class BAFCOLeadDetailsControllerTest {
         opty.Name ='testopty';
         opty.Business_Type__c = 'Export';
         insert opty;
+        Task tsk = new Task();
+        tsk.Subject = 'Provide Quotation';
+        tsk.Status = 'Open';
+        tsk.OwnerId = UserInfo.getUserId();
+        tsk.WhatId = opty.Id;
+        tsk.IsReminderSet = true;
+        tsk.ActivityDate = Date.valueOf(DateTime.now());
+        insert tsk;
         Contact cont = new Contact();
         cont.FirstName='First Name';
         cont.LastName = 'Last name';
@@ -38,10 +46,12 @@ public class BAFCOLeadDetailsControllerTest {
         
         Shipping_Line__c shipLine = new  Shipping_Line__c();
         shipLine.Name = 'ShipLine';
+        shipLine.BSLS_ID__c = 'test';
         Insert shipLine;
         
         Equipment_Type__c equip = new Equipment_Type__c();
         equip.Name='EquipName';
+        equip.BSLS_ID__c = 'test';
         Insert equip;
         
         RMS__c rmsObj = new RMS__c();
@@ -51,7 +61,7 @@ public class BAFCOLeadDetailsControllerTest {
         rmsObj.Commodity__c =comd.Id;
         rmsObj.Shipping_Line__c = shipLine.id;
         rmsObj.Equipment_Type__c = equip.id;
-        rmsObj.Validity__c = System.today().addDays(-5);
+        rmsObj.Validity__c = System.today().addDays(15);
         insert rmsObj;
         
     }
@@ -134,21 +144,42 @@ public class BAFCOLeadDetailsControllerTest {
         test.stopTest();
     }
     testmethod static void submitRMSTest(){
-         Port__c portObj = [Select id from Port__c limit 1]; 
+        Port__c portObj = [Select id from Port__c limit 1]; 
+        Equipment_Type__c equip = [Select id from Equipment_Type__c limit 1]; 
         BAFCORMSDto rmsDetail = new BAFCORMSDto();
         rmsDetail.validity= String.valueOf(system.today());
         rmsDetail.seaFreight= 100;
         rmsDetail.businessType= 'Export';
         rmsDetail.allInRate = false;
-         rmsDetail.FOBAllIn = false;
-         rmsDetail.ExWorksIn = false;
+        rmsDetail.FOBAllIn = false;
+        rmsDetail.ExWorksIn = false;
         rmsDetail.loadingPortId = portObj.id;
-            rmsDetail.loadingDestinationId = portObj.id;
+        rmsDetail.loadingDestinationId = portObj.id;
+        rmsDetail.equipmentId = equip.id;
         shippingLineChargesDTO shippingChargeDto = new shippingLineChargesDTO();
         BAFCOIncoChargesDto incocharges = new BAFCOIncoChargesDto();
         BAFCODestinationChargeDto destinCharges = new BAFCODestinationChargeDto();
         test.startTest();
         BAFCOLeadDetailsController.submitRMS(rmsDetail, shippingChargeDto, incocharges, false, false, false, destinCharges);
+        rmsDetail.businessType= 'Import';
+        BAFCOLeadDetailsController.submitRMS(rmsDetail, shippingChargeDto, incocharges, false, false, false, destinCharges);
+        test.stopTest();
+    }
+    testMethod static void getMonthName(){
+        test.startTest(); 
+        BAFCOLeadDetailsController.getMonthName(1);
+        BAFCOLeadDetailsController.getMonthName(2);
+        BAFCOLeadDetailsController.getMonthName(3);
+        BAFCOLeadDetailsController.getMonthName(4);
+        BAFCOLeadDetailsController.getMonthName(5);
+        BAFCOLeadDetailsController.getMonthName(6);
+        BAFCOLeadDetailsController.getMonthName(7);
+        BAFCOLeadDetailsController.getMonthName(8);
+        BAFCOLeadDetailsController.getMonthName(9);
+        BAFCOLeadDetailsController.getMonthName(10);
+        BAFCOLeadDetailsController.getMonthName(11);
+        BAFCOLeadDetailsController.getMonthName(12);
+         BAFCOLeadDetailsController.getMonthName(null);
         test.stopTest();
     }
 }

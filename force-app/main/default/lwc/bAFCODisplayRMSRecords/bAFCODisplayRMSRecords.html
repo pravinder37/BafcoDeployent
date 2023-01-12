@@ -87,7 +87,8 @@
                             </td>                
                             <td>{rms.lastModifiedByName}</td>                
                             <td>
-                                <lightning-button variant="base" label="view" data-rmsid={rms.rmsID} onclick={navigateToRms}></lightning-button>
+                                <lightning-button-icon variant="label-hidden" label="" icon-name="utility:preview" data-rmsid={rms.rmsID} onclick={navigateToRms}></lightning-button-icon>
+                                <lightning-button-icon variant="label-hidden" label="" icon-name="utility:copy" data-rmsid={rms.rmsID} onclick={CopyRms}></lightning-button-icon>
                             </td>
                         </tr>
                     </template>
@@ -106,7 +107,7 @@
             </div>            
         </template>
         <template if:true={showAddRatesModel}>
-            <c-b-a-f-c-o-r-m-s-intake-form onclose={handleCloseAddRates} onsuccess={handleSuccessAddRate}></c-b-a-f-c-o-r-m-s-intake-form>
+            <c-b-a-f-c-o-r-m-s-intake-form copy-rms-id={rmsId} onclose={handleCloseAddRates} onsuccess={handleSuccessAddRate}></c-b-a-f-c-o-r-m-s-intake-form>
         </template>
     </div>    
 </template>

@@ -56,11 +56,11 @@ export default class BAFCODisplayRMSRecords extends NavigationMixin(LightningEle
         this.showServiceChargeModal = false; 
     }
     navigateToRms(e){
-        this.rmsId = e.target.dataset.rmsid;
+        let rmsId = e.target.dataset.rmsid;
         this[NavigationMixin.GenerateUrl]({
             type: 'standard__recordPage',
             attributes: {
-                recordId: this.rmsId,
+                recordId: rmsId,
                 actionName: 'view'
             },
         }).then(url => { window.open(url) });
@@ -82,6 +82,7 @@ export default class BAFCODisplayRMSRecords extends NavigationMixin(LightningEle
         this.loadingPort = '';
     }
     handleCloseAddRates(){
+        this.rmsId = '';
         this.showAddRatesModel = false
     }
     handleDestinationSelection(e){
@@ -117,5 +118,10 @@ export default class BAFCODisplayRMSRecords extends NavigationMixin(LightningEle
         let defaultLoadingDestinationField = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[1]
         defaultLoadingDestinationField.handleRemovePill();
         this.validity = '';
+    }
+    CopyRms(e){
+        this.rmsId = e.target.dataset.rmsid;
+        console.log('** this.rmsId '+this.rmsId)
+        this.showAddRatesModel = true;
     }
 }

@@ -201,6 +201,18 @@ chargesIncluded +='Container Lashing Charges : '+quote.Container_Lashing_Charges
             if(quote.Wrappingpacking_charges__c!=0.0 && quote.Wrappingpacking_charges__c!=NULL){
                 chargesIncluded +='Wrapping/packing charges : '+quote.Wrappingpacking_charges__c +' '+ quote.CurrencyIsoCode + '\r\n';
             }
+            if(quote.Alternate_depot_release_charges__c!=0.0 && quote.Alternate_depot_release_charges__c!=NULL){
+                chargesIncluded +='Alternate Depot Release Charges : '+quote.Alternate_depot_release_charges__c +' '+ quote.CurrencyIsoCode + '\r\n';
+            }
+            if(quote.Freight_Difference_FD__c!=0.0 && quote.Freight_Difference_FD__c!=NULL){
+                chargesIncluded +='Freight Difference (FD) : '+quote.Freight_Difference_FD__c +' '+ quote.CurrencyIsoCode + '\r\n';
+            }
+            if(quote.Carrier_container_repositioning_charges__c!=0.0 && quote.Carrier_container_repositioning_charges__c!=NULL){
+                chargesIncluded +='Carrier container repositioning charges : '+quote.Carrier_container_repositioning_charges__c +' '+ quote.CurrencyIsoCode + '\r\n';
+            }
+            if(quote.Tank_Rental_Charges__c!=0.0 && quote.Tank_Rental_Charges__c!=NULL){
+                chargesIncluded +='Tank Rental Charges : '+quote.Tank_Rental_Charges__c +' '+ quote.CurrencyIsoCode + '\r\n';
+            }
             
             //Ex Works Charges Computation
             /*if(quote.Place_of_Pickup__c!=0.0 && quote.Place_of_Pickup__c!=NULL){

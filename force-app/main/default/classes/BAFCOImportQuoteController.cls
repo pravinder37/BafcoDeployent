@@ -89,6 +89,7 @@ if(quoteItemToIdMap.containsKey(key)){
 rmsDto.quotationItemId = quoteItemToIdMap.get(key);  
 }*/
                                 Date d = rmsObj.Validity__c != null ? rmsObj.Validity__c : null;
+                                rmsDto.buyingRateValidity = d;
                                 if(d != null)
                                     rmsDto.validity = DateTime.newInstance(d.year(),d.month(),d.day()).format('dd-MMM-YYYY') +', '+system.today().daysBetween(d) +' Days';
                                 tempMap.get(rmsObj.Shipping_Line__r.Name).add(rmsDto);
@@ -384,6 +385,9 @@ quoteItemObj. = dto.value;
             }
             if(dto2.name == 'Alternate depot release charges'){
                 quoteItemObj.Alternate_depot_release_charges__c = dto2.value;
+            }
+            if(dto2.name == 'Tank Rental Charges'){
+                quoteItemObj.Tank_Rental_Charges__c = dto2.value;
             }
             quoteItemObj.Add_to_Buying_Additional__c =  dto.addAdditionalCharge != null ? dto.addAdditionalCharge : false;
             quoteItemObj.Included_PDF_Additional__c =  dto.includeAdditionalCharge != null ? dto.includeAdditionalCharge : false;

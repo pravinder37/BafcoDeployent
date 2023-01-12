@@ -147,7 +147,7 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
             'placeOfDischarge':'',
             'commodity':'',
             'commodityName':'',
-            'cargoWeights':0,
+            'cargoWeights':null,
             'dangerousGoods':false,
             'remarks':'',
             'dgClass':'',
