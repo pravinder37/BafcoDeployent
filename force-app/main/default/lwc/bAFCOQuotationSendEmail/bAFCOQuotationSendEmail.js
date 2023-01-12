@@ -39,7 +39,8 @@ export default class BAFCOQuotationSendEmail extends LightningElement {
                     this.subject += result[0].subjectLine;
                     console.log('subject '+this.subject)
                     result.forEach(elem => {
-                        content += 'Port of Loading: '+elem.loadingPort;
+                        content += '\nQuotation Name: '+elem.quoteName;
+                        content += '\nPort of Loading: '+elem.loadingPort;
                         content += '\nPort of Discharge: '+elem.dischargePort;
                         content += '\nEquipment Type: '+elem.equipmentType;
                         content += '\nCargo Weight: '+elem.cargoWeight;
@@ -123,6 +124,7 @@ export default class BAFCOQuotationSendEmail extends LightningElement {
                 toBCCSend : this.toBCCSend,
                 subject : this.subject,
                 body : stringAsHtml,
+                quoteId : this.recordId,
             }).then(result=>{
                 console.log('sendEmail result '+result)
                 this.isLoading = false

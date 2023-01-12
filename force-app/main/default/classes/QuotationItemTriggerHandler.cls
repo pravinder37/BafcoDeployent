@@ -262,15 +262,15 @@ chargesIncluded +='Place of Discharge : '+quote.Place_of_Discharge__c +' '+ quot
         }
         if(quoteId.size()>0){
             Map<Id,String> quoteIdToDetails = new Map<Id,String>();
-            for(Quotation_Item__c item : [Select id,Quotation__c,Route__r.name,Total__c from Quotation_Item__c where Quotation__c in :quoteId ]){
+            for(Quotation_Item__c item : [Select id,Equipment_Type__r.name,Quotation__c,Route__r.name,Total__c from Quotation_Item__c where Quotation__c in :quoteId ]){
                 if(item.Route__c != null){
                     String details = '';
                     if(!quoteIdToDetails.containsKey(item.Quotation__c)){
-                         details = item.Route__r.Name+'-'+item.Total__c;
+                         details = item.Route__r.Name+' - '+item.Equipment_Type__r.name+' - '+item.Total__c;
                     }
                     else{
                         details = quoteIdToDetails.get(item.Quotation__c);
-                        details += '\n'+item.Route__r.Name+'-'+item.Total__c;
+                        details += '\n'+item.Route__r.Name+' - '+item.Equipment_Type__r.name+' - '+item.Total__c;
                     }
                      quoteIdToDetails.put(item.Quotation__c,details);
                 }

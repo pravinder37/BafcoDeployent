@@ -3,7 +3,7 @@ public without sharing class BAFCOQuoteCopyContentController {
     public static List<QuoteLineList>  getQuoteDataOnLoad(String quoteId){
         List<QuoteLineList> quoteItemList = new List<QuoteLineList>();
         String SubjectLine = '';
-        List<Quotation_Item__c> quoteList = [Select Customer_Name__c,Shipping_Linee__r.name,Quantity__c,Route__r.Cargo_Weight__c,Rms__r.Free_time_POD__c, Rms__r.Free_time__c,Route__r.INCO_Term__r.name,Route__r.Service_Type__c,id,Quotation__r.Exclusions__c,Quotation__r.Inclusions__c,Quotation__r.Terms_and_Conditions__c,Total__c,Quotation__r.Recordtype.Name,Port_of_Loading__r.Name,Port_of_Discharge__r.Name,Equipment_Type__r.Name from Quotation_Item__c where quotation__c =: quoteId];
+        List<Quotation_Item__c> quoteList = [Select Quotation__r.Name,Customer_Name__c,Shipping_Linee__r.name,Quantity__c,Route__r.Cargo_Weight__c,Rms__r.Free_time_POD__c, Rms__r.Free_time__c,Route__r.INCO_Term__r.name,Route__r.Service_Type__c,id,Quotation__r.Exclusions__c,Quotation__r.Inclusions__c,Quotation__r.Terms_and_Conditions__c,Total__c,Quotation__r.Recordtype.Name,Port_of_Loading__r.Name,Port_of_Discharge__r.Name,Equipment_Type__r.Name from Quotation_Item__c where quotation__c =: quoteId];
         if(quoteList.size() > 0){
             Set<String> portStringSet = new Set<String>();
             Map<Id,String> itemIdToPortString = new  Map<Id,String>();
@@ -17,13 +17,14 @@ public without sharing class BAFCOQuoteCopyContentController {
             SubjectLine = SubjectLine.removeEnd(',');
             for(Quotation_Item__c item : quoteList){
                 QuoteLineList dto = new QuoteLineList();
+                dto.quoteName = item.Quotation__r.name;
                 dto.loadingPort = item.Port_of_Loading__c != null ? item.Port_of_Loading__r.Name : '';
                 dto.dischargePort = item.Port_of_Discharge__c != null ? item.Port_of_Discharge__r.Name : '';
                 dto.equipmentType = item.Equipment_Type__c != null ? item.Equipment_Type__r.Name : '';
                 dto.total = item.Total__c;
                 dto.recordtypeName = item.Quotation__r.Recordtype.Name;
                 dto.serviceType = item.Route__r.Service_Type__c;
-                dto.cargoWeight = item.Route__r.Cargo_Weight__c;
+                dto.cargoWeight = item.Route__r.Cargo_Weight__c > 0 ? item.Route__r.Cargo_Weight__c : 0;
                 dto.quantity = item.Quantity__c;
                 dto.shippingLine = item.Shipping_Linee__r.name;
                 dto.customerRefNo ='';
@@ -67,7 +68,15 @@ public without sharing class BAFCOQuoteCopyContentController {
         return quoteItemList;
     }
     @AuraEnabled 
-    public static void  sendEmail(String toSend,String toCCSend, String toBCCSend, String subject,String body){ 
+    public static void  sendEmail(String toSend,String toCCSend, String toBCCSend, String subject,String body,String quoteId){ 
+        system.debug('quoteId '+quoteId);
+        if(quoteId != null){
+            Quotation__c quoteObj = new Quotation__c();
+            quoteObj.id = quoteId;
+            quoteObj.Status__c = 'Awaiting CRO';
+            update quoteObj;
+            system.debug('quoteObj '+quoteObj);
+        }
         List<Messaging.SingleEmailMessage> mails = new List<Messaging.SingleEmailMessage>();
         Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
         System.debug('body '+body);
@@ -108,5 +117,6 @@ public without sharing class BAFCOQuoteCopyContentController {
         @AuraEnabled public String customerPONo{get;set;}
         @AuraEnabled public String subjectLine{get;set;}
         @AuraEnabled public String customerName{get;set;}
+        @AuraEnabled public String quoteName{get;set;}
     }
 }

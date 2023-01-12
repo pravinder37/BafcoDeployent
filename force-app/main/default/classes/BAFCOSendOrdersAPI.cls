@@ -128,65 +128,108 @@ public class BAFCOSendOrdersAPI {
         dtoObj.OrderList = orderDtoList;
         //returnResult = JSON.serialize(dtoObj);
         system.debug('returnResult'+returnResult);
-        return dtoObj;
-    }
-    public class OrderDetails{
-        @AuraEnabled public List<OrderList> OrderList {get;Set;}
-    }
-    public class OrderList{
-        @AuraEnabled public AccountObj  AccountObj{get;set;}
-        @AuraEnabled public OrderObj  OrderObj{get;set;}
-    }
-    public class AccountObj{
-        @AuraEnabled public String AccountName {get;Set;}
-        @AuraEnabled public String Branch {get;Set;}
-        @AuraEnabled public String AccountOwner {get;Set;}
-        @AuraEnabled public String BillingAddress {get;Set;}
-        @AuraEnabled public String SFID {get;Set;}
-        @AuraEnabled public String BSLSID {get;Set;}
-    }
-    public class OrderObj{
-        @AuraEnabled public String OrderNumber {get;Set;}
-        @AuraEnabled public String QuotationNumber {get;Set;}
-        @AuraEnabled public Date QuotationValidity {get;Set;}
-        @AuraEnabled public Date OrderValidity {get;Set;}
-        @AuraEnabled public List<OrderItemList> orderItemList {get;Set;}
-    }
-    public class OrderItemList{
-        @AuraEnabled public String OrderNumber {get;Set;}
-        @AuraEnabled public String OrderItemNumber {get;Set;}
-        @AuraEnabled public String opsExecutive {get;Set;}
-        @AuraEnabled public String shippingline {get;Set;}
-        @AuraEnabled public String portOfLoading {get;Set;}
-        @AuraEnabled public String portOfDestination {get;Set;}
-        @AuraEnabled public String placeOfPickup {get;Set;}
-        @AuraEnabled public String placeOfDischarge {get;Set;}
-        @AuraEnabled public String equipmentType {get;Set;}
-        @AuraEnabled public Integer serviceType {get;Set;}
-        @AuraEnabled public Integer shipmentType {get;Set;}
-        @AuraEnabled public Agent Agent {get;Set;}
-        @AuraEnabled public List<Consignee> Consignee {get;Set;}
-        @AuraEnabled public List<Shipper> Shipper {get;Set;}
-    }
-    public class Agent{
-        @AuraEnabled public String AgentName {get;Set;}
-        @AuraEnabled public String SFID {get;Set;}
-        @AuraEnabled public String BSLSID {get;Set;}
-    }
-    public class Consignee{
-        @AuraEnabled public String AccountName {get;Set;}
-        @AuraEnabled public String Branch {get;Set;}
-        @AuraEnabled public String AccountOwner {get;Set;}
-        @AuraEnabled public String BillingAddress {get;Set;}
-        @AuraEnabled public String SFID {get;Set;}
-        @AuraEnabled public String BSLSID {get;Set;}
-    }
-    public class Shipper{
-        @AuraEnabled public String AccountName {get;Set;}
-        @AuraEnabled public String Branch {get;Set;}
-        @AuraEnabled public String AccountOwner {get;Set;}
-        @AuraEnabled public String BillingAddress {get;Set;}
-        @AuraEnabled public String SFID {get;Set;}
-        @AuraEnabled public String BSLSID {get;Set;}
-    }
+        HttpRequest req = new HttpRequest();
+        req.setEndpoint('callout:TPG_API/api/Request/Begin');
+        req.setMethod('POST');
+        //Adding Header Authentication
+        req.setHeader('Content-Type', 'application/json');
+        //String authorizationHeader = 'Basic ' + EncodingUtil.base64Encode(headerValue);
+        //req.setHeader('Authorization', authorizationHeader);
+        //system.debug('Header Value '+req.getHeader('Authorization'));
+        //Adding Header
+        //req.setBody(JSON.serialize(projectWrapper));
+        req.setTimeout(2 * 60 * 1000);        
+        HttpResponse response = null;        
+        try {
+            Http http = new Http();
+            response = http.send(req);            
+            system.debug('response of upsertProjectToTPG'+response);
+        } 
+        catch (System.CalloutException e) {
+            system.debug('Catch of Callout Exception in Class - dxpTPGCreateProjectAPIService'+e.getMessage());
+        }
+        if(response!=NULL){
+            String responseBody = response.getBody();
+            //dxpTPGpcDTOWrapper.ProjectTPGResponse responseTPGProjectID = (dxpTPGpcDTOWrapper.ProjectTPGResponse)Json.deserialize(responseBody,dxpTPGpcDTOWrapper.ProjectTPGResponse.class);
+            if (response.getStatusCode() == 200) {
+                String statusCode = String.valueOf(response.getStatusCode());
+                system.debug('body of upsertProjectToTPG: ' + response.getBody());
+                if(String.isNotBlank(responseBody)) {
+                    String tpgID='';
+                    system.debug('responseBody of upsertProjectToTPG'+responseBody);
+                    }
+                }
+            }
+            else{
+                /*String statusCode = String.valueOf(response.getStatusCode());
+                Services_Exception_Log__c exceptionLog = new Services_Exception_Log__c();
+                exceptionLog.API_Name__c='Opportunity_Brand__c record callout for '+oppBrand.Id;
+                exceptionLog.API_Producer_Picklist__c=SERVICES_EXCEPTION_API_PRODUCER;
+                exceptionLog.Messages__c=responseTPGProjectID.BusinessError;
+                exceptionLog.Stack_Trace__c='Business Error - '+responseTPGProjectID.BusinessError+' for Status Code - '+statusCode +' in class dxpTPGCreateProjectAPIService';                    
+                callOutExceptions.add(exceptionLog);*/
+            }
+        
+    return dtoObj;
+    
+}
+public class OrderDetails{
+    @AuraEnabled public List<OrderList> OrderList {get;Set;}
+}
+public class OrderList{
+    @AuraEnabled public AccountObj  AccountObj{get;set;}
+    @AuraEnabled public OrderObj  OrderObj{get;set;}
+}
+public class AccountObj{
+    @AuraEnabled public String AccountName {get;Set;}
+    @AuraEnabled public String Branch {get;Set;}
+    @AuraEnabled public String AccountOwner {get;Set;}
+    @AuraEnabled public String BillingAddress {get;Set;}
+    @AuraEnabled public String SFID {get;Set;}
+    @AuraEnabled public String BSLSID {get;Set;}
+}
+public class OrderObj{
+    @AuraEnabled public String OrderNumber {get;Set;}
+    @AuraEnabled public String QuotationNumber {get;Set;}
+    @AuraEnabled public Date QuotationValidity {get;Set;}
+    @AuraEnabled public Date OrderValidity {get;Set;}
+    @AuraEnabled public List<OrderItemList> orderItemList {get;Set;}
+}
+public class OrderItemList{
+    @AuraEnabled public String OrderNumber {get;Set;}
+    @AuraEnabled public String OrderItemNumber {get;Set;}
+    @AuraEnabled public String opsExecutive {get;Set;}
+    @AuraEnabled public String shippingline {get;Set;}
+    @AuraEnabled public String portOfLoading {get;Set;}
+    @AuraEnabled public String portOfDestination {get;Set;}
+    @AuraEnabled public String placeOfPickup {get;Set;}
+    @AuraEnabled public String placeOfDischarge {get;Set;}
+    @AuraEnabled public String equipmentType {get;Set;}
+    @AuraEnabled public Integer serviceType {get;Set;}
+    @AuraEnabled public Integer shipmentType {get;Set;}
+    @AuraEnabled public Agent Agent {get;Set;}
+    @AuraEnabled public List<Consignee> Consignee {get;Set;}
+    @AuraEnabled public List<Shipper> Shipper {get;Set;}
+}
+public class Agent{
+    @AuraEnabled public String AgentName {get;Set;}
+    @AuraEnabled public String SFID {get;Set;}
+    @AuraEnabled public String BSLSID {get;Set;}
+}
+public class Consignee{
+    @AuraEnabled public String AccountName {get;Set;}
+    @AuraEnabled public String Branch {get;Set;}
+    @AuraEnabled public String AccountOwner {get;Set;}
+    @AuraEnabled public String BillingAddress {get;Set;}
+    @AuraEnabled public String SFID {get;Set;}
+    @AuraEnabled public String BSLSID {get;Set;}
+}
+public class Shipper{
+    @AuraEnabled public String AccountName {get;Set;}
+    @AuraEnabled public String Branch {get;Set;}
+    @AuraEnabled public String AccountOwner {get;Set;}
+    @AuraEnabled public String BillingAddress {get;Set;}
+    @AuraEnabled public String SFID {get;Set;}
+    @AuraEnabled public String BSLSID {get;Set;}
+}
 }
