@@ -24,5 +24,13 @@
 		<members>*</members>
 		<name>CustomObject</name>
 	</types>
+	<types>
+		<members>*</members>
+		<name>Flexipage</name>
+	</types>
+	<types>
+		<members>*</members>
+		<name>customtab</name>
+	</types>
 	<version>55.0</version>
 </Package>

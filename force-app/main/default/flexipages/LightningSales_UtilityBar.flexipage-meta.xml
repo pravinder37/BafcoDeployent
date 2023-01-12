@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>The default utility bar for the Sales application.</description>
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
@@ -7,26 +8,12 @@
                 <identifier>runtime_sales_todo_list_unifiedToDoListAuraWrapper</identifier>
             </componentInstance>
         </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentName>notes:utilityBarNoteList</componentName>
-                <identifier>notes_utilityBarNoteList</identifier>
-            </componentInstance>
-        </itemInstances>
         <name>utilityItems</name>
         <type>Region</type>
     </flexiPageRegions>
-    <flexiPageRegions>
-        <name>backgroundComponents</name>
-        <type>Background</type>
-    </flexiPageRegions>
-    <masterLabel>Sales UtilityBar</masterLabel>
+    <masterLabel>Sales App Utility Bar</masterLabel>
     <template>
         <name>one:utilityBarTemplateDesktop</name>
-        <properties>
-            <name>isLeftAligned</name>
-            <value>true</value>
-        </properties>
     </template>
     <type>UtilityBar</type>
 </FlexiPage>
