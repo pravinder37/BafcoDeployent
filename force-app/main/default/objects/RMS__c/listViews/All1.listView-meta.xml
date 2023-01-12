@@ -11,6 +11,7 @@
     <columns>Validity__c</columns>
     <columns>UPDATEDBY_USER</columns>
     <columns>CREATED_DATE</columns>
+    <columns>Remarks__c</columns>
     <filterScope>Everything</filterScope>
     <label>All</label>
 </ListView>

@@ -3,6 +3,7 @@
     <fullName>All1</fullName>
     <columns>NAME</columns>
     <columns>Opportunity_Enquiry__c</columns>
+    <columns>Remarks__c</columns>
     <columns>CREATED_DATE</columns>
     <columns>CREATEDBY_USER</columns>
     <filterScope>Everything</filterScope>

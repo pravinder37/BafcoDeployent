@@ -11,10 +11,6 @@
         <default>false</default>
     </values>
     <values>
-        <fullName>Negotiation%2FReview</fullName>
-        <default>false</default>
-    </values>
-    <values>
         <fullName>Proposal%2FPrice Quote</fullName>
         <default>false</default>
     </values>

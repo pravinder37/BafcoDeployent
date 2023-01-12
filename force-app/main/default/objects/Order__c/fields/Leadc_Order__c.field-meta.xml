@@ -7,6 +7,7 @@
     <referenceTo>Lead__c</referenceTo>
     <relationshipName>Orders</relationshipName>
     <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Lookup</type>

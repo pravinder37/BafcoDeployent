@@ -4,6 +4,21 @@
     <active>true</active>
     <label>Import</label>
     <picklistValues>
+        <picklist>Payment_Terms__c</picklist>
+        <values>
+            <fullName>Advance Payment</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cash Against Invoice</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Credit</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
         <picklist>Status__c</picklist>
         <values>
             <fullName>Confirmed</fullName>
@@ -12,6 +27,10 @@
         <values>
             <fullName>Issued</fullName>
             <default>true</default>
+        </values>
+        <values>
+            <fullName>Rejected</fullName>
+            <default>false</default>
         </values>
         <values>
             <fullName>Request for Revision</fullName>

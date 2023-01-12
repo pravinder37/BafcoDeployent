@@ -3,12 +3,11 @@
     <fullName>AllOpportunities</fullName>
     <columns>OPPORTUNITY.NAME</columns>
     <columns>ACCOUNT.NAME</columns>
+    <columns>Business_Type__c</columns>
+    <columns>routes__c</columns>
     <columns>CORE.USERS.FULL_NAME</columns>
-    <columns>OPPORTUNITY.AMOUNT</columns>
-    <columns>OPPORTUNITY.CLOSE_DATE</columns>
     <columns>OPPORTUNITY.STAGE_NAME</columns>
-    <columns>OPPORTUNITY.PROBABILITY</columns>
-    <columns>OPPORTUNITY.CREATED_DATE</columns>
+    <columns>OPPORTUNITY.LAST_UPDATE</columns>
     <filterScope>Everything</filterScope>
     <label>All Opportunities</label>
 </ListView>

@@ -9,14 +9,14 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>Inquiry in hand</fullName>
+                <fullName>Inquiry Follow up</fullName>
                 <default>false</default>
-                <label>Inquiry in hand</label>
+                <label>Inquiry Follow up</label>
             </value>
             <value>
-                <fullName>Payment Collection</fullName>
+                <fullName>Payment Followup</fullName>
                 <default>false</default>
-                <label>Payment Collection</label>
+                <label>Payment Followup</label>
             </value>
             <value>
                 <fullName>Issues</fullName>
@@ -24,14 +24,14 @@
                 <label>Issues</label>
             </value>
             <value>
-                <fullName>Inquiry Follow up</fullName>
-                <default>false</default>
-                <label>Inquiry Follow up</label>
-            </value>
-            <value>
                 <fullName>Cold Call</fullName>
                 <default>false</default>
                 <label>Cold Call</label>
+            </value>
+            <value>
+                <fullName>Log a call</fullName>
+                <default>false</default>
+                <label>Log a call</label>
             </value>
         </valueSetDefinition>
     </valueSet>

@@ -5,6 +5,7 @@
     <columns>Quotation__c</columns>
     <columns>Opportunity_Order__c</columns>
     <columns>Account_Order__c</columns>
+    <columns>RECORDTYPE</columns>
     <columns>UPDATEDBY_USER</columns>
     <columns>LAST_UPDATE</columns>
     <filterScope>Everything</filterScope>

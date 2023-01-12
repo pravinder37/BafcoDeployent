@@ -153,13 +153,13 @@
     <enableSharing>true</enableSharing>
     <enableStreamingApi>true</enableStreamingApi>
     <externalSharingModel>ReadWrite</externalSharingModel>
-    <label>Transportation Charge</label>
+    <label>Ex Works Charges</label>
     <nameField>
-        <label>Transportation Charge Name</label>
+        <label>Ex Works Charge</label>
         <trackHistory>false</trackHistory>
         <type>Text</type>
     </nameField>
-    <pluralLabel>Transportation Charges</pluralLabel>
+    <pluralLabel>Ex Works Charges</pluralLabel>
     <searchLayouts></searchLayouts>
     <sharingModel>ReadWrite</sharingModel>
     <visibility>Public</visibility>

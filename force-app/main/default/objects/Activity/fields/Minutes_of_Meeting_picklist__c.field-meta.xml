@@ -132,27 +132,23 @@
             </value>
         </valueSetDefinition>
         <valueSettings>
-            <controllingFieldValue>Inquiry in hand</controllingFieldValue>
-            <valueName>he is giving inquiry for</valueName>
-        </valueSettings>
-        <valueSettings>
-            <controllingFieldValue>Payment Collection</controllingFieldValue>
+            <controllingFieldValue>Payment Followup</controllingFieldValue>
             <valueName>payment confirmed today</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>Payment Collection</controllingFieldValue>
+            <controllingFieldValue>Payment Followup</controllingFieldValue>
             <valueName>payment confirmed for tomorrow</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>Payment Collection</controllingFieldValue>
+            <controllingFieldValue>Payment Followup</controllingFieldValue>
             <valueName>payment confirmed for next week</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>Payment Collection</controllingFieldValue>
+            <controllingFieldValue>Payment Followup</controllingFieldValue>
             <valueName>payment postponed to</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>Payment Collection</controllingFieldValue>
+            <controllingFieldValue>Payment Followup</controllingFieldValue>
             <valueName>Customer not available</valueName>
         </valueSettings>
         <valueSettings>
@@ -178,50 +174,6 @@
         <valueSettings>
             <controllingFieldValue>Issues</controllingFieldValue>
             <valueName>Material Dispatch Issue</valueName>
-        </valueSettings>
-        <valueSettings>
-            <controllingFieldValue>Inquiry Follow up</controllingFieldValue>
-            <valueName>Order follow up next day</valueName>
-        </valueSettings>
-        <valueSettings>
-            <controllingFieldValue>Inquiry Follow up</controllingFieldValue>
-            <valueName>Order follow up next week</valueName>
-        </valueSettings>
-        <valueSettings>
-            <controllingFieldValue>Inquiry Follow up</controllingFieldValue>
-            <valueName>Order confirmed today</valueName>
-        </valueSettings>
-        <valueSettings>
-            <controllingFieldValue>Inquiry Follow up</controllingFieldValue>
-            <valueName>Order placed with other vendor</valueName>
-        </valueSettings>
-        <valueSettings>
-            <controllingFieldValue>Inquiry Follow up</controllingFieldValue>
-            <valueName>Inquiry not finalized</valueName>
-        </valueSettings>
-        <valueSettings>
-            <controllingFieldValue>Inquiry Follow up</controllingFieldValue>
-            <valueName>Order finalized but stock position not with us</valueName>
-        </valueSettings>
-        <valueSettings>
-            <controllingFieldValue>Inquiry Follow up</controllingFieldValue>
-            <valueName>Order confirmed, dispatch pending due to to price issue</valueName>
-        </valueSettings>
-        <valueSettings>
-            <controllingFieldValue>Inquiry Follow up</controllingFieldValue>
-            <valueName>Order confirmed, but payment for previous bills pending</valueName>
-        </valueSettings>
-        <valueSettings>
-            <controllingFieldValue>Inquiry Follow up</controllingFieldValue>
-            <valueName>Their new project not started till now. If any requirement is there they will contact us</valueName>
-        </valueSettings>
-        <valueSettings>
-            <controllingFieldValue>Inquiry Follow up</controllingFieldValue>
-            <valueName>Customer has regular vendor, need better rates to get customer in</valueName>
-        </valueSettings>
-        <valueSettings>
-            <controllingFieldValue>Inquiry Follow up</controllingFieldValue>
-            <valueName>Order on hold, price difference with other suppliers</valueName>
         </valueSettings>
         <valueSettings>
             <controllingFieldValue>Cold Call</controllingFieldValue>

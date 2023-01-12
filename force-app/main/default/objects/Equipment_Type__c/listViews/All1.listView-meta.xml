@@ -3,6 +3,7 @@
     <fullName>All1</fullName>
     <columns>NAME</columns>
     <columns>Teus__c</columns>
+    <columns>BSLS_ID__c</columns>
     <columns>UPDATEDBY_USER</columns>
     <columns>LAST_UPDATE</columns>
     <filterScope>Everything</filterScope>

@@ -2,7 +2,7 @@
 <ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Closed_lost_reasoning</fullName>
     <active>true</active>
-    <errorConditionFormula>AND(ISPICKVAL( StageName , &apos;Closed Lost&apos;), ISBLANK(Closed_Lost_Reason__c))</errorConditionFormula>
+    <errorConditionFormula>AND(ISPICKVAL( StageName , &apos;Closed Lost&apos;), ISBLANK(Closed_Lost_Reason__c),ISBLANK( Closed_Lost_Reason_Commercial__c ))</errorConditionFormula>
     <errorDisplayField>Closed_Lost_Reason__c</errorDisplayField>
-    <errorMessage>Please fill out Closed Lost Reasoning</errorMessage>
+    <errorMessage>The Closed Lost Reasoning for both sales and commercial have to be provided.</errorMessage>
 </ValidationRule>
