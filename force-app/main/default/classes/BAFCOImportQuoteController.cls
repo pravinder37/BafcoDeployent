@@ -27,6 +27,7 @@ public class BAFCOImportQuoteController {
         Date todaysDate = System.today();
         String QuoteId = '';    
         Integer uniqueEquip = 0;
+        Boolean isFDAccount = false;
         Map<String,String>  quoteItemToIdMap = new Map<String,String>();
         for(Route_Equipment__c routeEquip : [Select Equipment_Type__r.name,Quantity__c  FROM Route_Equipment__c WHERE Route__c=:routeId]){
             routeEquipmentList.add(routeEquip.Equipment_Type__r.name);
@@ -39,6 +40,8 @@ public class BAFCOImportQuoteController {
                              }
         // to get Previously generated Quote
         List<Quotation__c> quoteList = [SELECT Id FROM Quotation__c where Opportunity__c  =: enquiryId limit 1];
+        Opportunity opty = [Select id,Account.Fd__c from Opportunity where id =: enquiryId limit 1];
+        if(opty.Account.Fd__c == true) isFDAccount = true;
         if(quoteList.size() > 0) QuoteId = quoteList[0].Id;
         if(!String.isBlank(QuoteId)){
             for(Quotation_Item__c item : [Select Equipment_Type__r.name,Shipping_Line__c,id from Quotation_Item__c  where Quotation__c =: QuoteId
@@ -83,6 +86,7 @@ public class BAFCOImportQuoteController {
                                 rmsDto.agentName = rmsObj.Agent__r.Name;
                                 rmsDto.rateType =rmsObj.Rate_Type__c ;
                                 rmsDto.rmsRemarks = rmsObj.Remarks__c;
+                                rmsDto.fdAccount = isFDAccount;
                                 /* NEED TO DISCUSS */
                                 /* String key = rmsObj.Shipping_Line__r.Name+'-'+rmsObj.Equipment_Type__r.name;
 if(quoteItemToIdMap.containsKey(key)){
@@ -110,6 +114,7 @@ rmsDto.quotationItemId = quoteItemToIdMap.get(key);
                         rmsDto.equipmentName = equip;
                         rmsDto.equipmentId  = '';
                         rmsDto.uniqueEquip = uniqueEquip;
+                        rmsDto.fdAccount = isFDAccount;
                         uniqueEquip = uniqueEquip+1;
                         rmsDto.rmsID = '';
                         agentToEquipMap.get(key).get(key2).add(rmsDto);

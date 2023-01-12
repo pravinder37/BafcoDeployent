@@ -889,7 +889,36 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
         });
     }
     assignTabsData(){
+        let tempList3 = [];
         let keyName = this.shippingTabSelected+'-'+this.shippingEquipTabSelected;  
+        let seletedEquipName1 = '';
+        let isFDAccount = false;
+        let dedicatedRoutingObj1 = this.routingListMap[this.shippingTabSelected];
+        let elemIndex = dedicatedRoutingObj1.findIndex(x=>x.uniqueEquip == this.shippingEquipTabSelected);
+        if(elemIndex != -1){
+            seletedEquipName1 = dedicatedRoutingObj1[elemIndex].equipmentName;
+            isFDAccount = dedicatedRoutingObj1[elemIndex].fdAccount;
+        }
+        if(seletedEquipName1 == '20ISO'){
+            tempList3.push({
+                'name':'Tank Rental Charges',
+                'value':null,
+                'index':this.additionalChargeIndex
+            })
+            this.additionalChargeIndex++;
+            this.additionalChargeList = tempList3;
+            this.displayAdditionalCharge = true
+        }
+        if(isFDAccount == true){
+            tempList3.push({
+                'name':'Freight Difference(FD)',
+                'value':null,
+                'index':this.additionalChargeIndex
+            })
+            this.additionalChargeIndex++;
+            this.additionalChargeList = tempList3;
+            this.displayAdditionalCharge = true
+        }
         this.toHoldData.forEach(elem => {
             if(elem.key == keyName){
                 if(elem.value.length == 0){
@@ -913,7 +942,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                         'exWorksObj':{},
                         'exWorksTotal':null,
                         'incoChargList':{},
-                        'additionalChargeList':[],
+                        'additionalChargeList' : tempList3,
                         'serviceChargeList':{},
                         'savedClicked':false,
                         'pickupPlaceName':this.pickupPlaceName,
@@ -955,7 +984,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                 }
             }
         });
-
+        
         this.assignServiceChargesData();    
         this.checkSaveQuoteClicked();   
     }

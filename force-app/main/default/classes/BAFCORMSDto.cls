@@ -68,4 +68,5 @@ public class BAFCORMSDto {
     public String commodity { get; set; }
     @AuraEnabled
     public Date buyingRateValidity { get; set; }
+    @AuraEnabled public Boolean fdAccount { get; set; }
 }

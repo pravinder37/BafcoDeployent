@@ -412,6 +412,46 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
     }
     assignTabsData(){
         let keyName = this.agentTabSelected+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected;
+        let seletedEquipName = '';
+        let isFDAccount = false;
+        let dedicatedRoutingObj = this.routingListMap[this.agentTabSelected];
+        let templist090 = [];
+        let tankTempList =[];
+        for(let key in dedicatedRoutingObj){
+            templist090.push({key:key, data: dedicatedRoutingObj[key]})
+        }
+        let dataIndex = templist090.findIndex(x=>x.key == this.shippingTabSelected);
+        if(dataIndex != -1){
+            let data = templist090[dataIndex].data;
+            if(data.length > 0){
+                let elemIndex = data.findIndex(x=>x.uniqueEquip == this.shippingEquipTabSelected);
+                if(elemIndex != -1){
+                    seletedEquipName = data[elemIndex].equipmentName;
+                    isFDAccount = data[elemIndex].fdAccount;
+                }
+            }
+        }
+        if(seletedEquipName == '20ISO'){
+            tankTempList.push({
+                'name':'Tank Rental Charges',
+                'value':null,
+                'index':this.additionalChargeIndex
+            })
+            this.additionalChargeIndex++;
+            this.additionalChargeList = tankTempList;
+            this.displayAdditionalCharge = true
+        }
+        if(isFDAccount == true){
+            tankTempList.push({
+                'name':'Freight Difference(FD)',
+                'value':null,
+                'index':this.additionalChargeIndex
+            })
+            this.additionalChargeIndex++;
+            this.additionalChargeList = tankTempList;
+            this.displayAdditionalCharge = true
+        }
+                
         this.toHoldData.forEach(elem => {
             if(elem.key == keyName){
                 if(elem.value.length == 0){
@@ -434,7 +474,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                         'exWorksObj':{},
                         'exWorksTotal':null,
                         'quantity':this.equipQuantity,
-                        'additionalChargeList':[],
+                        'additionalChargeList':tankTempList,
                         'serviceChargeList':{},
                         'savedClicked':false,
                         'currencyCode':'',

@@ -23,7 +23,7 @@ public without sharing  class BAFCOLRoutingDetailsController {
         Integer index = 1;
         for(Route__c enqObj : [SELECT (Select id, Equipment_Type__r.name,Quantity__c from Route_Equipments__r), Place_of_Discharge__r.Name,Place_of_Pickup__r.Name,Opportunity_Enquiry__r.AccountId,Regular_Routing_Lookup__r.name,Port_of_loading__c,Pickup_Place__c,Discharge_Place__c,Id, Regular_Routing__c,INCO_Term__r.name, Kind_Of_Shipment__c, Service_Type__c, Port_of_loading__r.Name, 
                                Port_of_Destination__r.Name, Shipping_Line__r.name, Commodity__r.Name, Cargo_Weight__c, Remarks__c, 
-                               Name,Opportunity_Enquiry__r.Business_Type__c,Opportunity_Enquiry__r.Account.Average_Credit_Days__c,Opportunity_Enquiry__r.Account.Best_Margin__c,Opportunity_Enquiry__r.Account.Average_Margin__c /*Enquiry__r.Account__r.Average_Margin__c,Enquiry__r.Account__r.Best_Margin__c,Enquiry__r.Account__r.Average_Credit_Days__c,Enquiry__r.Business_Type__c*/  
+                               Name,Opportunity_Enquiry__r.Business_Type__c,Opportunity_Enquiry__r.Account.FD__c,Opportunity_Enquiry__r.Account.Average_Credit_Days__c,Opportunity_Enquiry__r.Account.Best_Margin__c,Opportunity_Enquiry__r.Account.Average_Margin__c /*Enquiry__r.Account__r.Average_Margin__c,Enquiry__r.Account__r.Best_Margin__c,Enquiry__r.Account__r.Average_Credit_Days__c,Enquiry__r.Business_Type__c*/  
                                FROM Route__c WHERE Opportunity_Enquiry__c=:enquiryID]){
                                    BAFCORoutingDetailsDto enqDtoObj = new BAFCORoutingDetailsDto();
                                    enqDtoObj.routeName = 'Route '+ index;
@@ -77,6 +77,7 @@ public without sharing  class BAFCOLRoutingDetailsController {
         Map<String,String>  quoteItemToIdMap = new Map<String,String>();
         String QuoteId = '';
         Date todaysDate = System.today();
+        Boolean isFDAccount = false;
         Integer uniqueEquip = 0;
         for(Route_Equipment__c routeEquip : [Select Equipment_Type__r.name,Quantity__c  FROM Route_Equipment__c WHERE Route__c=:routeId]){
             routeEquipmentList.add(routeEquip.Equipment_Type__r.name);
@@ -92,6 +93,8 @@ public without sharing  class BAFCOLRoutingDetailsController {
         system.debug('rmsEquipmentList '+rmsEquipmentList);
         // to get Previously generated Quote
         List<Quotation__c> quoteList = [SELECT Id FROM Quotation__c where Opportunity__c  =: enquiryId limit 1];
+        Opportunity opty = [Select id,Account.Fd__c from Opportunity where id =: enquiryId limit 1];
+        if(opty.Account.Fd__c == true) isFDAccount = true;
         if(quoteList.size() > 0) QuoteId = quoteList[0].Id;
         
         // to getquoteItemItem so as to update on Generate quoteItem
@@ -135,6 +138,7 @@ public without sharing  class BAFCOLRoutingDetailsController {
                                 rmsDto.rateType =rmsObj.Rate_Type__c ;
                                 rmsDto.rmsRemarks = rmsObj.Remarks__c;
                                 rmsDto.quotationId = QuoteId;
+                                rmsDto.fdAccount = isFDAccount;
                                 String key = rmsObj.Shipping_Line__r.Name+'-'+rmsObj.Equipment_Type__r.name;
                                 if(quoteItemToIdMap.containsKey(key)){
                                     //rmsDto.quotationItemId = quoteItemToIdMap.get(key);  
@@ -159,6 +163,7 @@ public without sharing  class BAFCOLRoutingDetailsController {
                     rmsDto.equipmentName = equip;
                     rmsDto.equipmentId  = '';
                     rmsDto.rmsID = '';
+                    rmsDto.fdAccount = isFDAccount;
                     rmsDto.uniqueEquip = uniqueEquip;
                     uniqueEquip = uniqueEquip+1;
                     shipLineToEquipMap.get(key).add(rmsDto);

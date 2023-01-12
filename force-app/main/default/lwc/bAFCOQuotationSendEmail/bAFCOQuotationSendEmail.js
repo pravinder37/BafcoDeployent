@@ -31,7 +31,7 @@ export default class BAFCOQuotationSendEmail extends LightningElement {
             this.isLoading = false
             console.log('getQuoteDataOnLoad result @@ '+JSON.stringify(result,null,2))
             if(result != null){
-                let content = 'Dear Valued Client,\n\nThank you for giving Bafco International the opportunity to quote for your order.';
+                let content = 'Dear Team,\n\nPlease take note of the following and process the booking.';
                 content +='\n\nPlease find below the details:\n';
 
                 if(result.length > 0){
@@ -49,7 +49,6 @@ export default class BAFCOQuotationSendEmail extends LightningElement {
                         content += '\nCustomer PO number: '+elem.customerPONo;
                         content += '\n\n';
                     });
-                    content +='\nWe look forward to a positive response from your end.';
                     this.body = content;
                 }
             }
