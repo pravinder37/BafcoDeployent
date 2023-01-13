@@ -26,6 +26,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
     @api enquiryId;
     @api quotationList;
     @api leadId;
+    @api acctName = '';
     @api pickupPlace ='';
     @api dischargePlace = '';
     @api portLoadingId='';
@@ -239,15 +240,26 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                 this.dispatchEvent(new CustomEvent('updatecalculation', { detail: toBeSend }));}
             }
             //Loop to hold the update to be updated on Tab change
+            let noRateElemFound = false;
                 let tempList = [];
                 for(let key in conts){
-                    for(let equip in conts[key]){                    
+                    for(let equip in conts[key]){   
+                        if(conts[key][equip].equipmentId == '') noRateElemFound = true;          
                         let dd = key+'-'+conts[key][equip].uniqueEquip
                         tempList.push({
                             key: dd,
                             value:[]
                         })
                     }                
+                }
+                if(noRateElemFound){
+                    const evt = new ShowToastEvent({
+                        title: 'Routes without rate found.',
+                        message: 'This enquiry has routes for which buying rate is not available. Kindly add all buying rates before selecting any item for quotation.',
+                        variant: 'info',
+                        mode: 'sticky'
+                    });
+                    this.dispatchEvent(evt);
                 }
                 this.toHoldData = tempList;
         }).catch(error=>{

@@ -35,6 +35,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
     @api dischargePlaceName = '';
     @api quotationId = '';
     @api equipmentType = ''
+    @api acctName = '';
 
     @track addAgentModel = false;
     @track agentTabSelected = '';
@@ -208,10 +209,12 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
             }
 
              let holdtempList = [];
+             let noRateElemFound = false;
              for(let key in conts){
                  for(let key2 in conts[key]){
                     let templist = [];  
                     for(let key3 in conts[key][key2]){
+                        if(conts[key][key2][key3].equipmentId == '') noRateElemFound = true;  
                         let dd=key+'-'+key2+'-'+conts[key][key2][key3].uniqueEquip
                         holdtempList.push({
                             key: dd,
@@ -247,6 +250,15 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                         this.dispatchEvent(new CustomEvent('updatecalculation', { detail: toBeSend })); 
                     }   
                  }                
+              }
+              if(noRateElemFound){
+                const evt = new ShowToastEvent({
+                    title: 'Routes without rate found.',
+                    message: 'This enquiry has routes for which buying rate is not available. Kindly add all buying rates before selecting any item for quotation.',
+                    variant: 'info',
+                    mode: 'sticky'
+                });
+                this.dispatchEvent(evt);
               }
              this.toHoldData = holdtempList;
         })

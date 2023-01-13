@@ -20,6 +20,7 @@ export default class BAFCOAddRMSModel
     @api equipmentType = '';
     @api routeId ='';
     @api leadId = '';
+    @api acctName = '';
     @api pickupPlace ='';
     @api dischargePlace = '';
     @api portLoadingId='';
@@ -54,6 +55,8 @@ export default class BAFCOAddRMSModel
     @track destinExchangeRate = '';
     @track destinOffSet = '';
     @track isLoading = false;
+    @track customerId = '';
+    @track customerOption = [];
 
     bayan = null;                
     destinationCustomsClearance = null; 
@@ -131,6 +134,9 @@ export default class BAFCOAddRMSModel
     }
 
     connectedCallback(){
+       if(this.leadId != ''){
+            this.customerOption.push({label:this.acctName,value:this.leadId})
+        }
         this.getRouteEquipType();
         this.getExchangeRate();
         this.getDefualtValueForRMS();
@@ -849,12 +855,6 @@ export default class BAFCOAddRMSModel
         this.incoCharges.vGM = parseInt(e.target.value);
         this.updaTeIncoChargeTotal();
     }
-    handleCustomerSelection(e){
-        this.rmsDetail.customerName = e.detail.Id;
-    }
-    handleCustomerRemoved(e){
-        this.rmsDetail.customerName = '';
-    }
     handleCommoditySelection(e){
         this.rmsDetail.commodity =e.detail.Id
         this.commodityError = '';
@@ -883,7 +883,7 @@ export default class BAFCOAddRMSModel
             'remarks':'',
             'agentName':'',
             'incoTermId':'',
-            'customerName':'',
+            'customerId':'',
             'commodity':''
         }
         this.rmsDetail = rmsDetail;
@@ -1021,5 +1021,9 @@ export default class BAFCOAddRMSModel
         tempList.push(obj);
         this.containerRecord = JSON.parse(JSON.stringify(tempList));
         this.noRecord = false
+    }
+    handleCustomerChange(e){
+        this.customerId = e.target.value;
+        this.rmsDetail.customerId = this.customerId;
     }
 }
