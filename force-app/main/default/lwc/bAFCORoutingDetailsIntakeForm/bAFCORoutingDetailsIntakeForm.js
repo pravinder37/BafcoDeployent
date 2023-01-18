@@ -226,18 +226,18 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
 
                     })
                 //}
-                let parentKey = key+'-'+conts[key][equip].equipmentName+'-'+this.routeName;
-                let existingIndex = this.quotationMap.findIndex(x=>x.key==parentKey);
-                let newTempListIndex = templist.findIndex(x=>x.equipment==conts[key][equip].equipmentName);
-                let NewTempList = [];
-                NewTempList.push(templist[newTempListIndex])
-                if(existingIndex == -1) this.quotationMap.push({value : NewTempList,key:parentKey})
-                //this.quotationMap.push({value : templist,key:parentKey})
-                let toBeSend = {
-                    'routeName':this.routeName,
-                    'quotationMap':this.quotationMap
-                }
-                this.dispatchEvent(new CustomEvent('updatecalculation', { detail: toBeSend }));}
+                //let parentKey = key+'-'+conts[key][equip].equipmentName+'-'+this.routeName;
+                //let existingIndex = this.quotationMap.findIndex(x=>x.key==parentKey);
+                //let newTempListIndex = templist.findIndex(x=>x.equipment==conts[key][equip].equipmentName);
+                //let NewTempList = [];
+                //NewTempList.push(templist[newTempListIndex])
+                //if(existingIndex == -1) this.quotationMap.push({value : NewTempList,key:parentKey})
+                //let toBeSend = {
+                //    'routeName':this.routeName,
+                //    'quotationMap':this.quotationMap
+               // }
+                //this.dispatchEvent(new CustomEvent('updatecalculation', { detail: toBeSend }));
+            }
             }
             //Loop to hold the update to be updated on Tab change
             let noRateElemFound = false;
@@ -546,13 +546,9 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
 
             
           this.profitLabel = this.currencyCode+' '+profit +' Profit.';
-          let tempMap = this.quotationMap;
-            let seletedEquipName = '';
-            let dedicatedRoutingObj = this.routingListMap[this.shippingTabSelected];
-            dedicatedRoutingObj.forEach(elem =>{
-                if(elem.uniqueEquip == this.shippingEquipTabSelected)
-                 seletedEquipName = elem.equipmentName;
-             })
+
+          /*let tempMap = this.quotationMap;
+            
 
 
             tempMap.forEach(elem=>{
@@ -579,7 +575,86 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                 'routeName':this.routeName,
                 'quotationMap':this.quotationMap
             }
-            this.dispatchEvent(new CustomEvent('updatecalculation', { detail: toBeSend }));
+            this.dispatchEvent(new CustomEvent('updatecalculation', { detail: toBeSend }));*/
+            //if(this.sellingRate > 0){
+                let seletedEquipName = '';
+                let dedicatedRoutingObj = this.routingListMap[this.shippingTabSelected];
+                dedicatedRoutingObj.forEach(elem =>{
+                    if(elem.uniqueEquip == this.shippingEquipTabSelected)
+                    seletedEquipName = elem.equipmentName;
+                })
+                if(this.quotationMap.length == 0 ){
+                    let tempList = [];
+                    let value = [];
+                    value.push({
+                        key: this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName,
+                        sellingRate : parseInt(this.sellingRate) ,
+                        equipmentName: this.shippingTabSelected+'-'+seletedEquipName,
+                        profit : parseInt(profit),
+                        margin :  parseInt(this.margin),
+                        validity : this.validity,
+                        quantity : this.quantity,
+                        currencyCode : this.currencyCode,
+                        cssClass :'',
+                        displayeEquip : this.sellingRate > 0 ? true:false
+                    })
+                    tempList.push({key:this.routeName,value:value})
+                    this.quotationMap = JSON.parse(JSON.stringify(tempList)); 
+                    console.log('this.quotationMap ',JSON.stringify(this.quotationMap,null,2));
+                }
+                else{
+                    let quoteMap = JSON.parse(JSON.stringify(this.quotationMap));
+                    let index = quoteMap.findIndex(x=>x.key == this.routeName);
+                    if(index != -1){
+                        let value =  quoteMap[index].value;
+                        let equipIndex = value.findIndex(x=>x.key == this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName);
+                        if(equipIndex != -1){
+                            value[equipIndex].sellingRate = parseInt(this.sellingRate) 
+                            value[equipIndex].profit = parseInt(profit)
+                            value[equipIndex].margin =  parseInt(this.margin)
+                            value[equipIndex].validity = this.validity
+                            value[equipIndex].quantity = this.quantity
+                            value[equipIndex].currencyCode = this.currencyCode
+                            value[equipIndex].displayeEquip = this.sellingRate > 0 ? true:false
+                            if(value[equipIndex].savedClicked == true) el.cssClass = 'class2'
+                            else value[equipIndex].cssClass = '';
+                        }
+                        else{
+                            value.push({
+                                key: this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName,
+                                sellingRate : parseInt(this.sellingRate) ,
+                                equipmentName: this.shippingTabSelected+'-'+seletedEquipName,
+                                profit : parseInt(profit),
+                                margin :  parseInt(this.margin),
+                                validity : this.validity,
+                                quantity : this.quantity,
+                                currencyCode : this.currencyCode,
+                                cssClass :'',
+                                displayeEquip : this.sellingRate > 0 ? true:false
+                            })
+                        }
+                        quoteMap[index].value = value;
+                    }
+                    else{
+                        let value = [];
+                        value.push({
+                            key: this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName,
+                            sellingRate : parseInt(this.sellingRate) ,
+                            equipmentName: this.shippingTabSelected+'-'+seletedEquipName,
+                            profit : parseInt(profit),
+                            margin :  parseInt(this.margin),
+                            validity : this.validity,
+                            quantity : this.quantity,
+                            currencyCode : this.currencyCode,
+                            cssClass :'',
+                            displayeEquip : this.sellingRate > 0 ? true:false
+                        })
+                        quoteMap.push({key:this.routeName,value:value})
+                    }
+                    this.quotationMap = JSON.parse(JSON.stringify(quoteMap));
+                }
+                this.dispatchEvent(new CustomEvent('updatecalculation', { detail: this.quotationMap }));
+            //}
 
     }
     handleAddNewServiceCharge(){
@@ -728,7 +803,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                 this.dispatchEvent(new CustomEvent('showquotebtn',{ detail: {quoteId : this.quotationId}}));
 
 
-                let tempMap = this.quotationMap;
+                /*let tempMap = this.quotationMap;
                 let seletedEquipName = '';
                 let dedicatedRoutingObj = this.routingListMap[this.shippingTabSelected];
                 dedicatedRoutingObj.forEach(elem =>{
@@ -747,9 +822,20 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                     'routeName':this.routeName,
                     'quotationMap':this.quotationMap
                 }
-                this.dispatchEvent(new CustomEvent('updatecalculation', { detail: toBeSend }));
+                this.dispatchEvent(new CustomEvent('updatecalculation', { detail: toBeSend }));*/
 
-                
+                let tempMap = JSON.parse(JSON.stringify(this.quotationMap));
+                let index = tempMap.findIndex(x=>x.key == this.routeName);
+                if(index != -1){
+                    let value = tempMap[index].value;
+                    let equipIndex = value.findIndex(x=>x.key == this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName);
+                    if(equipIndex != -1){
+                        value[equipIndex].cssClass = 'class2'
+                    }
+                    tempMap[index].value = value;
+                    this.quotationMap = JSON.parse(JSON.stringify(tempMap));
+                    this.dispatchEvent(new CustomEvent('updatecalculation', { detail: this.quotationMap }));
+                }
             
             }).catch(error=>{
                 console.log('generate quote error', JSON.stringify(error));

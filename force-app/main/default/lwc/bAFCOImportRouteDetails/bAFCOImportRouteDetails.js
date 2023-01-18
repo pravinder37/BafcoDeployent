@@ -212,7 +212,6 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
              let noRateElemFound = false;
              for(let key in conts){
                  for(let key2 in conts[key]){
-                    let templist = [];  
                     for(let key3 in conts[key][key2]){
                         if(conts[key][key2][key3].equipmentId == '') noRateElemFound = true;  
                         let dd=key+'-'+key2+'-'+conts[key][key2][key3].uniqueEquip
@@ -220,7 +219,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                             key: dd,
                             value:[]
                         }) 
-                        templist.push({
+                        /*templist.push({
                             'sellingRate': 0,
                             'profit' : 0,
                             'margin':0,
@@ -247,7 +246,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                             'routeName':this.routeName,
                             'quotationMap':this.quotationMap
                         }
-                        this.dispatchEvent(new CustomEvent('updatecalculation', { detail: toBeSend })); 
+                       this.dispatchEvent(new CustomEvent('updatecalculation', { detail: toBeSend })); */
                     }   
                  }                
               }
@@ -676,7 +675,6 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
             }, 100);
                  
             this.profitLabel = this.currencyCode+' '+profit +' Profit.';
-            let tempMap = this.quotationMap;
             let seletedEquipName = '';
             let dedicatedRoutingObj = this.routingListMap[this.agentTabSelected];
             let templist = [];
@@ -693,7 +691,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                 if(elem.uniqueEquip == this.shippingEquipTabSelected)
                 seletedEquipName = elem.equipmentName;
              })
-            tempMap.forEach(elem=>{
+            /*tempMap.forEach(elem=>{
                 if(elem.key == this.agentTabSelected+'-'+this.shippingTabSelected+'-'+seletedEquipName+'-'+this.routeName){
                     elem.value.forEach(el =>{
                         if(el.equipment == seletedEquipName){
@@ -715,9 +713,76 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
             'routeName':this.routeName,
             'quotationMap':this.quotationMap
         }
-        this.dispatchEvent(new CustomEvent('updatecalculation', { detail: toBeSend }));
-
-                
+        this.dispatchEvent(new CustomEvent('updatecalculation', { detail: toBeSend }));*/
+        if(this.quotationMap.length == 0 ){
+            let tempList = [];
+            let value = [];
+            value.push({
+                key: this.agentTabSelected+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName,
+                sellingRate : parseInt(this.sellingRate) ,
+                equipmentName: this.agentTabSelected+'-'+this.shippingTabSelected+'-'+seletedEquipName,
+                profit : parseInt(profit),
+                margin :  parseInt(this.margin),
+                validity : this.validity,
+                quantity : this.quantity,
+                currencyCode : this.currencyCode,
+                cssClass :'',
+                displayeEquip : this.sellingRate > 0 ? true:false
+            })
+            tempList.push({key:this.routeName,value:value})
+            this.quotationMap = JSON.parse(JSON.stringify(tempList)); 
+        }else{
+            let quoteMap = JSON.parse(JSON.stringify(this.quotationMap));
+            let index = quoteMap.findIndex(x=>x.key == this.routeName);
+            if(index != -1){
+                let value =  quoteMap[index].value;
+                let equipIndex = value.findIndex(x=>x.key == this.agentTabSelected+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName);
+                if(equipIndex != -1){
+                    value[equipIndex].sellingRate = parseInt(this.sellingRate) 
+                    value[equipIndex].profit = parseInt(profit)
+                    value[equipIndex].margin =  parseInt(this.margin)
+                    value[equipIndex].validity = this.validity
+                    value[equipIndex].quantity = this.quantity
+                    value[equipIndex].currencyCode = this.currencyCode
+                    value[equipIndex].displayeEquip = this.sellingRate > 0 ? true:false
+                    if(value[equipIndex].savedClicked == true) el.cssClass = 'class2'
+                    else value[equipIndex].cssClass = '';
+                }
+                else{
+                    value.push({
+                        key: this.agentTabSelected+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName,
+                        sellingRate : parseInt(this.sellingRate) ,
+                        equipmentName: this.agentTabSelected+'-'+this.shippingTabSelected+'-'+seletedEquipName,
+                        profit : parseInt(profit),
+                        margin :  parseInt(this.margin),
+                        validity : this.validity,
+                        quantity : this.quantity,
+                        currencyCode : this.currencyCode,
+                        cssClass :'',
+                        displayeEquip : this.sellingRate > 0 ? true:false
+                    })
+                }
+                quoteMap[index].value = value;
+            }
+            else{
+                let value = [];
+                value.push({
+                    key: this.agentTabSelected+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName,
+                    sellingRate : parseInt(this.sellingRate) ,
+                    equipmentName: this.agentTabSelected+'-'+this.shippingTabSelected+'-'+seletedEquipName,
+                    profit : parseInt(profit),
+                    margin :  parseInt(this.margin),
+                    validity : this.validity,
+                    quantity : this.quantity,
+                    currencyCode : this.currencyCode,
+                    cssClass :'',
+                    displayeEquip : this.sellingRate > 0 ? true:false
+                })
+                quoteMap.push({key:this.routeName,value:value})
+            }
+            this.quotationMap = JSON.parse(JSON.stringify(quoteMap));
+        } 
+        this.dispatchEvent(new CustomEvent('updatecalculation', { detail: this.quotationMap }));   
     }
     getServiceCharges(){        
         getClassification({rmsRecordId : this.rmsId})
@@ -940,7 +1005,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                 this.dispatchEvent(new CustomEvent('showquotebtn',{ detail: {quoteId : this.quotationId}}));
 
 
-                let tempMap = this.quotationMap;
+                /*let tempMap = this.quotationMap;
                 console.log('TempMap '+JSON.stringify(tempMap,null,2))
                 
                 tempMap.forEach(elem=>{
@@ -955,8 +1020,19 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                     'routeName':this.routeName,
                     'quotationMap':this.quotationMap
                 }
-                this.dispatchEvent(new CustomEvent('updatecalculation', { detail: toBeSend }));
-
+                this.dispatchEvent(new CustomEvent('updatecalculation', { detail: toBeSend }));*/
+                let tempMap = JSON.parse(JSON.stringify(this.quotationMap));
+                let index = tempMap.findIndex(x=>x.key == this.routeName);
+                if(index != -1){
+                    let value = tempMap[index].value;
+                    let equipIndex = value.findIndex(x=>x.key == this.agentTabSelected+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName);
+                    if(equipIndex != -1){
+                        value[equipIndex].cssClass = 'class2'
+                    }
+                    tempMap[index].value = value;
+                    this.quotationMap = JSON.parse(JSON.stringify(tempMap));
+                    this.dispatchEvent(new CustomEvent('updatecalculation', { detail: this.quotationMap }));
+                }
                 
             
             }).catch(error=>{

@@ -11,15 +11,22 @@ export default class BAFCOImportSearchScreen extends NavigationMixin(LightningEl
     @track quoteItemId = '';
     @track buyingRate ;
     @track totalSellingRate ;
-    displayModal = false
+    displayModal = false;
+    @track fromVesselETD = null;
+    @track toVesselETD = null;
     handleAgentSelection(e){
         this.agentId = e.detail.Id;
         this.selectedAgentError = '';
+        this.removeError();
     }
     handleSearchItem(){
-        if(this.agentId != ''){
-            this.isLoading = true;
-            getImportItem({agentId :this.agentId})
+        this.isLoading = true;
+        let allValid = false;
+        if(this.agentId != '' || (this.fromVesselETD != null && this.toVesselETD != null)){
+            allValid = true;
+        }
+        if(allValid){
+            getImportItem({agentId :this.agentId,fromVesselETD:this.fromVesselETD,toVesselETD:this.toVesselETD})
             .then(result=>{
                 console.log('result '+JSON.stringify(result,null,2));
                 this.quoteList = result;
@@ -32,7 +39,22 @@ export default class BAFCOImportSearchScreen extends NavigationMixin(LightningEl
                 this.isLoading = false;
             })
         }
-        else this.selectedAgentError = 'slds-has-error';
+        else{
+            if(this.agentId == ''){
+                this.selectedAgentError = 'slds-has-error'
+            }
+            if(this.fromVesselETD == null){
+                let fromVesselETD = this.template.querySelector("[data-field='fromVesselETD']");
+                fromVesselETD.setCustomValidity("Complete this field.");
+                fromVesselETD.reportValidity();
+            }
+            if(this.toVesselETD == null){
+                let toVesselETD = this.template.querySelector("[data-field='toVesselETD']");
+                toVesselETD.setCustomValidity("Complete this field.");
+                toVesselETD.reportValidity();
+            }
+            this.isLoading = false;
+        }
     }
     handleAgentRemoved(e){
         this.agentId = '';
@@ -112,16 +134,6 @@ export default class BAFCOImportSearchScreen extends NavigationMixin(LightningEl
             },
         }).then(url => { window.open(url,'_blank') });
     }
-    handleOrderClicked(e){
-        let Id = e.target.dataset.value
-        this[NavigationMixin.GenerateUrl]({
-            type: 'standard__recordPage',
-            attributes: {
-                recordId: Id,
-                actionName: 'view'
-            },
-        }).then(url => { window.open(url,'_blank') });
-    }
     handleQuotationClicked(e){
         let Id = e.target.dataset.value
         this[NavigationMixin.GenerateUrl]({
@@ -131,5 +143,22 @@ export default class BAFCOImportSearchScreen extends NavigationMixin(LightningEl
                 actionName: 'view'
             },
         }).then(url => { window.open(url,'_blank') });
+    }
+    handleFromVesselETDChange(e){
+        this.fromVesselETD = e.target.value
+        this.removeError();
+    }
+    handleToVesselETDChange(e){
+        this.toVesselETD = e.target.value
+        this.removeError();
+    }
+    removeError(){
+        this.selectedAgentError = ''
+        let fromVesselETD = this.template.querySelector("[data-field='fromVesselETD']");
+        fromVesselETD.setCustomValidity("");
+        fromVesselETD.reportValidity();
+        let toVesselETD = this.template.querySelector("[data-field='toVesselETD']");
+        toVesselETD.setCustomValidity("");
+        toVesselETD.reportValidity();
     }
 }

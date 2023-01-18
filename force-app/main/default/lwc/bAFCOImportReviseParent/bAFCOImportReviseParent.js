@@ -69,14 +69,18 @@ export default class BAFCOImportReviseParent extends LightningElement {
             console.log('getQuoteLineItemRoute error: ', JSON.stringify(error));
         });
     }
+    handleSectionToggle01(event){
+        let section = event.detail.openSections;
+        this.section = section
+        let index = this.routingDetailsList.findIndex(x=>x.routeName == section);
+        if(index != -1){
+            setTimeout(() => {
+                this.template.querySelectorAll("c-b-a-f-c-o-import-quote-line-item-revise-detail")[index].handleUpdateCalculation();
+            }, 200);
+        }
+    }
     handleUpdateCalculation(e){
-        let templist = [];
-        let tempList2 = [];
-        e.detail.quotationMap.forEach(elem =>{
-            tempList2.push({value:elem.key,data:elem.value})
-        })
-        templist.push({key:e.detail.routeName,value:tempList2})        
-        this.displayQuotationlist = templist;
+        this.displayQuotationlist = JSON.parse(JSON.stringify(e.detail))
     }
     getEnqueryDetails(){
         getEnqueryDetails({enquiryID : this.enquiryId})
@@ -90,6 +94,12 @@ export default class BAFCOImportReviseParent extends LightningElement {
     handleSectionToggle(event){
         let section = event.detail.openSections;
         this.section = section
+        let index = this.routingDetailsList.findIndex(x=>x.routeName == section);
+        if(index != -1){
+            setTimeout(() => {
+                this.template.querySelectorAll("c-b-a-f-c-o-import-route-details")[index].handleUpdateCalculation();
+            }, 200);
+        }
     }
     handleShowquoteBtn(e){
         this.quoteID = e.detail.quoteId;

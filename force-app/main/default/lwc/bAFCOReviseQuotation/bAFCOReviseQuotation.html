@@ -66,7 +66,7 @@
                             </lightning-layout-item>
                             <lightning-layout-item size="12">
                                 <template if:true={routingDetailsList}>
-                                    <lightning-accordion class="customFont" onsectiontoggle={handleSectionToggle} >
+                                    <lightning-accordion class="customFont" active-section-name={section} onsectiontoggle={handleSectionToggle01} >
                                         <template for:each={routingDetailsList} for:item="prod" >
                                             <lightning-accordion-section key={prod.routeName} name={prod.routeName} label={prod.routeName}>
                                                 <c-b-a-f-c-o-quote-line-item-revise-detail 
@@ -85,8 +85,8 @@
                                                                 equipment-type={prod.equipmentType}
                                                                 pickup-place-name={prod.placeOfPickupName}
                                                                 discharge-place-name={prod.placeOfDischargeName}
-                                                                active-quote-id={activeQuoteId}
                                                                 onupdatecalculation={handleUpdateCalculation}
+                                                                active-quote-id={activeQuoteId}
                                                     ></c-b-a-f-c-o-quote-line-item-revise-detail>
                                             </lightning-accordion-section>
                                         </template>

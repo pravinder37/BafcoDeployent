@@ -29,7 +29,7 @@ export default class BAFCOCopyQuoteItem extends LightningElement {
                         content += '\nINCO Term: '+elem.incoterm;
                         content += '\nFreetime at POD: '+elem.freeTimePOD;
                         content += '\nFreetime at POL: '+elem.freeTimePOL;
-                        content += '\nTotal: '+elem.total;
+                        content += '\nTotal: '+elem.currencyCode+' '+elem.total;
                         content += '\n\n'
                     });
                     content +='\nWe look forward to a positive response from your end.';
@@ -45,8 +45,14 @@ export default class BAFCOCopyQuoteItem extends LightningElement {
                     else if(recordtype == 'Import'){
                         content +='\n\nTerms & Conditions:\n\n';
                         if(result[0].header != undefined) content +=result[0].header+':\n';
-                        if(result[0].headerList != undefined)  content +=result[0].headerList
+                        if(result[0].headerList != undefined)  content +=result[0].headerList;
                     }
+                    content += '\n\nNote:';
+                    content +=' \n1. Subject to equipment & vessel space availability while placing booking';
+                    content +=' \n2. Cargo insurance not covered in BAFCO scope.'
+                    content +=' \n3. Subject to war risk surcharge if any applied by line'
+                    content +=' \n4. Standard free time at POD unless specified above.'
+                    content +=' \n5. ACID Number, Importer VAT ID, Exporter VAT ID mandatory to proceed with shipment for Egypt.'
                 }
                 if (navigator.clipboard && window.isSecureContext) {
                     return navigator.clipboard.writeText(content);

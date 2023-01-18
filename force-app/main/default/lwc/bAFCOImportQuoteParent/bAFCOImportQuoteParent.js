@@ -61,14 +61,7 @@ export default class BAFCOImportQuoteParent extends LightningElement {
         }
     }
     handleUpdateCalculation(e){
-        let templist = [];
-        let tempList2 = [];
-        e.detail.quotationMap.forEach(elem =>{
-            tempList2.push({value:elem.key,data:elem.value})
-        })
-        templist.push({key:e.detail.routeName,value:tempList2})        
-        this.displayQuotationlist = templist;
-        console.log('map '+JSON.stringify(this.displayQuotationlist,null,2))
+        this.displayQuotationlist = JSON.parse(JSON.stringify(e.detail));
     }
     addNewShippingline(){}
     handleGotoQuote(e){

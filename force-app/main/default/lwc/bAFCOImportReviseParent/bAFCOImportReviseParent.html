@@ -68,7 +68,7 @@
                             </lightning-layout-item>
                             <lightning-layout-item size="12">
                                 <template if:true={routingDetailsList}>
-                                    <lightning-accordion class="customFont" onsectiontoggle={handleSectionToggle} >
+                                    <lightning-accordion class="customFont" onsectiontoggle={handleSectionToggle01} >
                                         <template for:each={routingDetailsList} for:item="prod" >
                                             <lightning-accordion-section key={prod.routeName} name={prod.routeName} label={prod.routeName}>
                                                 <c-b-a-f-c-o-import-quote-line-item-revise-detail 

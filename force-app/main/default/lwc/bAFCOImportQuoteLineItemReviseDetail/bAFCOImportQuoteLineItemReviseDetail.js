@@ -60,36 +60,6 @@ export default class BAFCOImportQuoteLineItemReviseDetail extends LightningEleme
                     }
                     this.quoteLineItemList.push({value:tempList, key:key});
                 }
-                for(let key in conts){
-                    for(let key2 in conts[key]){
-                        let templist = [];  
-                        for(let key3 in conts[key][key2]){
-                            templist.push({
-                                'sellingRate': 0,
-                                'profit' : 0,
-                                'margin':0,
-                                'validity':conts[key][key2][key3].validity,
-                                'quantity':conts[key][key2][key3].quantity,
-                                'quotationId':conts[key][key2][key3].quotationId,
-                                'currencyCode':conts[key][key2][key3].currencyCode,
-                                'equipment' : conts[key][key2][key3].equipmentName,
-                                'cssClass':'',
-                                savedClicked:false
-                            })
-                            let parentKey = key+'-'+key2+'-'+conts[key][key2][key3].equipmentName+'-'+this.routeName;
-                            let existingIndex = this.quotationMap.findIndex(x=>x.key==parentKey);
-                            let newTempListIndex = templist.findIndex(x=>x.equipment==conts[key][key2][key3].equipmentName);
-                            let NewTempList = [];
-                            NewTempList.push(templist[newTempListIndex])
-                            if(existingIndex == -1) this.quotationMap.push({value : NewTempList,key:parentKey})
-                            let toBeSend = {
-                                'routeName':this.routeName,
-                                'quotationMap':this.quotationMap
-                            }
-                            this.dispatchEvent(new CustomEvent('updatecalculation', { detail: toBeSend })); 
-                        }
-                    }
-                }
                 this.shippingEquipTabSelected = this.quoteLineItemList[0].value[0].value2[0].equipmentName;
                 this.shippingTabSelected = this.quoteLineItemList[0].value[0].key2;
             }
@@ -109,61 +79,14 @@ export default class BAFCOImportQuoteLineItemReviseDetail extends LightningEleme
         let elem = 0;
         this.shippingTabSelected = templist[elem].key;
         let data =templist[elem].data;
-        console.log('data ',JSON.stringify(data,null,2))
         this.shippingEquipTabSelected = data[elem].equipmentName; 
         let totalSelling = 0;
         if(data[elem].totalSellingRate > 0) totalSelling=totalSelling+data[elem].totalSellingRate;
-        //if(data[elem].totaladditionalCharge > 0) totalSelling=totalSelling+data[elem].totaladditionalCharge;
-       // if(data[elem].TotalOrigincharges > 0) totalSelling=totalSelling+data[elem].TotalOrigincharges;
-       // if(data[elem].totalSl > 0) totalSelling=totalSelling+data[elem].totalSl;
-       // if(data[elem].destinTotalCharges > 0) totalSelling=totalSelling+data[elem].destinTotalCharges;
         this.buyingRate = data[elem].totalBuyingRate;
         this.sellingRate = totalSelling;
         this.quotationDate = data[elem].quotationDate;
         this.currencyCode = data[elem].currencyCode;
-        let profit = 0;
-            if(this.sellingRate > 0 && !isNaN(this.sellingRate)){
-            profit = this.sellingRate - this.buyingRate;
-            let margin  = profit/this.sellingRate;
-            this.margin = isNaN(margin) ? 0 : margin * 100;
-            this.margin = this.margin.toFixed(2);
-            profit = isNaN(profit) ? 0 : profit;
-            }
-            else if(this.sellingRate <= 0 && isNaN(this.sellingRate)){
-                this.margin = 0;
-                profit = 0;
-            }
-        this.profitLabel = this.currencyCode+' '+profit +' Profit.';
-        let tempMap = this.quotationMap;
-        let key = this.agentName+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName         
-        tempMap.forEach(elem=>{
-            if(elem.key == key){
-                elem.value.forEach(el =>{
-                    el.sellingRate = parseInt(this.sellingRate) 
-                    el.profit = parseInt(profit)
-                    el.margin =  parseInt(this.margin)
-                    el.validity = el.validity
-                    el.quantity = 0
-                })
-            }
-        })
-        this.quotationMap = tempMap;
-        let toBeSend = {
-            'routeName':this.routeName,
-            'quotationMap':this.quotationMap
-        }
-        this.dispatchEvent(new CustomEvent('updatecalculation', { detail: toBeSend }));
-        setTimeout(() => {
-            let profitButton =  this.template.querySelector('.profitButton');
-            if(profitButton != undefined){
-                if(profit > 0){
-                    profitButton.style = "background:#4CAF50;height: 50px;border-radius: 4px;"
-                }
-                else{
-                    profitButton.style = "background:#FF9800;height: 50px;border-radius: 4px;"
-                }
-            }
-        }, 100);
+        this.handleUpdateCalculation();
     }
     handleshippingLineActive(e){
         this.shippingTabSelected = e.target.value
@@ -182,58 +105,11 @@ export default class BAFCOImportQuoteLineItemReviseDetail extends LightningEleme
         this.shippingEquipTabSelected  =  data[elem].equipmentName;
         let totalSelling = 0;
         if(data[elem].totalSellingRate > 0) totalSelling=totalSelling+data[elem].totalSellingRate;
-        //if(data[elem].totaladditionalCharge > 0) totalSelling=totalSelling+data[elem].totaladditionalCharge;
-       // if(data[elem].TotalOrigincharges > 0) totalSelling=totalSelling+data[elem].TotalOrigincharges;
-       // if(data[elem].totalSl > 0) totalSelling=totalSelling+data[elem].totalSl;
-       // if(data[elem].destinTotalCharges > 0) totalSelling=totalSelling+data[elem].destinTotalCharges;
         this.buyingRate = data[elem].totalBuyingRate;
         this.quotationDate = data[elem].quotationDate;
         this.currencyCode = data[elem].currencyCode
         this.sellingRate = totalSelling;
-        let profit = 0;
-            if(this.sellingRate > 0 && !isNaN(this.sellingRate)){
-            profit = this.sellingRate - this.buyingRate;
-            let margin  = profit/this.sellingRate;
-            this.margin = isNaN(margin) ? 0 : margin * 100;
-            this.margin = this.margin.toFixed(2);
-            profit = isNaN(profit) ? 0 : profit;
-            }
-            else if(this.sellingRate <= 0 && isNaN(this.sellingRate)){
-                this.margin = 0;
-                profit = 0;
-            }
-        this.profitLabel = this.currencyCode+' '+profit +' Profit.';
-        let tempMap = this.quotationMap;
-        let key = this.agentName+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName
-            tempMap.forEach(elem=>{
-                if(elem.key == key){
-                    elem.value.forEach(el =>{
-                            el.sellingRate = parseInt(this.sellingRate) 
-                            el.profit = parseInt(profit)
-                            el.margin =  parseInt(this.margin)
-                            el.validity = el.validity
-                            el.quantity = 0
-                    })
-                }
-            })
-            this.quotationMap = tempMap;
-            let toBeSend = {
-                'routeName':this.routeName,
-                'quotationMap':this.quotationMap
-            }
-            this.dispatchEvent(new CustomEvent('updatecalculation', { detail: toBeSend }));
-        setTimeout(() => {
-                let profitButton =  this.template.querySelector('.profitButton');
-                if(profitButton != undefined){
-                    if(profit > 0){
-                        profitButton.style = "background:#4CAF50;height: 50px;border-radius: 4px;"
-                    }
-                    else{
-                        profitButton.style = "background:#FF9800;height: 50px;border-radius: 4px;"
-                    }
-                }
-            }, 100);
-            
+        this.handleUpdateCalculation();
     }
     handleEquipmentActive(e){
         let profitButton =  this.template.querySelector('.profitButton');
@@ -242,6 +118,7 @@ export default class BAFCOImportQuoteLineItemReviseDetail extends LightningEleme
         }
         this.shippingEquipTabSelected = e.target.value
         let dedicatedObj = this.quoteLineItemMap[this.agentName];
+        console.log('dedicatedObj '+JSON.stringify(dedicatedObj,null,2))
         let templist = [];
         for(let key in dedicatedObj){
             templist.push({key:key, data: dedicatedObj[key]})
@@ -252,69 +129,117 @@ export default class BAFCOImportQuoteLineItemReviseDetail extends LightningEleme
                 data= elem.data
             }
         })
-        data.forEach(ele =>{
-            if(ele.equipmentName == this.shippingEquipTabSelected){
-                let totalSelling = 0;
-                if(ele.totalSellingRate > 0) totalSelling=totalSelling+ele.totalSellingRate;
-                //if(ele.totaladditionalCharge > 0) totalSelling=totalSelling+ele.totaladditionalCharge;
-                //if(ele.TotalOrigincharges > 0) totalSelling=totalSelling+ele.TotalOrigincharges;
-               // if(ele.totalSl > 0) totalSelling=totalSelling+ele.totalSl;
-               // if(ele.destinTotalCharges > 0) totalSelling=totalSelling+ele.destinTotalCharges;
-                this.buyingRate = ele.totalBuyingRate;
-                this.quotationDate = ele.quotationDate;
-                this.sellingRate =totalSelling;
-                this.rmsId = ele.rmsId;
-                this.currencyCode = ele.currencyCode;
-                let profit = 0;
-                if(this.sellingRate > 0 && !isNaN(this.sellingRate)){
-                    profit = this.sellingRate - this.buyingRate;
-                    let margin  = profit/this.sellingRate;
-                    this.margin = isNaN(margin) ? 0 : margin * 100;
-                    this.margin = this.margin.toFixed(2);
-                    profit = isNaN(profit) ? 0 : profit;
-                }
-                else if(this.sellingRate <= 0 && isNaN(this.sellingRate)){
-                    this.margin = 0;
-                    profit = 0;
-                }
-                this.profitLabel = this.currencyCode+' '+profit +' Profit.';
-                let tempMap = this.quotationMap;
-                let key = this.agentName+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName
-                tempMap.forEach(elem=>{
-                    if(elem.key == key){
-                        elem.value.forEach(el =>{
-                                el.sellingRate = parseInt(this.sellingRate) 
-                                el.profit = parseInt(profit)
-                                el.margin =  parseInt(this.margin)
-                                el.validity = el.validity
-                                el.quantity = 0
-                        })
-                    }
-                })
-                this.quotationMap = tempMap;0
-                let toBeSend = {
-                    'routeName':this.routeName,
-                    'quotationMap':this.quotationMap
-                }
-                this.dispatchEvent(new CustomEvent('updatecalculation', { detail: toBeSend }));
-                setTimeout(() => {
-                    let profitButton =  this.template.querySelector('.profitButton');
-                    if(profitButton != undefined){
-                        if(profit > 0){
-                            profitButton.style = "background:#4CAF50;height: 50px;border-radius: 4px;"
-                        }
-                        else{
-                            profitButton.style = "background:#FF9800;height: 50px;border-radius: 4px;"
-                        }
-                    }
-                }, 100);
-            }
-        })
+        let equipIndex = data.findIndex(x=>x.equipmentName == this.shippingEquipTabSelected)
+        if(equipIndex != -1){
+            let totalSelling = 0;
+            if(data[equipIndex].totalSellingRate > 0) totalSelling = totalSelling + data[equipIndex].totalSellingRate;
+            this.buyingRate = data[equipIndex].totalBuyingRate;
+            this.quotationDate = data[equipIndex].quotationDate;
+            this.sellingRate =totalSelling;
+            this.rmsId = data[equipIndex].rmsId;
+            this.currencyCode = data[equipIndex].currencyCode;
+        }
+        this.handleUpdateCalculation();
     }
     handleShowServiceCharge(){
         this.showServiceChargeModal = true; 
     }
     handleCloseModal(){
         this.showServiceChargeModal = false; 
+    }
+    @api handleUpdateCalculation(){
+        let profit = 0;
+        if(this.sellingRate > 0 && !isNaN(this.sellingRate)){
+        profit = this.sellingRate - this.buyingRate;
+        let margin  = profit/this.sellingRate;
+        this.margin = isNaN(margin) ? 0 : margin * 100;
+        this.margin = this.margin.toFixed(2);
+        profit = isNaN(profit) ? 0 : profit;
+        }
+        else if(this.sellingRate <= 0 && isNaN(this.sellingRate)){
+            this.margin = 0;
+            profit = 0;
+        }
+        this.profitLabel = this.currencyCode+' '+profit +' Profit.';
+        setTimeout(() => {
+            let profitButton =  this.template.querySelector('.profitButton');
+            if(profitButton != undefined){
+                if(profit > 0){
+                    profitButton.style = "background:#4CAF50;height: 50px;border-radius: 4px;"
+                }
+                else{
+                    profitButton.style = "background:#FF9800;height: 50px;border-radius: 4px;"
+                }
+            }
+        }, 100);
+        if(this.quotationMap.length == 0 ){
+            let tempList = [];
+            let value = [];
+            value.push({
+                key: this.agentName+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName,
+                sellingRate : parseInt(this.sellingRate) ,
+                equipmentName: this.agentName+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected,
+                profit : parseInt(profit),
+                margin :  parseInt(this.margin),
+                validity : this.validity,
+                quantity : this.quantity,
+                currencyCode : this.currencyCode,
+                cssClass :'',
+                displayeEquip : this.sellingRate > 0 ? true:false
+            })
+            tempList.push({key:this.routeName,value:value})
+            this.quotationMap = JSON.parse(JSON.stringify(tempList)); 
+        }else{
+            let quoteMap = JSON.parse(JSON.stringify(this.quotationMap));
+            let index = quoteMap.findIndex(x=>x.key == this.routeName);
+            if(index != -1){
+                let value =  quoteMap[index].value;
+                let equipIndex = value.findIndex(x=>x.key == this.agentName+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName);
+                if(equipIndex != -1){
+                    value[equipIndex].sellingRate = parseInt(this.sellingRate) 
+                    value[equipIndex].profit = parseInt(profit)
+                    value[equipIndex].margin =  parseInt(this.margin)
+                    value[equipIndex].validity = this.validity
+                    value[equipIndex].quantity = this.quantity
+                    value[equipIndex].currencyCode = this.currencyCode
+                    value[equipIndex].displayeEquip = this.sellingRate > 0 ? true:false
+                    if(value[equipIndex].savedClicked == true) el.cssClass = 'class2'
+                    else value[equipIndex].cssClass = '';
+                }
+                else{
+                    value.push({
+                        key: this.agentName+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName,
+                        sellingRate : parseInt(this.sellingRate) ,
+                        equipmentName: this.agentName+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected,
+                        profit : parseInt(profit),
+                        margin :  parseInt(this.margin),
+                        validity : this.validity,
+                        quantity : this.quantity,
+                        currencyCode : this.currencyCode,
+                        cssClass :'',
+                        displayeEquip : this.sellingRate > 0 ? true:false
+                    })
+                }
+                quoteMap[index].value = value;
+            }
+            else{
+                let value = [];
+                value.push({
+                    key: this.agentName+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected+'-'+this.routeName,
+                    sellingRate : parseInt(this.sellingRate) ,
+                    equipmentName: this.agentName+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected,
+                    profit : parseInt(profit),
+                    margin :  parseInt(this.margin),
+                    validity : this.validity,
+                    quantity : this.quantity,
+                    currencyCode : this.currencyCode,
+                    cssClass :'',
+                    displayeEquip : this.sellingRate > 0 ? true:false
+                })
+                quoteMap.push({key:this.routeName,value:value})
+            }
+            this.quotationMap = JSON.parse(JSON.stringify(quoteMap));
+        } 
+        this.dispatchEvent(new CustomEvent('updatecalculation', { detail: this.quotationMap })); 
     }
 }

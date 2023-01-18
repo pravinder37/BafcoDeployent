@@ -20,13 +20,14 @@ export default class BAFCOReviseQuotation extends NavigationMixin(LightningEleme
     @track cameReviseCompt = true;
     @track sameRoute = true;
     @track  showQuoteButton = false;
-    @track section = '';
+    @track section = 'Route 1';
     @track recordtypeName = '';
     @track validityDate = '';
     connectedCallback(){
         console.log('quotation id '+this.quoteID);
         console.log('leadId id '+this.leadId);
         document.title = 'Revise Export Quote';
+        this.section = 'Route 1'
         this.getquoteDetails();
     }
     getquoteDetails(){
@@ -65,6 +66,7 @@ export default class BAFCOReviseQuotation extends NavigationMixin(LightningEleme
             if(result.length > 0){
                 this.routingDetailsList = result;
                 this.enquiryId = result[0].enquiryId;
+                this.section = result[0].routeName;
                 this.getEnqueryDetails(); // new qoute generation
             }
             
@@ -74,13 +76,7 @@ export default class BAFCOReviseQuotation extends NavigationMixin(LightningEleme
         });
     }
     handleUpdateCalculation(e){
-        let templist = [];
-        let tempList2 = [];
-        e.detail.quotationMap.forEach(elem =>{
-            tempList2.push({value:elem.key,data:elem.value})
-        })
-        templist.push({key:e.detail.routeName,value:tempList2})        
-        this.displayQuotationlist = templist;
+        this.displayQuotationlist = JSON.parse(JSON.stringify(e.detail));
     }
     getEnqueryDetails(){
         getEnqueryDetails({enquiryID : this.enquiryId})
@@ -94,6 +90,26 @@ export default class BAFCOReviseQuotation extends NavigationMixin(LightningEleme
     handleSectionToggle(event){
         let section = event.detail.openSections;
         this.section = section
+        let index = -1;
+        index = this.routingDetailsList.findIndex(x=>x.routeName == this.section);
+        if(index != -1){
+            setTimeout(() => {
+                this.template.querySelectorAll("c-b-a-f-c-o-routing-details-intake-form")[index].handleUpdateCalculation();
+            }, 200);
+            
+        }
+    }
+    handleSectionToggle01(event){
+        let section = event.detail.openSections;
+        this.section = section
+        let index = -1;
+        index = this.routingDetailsList.findIndex(x=>x.routeName == this.section);
+        if(index != -1){
+            setTimeout(() => {
+                this.template.querySelectorAll("c-b-a-f-c-o-quote-line-item-revise-detail")[index].handleUpdateCalculation();
+            }, 200);
+            
+        }
     }
     handleShowquoteBtn(e){
         this.quoteID = e.detail.quoteId;

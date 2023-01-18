@@ -2,7 +2,7 @@
     <lightning-spinner size="large" variant="brand" if:true={isLoading}></lightning-spinner>
     <div style="background: white;">
         <lightning-layout multiple-rows>
-            <lightning-layout-item size="12" style="padding-top: 22px;" large-device-size="6" medium-device-size="6" small-device-size="12">
+            <lightning-layout-item size="12" style="padding-top: 22px;" large-device-size="3" medium-device-size="3" small-device-size="12">
                 <div class={selectedAgentError}>
                     <label class="slds-form-element__label">
                         <p style="padding-left: 22px">Customer Name</p>
@@ -18,7 +18,13 @@
                     </div>
                 </div>
             </lightning-layout-item>
-            <lightning-layout-item size="12" style="padding-top: 42px;" large-device-size="6" medium-device-size="6" small-device-size="12">
+            <lightning-layout-item size="12" style="padding-top: 22px;" large-device-size="3" medium-device-size="3" small-device-size="12">
+                <lightning-input type="date" label="Vessel ETD (From)" data-field="fromVesselETD" value={fromVesselETD} onchange={handleFromVesselETDChange} ></lightning-input>
+            </lightning-layout-item>
+            <lightning-layout-item size="12" style="padding-top: 22px;padding-left: 12px" large-device-size="3" medium-device-size="3" small-device-size="12">
+                <lightning-input type="date" label="Vessel ETD (To)" data-field="toVesselETD" value={toVesselETD} onchange={handleToVesselETDChange} ></lightning-input>
+            </lightning-layout-item>
+            <lightning-layout-item size="12"  style="padding-top: 42px;padding-left: 12px" large-device-size="3" medium-device-size="3" small-device-size="12">
                 <lightning-button label="Search" variant="brand" onclick={handleSearchItem}></lightning-button>
             </lightning-layout-item>
             <lightning-layout-item style="padding: 20px;" size="12" large-device-size="12" medium-device-size="12" small-device-size="12" if:true={noRecord}>
@@ -31,7 +37,6 @@
                     <thead>
                         <tr class="slds-line-height_reset">
                             <th>Order Item Name</th>
-                            <th>Order Name</th>
                             <th>Quotation Name</th>
                             <th>Agent Name</th>
                             <th>Port Of Loading</th>
@@ -39,7 +44,8 @@
                             <th>Shipping Line</th>
                             <th>Vessel ETD</th>
                             <th>Buying Rate</th>
-                            <th>Total</th>
+                            <th>Quantity</th>
+                            <th>Selling Rate</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -47,7 +53,6 @@
                         <template for:each={quoteList} for:item="item">
                             <tr key={item} class="slds-hint-parent">
                                 <td><a data-value={item.Id} onclick={handleOrderItemClicked}>{item.Name}</a></td>
-                                <td><a data-value={item.Order__c} onclick={handleOrderClicked}>{item.Order__r.Name}</a></td>
                                 <td><a data-value={item.Order__r.Quotation__c} onclick={handleQuotationClicked}>{item.Order__r.Quotation__r.Name}</a></td>
                                 <td>{item.Agent__r.Name}</td>
                                 <td>{item.Port_of_Loading_Order__r.Name}</td>
@@ -55,6 +60,7 @@
                                 <td>{item.Shipping_Line__r.Name}</td>
                                 <td><lightning-formatted-date-time value={item.Vessel_ETD__c}></lightning-formatted-date-time></td>
                                 <td>{item.Buying_Rate__c}</td>
+                                <td>{item.Quantity__c}</td>
                                 <td>{item.Total_Order__c}</td>
                                 <td>
                                     <span>

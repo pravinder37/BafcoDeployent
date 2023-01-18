@@ -111,7 +111,7 @@ export default class BAFCODisplayRMSRecords extends NavigationMixin(LightningEle
         } 
         this.getRMSRecords();
     }
-    resetClicked(){
+    refreshClicked(){
         this.SearchClicked = false;
         let laodingPortField = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[0]
         laodingPortField.handleRemovePill(); 
@@ -123,5 +123,8 @@ export default class BAFCODisplayRMSRecords extends NavigationMixin(LightningEle
         this.rmsId = e.target.dataset.rmsid;
         console.log('** this.rmsId '+this.rmsId)
         this.showAddRatesModel = true;
+    }
+    resetClicked(){
+        location.reload();
     }
 }

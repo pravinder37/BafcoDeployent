@@ -37,15 +37,16 @@ export default class BAFCOParentComponent extends LightningElement {
         });
     }
     handleUpdateCalculation(e){
-        //console.log('calculation '+JSON.stringify(e.detail.quotationMap,null,2));
-        let templist = [];
+        console.log('calculation '+JSON.stringify(e.detail,null,2));
+        this.displayQuotationlist = JSON.parse(JSON.stringify(e.detail));
+       /* let templist = [];
         let tempList2 = [];
         e.detail.quotationMap.forEach(elem =>{
             tempList2.push({value:elem.key,data:elem.value})
         })
         templist.push({key:e.detail.routeName,value:tempList2})        
         this.displayQuotationlist = templist;
-        //console.log('map '+JSON.stringify(this.displayQuotationlist,null,2))
+        //console.log('map '+JSON.stringify(this.displayQuotationlist,null,2))*/
     }
     addNewShippingline(){
         this.template.querySelectorAll("c-b-a-f-c-o-routing-details-intake-form")[0].handleAddShippingline();
