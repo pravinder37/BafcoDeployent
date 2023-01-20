@@ -81,6 +81,7 @@
                             dangerous-goods={lead.dangerousGoods}
                             show-d-g-class-field={lead.showDGClassField}
                             dg-class={lead.dgClass}
+                            business-type={businessTypeSelected}
                             remarks={lead.remarks}
                             lead-enquiry-list={leadEnquiryList}
                             place-of-pickup-name={lead.placeOfPickupName}
@@ -95,6 +96,7 @@
                             cargoweight-class={lead.cargoweightClass}
                             discharge-place-class={lead.dischargePlaceClass}
                             pickup-place-class={lead.pickupPlaceClass}
+                            disable-add-route ={lead.disableAddRoute}
                             onupdate={handleEnquiryListUpdate}
                             oncontainertypeupdate={handleContainerTypeUpdate}
                             oncontainerqtyupdate={handleContainerQTYUpdate}
@@ -112,7 +114,8 @@
             <lightning-layout-item size="12" large-device-size="12" medium-device-size="12" small-device-size="12" if:false={dontShowAddNewRoute} class="addNewRouteCss">
                 <lightning-button   variant="brand" 
                                 label="Add New Route" 
-                                title="Add new Route"                                    
+                                title="Add new Route" 
+                                disabled={disableAddRoute}                                   
                                 onclick={addRouteEnquiry}></lightning-button>
             </lightning-layout-item>
         </lightning-layout>

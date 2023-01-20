@@ -35,6 +35,7 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
     @track isLoading = false;
     @track customerErrorClass = '';
     @track minDate = '';
+    @track disableAddRoute = false
 
 
     @wire(getPicklistValues, {
@@ -170,6 +171,7 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
             'cargoweightClass':'',
             'dischargePlaceClass':'',
             'pickupPlaceClass':'',
+            'disableAddRoute':false
         }
         this.entryIntVar++;
        if(this.leadEnquiryList.length <= 4 ){
@@ -212,38 +214,70 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
         }
         this.leadEnquiryList.forEach(elem=>{
             let tempErrorList = [];
-            /*if(elem.shipmentKind == '') {
-                tempErrorList.push('Please fill kind of shipment')
-                elem.shipmentKindClass = 'slds-has-error';
-
-            }*/
+            console.log('elem '+JSON.stringify(elem,null,2))
             if(elem.serviceType == '') {
                 tempErrorList.push('Please fill Service Type')
                 elem.serviceTypeClass = 'slds-has-error';
             }
             if(elem.incoTerm == '') {
-                tempErrorList.push('Please fill Inco term')
-                elem.incoTermClass = 'slds-has-error';
+                if(elem.serviceType != 'Ex-Works'){
+                    tempErrorList.push('Please fill Inco term')
+                    elem.incoTermClass = 'slds-has-error';
+                }
             }
             if(elem.portLoading == '') {
-                tempErrorList.push('Please fill Port of Loading')
-                elem.portOfLoadingClass = 'slds-has-error';
+                if(elem.incoTermName == 'Local Operation' && this.businessTypeSelected == 'Export'){
+                    tempErrorList.push('Please fill Port of Loading')
+                    elem.portOfLoadingClass = 'slds-has-error';
+                }
+                else if(elem.incoTermName != 'Local Operation'){
+                    tempErrorList.push('Please fill Port of Loading')
+                    elem.portOfLoadingClass = 'slds-has-error';
+                }
             }
             if(elem.portDestination == '') {
-                tempErrorList.push('Please fill Port of Destination')
-                elem.portOfDestinationClass = 'slds-has-error';
+                if(elem.incoTermName == 'Local Operation' && this.businessTypeSelected =='Import'){
+                    tempErrorList.push('Please fill Port of Destination')
+                    elem.portOfDestinationClass = 'slds-has-error';
+                }
+                else if(elem.incoTermName != 'Local Operation'){
+                    tempErrorList.push('Please fill Port of Destination')
+                    elem.portOfDestinationClass = 'slds-has-error';
+                }
             }
             if(elem.commodity == '') {
                 tempErrorList.push('Please fill commodity')
                 elem.commodityClass = 'slds-has-error';
             }
             if(elem.serviceType == 'D2P' && elem.placeOfPickup == ''){
-                tempErrorList.push('Please fill cargoWeights')
-                elem.pickupPlaceClass = 'slds-has-error';
+                if(elem.incoTermName == 'Local Operation' && this.businessTypeSelected =='Export'){
+                    tempErrorList.push('Please fill Place of Pickup')
+                    elem.pickupPlaceClass = 'slds-has-error';
+                }
+                else if(elem.incoTermName != 'Local Operation'){
+                    tempErrorList.push('Please fill Place of Pickup')
+                    elem.pickupPlaceClass = 'slds-has-error';
+                }
             }
             if(elem.serviceType == 'D2D' && elem.placeOfDischarge == ''){
-                tempErrorList.push('Please fill cargoWeights')
-                elem.dischargePlaceClass = 'slds-has-error';
+                if(elem.incoTermName == 'Local Operation' && this.businessTypeSelected =='Import'){
+                    tempErrorList.push('Please fill place of discharge')
+                    elem.dischargePlaceClass = 'slds-has-error';
+                }
+                else if(elem.incoTermName != 'Local Operation'){
+                    tempErrorList.push('Please fill place of discharge')
+                    elem.dischargePlaceClass = 'slds-has-error';
+                }
+            }
+            if(elem.incoTermName == 'Local Operation'){
+                if(this.businessTypeSelected == 'Import' && elem.placeOfDischarge == ''){
+                    tempErrorList.push('Please fill place of discharge')
+                    elem.dischargePlaceClass = 'slds-has-error';
+                }
+                if(this.businessTypeSelected == 'Export' && elem.placeOfPickup == ''){
+                    tempErrorList.push('Please fill Place of Pickup')
+                    elem.pickupPlaceClass = 'slds-has-error';
+                }
             }
             elem.containerRecord.forEach(elem2=>{
                 if(elem2.containerType == '' ){
@@ -328,6 +362,7 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
         this.businessTypeSelected = event.target.value
         this.quoteTypeErrorClass ='';
         this.quoteTypeErrorMsg ='';
+        this.disableAddRoute = false;
         let ChildList = this.template.querySelectorAll('c-b-a-f-c-o-lead-enquiry-entry-intake');
         if(ChildList.length > 0){
             ChildList.forEach(elem=>{
@@ -382,6 +417,8 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
                 elem.cargoweightClass = prdDto.cargoweightClass
                 elem.dischargePlaceClass = prdDto.dischargePlaceClass
                 elem.pickupPlaceClass = prdDto.pickupPlaceClass
+                elem.disableAddRoute = prdDto.disableAddRoute
+                if(elem.disableAddRoute == true) this.disableAddRoute = true
             }
         })
         console.log('updated List '+ JSON.stringify(this.leadEnquiryList,null,2))

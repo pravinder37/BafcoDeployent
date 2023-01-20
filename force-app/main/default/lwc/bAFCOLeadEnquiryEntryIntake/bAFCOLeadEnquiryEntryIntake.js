@@ -48,10 +48,18 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
     @track serviceTypeOption=[];
     @track dgClassOption=[];
     @api leadEnquiryList = [];
+    @api disableAddRoute = false;
     AddContainerPNG = CONTAINER_PNG;
     @api accountId = '';
     @track isAccountObject = false;
     @track isLoading = false;
+    @track disableIncoField =  false; 
+    @track hidePOL = false;
+    @track hidePOD = false;
+    @track hidePlOP = false;
+    @track hidePlOD = false;
+    @api businessType= '';
+    @track hideShippingLine = false;
 
     @wire(getPicklistValuesByRecordType, { objectApiName: ROUTE_OBJECT, recordTypeId: '012000000000000AAA' })
     routeObjectData({ data, error }) {
@@ -74,21 +82,28 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
         this.getDefualtValueForEnquiry();
     }
     @api getDefualtValueForEnquiry(){
-        this.isLoading = true
+        this.isLoading = true 
         getDefualtValueForEnquiry()
         .then(result=>{
             console.log(' getDefualtValueForEnquiry result', JSON.stringify(result, null, 2));
             if(result != null){
-                if(result.commodityId != undefined){
-                    let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[4];
-                    let Obj={Id:result.commodityId,Name:result.commodityName}
-                    field.handleDefaultSelected(Obj);
-                }
-                if(result.incoTermId != undefined){
-                    let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[0];
-                    let Obj={Id:result.incoTermId,Name:result.incoTermName}
-                    field.handleDefaultSelected(Obj);
-                }
+                this.displayIncoChanges();   
+                setTimeout(() => {
+                    this.serviceType = '';
+                    if(result.commodityId != undefined){
+                        let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[4];
+                        let Obj={Id:result.commodityId,Name:result.commodityName}
+                        if(field != null || field != undefined) field.handleDefaultSelected(Obj);
+                    }
+                    if(result.incoTermId != undefined){
+                        let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[0];
+                        let Obj={Id:result.incoTermId,Name:result.incoTermName}
+                        if(field != null || field != undefined) field.handleDefaultSelected(Obj);
+                    }
+                    if(this.incoTermName == 'Local Operation') this.handleLocalInco();
+                }, 200);
+                this.disableAddRoute = false;
+                this.disableIncoField = false;
             }
             this.shipmentKind = 'FCL';
             this.updateEnquiryList();
@@ -240,17 +255,26 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
     handleServiceType(e){
         let serviceType = e.target.value;
         this.serviceType = serviceType;
-        if(serviceType == 'D2P' || serviceType ==  'D2D'){
-            this.showPickupPlaceField = true;
+        if(serviceType == 'Ex-Works'){
+            this.disableIncoField = true;
+            let field2 = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[0];
+            field2.handleRemovePill();
+            this.incoTerm = '';
+            this.incoTermName = '';
         }
         else{
-            this.showPickupPlaceField = false;
-        }
-        if(serviceType == 'P2D' || serviceType ==  'D2D'){
-            this.showDischargePlaceField = true;
-        }
-        else{
-            this.showDischargePlaceField = false;
+            if(serviceType == 'D2P' || serviceType ==  'D2D'){
+                this.showPickupPlaceField = true;
+            }
+            else{
+                this.showPickupPlaceField = false;
+            }
+            if(serviceType == 'P2D' || serviceType ==  'D2D'){
+                this.showDischargePlaceField = true;
+            }
+            else{
+                this.showDischargePlaceField = false;
+            }
         }
         this.placeOfPickup = '';
         this.placeOfDischarge = '';
@@ -261,8 +285,34 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
         let incoTermID = e.detail.Id;
         this.incoTerm = incoTermID;
         this.incoTermName = e.detail.Name
+        if(this.incoTermName == 'Local Operation') this.handleLocalInco();
         this.incoTermClass ='';
         this.updateEnquiryList();
+    }
+    @api handleLocalInco(){
+        this.hideShippingLine = true
+        this.disableAddRoute = true;
+        this.disableIncoField = true;
+        this.shippingLine = '';
+        this.shippingLineName ='';
+        this.portLoading = '';
+        this.portLoadingName = '';
+        this.placeOfPickup = '';
+        this.portDestination = '';
+        this.portDestinationName = '';
+        this.placeOfDischarge = '';
+        if(this.businessType == 'Import'){
+            this.hidePOL = true;
+            this.hidePlOP = true;           
+            this.hidePlOD = false;
+            this.hidePOD = false;
+        }
+        else if(this.businessType == 'Export'){
+            this.hidePlOD = true;
+            this.hidePOD = true;
+            this.hidePOL = false;
+            this.hidePlOP = false;            
+        }
     }
     handleIncoTermRemoved(e){
         this.incoTerm = '';
@@ -318,10 +368,12 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
     }
     handleDischargePlaceInputchange(e){
         this.placeOfDischarge = e.target.value
+        this.dischargePlaceClass ='';
         this.updateEnquiryList();
     }
     handlePickupPlaceInputchange(e){
         this.placeOfPickup = e.target.value;
+        this.pickupPlaceClass = '';
         this.updateEnquiryList();
     }
    /* handlePickupPlaceSelection(e){
@@ -496,7 +548,8 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
             'commodityClass':this.commodityClass,
             'cargoweightClass':this.cargoweightClass,
             'dischargePlaceClass':this.dischargePlaceClass,
-            'pickupPlaceClass':this.pickupPlaceClass
+            'pickupPlaceClass':this.pickupPlaceClass,
+            'disableAddRoute':this.disableAddRoute
         }
         let updateleadEntryDto = JSON.parse(JSON.stringify(leadEntryDto));
         this.dispatchEvent(new CustomEvent('update', { detail: { dto: updateleadEntryDto } }));
@@ -545,12 +598,34 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
         this.dispatchEvent(new CustomEvent('addcontainertype', { detail:  strIndex}));
     }
     @api removeDefaultOnImport(){
-        let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[4];
-        field.handleRemovePill();
-        let field2 = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[0];
-        field2.handleRemovePill();
+        this.isLoading = true;
+        this.displayIncoChanges();                
+        setTimeout(() => {
+            this.serviceType = ''
+            if(this.incoTermName != 'Local Operation'){   
+                let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[4];
+                field.handleRemovePill();
+                let field2 = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[0];
+                field2.handleRemovePill();
+            }
+            else if(this.incoTermName == 'Local Operation'){
+                this.handleLocalInco();
+            }
+        }, 200); 
         this.shipmentKind = '';
         this.updateEnquiryList();
+        this.isLoading = false;
+    }
+    displayIncoChanges(){
+        this.hidePOL = false;
+        this.hidePlOP = false;           
+        this.hidePlOD = false;
+        this.hidePOD = false;
+        this.hidePlOD = false;
+        this.hidePOD = false;
+        this.hidePOL = false;
+        this.hidePlOP = false;  
+        this.hideShippingLine = false
     }
     @api onSubmit(){
         this.isLoading = true;

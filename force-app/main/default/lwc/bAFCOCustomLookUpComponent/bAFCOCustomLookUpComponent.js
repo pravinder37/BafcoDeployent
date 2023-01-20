@@ -11,6 +11,7 @@ export default class BAFCOCustomLookUpComponent extends LightningElement {
     @track isValueSelected;
     @track blurTimeout;
     @api cameFromDisplayMeeting = false
+    @api disableField = false
     searchTerm;
     //css
     @track boxClass = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-has-focus';
@@ -25,7 +26,10 @@ export default class BAFCOCustomLookUpComponent extends LightningElement {
             this.records = undefined;
         }
     }
-    handleClick() {
+    renderedCallback(){
+        if(this.disableField) this.records = undefined
+    }
+   handleClick() {
         this.searchTerm = '';
         this.inputClass = 'slds-has-focus';
         this.boxClass = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-has-focus slds-is-open';
@@ -48,6 +52,7 @@ export default class BAFCOCustomLookUpComponent extends LightningElement {
     }
 
     @api handleRemovePill() {
+        if(!this.disableField){
         this.isValueSelected = false;
         this.searchTerm = ''
         let SelectedObj = {Id:'', index:this.index};
@@ -55,6 +60,7 @@ export default class BAFCOCustomLookUpComponent extends LightningElement {
         this.dispatchEvent(valueUnSelectedEvent);
         let input = this.template.querySelector("lightning-input");
         if(input != undefined) input.value = ''
+        }
     }
 
     onChange(event) {
