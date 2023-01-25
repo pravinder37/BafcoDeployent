@@ -15,6 +15,8 @@ public class BAFCORoutingDetailsDto {
     @AuraEnabled
     public String incoTerm { get; set; }
     @AuraEnabled
+    public String incoTermName { get; set; }
+    @AuraEnabled
     public String incoTermId { get; set; }
     @AuraEnabled
     public String portLoading { get; set; }
@@ -32,6 +34,8 @@ public class BAFCORoutingDetailsDto {
     public String dgClass { get; set; }
     @AuraEnabled
     public String portDestination { get; set; }
+    @AuraEnabled
+    public String portDestinationId { get; set; }
     @AuraEnabled
     public String shippingLine { get; set; }
     @AuraEnabled
@@ -60,6 +64,7 @@ public class BAFCORoutingDetailsDto {
     public String parentId { get; set; }
     @AuraEnabled
     public String equipmentType { get; set; }
+    @AuraEnabled public String acctName { get; set; }
     @AuraEnabled
     public List<BAFCORoutingDetailsDto.containerRecord> containerRecord { get; set; }
     

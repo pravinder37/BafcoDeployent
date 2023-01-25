@@ -52,8 +52,11 @@ public class BAFCOImportSearchControllerTest {
     }
     testmethod static void getImportItemTest(){
         String agentId = [Select id from Agent__c limit 1].id;
+        String todaysDate = String.valueOf(System.today());
         test.startTest();
-        BAFCOImportSearchController.getImportItem(agentId);
+        BAFCOImportSearchController.getImportItem(agentId,null,null);
+        BAFCOImportSearchController.getImportItem(agentId,todaysDate,todaysDate);
+        BAFCOImportSearchController.getImportItem('',todaysDate,todaysDate);
         test.stopTest();
     }
      testmethod static void updateQuoteItemTest(){

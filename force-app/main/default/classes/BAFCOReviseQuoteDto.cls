@@ -20,6 +20,8 @@ public class BAFCOReviseQuoteDto {
     @AuraEnabled
     public String leadId {get; set;}
     @AuraEnabled
+    public String incoTerm {get; set;}
+    @AuraEnabled
     public Decimal accountAvgMargin { get; set; }
     @AuraEnabled
     public Decimal accountBestMargin { get; set; }

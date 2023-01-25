@@ -30,7 +30,7 @@ export default class BAFCOQuoteLineItemReviseDetail extends LightningElement {
     @track rmsId = '';
     @track quotationDate = '';
     @api equipmentType =''
-    @track currencyCode='USD';
+    @track currencyCode='USD'
 
 
     connectedCallback(){

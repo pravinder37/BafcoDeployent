@@ -320,7 +320,7 @@ public class BAFCOImportQuoteControllerTest {
         String portLoading = 'PortName';
         String portDestination = 'PortName';
         String commodity = 'CommodityName';
-        String enquiryId =''/* [Select id from Enquiry__c limit 1].Id*/;
+        String enquiryId = [Select id from Opportunity limit 1].Id;
         String routeId = [Select id from Route__c limit 1].Id;
         test.startTest();
         BAFCOImportQuoteController.getImportRMSDetails(portLoading, portDestination, commodity, routeId, enquiryId);

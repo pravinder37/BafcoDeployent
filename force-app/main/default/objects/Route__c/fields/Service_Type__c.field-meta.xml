@@ -31,6 +31,12 @@
                 <default>false</default>
                 <label>D2D</label>
             </value>
+            <value>
+                <fullName>Ex-Works</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Ex-Works</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

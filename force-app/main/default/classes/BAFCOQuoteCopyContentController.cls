@@ -3,7 +3,7 @@ public without sharing class BAFCOQuoteCopyContentController {
     public static List<QuoteLineList>  getQuoteDataOnLoad(String quoteId){
         List<QuoteLineList> quoteItemList = new List<QuoteLineList>();
         String SubjectLine = '';
-        List<Quotation_Item__c> quoteList = [Select Quotation__r.Name,Customer_Name__c,Shipping_Linee__r.name,Quantity__c,Route__r.Cargo_Weight__c,Rms__r.Free_time_POD__c, Rms__r.Free_time__c,Route__r.INCO_Term__r.name,Route__r.Service_Type__c,id,Quotation__r.Exclusions__c,Quotation__r.Inclusions__c,Quotation__r.Terms_and_Conditions__c,Total__c,Quotation__r.Recordtype.Name,Port_of_Loading__r.Name,Port_of_Discharge__r.Name,Equipment_Type__r.Name from Quotation_Item__c where quotation__c =: quoteId];
+        List<Quotation_Item__c> quoteList = [Select CurrencyIsoCode,Quotation__r.Name,Customer_Name__c,Shipping_Linee__r.name,Quantity__c,Route__r.Cargo_Weight__c,Rms__r.Free_time_POD__c, Rms__r.Free_time__c,Route__r.INCO_Term__r.name,Route__r.Service_Type__c,id,Quotation__r.Exclusions__c,Quotation__r.Inclusions__c,Quotation__r.Terms_and_Conditions__c,Total__c,Quotation__r.Recordtype.Name,Port_of_Loading__r.Name,Port_of_Discharge__r.Name,Equipment_Type__r.Name from Quotation_Item__c where quotation__c =: quoteId];
         if(quoteList.size() > 0){
             Set<String> portStringSet = new Set<String>();
             Map<Id,String> itemIdToPortString = new  Map<Id,String>();
@@ -31,6 +31,7 @@ public without sharing class BAFCOQuoteCopyContentController {
                 dto.customerPONo ='';
                 dto.subjectLine = SubjectLine;
                 dto.customerName = item.Customer_Name__c;
+                dto.currencyCode = item.CurrencyIsoCode;
                 if(item.Route__r.INCO_Term__c != null) dto.incoterm = item.Route__r.INCO_Term__r.name;
                 else dto.incoterm = '';
                 if(item.RMS__c != null){
@@ -118,5 +119,6 @@ public without sharing class BAFCOQuoteCopyContentController {
         @AuraEnabled public String subjectLine{get;set;}
         @AuraEnabled public String customerName{get;set;}
         @AuraEnabled public String quoteName{get;set;}
+        @AuraEnabled public String currencyCode{get;set;}
     }
 }

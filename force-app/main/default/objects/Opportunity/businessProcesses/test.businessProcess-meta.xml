@@ -11,11 +11,23 @@
         <default>false</default>
     </values>
     <values>
+        <fullName>Negotiation</fullName>
+        <default>false</default>
+    </values>
+    <values>
         <fullName>Proposal%2FPrice Quote</fullName>
         <default>false</default>
     </values>
     <values>
         <fullName>Qualification</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Rate Indication</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Rejected</fullName>
         <default>false</default>
     </values>
 </BusinessProcess>

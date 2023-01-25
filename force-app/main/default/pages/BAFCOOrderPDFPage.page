@@ -956,16 +956,6 @@
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
-                                <apex:panelGroup rendered="{!item.additionalChargesObj.FreightDifference  != NULL}">
-                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
-                                        <apex:panelGrid columns="2">
-                                            <apex:outputText value="Freight Difference (FD)"/>
-                                            <apex:outputText value="{!item.additionalChargesObj.FreightDifference}"/>                                          
-                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
-                                            <span style="display:{!if(item.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
-                                        </apex:panelGrid>
-                                    </div>
-                                </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.additionalChargesObj.tankRentalCharge  != NULL}">
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
@@ -1739,16 +1729,6 @@
                                         </apex:panelGrid>
                                     </div>
                                 </apex:panelGroup>
-                                <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.FreightDifference  != NULL}">
-                                    <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
-                                        <apex:panelGrid columns="2">
-                                            <apex:outputText value="Freight Difference (FD)"/>
-                                            <apex:outputText value="{!item.dc20Charges.additionalChargesObj.FreightDifference}"/>                                          
-                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == true,'block','none')}" >(Included)</span>
-                                            <span style="display:{!if(item.dc20Charges.additionalChargesObj.includeAdditionalCharge == false,'block','none')}" >(Excluded)</span>
-                                        </apex:panelGrid>
-                                    </div>
-                                </apex:panelGroup>
                                 <apex:panelGroup rendered="{!item.dc20Charges.additionalChargesObj.tankRentalCharge  != NULL}">
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
@@ -1782,7 +1762,7 @@
         </div>
         <div style="margin-top1%;">
             <apex:panelGrid columns="2">
-                <apex:image url="{!$Resource.QuoteQRCode}"/>
+                <apex:image url="{!$Resource.QuoteNewQRCode}" height="100px" width="100px"/>
                 <div>
                     <span style="color:#01648E;font-size:large !important;font-weight:600;">Standard Operating Procedures</span>
                     <p>

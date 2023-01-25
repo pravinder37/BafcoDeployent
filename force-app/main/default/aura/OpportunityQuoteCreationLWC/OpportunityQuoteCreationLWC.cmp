@@ -2,6 +2,7 @@
                 access="global">
  <aura:attribute name="refRecordId" type="String" />
     <aura:attribute name="refBusinessType" type="String" />
+    <aura:attribute name="refRecordTypeType" type="String" />
     <aura:attribute name="cameReviseCompt" type="Boolean" default="false" />
     <aura:handler name="init" value="{!this}" action="{!c.init}" />
     <aura:html tag="style">
@@ -15,15 +16,21 @@
             max-height:unset !important;
         }
     </aura:html>
-    <aura:if isTrue="{!v.refBusinessType == 'Export'}">
-    	<div style="background: white;">
-        <c:bAFCOParentComponent enquiryID="{!v.refRecordId}" cameReviseCompt ="{!v.cameReviseCompt}"/>
-    </div>	
+    <aura:if isTrue="{!v.refRecordTypeType == 'FCL'}">
+        <aura:if isTrue="{!v.refBusinessType == 'Export'}">
+            <div style="background: white;">
+                <c:bAFCOParentComponent enquiryID="{!v.refRecordId}" cameReviseCompt ="{!v.cameReviseCompt}"/>
+            </div>	
+        </aura:if>
+        <aura:if isTrue="{!v.refBusinessType == 'Import'}">
+            <div style="background: white;">
+                <c:bAFCOImportQuoteParent enquiryId="{!v.refRecordId}"/>
+            </div>	
+        </aura:if>
     </aura:if>
-    <aura:if isTrue="{!v.refBusinessType == 'Import'}">
-    	<div style="background: white;">
-        <c:bAFCOImportQuoteParent enquiryId="{!v.refRecordId}"/>
-    </div>	
+    <aura:if isTrue="{!v.refRecordTypeType == 'Local Operation'}">
+        <div style="background: white;">
+        	<c:bAFCOLocalOperationQuoteParent optyId="{!v.refRecordId}" businessType="{!v.refBusinessType}" />
+        </div>
     </aura:if>
-    
 </aura:component>

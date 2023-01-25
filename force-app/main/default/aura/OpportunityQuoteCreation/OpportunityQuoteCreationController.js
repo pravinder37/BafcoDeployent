@@ -5,8 +5,10 @@
         action.setCallback(this, function(response) {
             var state = response.getState();
             if (state === "SUCCESS") {
-                console.log("From server: " + response.getReturnValue());
-                let businessType = response.getReturnValue();
+                console.log("From server: " + JSON.stringify(response.getReturnValue(),null,2));
+                let optyObj = response.getReturnValue();
+                let businessType = optyObj.Business_Type__c;
+                let recordTypeName =optyObj.RecordType.Name;
                 var pageReference = {
             type: 'standard__component',
             attributes: {
@@ -14,7 +16,8 @@
             },
             state: {
                 c__refRecordId: cmp.get("v.recordId"),
-                c__refBusinessType: businessType
+                c__refBusinessType: businessType,
+                c__refRecordTypeName:recordTypeName
             }
         };
         cmp.set("v.pageReference", pageReference);

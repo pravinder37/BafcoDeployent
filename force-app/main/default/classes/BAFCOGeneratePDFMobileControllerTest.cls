@@ -57,7 +57,6 @@ public class BAFCOGeneratePDFMobileControllerTest {
         testPage.getParameters().put('recordId', quoteObj.id);
         ApexPages.StandardController sc = new  ApexPages.StandardController(quoteObj); 
         BAFCOGeneratePDFMobileController ob = new BAFCOGeneratePDFMobileController(sc);
-        ob.emailid = 'test@email.com';
-        ob.send();
+        ob.savePdf();
     }
 }

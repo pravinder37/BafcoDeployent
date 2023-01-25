@@ -2,10 +2,6 @@
 public class BAFCOSalesOrderControllerTest {
     @TestSetup
     static void setup() {
-        Lead__c ld = new Lead__c();
-        ld.Business_Type__c = 'Import';
-        insert ld;
-        
         Account acc = new Account();
         acc.name = 'test';
         acc.branch__c ='Jeddah';
@@ -72,13 +68,18 @@ public class BAFCOSalesOrderControllerTest {
         rmsObj.Validity__c = System.today().addDays(5);
         insert rmsObj;
         
+        Regular_Routing__c regObj = new Regular_Routing__c();
+        regObj.Port_of_Destination__c = port.Id;
+        regObj.Port_Of_Loading__c = port.Id;
+        regObj.Account__c = acc.id;
+        insert regObj;
+        
         integer year =  Date.Today().Year();
         string s1=string.valueof(year).right(2);
         Integer Year1= Integer.valueof(s1);
         Quotation__c quoteObj = new Quotation__c();
         quoteObj.Name__c= 'Quote/'+Year1+'/'+1;
         quoteObj.Opportunity__c = opty.id;
-        quoteObj.Leadc__c = ld.id;
         quoteObj.Account__c = acc.id;
         quoteObj.Customer_Name__c = 'test';
         Insert quoteObj;
@@ -124,7 +125,10 @@ public class BAFCOSalesOrderControllerTest {
         obj2.shipperName = 'test';
         shipperList.add(obj2);
         
-        BAFCOSalesOrderController.createOrder(dtoList,dd,'test','test2',consigneeList,shipperList);        
+        BAFCOSalesOrderController.createOrder(dtoList,dd,'test','test2',consigneeList,shipperList);
+        List<Order__c> orderList = [Select id from Order__c];
+        Order_item__c item = [Select id from Order_item__c limit 1];
+        delete item;
         test.stopTest();
     }
     static List<BAFCOOrderCreationDto> getOrderCreationDto(){

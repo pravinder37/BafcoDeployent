@@ -21,6 +21,10 @@
     <picklistValues>
         <picklist>Status__c</picklist>
         <values>
+            <fullName>Awaiting CRO</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>Confirmed</fullName>
             <default>false</default>
         </values>

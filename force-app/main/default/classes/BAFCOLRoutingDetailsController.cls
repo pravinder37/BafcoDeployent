@@ -21,8 +21,8 @@ public without sharing  class BAFCOLRoutingDetailsController {
     public static List<BAFCORoutingDetailsDto> getEnqueryDetails(String enquiryID) {
         List<BAFCORoutingDetailsDto> routingDetailsList = new List<BAFCORoutingDetailsDto>();
         Integer index = 1;
-        for(Route__c enqObj : [SELECT (Select id, Equipment_Type__r.name,Quantity__c from Route_Equipments__r), Place_of_Discharge__r.Name,Place_of_Pickup__r.Name,Opportunity_Enquiry__r.AccountId,Regular_Routing_Lookup__r.name,Port_of_loading__c,Pickup_Place__c,Discharge_Place__c,Id, Regular_Routing__c,INCO_Term__r.name, Kind_Of_Shipment__c, Service_Type__c, Port_of_loading__r.Name, 
-                               Port_of_Destination__r.Name, Shipping_Line__r.name, Commodity__r.Name, Cargo_Weight__c, Remarks__c, 
+        for(Route__c enqObj : [SELECT (Select id,Equipment_Type__r.name,Quantity__c from Route_Equipments__r), Place_of_Discharge__r.Name,Place_of_Pickup__r.Name,Opportunity_Enquiry__r.Account.Name,Regular_Routing_Lookup__r.name,Port_of_loading__c,Pickup_Place__c,Discharge_Place__c,Id, Regular_Routing__c,INCO_Term__r.name, Kind_Of_Shipment__c, Service_Type__c, Port_of_loading__r.Name, 
+                               Port_of_Destination__r.Name, Shipping_Line__r.name, Commodity__r.Name, Cargo_Weight__c, Remarks__c,
                                Name,Opportunity_Enquiry__r.Business_Type__c,Opportunity_Enquiry__r.Account.FD__c,Opportunity_Enquiry__r.Account.Average_Credit_Days__c,Opportunity_Enquiry__r.Account.Best_Margin__c,Opportunity_Enquiry__r.Account.Average_Margin__c /*Enquiry__r.Account__r.Average_Margin__c,Enquiry__r.Account__r.Best_Margin__c,Enquiry__r.Account__r.Average_Credit_Days__c,Enquiry__r.Business_Type__c*/  
                                FROM Route__c WHERE Opportunity_Enquiry__c=:enquiryID]){
                                    BAFCORoutingDetailsDto enqDtoObj = new BAFCORoutingDetailsDto();
@@ -32,7 +32,8 @@ public without sharing  class BAFCOLRoutingDetailsController {
                                    enqDtoObj.serviceType = enqObj.Service_Type__c != null ? enqObj.Service_Type__c : '-';
                                    enqDtoObj.portDestination = enqObj.Port_of_Destination__r.Name != null ? enqObj.Port_of_Destination__r.Name :'-';
                                    enqDtoObj.portLoading = enqObj.Port_of_loading__r.name != null ? enqObj.Port_of_loading__r.name : '-';
-                                   enqDtoObj.portLoadingId =enqObj.Port_of_loading__c != null ? enqObj.Port_of_loading__c : '-';
+                                   enqDtoObj.portLoadingId =enqObj.Port_of_loading__c != null ? enqObj.Port_of_loading__c : null;
+                                   enqDtoObj.portDestinationId = enqObj.Port_of_Destination__c != null ? enqObj.Port_of_Destination__c : null;
                                    enqDtoObj.commodity = enqObj.Commodity__r.Name != null ? enqObj.Commodity__r.name : '-';
                                    enqDtoObj.cargoWeights = enqObj.Cargo_Weight__c != null ? enqObj.Cargo_Weight__c : 0 ;
                                    enqDtoObj.remarks = enqObj.Remarks__c != null ? enqObj.Remarks__c : '-';
@@ -41,6 +42,7 @@ public without sharing  class BAFCOLRoutingDetailsController {
                                    enqDtoObj.incoTerm = enqObj.INCO_Term__r.name != null ? enqObj.INCO_Term__r.name : '-'; 
                                    enqDtoObj.incoTermId = enqObj.INCO_Term__c != null ? enqObj.INCO_Term__c : null; 
                                    enqDtoObj.leadId =  enqObj.Opportunity_Enquiry__r.AccountId != null ? enqObj.Opportunity_Enquiry__r.AccountId :  '' ;
+                                   enqDtoObj.acctName = enqObj.Opportunity_Enquiry__r.AccountId != null ? enqObj.Opportunity_Enquiry__r.Account.Name :  '' ;
                                    enqDtoObj.accountAvgMargin = enqObj.Opportunity_Enquiry__r.Account.Average_Margin__c != null ? enqObj.Opportunity_Enquiry__r.Account.Average_Margin__c : 0 ;
                                    enqDtoObj.accountBestMargin = enqObj.Opportunity_Enquiry__r.Account.Best_Margin__c !=null ? enqObj.Opportunity_Enquiry__r.Account.Best_Margin__c : 0;
                                    enqDtoObj.accountAvgCreditDays = enqObj.Opportunity_Enquiry__r.Account.Average_Credit_Days__c != null ?enqObj.Opportunity_Enquiry__r.Account.Average_Credit_Days__c : 0 ;
@@ -79,6 +81,7 @@ public without sharing  class BAFCOLRoutingDetailsController {
         Date todaysDate = System.today();
         Boolean isFDAccount = false;
         Integer uniqueEquip = 0;
+        String accountId = null;
         for(Route_Equipment__c routeEquip : [Select Equipment_Type__r.name,Quantity__c  FROM Route_Equipment__c WHERE Route__c=:routeId]){
             routeEquipmentList.add(routeEquip.Equipment_Type__r.name);
             routeEquipmentoquantityMap.put(routeEquip.Equipment_Type__r.name,routeEquip.Quantity__c);
@@ -93,9 +96,12 @@ public without sharing  class BAFCOLRoutingDetailsController {
         system.debug('rmsEquipmentList '+rmsEquipmentList);
         // to get Previously generated Quote
         List<Quotation__c> quoteList = [SELECT Id FROM Quotation__c where Opportunity__c  =: enquiryId limit 1];
+        if(quoteList.size() > 0) QuoteId = quoteList[0].Id;
+        
         Opportunity opty = [Select id,Account.Fd__c from Opportunity where id =: enquiryId limit 1];
         if(opty.Account.Fd__c == true) isFDAccount = true;
-        if(quoteList.size() > 0) QuoteId = quoteList[0].Id;
+        if(opty.AccountId != null) accountId = opty.AccountId;
+        
         
         // to getquoteItemItem so as to update on Generate quoteItem
         if(!String.isBlank(QuoteId)){
@@ -111,7 +117,7 @@ public without sharing  class BAFCOLRoutingDetailsController {
             }        
         }
         system.debug('routeEquipmentoquantityMap '+routeEquipmentoquantityMap);
-        for(RMS__c rmsObj : [Select Remarks__c,Rate_Type__c,Validity__c, Id,Sea_Freight__c, Equipment_Type__c,Shipping_Line__c,Shipping_Line__r.Name,Equipment_Type__r.name  
+        for(RMS__c rmsObj : [Select Rate_Type__c,Validity__c,Remarks__c, Id,Sea_Freight__c, Equipment_Type__c,Shipping_Line__c,Shipping_Line__r.Name,Equipment_Type__r.name  
                              FROM RMS__c WHERE Port_Of_Loading__r.Name =: portLoading 
                              AND Port_Of_Discharge__r.Name =: portDestination
                              AND Shipping_Line__r.Name != null
@@ -119,6 +125,7 @@ public without sharing  class BAFCOLRoutingDetailsController {
                              AND Validity__c >=: todaysDate
                              AND recordtypeId =: RMS_EXPORT_RECORDTYPE_Id
                              AND Equipment_Type__r.name in: routeEquipmentList
+                             AND (Customer_Name__c =: accountId OR Customer_Name__c = null)
                             ]){
                                 if(!shipLineToEquipMap.containsKey(rmsObj.Shipping_Line__r.Name)){
                                     shipLineToEquipMap.put(rmsObj.Shipping_Line__r.Name, new List<BAFCORMSDto>());
@@ -194,6 +201,9 @@ public without sharing  class BAFCOLRoutingDetailsController {
     public static String submitRoutingList(List<BAFCORoutingDetailsDto> routingList, String businessType, String quoteId,String closeDate, String commercialUserId) {
         system.debug('routingList '+routingList);
         List<Route__c> routeList = new List<Route__c>();
+        String incoTermSelected = '';
+        if(routingList.size() > 0) incoTermSelected = routingList[0].incoTermName;
+        system.debug('incoTermSelected '+incoTermSelected);
         Opportunity optyObj = new Opportunity();
         if(businessType != '' && quoteId != ''){
             Account acc = [Select id,name,ownerId from Account where id=: quoteId];
@@ -205,6 +215,18 @@ public without sharing  class BAFCOLRoutingDetailsController {
                 optyObj.StageName = 'Qualification';
                 optyObj.CloseDate = date.valueOf(closeDate);
                 optyObj.Commercial_User__c = commercialUserId != '' ? commercialUserId : null;
+                if(incoTermSelected == 'Local Operation') {
+                    Id LocalOperationRecId = Schema.SObjectType.Opportunity.getRecordTypeInfosByName()
+                        .get('Local Operation')
+                        .getRecordTypeId();
+                    optyObj.RecordTypeId = LocalOperationRecId;
+                }
+                else{
+                    Id FCLRecId = Schema.SObjectType.Opportunity.getRecordTypeInfosByName()
+                        .get('FCL')
+                        .getRecordTypeId();
+                    optyObj.RecordTypeId = FCLRecId;
+                }
                 insert optyObj;
                 Task tsk = new Task();
                 tsk.Subject = 'Provide Quotation';
@@ -401,6 +423,39 @@ public without sharing  class BAFCOLRoutingDetailsController {
             update quoteObj;
             system.debug('quoteObj '+quoteObj);
         }
+        
+        quoteItemObj = assignServiceChargeIntoQuoteItem(quoteItemObj,dto);
+        quoteItemObj = assignAdditionalChargeIntoQuoteItem(additionalChargeList,quoteItemObj,dto);
+        quoteItemObj.Total__c = dto.total;
+        quoteItemObj.Pickup_Place__c = dto.pickupPlaceName;
+        quoteItemObj.Discharge_Place__c = dto.dischargePlaceName;
+        quoteItemObj.Total_Additional__c = additionalChargeTotal;
+        quoteItemObj.Sea_Freight__c = dto.seaFreightSellRate;  
+        quoteItemObj.Quantity__c = dto.quantity;
+        quoteItemObj.Buying_Rate__c = dto.quoteBuyingRate > 0 ? dto.quoteBuyingRate : null;
+        if(dto.selectedShippLine != '' ){
+            List<Shipping_Line__c> shipLine = [Select id from Shipping_Line__c where name =:dto.selectedShippLine limit 1];
+            if(shipLine.size() > 0) quoteItemObj.Shipping_Linee__c = shipLine[0].id;
+        }
+        if(dto.exWorksObj != null){
+            quoteItemObj.Ex_Works_Charge_Name__c = dto.exWorksObj.Id;
+            quoteItemObj.Ex_Works_Charge__c = dto.exWorksObj.LoadCharge;
+            if(dto.exWorksObj.Id != null){
+                quoteItemObj.Add_to_Buying_Ex_works__c =  dto.addExWorksCharge != null ? dto.addExWorksCharge : false;
+                quoteItemObj.Included_PDF_Ex_works__c =  dto.includeExWorksCharge != null ? dto.includeExWorksCharge : false;
+            }
+        }
+        system.debug('quoteItemObj '+quoteItemObj);
+        try{
+            upsert quoteItemObj;
+        }
+        Catch(Exception e){
+            System.debug('Exception '+e.getMessage());
+        }
+        
+        return quoteObj.Id;
+    }
+    public static Quotation_item__c assignServiceChargeIntoQuoteItem(Quotation_item__c quoteItemObj,BAFCOGenerteQuoteDto dto){
         if(dto.serviceChargeList != null){
             if(dto.serviceChargeList.servichargesObj != null){
                 BAFCOImportRMSDto.servichargesObj servObj = dto.serviceChargeList.servichargesObj;
@@ -471,7 +526,9 @@ public without sharing  class BAFCOLRoutingDetailsController {
                 quoteItemObj.Included_PDF_Destination__c =  dto.includeDestinCharge != null ? dto.includeDestinCharge : false;
             }
         }
-        
+        return quoteItemObj;
+    }
+    public static Quotation_item__c assignAdditionalChargeIntoQuoteItem(List<BAFCOGenerteQuoteDto.AdditionalCharge> additionalChargeList, Quotation_item__c quoteItemObj,BAFCOGenerteQuoteDto dto){
         for(BAFCOGenerteQuoteDto.AdditionalCharge dto2 : additionalChargeList){
             if(dto2.name == 'Bayan cancellation charge'){
                 quoteItemObj.Bayan_cancellation_charge__c = dto2.value;
@@ -560,34 +617,7 @@ public without sharing  class BAFCOLRoutingDetailsController {
             quoteItemObj.Add_to_Buying_Additional__c =  dto.addAdditionalCharge != null ? dto.addAdditionalCharge : false;
             quoteItemObj.Included_PDF_Additional__c =  dto.includeAdditionalCharge != null ? dto.includeAdditionalCharge : false;
         }
-        quoteItemObj.Total__c = dto.total;
-        quoteItemObj.Pickup_Place__c = dto.pickupPlaceName;
-        quoteItemObj.Discharge_Place__c = dto.dischargePlaceName;
-        quoteItemObj.Total_Additional__c = additionalChargeTotal;
-        quoteItemObj.Sea_Freight__c = dto.seaFreightSellRate;  
-        quoteItemObj.Quantity__c = dto.quantity;
-        quoteItemObj.Buying_Rate__c = dto.quoteBuyingRate > 0 ? dto.quoteBuyingRate : null;
-        if(dto.selectedShippLine != '' ){
-            List<Shipping_Line__c> shipLine = [Select id from Shipping_Line__c where name =:dto.selectedShippLine limit 1];
-            if(shipLine.size() > 0) quoteItemObj.Shipping_Linee__c = shipLine[0].id;
-        }
-        if(dto.exWorksObj != null){
-            quoteItemObj.Ex_Works_Charge_Name__c = dto.exWorksObj.Id;
-            quoteItemObj.Ex_Works_Charge__c = dto.exWorksObj.LoadCharge;
-            if(dto.exWorksObj.Id != null){
-                quoteItemObj.Add_to_Buying_Ex_works__c =  dto.addExWorksCharge != null ? dto.addExWorksCharge : false;
-                quoteItemObj.Included_PDF_Ex_works__c =  dto.includeExWorksCharge != null ? dto.includeExWorksCharge : false;
-            }
-        }
-        system.debug('quoteItemObj '+quoteItemObj);
-        try{
-            upsert quoteItemObj;
-        }
-        Catch(Exception e){
-            System.debug('Exception '+e.getMessage());
-        }
-        
-        return quoteObj.Id;
+        return quoteItemObj;
     }
     @AuraEnabled
     public static string addRates(
@@ -638,7 +668,7 @@ public without sharing  class BAFCOLRoutingDetailsController {
         rmsObj.Remarks__c = rmsDetail.remarks;
         rmsObj.Agent__c = rmsDetail.agentName != '' ? rmsDetail.agentName : null; 
         rmsObj.INCO_Term__c = rmsDetail.incoTermId != '' ? rmsDetail.incoTermId : null;
-        //rmsObj.Customer_Name__c = rmsDetail.customerName != null ? rmsDetail.customerName : null;
+        rmsObj.Customer_Name__c = rmsDetail.customerId != '' ? rmsDetail.customerId : null;
         if(rmsObj.Business_Type__c == 'Export') rmsObj.RecordTypeId = ExportRecordTypeId;
         else if(rmsObj.Business_Type__c == 'Import')rmsObj.RecordTypeId = ImportRecordTypeId;
         
@@ -845,8 +875,8 @@ public without sharing  class BAFCOLRoutingDetailsController {
         return procuObj;        
     }
     @auraenabled
-    public static string getOptyBusinessType(string optyId){
-        return [Select id,Business_Type__c from opportunity where id =: optyId ].Business_Type__c;
+    public static opportunity getOptyBusinessType(string optyId){
+        return [Select id,Business_Type__c,RecordType.Name from opportunity where id =: optyId ];
     }
     @auraenabled
     public static List<Opportunity> getCommercialUserOnLoad(string AccountId){
@@ -949,7 +979,7 @@ public without sharing  class BAFCOLRoutingDetailsController {
         if(rmsId != null){
             rmsObj = [Select Agent__r.name,FOB_All_In__c,id,Port_Of_Discharge__r.name,Port_Of_Loading__r.name,Commodity__r.name,Shipping_Line__r.name,
                       INCO_Term__r.name,Equipment_Type__r.name,Rate_Type__c,Validity__c,Sea_Freight__c,Business_Type__c,
-                      Free_time_POD__c,Free_time__c,Remarks__c,Customer_Name__r.name,All_in_Rate__c,Ex_Works_All_In__c,
+                      Free_time_POD__c,Free_time__c,Customer_Name__r.name,All_in_Rate__c,Ex_Works_All_In__c,
                       (Select id,BAF__c,Bunker_surcharge__c,CMC__c,DTHC__c,EIC__c,ISPS__c,OTHC__c,Seal_Charges__c,
                        Carriage_Congestion_Surcharge__c,Carrier_Security_Fees__c,Cleaning_Charges__c,DG_Surcharge__c,
                        Inland_Fuel_Surcharge__c,Inland_Handling_Fees__c,Inland_haulage__c,Low_Sulphur_Surcharge__c,

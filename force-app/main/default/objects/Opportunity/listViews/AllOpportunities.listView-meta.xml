@@ -8,6 +8,7 @@
     <columns>CORE.USERS.FULL_NAME</columns>
     <columns>OPPORTUNITY.STAGE_NAME</columns>
     <columns>OPPORTUNITY.LAST_UPDATE</columns>
+    <columns>OPPORTUNITY.RECORDTYPE</columns>
     <filterScope>Everything</filterScope>
     <label>All Opportunities</label>
 </ListView>

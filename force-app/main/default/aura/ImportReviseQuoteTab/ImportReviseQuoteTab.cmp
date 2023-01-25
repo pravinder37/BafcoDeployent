@@ -2,6 +2,7 @@
                 access="global" >
     <aura:attribute name="refRecordId" type="String" />
     <aura:attribute name="leadId" type="String" />
+    <aura:attribute name="incoTerm" type="String" />
     <aura:handler name="init" value="{!this}" action="{!c.init}" />
     <aura:html tag="style">
         .slds-modal__container{
@@ -14,8 +15,15 @@
             max-height:unset !important;
         }
     </aura:html>
-	<div style="background: white;">
-        <c:bAFCOImportReviseParent quoteID="{!v.refRecordId}" leadId ="{!v.leadId}"/>
-    </div>
+    <aura:if isTrue="{!v.incoTerm == 'Local Operation'}">
+        <div style="background: white;">
+            <c:bAFCOLocalOperationReviseParent quoteID="{!v.refRecordId}" accId ="{!v.leadId}"/>
+        </div>
+        <aura:set attribute="else">
+            <div style="background: white;">
+                <c:bAFCOImportReviseParent quoteID="{!v.refRecordId}" leadId ="{!v.leadId}"/>
+            </div>
+        </aura:set>
+    </aura:if>
 	
 </aura:component>

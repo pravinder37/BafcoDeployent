@@ -2,10 +2,6 @@
 public class BAFCOLRoutingDetailsControllerTest {
     @TestSetup
     static void setup() {
-        Lead__c ld = new Lead__c();
-        ld.Business_Type__c = 'Import';
-        insert ld;
-        
         List<Port__c> portList = new List<Port__c>();
         Port__c port = new Port__c();
         port.City__c = 'Test';
@@ -123,7 +119,6 @@ public class BAFCOLRoutingDetailsControllerTest {
         quoteObj.opportunity__c = opty.id;
         quoteObj.Customer_Name__c = 'test';
         quoteObj.Account__c = acc.id;
-        quoteObj.Leadc__c = ld.id;
         Insert quoteObj;
         
         Quotation_Item__c quoteItem = new Quotation_Item__c();

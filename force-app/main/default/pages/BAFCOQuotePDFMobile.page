@@ -1,4 +1,4 @@
-<apex:page standardController="Quotation__c" extensions="BAFCOGeneratePDFMobileController" >
+<apex:page standardController="Quotation__c" extensions="BAFCOGeneratePDFMobileController" action="{!savePdf}">
     <head>
         <style >
             @font-face {
@@ -6,20 +6,15 @@
             src: url('{!URLFOR($Resource.Montserrat, 'static/Montserrat-Medium.ttf')}') format('truetype');
             }
             * {
-            font-family: MontserratCustomfont;
+            font-family: Helvetica,Dialog;
+            font-size: 12px;
             }
         </style>
     </head>
-    <body>
-        <div style="padding:5%">
-            <H1>To get PDF in the mail, Give mail id in the text box and click 'Email PDF' button</H1>
-            <H1>PDF will be mailed to the given Email Id</H1>
-            
-            <apex:form >
-                <p style="font-size:15px"><span>Email id:</span></p>
-                <apex:inputText label="Email" value="{!emailid}" style="margin-left:2px"></apex:inputText>
-                <apex:commandButton value="Email PDF" action="{!send}" style="font-size:15px" />
-            </apex:form>
+    <div style="position: absolute; left: 50%; top:50%">
+        <div style="position: relative; left: -50%;">
+            <apex:image url="{!$Resource.LoadingGIF}"/>
+            Loading ....
         </div>
-    </body>
+    </div>
 </apex:page>

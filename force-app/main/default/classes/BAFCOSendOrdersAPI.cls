@@ -1,5 +1,5 @@
 public class BAFCOSendOrdersAPI {
-    public static OrderDetails getOrderData(List<Order__c> orderList) {
+    public static void getOrderData(List<Order__c> orderList) {
         String returnResult = '';
         List<OrderList> orderDtoList = new List<OrderList>();
         if(orderList.size() >0){
@@ -126,110 +126,114 @@ public class BAFCOSendOrdersAPI {
         }
         OrderDetails dtoObj = new OrderDetails();
         dtoObj.OrderList = orderDtoList;
-        //returnResult = JSON.serialize(dtoObj);
-        system.debug('returnResult'+returnResult);
+        for(OrderList orderRec: orderDtoList){
+            doCallOut(orderRec);            
+        }       
+        //return dtoObj;        
+    }
+    
+    public static void doCallOut(OrderList orderRecord) {
         HttpRequest req = new HttpRequest();
-        req.setEndpoint('callout:TPG_API/api/Request/Begin');
-        req.setMethod('POST');
-        //Adding Header Authentication
         req.setHeader('Content-Type', 'application/json');
-        //String authorizationHeader = 'Basic ' + EncodingUtil.base64Encode(headerValue);
-        //req.setHeader('Authorization', authorizationHeader);
-        //system.debug('Header Value '+req.getHeader('Authorization'));
-        //Adding Header
-        //req.setBody(JSON.serialize(projectWrapper));
-        req.setTimeout(2 * 60 * 1000);        
+        req.setEndpoint('http://223.31.190.170:52291/Import/RawData');
+        req.setHeader('Content-Length', '0');
+        req.setMethod('POST');
+        system.debug('Order BODY--'+JSON.serialize(orderRecord));
+        req.setBody(JSON.serialize(orderRecord));
         HttpResponse response = null;        
         try {
             Http http = new Http();
+            system.debug('req in TRY '+req);
             response = http.send(req);            
-            system.debug('response of upsertProjectToTPG'+response);
+            system.debug('response of Send Order API '+response);
         } 
         catch (System.CalloutException e) {
-            system.debug('Catch of Callout Exception in Class - dxpTPGCreateProjectAPIService'+e.getMessage());
+            system.debug('Catch of Callout Exception in Class - BAFCOSendOrderAPI '+e.getMessage());
         }
         if(response!=NULL){
             String responseBody = response.getBody();
-            //dxpTPGpcDTOWrapper.ProjectTPGResponse responseTPGProjectID = (dxpTPGpcDTOWrapper.ProjectTPGResponse)Json.deserialize(responseBody,dxpTPGpcDTOWrapper.ProjectTPGResponse.class);
             if (response.getStatusCode() == 200) {
+                ResponseData respWrapper = (ResponseData) JSON.deserialize(responseBody, ResponseData.class);
+                String OrderNumber = respWrapper.SFOrderID;
+                List<Order_Item__c> orderItemList = [SELECT BSLS_ID__c, Id, Order__r.Name FROM Order_Item__c Where Order__r.Name=:OrderNumber];
+                //Order__c orderRec = [Select Id, BSLS_ID__c from Order__c WHERE Name = :OrderNumber Limit 1];
+                
                 String statusCode = String.valueOf(response.getStatusCode());
-                system.debug('body of upsertProjectToTPG: ' + response.getBody());
+                system.debug('Body of Response: ' + response.getBody());
+                
                 if(String.isNotBlank(responseBody)) {
-                    String tpgID='';
-                    system.debug('responseBody of upsertProjectToTPG'+responseBody);
-                    }
+                    system.debug('responseBody '+responseBody);
                 }
             }
-            else{
-                /*String statusCode = String.valueOf(response.getStatusCode());
-                Services_Exception_Log__c exceptionLog = new Services_Exception_Log__c();
-                exceptionLog.API_Name__c='Opportunity_Brand__c record callout for '+oppBrand.Id;
-                exceptionLog.API_Producer_Picklist__c=SERVICES_EXCEPTION_API_PRODUCER;
-                exceptionLog.Messages__c=responseTPGProjectID.BusinessError;
-                exceptionLog.Stack_Trace__c='Business Error - '+responseTPGProjectID.BusinessError+' for Status Code - '+statusCode +' in class dxpTPGCreateProjectAPIService';                    
-                callOutExceptions.add(exceptionLog);*/
-            }
+        }
+        else{
+            system.debug('Body of Response When Response is NULL: ' + response.getBody());
+        }
         
-    return dtoObj;
+    }
     
-}
-public class OrderDetails{
-    @AuraEnabled public List<OrderList> OrderList {get;Set;}
-}
-public class OrderList{
-    @AuraEnabled public AccountObj  AccountObj{get;set;}
-    @AuraEnabled public OrderObj  OrderObj{get;set;}
-}
-public class AccountObj{
-    @AuraEnabled public String AccountName {get;Set;}
-    @AuraEnabled public String Branch {get;Set;}
-    @AuraEnabled public String AccountOwner {get;Set;}
-    @AuraEnabled public String BillingAddress {get;Set;}
-    @AuraEnabled public String SFID {get;Set;}
-    @AuraEnabled public String BSLSID {get;Set;}
-}
-public class OrderObj{
-    @AuraEnabled public String OrderNumber {get;Set;}
-    @AuraEnabled public String QuotationNumber {get;Set;}
-    @AuraEnabled public Date QuotationValidity {get;Set;}
-    @AuraEnabled public Date OrderValidity {get;Set;}
-    @AuraEnabled public List<OrderItemList> orderItemList {get;Set;}
-}
-public class OrderItemList{
-    @AuraEnabled public String OrderNumber {get;Set;}
-    @AuraEnabled public String OrderItemNumber {get;Set;}
-    @AuraEnabled public String opsExecutive {get;Set;}
-    @AuraEnabled public String shippingline {get;Set;}
-    @AuraEnabled public String portOfLoading {get;Set;}
-    @AuraEnabled public String portOfDestination {get;Set;}
-    @AuraEnabled public String placeOfPickup {get;Set;}
-    @AuraEnabled public String placeOfDischarge {get;Set;}
-    @AuraEnabled public String equipmentType {get;Set;}
-    @AuraEnabled public Integer serviceType {get;Set;}
-    @AuraEnabled public Integer shipmentType {get;Set;}
-    @AuraEnabled public Agent Agent {get;Set;}
-    @AuraEnabled public List<Consignee> Consignee {get;Set;}
-    @AuraEnabled public List<Shipper> Shipper {get;Set;}
-}
-public class Agent{
-    @AuraEnabled public String AgentName {get;Set;}
-    @AuraEnabled public String SFID {get;Set;}
-    @AuraEnabled public String BSLSID {get;Set;}
-}
-public class Consignee{
-    @AuraEnabled public String AccountName {get;Set;}
-    @AuraEnabled public String Branch {get;Set;}
-    @AuraEnabled public String AccountOwner {get;Set;}
-    @AuraEnabled public String BillingAddress {get;Set;}
-    @AuraEnabled public String SFID {get;Set;}
-    @AuraEnabled public String BSLSID {get;Set;}
-}
-public class Shipper{
-    @AuraEnabled public String AccountName {get;Set;}
-    @AuraEnabled public String Branch {get;Set;}
-    @AuraEnabled public String AccountOwner {get;Set;}
-    @AuraEnabled public String BillingAddress {get;Set;}
-    @AuraEnabled public String SFID {get;Set;}
-    @AuraEnabled public String BSLSID {get;Set;}
-}
+    public class OrderDetails{
+        @AuraEnabled public List<OrderList> OrderList {get;Set;}
+    }
+    public class OrderList{
+        @AuraEnabled public AccountObj  AccountObj{get;set;}
+        @AuraEnabled public OrderObj  OrderObj{get;set;}
+    }
+    public class AccountObj{
+        @AuraEnabled public String AccountName {get;Set;}
+        @AuraEnabled public String Branch {get;Set;}
+        @AuraEnabled public String AccountOwner {get;Set;}
+        @AuraEnabled public String BillingAddress {get;Set;}
+        @AuraEnabled public String SFID {get;Set;}
+        @AuraEnabled public String BSLSID {get;Set;}
+    }
+    public class OrderObj{
+        @AuraEnabled public String OrderNumber {get;Set;}
+        @AuraEnabled public String QuotationNumber {get;Set;}
+        @AuraEnabled public Date QuotationValidity {get;Set;}
+        @AuraEnabled public Date OrderValidity {get;Set;}
+        @AuraEnabled public List<OrderItemList> orderItemList {get;Set;}
+    }
+    public class OrderItemList{
+        @AuraEnabled public String OrderNumber {get;Set;}
+        @AuraEnabled public String OrderItemNumber {get;Set;}
+        @AuraEnabled public String opsExecutive {get;Set;}
+        @AuraEnabled public String shippingline {get;Set;}
+        @AuraEnabled public String portOfLoading {get;Set;}
+        @AuraEnabled public String portOfDestination {get;Set;}
+        @AuraEnabled public String placeOfPickup {get;Set;}
+        @AuraEnabled public String placeOfDischarge {get;Set;}
+        @AuraEnabled public String equipmentType {get;Set;}
+        @AuraEnabled public Integer serviceType {get;Set;}
+        @AuraEnabled public Integer shipmentType {get;Set;}
+        @AuraEnabled public Agent Agent {get;Set;}
+        @AuraEnabled public List<Consignee> Consignee {get;Set;}
+        @AuraEnabled public List<Shipper> Shipper {get;Set;}
+    }
+    public class Agent{
+        @AuraEnabled public String AgentName {get;Set;}
+        @AuraEnabled public String SFID {get;Set;}
+        @AuraEnabled public String BSLSID {get;Set;}
+    }
+    public class Consignee{
+        @AuraEnabled public String AccountName {get;Set;}
+        @AuraEnabled public String Branch {get;Set;}
+        @AuraEnabled public String AccountOwner {get;Set;}
+        @AuraEnabled public String BillingAddress {get;Set;}
+        @AuraEnabled public String SFID {get;Set;}
+        @AuraEnabled public String BSLSID {get;Set;}
+    }
+    public class Shipper{
+        @AuraEnabled public String AccountName {get;Set;}
+        @AuraEnabled public String Branch {get;Set;}
+        @AuraEnabled public String AccountOwner {get;Set;}
+        @AuraEnabled public String BillingAddress {get;Set;}
+        @AuraEnabled public String SFID {get;Set;}
+        @AuraEnabled public String BSLSID {get;Set;}
+    }
+    
+    public class ResponseData{
+        @AuraEnabled public String SFOrderID {get;Set;}
+        @AuraEnabled public String BSLSOrderID {get;Set;}
+    }
 }

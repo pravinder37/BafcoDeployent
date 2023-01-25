@@ -28,6 +28,7 @@ public class BAFCOImportQuoteController {
         String QuoteId = '';    
         Integer uniqueEquip = 0;
         Boolean isFDAccount = false;
+        String accountId = null;
         Map<String,String>  quoteItemToIdMap = new Map<String,String>();
         for(Route_Equipment__c routeEquip : [Select Equipment_Type__r.name,Quantity__c  FROM Route_Equipment__c WHERE Route__c=:routeId]){
             routeEquipmentList.add(routeEquip.Equipment_Type__r.name);
@@ -40,9 +41,12 @@ public class BAFCOImportQuoteController {
                              }
         // to get Previously generated Quote
         List<Quotation__c> quoteList = [SELECT Id FROM Quotation__c where Opportunity__c  =: enquiryId limit 1];
+        if(quoteList.size() > 0) QuoteId = quoteList[0].Id;
+        
         Opportunity opty = [Select id,Account.Fd__c from Opportunity where id =: enquiryId limit 1];
         if(opty.Account.Fd__c == true) isFDAccount = true;
-        if(quoteList.size() > 0) QuoteId = quoteList[0].Id;
+        if(opty.AccountId != null) accountId = opty.AccountId;
+        
         if(!String.isBlank(QuoteId)){
             for(Quotation_Item__c item : [Select Equipment_Type__r.name,Shipping_Line__c,id from Quotation_Item__c  where Quotation__c =: QuoteId
                                           AND Equipment_Type__r.name != null AND Shipping_Line__c != null ]){
@@ -63,6 +67,7 @@ public class BAFCOImportQuoteController {
                              AND Validity__c >=: todaysDate
                              AND recordtypeId =: RMS_IMPORT_RECORDTYPE_Id
                              AND Equipment_Type__r.name in : routeEquipmentList
+                             AND(Customer_name__c =: accountId OR Customer_name__c = null)
                             ]){
                                 if(!agentToEquipMap.ContainsKey(rmsObj.Agent__r.Name)){
                                     agentToEquipMap.put(rmsObj.Agent__r.Name,new Map<String,List<BAFCORMSDto>>());

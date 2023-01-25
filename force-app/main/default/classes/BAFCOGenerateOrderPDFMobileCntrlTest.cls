@@ -104,7 +104,6 @@ public class BAFCOGenerateOrderPDFMobileCntrlTest {
         testPage.getParameters().put('recordId', ordeObj.id);
         ApexPages.StandardController sc = new  ApexPages.StandardController(ordeObj); 
         BAFCOGenerateOrderPDFMobileController ob = new BAFCOGenerateOrderPDFMobileController(sc);
-        ob.emailid = 'test@email.com';
-        ob.send();
+        ob.saveOrderPDF();
     }
 }

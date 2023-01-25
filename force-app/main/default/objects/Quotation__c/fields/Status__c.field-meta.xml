@@ -33,6 +33,11 @@
                 <label>Confirmed</label>
             </value>
             <value>
+                <fullName>Awaiting CRO</fullName>
+                <default>false</default>
+                <label>Awaiting CRO</label>
+            </value>
+            <value>
                 <fullName>Rejected</fullName>
                 <default>false</default>
                 <label>Rejected</label>

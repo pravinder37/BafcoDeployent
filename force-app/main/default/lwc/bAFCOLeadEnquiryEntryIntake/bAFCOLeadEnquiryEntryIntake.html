@@ -28,19 +28,6 @@
                                 Complete this field
                             </div>
         </lightning-layout-item-->
-        <lightning-layout-item size="12" class="mobilePaddingRight labelStyle" large-device-size="4" medium-device-size="4" small-device-size="12">
-            <lightning-combobox label="Service Type" 
-                            options={serviceTypeOption}
-                            data-record-id={leadIndex}
-                            value={serviceType}
-                            style="padding: 0px 20px 0px 20px;" 
-                            onchange={handleServiceType}
-                            class={serviceTypeClass}
-                            placeholder="Select"></lightning-combobox>
-                            <div class="slds-form-element__help" style="color: rgb(234, 0, 30); padding-left: 20px; font-weight: 600;" if:true={serviceTypeClass}>
-                                Complete this field
-                            </div>
-        </lightning-layout-item>
         <lightning-layout-item size="12" class="mobilePaddingRight" large-device-size="4" medium-device-size="4" small-device-size="12">
             <div class={incoTermClass}>
                 <label class="slds-form-element__label">
@@ -60,6 +47,20 @@
             <div class="slds-form-element__help" style="color: rgb(234, 0, 30); padding-left: 20px; font-weight: 600;" if:true={incoTermClass}>
                 Complete this field
             </div>
+        </lightning-layout-item>
+        <lightning-layout-item size="12" class="mobilePaddingRight labelStyle" large-device-size="4" medium-device-size="4" small-device-size="12">
+            <lightning-combobox label="Service Type" 
+                            options={serviceTypeOption}
+                            data-record-id={leadIndex}
+                            value={serviceType}
+                            disabled={disableServiceType}
+                            style="padding: 0px 20px 0px 20px;" 
+                            onchange={handleServiceType}
+                            class={serviceTypeClass}
+                            placeholder="Select"></lightning-combobox>
+                            <div class="slds-form-element__help" style="color: rgb(234, 0, 30); padding-left: 20px; font-weight: 600;" if:true={serviceTypeClass}>
+                                Complete this field
+                            </div>
         </lightning-layout-item>
         <lightning-layout-item if:false={hidePOL} size="12" class="mobilePaddingRight" large-device-size="4" medium-device-size="4" small-device-size="12">
             <div class={portOfLoadingClass}>
@@ -127,7 +128,7 @@
             </div>
            
         </lightning-layout-item>
-        <lightning-layout-item if:false={hidePlOP} size="12" class="mobilePaddingRight labelStyle" large-device-size="4" medium-device-size="4" small-device-size="12" if:true={showPickupPlaceField}>
+        <lightning-layout-item size="12" class="mobilePaddingRight labelStyle" large-device-size="4" medium-device-size="4" small-device-size="12" if:true={showPickupPlaceField}>
             <div class={pickupPlaceClass}>
                 <lightning-input label="Place of Pickup"
                                  value={placeOfPickup}
@@ -138,7 +139,7 @@
                 Complete this field.
             </div>   
         </lightning-layout-item>
-        <lightning-layout-item if:false={hidePlOD} size="12" class="mobilePaddingRight labelStyle" large-device-size="4" medium-device-size="4" small-device-size="12" if:true={showDischargePlaceField}>
+        <lightning-layout-item size="12" class="mobilePaddingRight labelStyle" large-device-size="4" medium-device-size="4" small-device-size="12" if:true={showDischargePlaceField}>
             <div class={dischargePlaceClass}>
                 <lightning-input label="Place of Discharge"
                                 value={placeOfDischarge}

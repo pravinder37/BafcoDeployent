@@ -56,10 +56,9 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
     @track disableIncoField =  false; 
     @track hidePOL = false;
     @track hidePOD = false;
-    @track hidePlOP = false;
-    @track hidePlOD = false;
     @api businessType= '';
     @track hideShippingLine = false;
+    @track disableServiceType = false;
 
     @wire(getPicklistValuesByRecordType, { objectApiName: ROUTE_OBJECT, recordTypeId: '012000000000000AAA' })
     routeObjectData({ data, error }) {
@@ -256,24 +255,29 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
         let serviceType = e.target.value;
         this.serviceType = serviceType;
         if(serviceType == 'Ex-Works'){
-            this.disableIncoField = true;
+            this.showPickupPlaceField = true;
+            this.showDischargePlaceField = true;
             let field2 = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[0];
             field2.handleRemovePill();
             this.incoTerm = '';
             this.incoTermName = '';
         }
         else{
-            if(serviceType == 'D2P' || serviceType ==  'D2D'){
-                this.showPickupPlaceField = true;
-            }
-            else{
-                this.showPickupPlaceField = false;
-            }
-            if(serviceType == 'P2D' || serviceType ==  'D2D'){
-                this.showDischargePlaceField = true;
-            }
-            else{
-                this.showDischargePlaceField = false;
+            this.showPickupPlaceField = true;
+            this.showDischargePlaceField = true;
+            if(this.incoTermName != 'Local Operation'){
+                if(serviceType == 'D2P' || serviceType ==  'D2D'){
+                    this.showPickupPlaceField = true;
+                }
+                else{
+                    this.showPickupPlaceField = false;
+                }
+                if(serviceType == 'P2D' || serviceType ==  'D2D'){
+                    this.showDischargePlaceField = true;
+                }
+                else{
+                    this.showDischargePlaceField = false;
+                }
             }
         }
         this.placeOfPickup = '';
@@ -286,6 +290,10 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
         this.incoTerm = incoTermID;
         this.incoTermName = e.detail.Name
         if(this.incoTermName == 'Local Operation') this.handleLocalInco();
+        else if(this.incoTermName != 'Local Operation'){
+            this.serviceType = '';
+            this.disableServiceType = false
+        }
         this.incoTermClass ='';
         this.updateEnquiryList();
     }
@@ -301,17 +309,25 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
         this.portDestination = '';
         this.portDestinationName = '';
         this.placeOfDischarge = '';
-        if(this.businessType == 'Import'){
+        if(this.businessType == 'Import' && this.incoTermName == 'Local Operation'){
             this.hidePOL = true;
-            this.hidePlOP = true;           
-            this.hidePlOD = false;
+            this.showPickupPlaceField = false;           
+            this.showDischargePlaceField = true;
             this.hidePOD = false;
+            this.serviceType = 'P2D'
+            this.disableServiceType = true
         }
-        else if(this.businessType == 'Export'){
-            this.hidePlOD = true;
+        else if(this.businessType == 'Export' && this.incoTermName == 'Local Operation'){
+            this.showPickupPlaceField = true;
             this.hidePOD = true;
-            this.hidePOL = false;
-            this.hidePlOP = false;            
+            this.hidePOL = false; 
+            this.showDischargePlaceField = false;  
+            this.disableServiceType = true
+            this.serviceType = 'D2P'       
+        }
+        else if(this.incoTermName != 'Local Operation'){
+            this.serviceType = '';
+            this.disableServiceType = false
         }
     }
     handleIncoTermRemoved(e){
@@ -617,15 +633,13 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
         this.isLoading = false;
     }
     displayIncoChanges(){
-        this.hidePOL = false;
-        this.hidePlOP = false;           
-        this.hidePlOD = false;
-        this.hidePOD = false;
-        this.hidePlOD = false;
-        this.hidePOD = false;
-        this.hidePOL = false;
-        this.hidePlOP = false;  
-        this.hideShippingLine = false
+        if(this.incoTermName == 'Local Operation'){
+            this.hidePOL = false;
+            this.showDischargePlaceField = true;           
+            this.showPickupPlaceField = true;
+            this.hidePOD = false;
+            this.hideShippingLine = false
+        }
     }
     @api onSubmit(){
         this.isLoading = true;

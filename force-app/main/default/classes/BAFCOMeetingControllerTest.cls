@@ -59,4 +59,17 @@ public class BAFCOMeetingControllerTest {
         catch(Exception e){}
         test.stopTest();
     }
+    testMethod static void searchTest0123(){
+        String searchTerm='test ( name )';
+        String myObject ='Account';
+        String filter = 'test';
+        test.startTest();
+        try{
+            BAFCOMeetingController.accountSearch(searchTerm, myObject, null);
+            BAFCOMeetingController.accountSearch(null, myObject, null);
+            BAFCOMeetingController.accountSearch(searchTerm, myObject, filter);
+        }
+        catch(Exception e){}
+        test.stopTest();
+    }
 }

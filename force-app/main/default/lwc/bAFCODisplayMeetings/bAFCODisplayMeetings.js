@@ -245,7 +245,12 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
     }
     handlefilteredDateChange(e){
         this.filteredDate = e.target.value
-        this.getMeetingsRecords();
+        if(this.filteredDate >= this.minTodaysDate){
+            let filtereDate = this.template.querySelector("[data-field='filtereDate']");
+            filtereDate.setCustomValidity("");
+            filtereDate.reportValidity();   
+            this.getMeetingsRecords();
+        }
     }
     closeMeetingDisplay(){
         this.displayIntakeForm = false;

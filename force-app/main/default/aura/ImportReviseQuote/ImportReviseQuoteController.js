@@ -7,6 +7,7 @@
             if (state === "SUCCESS") {
                 var quoteObj = response.getReturnValue();
                 console.log('quoteObj '+JSON.stringify(quoteObj))
+                let incoTerm = quoteObj.incoTerm;
                 var leadId = quoteObj.leadId;
                 var pageReference = {
                     type: 'standard__component',
@@ -15,7 +16,8 @@
                     },
                     state: {
                         c__refRecordId: cmp.get("v.recordId"),
-                        c__leadId: leadId
+                        c__leadId: leadId,
+                        c__incoTerm: incoTerm
                     }
                 };
                 cmp.set("v.pageReference", pageReference);

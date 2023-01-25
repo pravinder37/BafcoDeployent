@@ -72,7 +72,12 @@ public class BAFCOSalesOrderController {
                                                   system.debug('here '+mapequipNameToQty.get(item.Equipment_Type__r.Name));
                                                   dto.Qty = mapequipNameToQty.get(item.Equipment_Type__r.Name);
                                                   system.debug(' dto.Qty '+ dto.Qty);
+                                                  if(item.Shipping_Line__c != null){
                                                   dto.shipName = item.Shipping_Line__c+( item.Agent_Name__c != null ? (' - '+item.Agent_Name__c) : '');
+                                                  }
+                                                  else{
+                                                      dto.shipName = '';
+                                                  }
                                                   dto.sellingRate = item.Total__c;
                                                   dto.checkBoxSelected = false;
                                                   dto.accountId = item.Quotation__r.Account__c;

@@ -70,7 +70,7 @@ public class QuotationItemTriggerHandlerTest {
         Quotation__c quoteObj = new Quotation__c();
         quoteObj.Name__c= 'Quote/'+Year1+'/'+1;
         quoteObj.Opportunity__c = opty.id;
-        // quoteObj.Enquiry__c = enq.id;
+        //quoteObj.Enquiry__c = enq.id;
         quoteObj.Account__c = acc.id;
         Insert quoteObj;
         
@@ -102,7 +102,7 @@ public class QuotationItemTriggerHandlerTest {
         quoteItem.Total_SL__c = 100;      
         quoteItem.Bayan_cancellation_charge__c = 10;
         quoteItem.Cleaning_charges__c =10;
-        //quoteItem.Container_Lashing_Charges__c = 10;        
+        quoteItem.Container_Lashing_Charges__c = 10;        
         quoteItem.Container_movement_charges__c = 10;        
         quoteItem.Container_stripping__c = 10;        
         quoteItem.Free_time_certificate_charges__c = 10;        

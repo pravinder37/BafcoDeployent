@@ -107,7 +107,8 @@ public class BAFCOQuoteCopyContentControllerTest {
         BAFCOQuoteCopyContentController.getQuoteDataOnLoad(Quoteobj.id);
     }
     testMethod static void sendEmailTest(){
-        BAFCOQuoteCopyContentController.sendEmail('toSend@email.com', 'toCCSend@email.com', 'toBCCSend@email.com', 'subject', 'body');
+        Quotation__c Quoteobj  = [Select id from Quotation__c limit 1];
+        BAFCOQuoteCopyContentController.sendEmail('toSend@email.com', 'toCCSend@email.com', 'toBCCSend@email.com', 'subject', 'body',Quoteobj.id);
     }
   
 }

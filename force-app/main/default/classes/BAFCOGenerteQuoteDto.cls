@@ -5,6 +5,8 @@ public class BAFCOGenerteQuoteDto {
     @AuraEnabled
     public Decimal seaFreightSellRate { get; set; }
     @AuraEnabled
+    public Decimal totalRate { get; set; }
+    @AuraEnabled
     public Decimal quoteBuyingRate { get; set; }
     @AuraEnabled
     public Decimal quantity { get; set; }
@@ -17,9 +19,15 @@ public class BAFCOGenerteQuoteDto {
     @AuraEnabled
     public String pickupPlaceName { get; set; }
     @AuraEnabled
+    public String portLoadingId { get; set; } 
+    @AuraEnabled
+    public String portDestinationId { get; set; }
+    @AuraEnabled
     public String dischargePlaceName { get; set; }
     @AuraEnabled
     public String pickupPlace { get; set; }
+    @AuraEnabled
+    public String selectedEquipment { get; set; }
     @AuraEnabled
     public String dischargePlace { get; set; }
     @AuraEnabled

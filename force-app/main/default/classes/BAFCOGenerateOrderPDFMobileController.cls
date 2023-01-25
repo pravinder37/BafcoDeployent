@@ -1,16 +1,12 @@
 public class BAFCOGenerateOrderPDFMobileController {
 public String recordId {get;set;}
-    public String subject { get; set; }
-    public String body { get; set; }
-    public String emailid{get; set;}
     public BAFCOGenerateOrderPDFMobileController(ApexPages.StandardController controller){
         Map<String, String> pageParameters = ApexPages.currentPage().getParameters();
         String recordId = pageParameters.get('recordId');
         this.recordId = recordId;
         system.debug('this.recordId' +this.recordId);
     }
-    public PageReference send() {
-        Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
+    public PageReference saveOrderPDF() {
         PageReference pdf =  Page.BAFCOOrderPDFPage;
         pdf.getParameters().put('recordId',(String)this.recordId);
         pdf.getParameters().put('showShippLine','true');
@@ -24,21 +20,19 @@ public String recordId {get;set;}
         else{
             b = pdf.getContentAsPdf();
         }
+        ContentVersion conVer = new ContentVersion();
+        conVer.ContentLocation = 'S';
+        conVer.PathOnClient = 'Order.pdf';
+        conVer.Title = 'Order.pdf';
+        conVer.VersionData = b;
+        insert conVer;
         
-        Messaging.EmailFileAttachment efa = new Messaging.EmailFileAttachment();
-        efa.setContentType('application/pdf');
-        efa.setFileName('Order.pdf');
-        efa.setBody(b);
-        String addresses;
-        addresses=emailid;
-        String[] toAddresses = addresses.split(':', 0);
-        email.setSubject( subject );
-        email.setToAddresses( toAddresses );
-        email.setPlainTextBody('Find the Attachment');
-        email.setFileAttachments(new Messaging.EmailFileAttachment[] {efa});
-        // Sends the email
-        Messaging.SendEmailResult [] r =
-            Messaging.sendEmail(new Messaging.SingleEmailMessage[] {email});
+        Id conDoc = [SELECT ContentDocumentId FROM ContentVersion WHERE Id =:conVer.Id].ContentDocumentId;
+        ContentDocumentLink conDocLink = New ContentDocumentLink();
+        conDocLink.LinkedEntityId = this.recordId;
+        conDocLink.ContentDocumentId = conDoc;
+        conDocLink.shareType = 'V';
+       // insert conDocLink;
         PageReference pg = new PageReference('/'+this.recordId);
         pg.setRedirect(true);
         return pg;  

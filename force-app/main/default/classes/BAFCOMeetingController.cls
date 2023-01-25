@@ -1,10 +1,10 @@
-public class BAFCOMeetingController {
+public with Sharing class BAFCOMeetingController {
     @AuraEnabled
     public static List<EventList> getMeetingsRecords(String filteredDate){
         Id currentUserId = UserInfo.getUserId();
         Date filterDateTime = filteredDate != null ? Date.valueOf(filteredDate) : system.today();
         List<EventList> eventList = new List<EventList>();
-        for(Event ev : [Select id, Who.name,What.Name,StartDateTime, Purpose_of_Visit__c,Minutes_of_Meeting__c from Event where Start_Date__c =: filterDateTime AND createdbyId =:currentUserId  order by StartDateTime ]){
+        for(Event ev : [Select id, Who.name,What.Name,StartDateTime, Purpose_of_Visit__c,Minutes_of_Meeting__c from Event where Start_Date__c =: filterDateTime /*AND createdbyId =:currentUserId*/  order by StartDateTime ]){
             EventList evobj = new EventList();
             evobj.recordId = ev.id;
             evobj.accountName =  ev.WhatId != null ? ev.What.Name : (ev.WhoId != null ? ev.Who.name : '-');
@@ -123,6 +123,9 @@ public class BAFCOMeetingController {
             if(cameFromDisplayMeeting == true && myObject == 'Lead'){
                 myQuery = 'Select Id, Search__c from '+myObject+' Where Search__c Like  \'%' + searchTerm + '%\' AND '+filter+' LIMIT  5';
             }
+            else{
+                myQuery = 'Select Id, Search__c from '+myObject+' Where Search__c Like  \'%' + searchTerm + '%\' AND '+filter+' LIMIT  5';
+            }
         }
         else {
             if(searchTerm == null || searchTerm == ''){
@@ -132,6 +135,24 @@ public class BAFCOMeetingController {
                 if(cameFromDisplayMeeting == true && myObject == 'Lead'){
                     myQuery = 'Select Id, Search__c from '+myObject+' Where Search__c Like  \'%' + searchTerm + '%\' LIMIT  5';
                 }
+            }
+        }
+        system.debug('myQuery '+myQuery);
+        List<sObject> lookUpList = database.query(myQuery);
+        return lookUpList;
+    }
+    @AuraEnabled(cacheable=true)
+    public static List<sObject> accountSearch(String searchTerm, string myObject, String filter) {
+        String myQuery = null;
+        if(filter != null && filter != ''){
+            myQuery = 'Select Id, Name from '+myObject+' Where Name Like  \'%' + searchTerm + '%\' AND '+filter+' LIMIT  5';
+        }
+        else {
+            if(searchTerm == null || searchTerm == ''){
+                myQuery = 'Select Id, Name from '+myObject+' Where LastViewedDate != NULL ORDER BY LastViewedDate DESC LIMIT  5';
+            }
+            else {
+                myQuery = 'Select Id, Name from '+myObject+' Where Name Like  \'%' + searchTerm + '%\' LIMIT  5';
             }
         }
         system.debug('myQuery '+myQuery);
