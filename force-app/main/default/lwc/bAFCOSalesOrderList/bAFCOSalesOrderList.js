@@ -19,6 +19,11 @@ export default class BAFCOSalesOrderList extends NavigationMixin(LightningElemen
     connectedCallback(){
         let todaysDate = new Date();
         this.minDate = this.formatDate(todaysDate);
+        let ddd = new Date();
+        let year = ddd.getFullYear();
+        let month = ddd.getMonth();
+        let lastdate = new Date(year, month +1, 0);
+        this.validityDate = this.formatDate(lastdate)
         setTimeout(() => {
             if(this.customerAccount != null){
                 let consigneeObj = {
@@ -55,6 +60,12 @@ export default class BAFCOSalesOrderList extends NavigationMixin(LightningElemen
        if(this.validityDate == '' || this.validityDate == null){
             let dateField = this.template.querySelector("[data-field='dateField']");
             dateField.setCustomValidity("Complete this field.");
+            dateField.reportValidity();
+            this.isLoading = false
+        }
+        else if(this.validityDate < this.minDate){
+            let dateField = this.template.querySelector("[data-field='dateField']");
+            dateField.setCustomValidity('Value must be '+this.minDate+' or later.');
             dateField.reportValidity();
             this.isLoading = false
         }

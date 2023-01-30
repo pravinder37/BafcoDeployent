@@ -15,6 +15,7 @@ export default class BAFCOParentComponent extends LightningElement {
     @track validityDate = '';
     @track quoteId = '';
     vectorPng = VECTOR;
+    minTodaysDate ='';
 
     entryIntVar = 1;
     @track displayQuotationlist= [];    
@@ -22,6 +23,26 @@ export default class BAFCOParentComponent extends LightningElement {
         console.log('record id '+this.enquiryID)
         document.title = 'Create Export Quote'
         this.getEnqueryDetailsOnInit();
+        let d = new Date().toISOString();  
+        this.minTodaysDate = this.formatDate(d);
+        let ddd = new Date();
+        let year = ddd.getFullYear();
+        let month = ddd.getMonth();
+        let lastdate = new Date(year, month +1, 0);
+        this.validityDate = this.formatDate(lastdate)
+    }
+    formatDate(date) {
+        let d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+    
+        if (month.length < 2) 
+            month = '0' + month;
+        if (day.length < 2) 
+            day = '0' + day;
+    
+        return [year, month, day].join('-');
     }
     getEnqueryDetailsOnInit(){
         getEnqueryDetails({enquiryID : this.enquiryID})
@@ -85,6 +106,15 @@ export default class BAFCOParentComponent extends LightningElement {
                         const evt = new ShowToastEvent({
                             title: 'Error',
                             message: 'Buying rate is only valid until '+validityDateRms,
+                            variant: 'error',
+                            mode: 'dismissable'
+                        });
+                        this.dispatchEvent(evt);
+                    }
+                    else if(this.validityDate < this.minTodaysDate){
+                        const evt = new ShowToastEvent({
+                            title: 'Error',
+                            message: 'Value must be '+this.validityDate+' or later.',
                             variant: 'error',
                             mode: 'dismissable'
                         });

@@ -40,7 +40,7 @@ export default class BAFCOLocalOperationQuoteIntakeForm extends NavigationMixin(
     @track toHoldData = [];
     @track allRouteList = [];
 
-   // @track totalRate = 0;
+    @track totalRate = 0;
     @track shippingEquipTabSelected = '';
 
     @track buyingRate = 0;
@@ -192,7 +192,7 @@ export default class BAFCOLocalOperationQuoteIntakeForm extends NavigationMixin(
         this.handleUpdateCalculation();
     }
     resetCalculation(){
-        //this.totalRate = 0;
+        this.totalRate = 0;
         this.buyingRate = 0;
         this.rmsRemarks = '';
         this.quantity=0;
@@ -272,18 +272,19 @@ export default class BAFCOLocalOperationQuoteIntakeForm extends NavigationMixin(
         this.quotationSaved = false;
     }
     handleTotalRateChange(e){
-       /* this.totalRate = e.target.value;
+        this.totalRate = e.target.value;
         let totalRateField = this.template.querySelector("[data-field='totalRateField']");
         totalRateField.setCustomValidity("");
         totalRateField.reportValidity();   
         this.updateTabsData();
-        this.handleUpdateCalculation();*/
+        this.handleUpdateCalculation();
     }
     updateTabsData(){
+        this.updateBuyingRate();
         let index  = this.toHoldData.findIndex(x=>x.key == this.shippingEquipTabSelected);
         if(index != -1){
             if(this.toHoldData[index].value.length == 1){
-                //this.toHoldData[index].value[0].totalRate = this.totalRate;
+                this.toHoldData[index].value[0].totalRate = parseInt(this.totalRate);
                 this.toHoldData[index].value[0].quoteBuyingRate = this.buyingRate;
                 this.toHoldData[index].value[0].quotationItemId = this.quotationItemId;                    
                 this.toHoldData[index].value[0].additionalChargeList = this.additionalChargeList;
@@ -303,6 +304,32 @@ export default class BAFCOLocalOperationQuoteIntakeForm extends NavigationMixin(
         }
         console.log('to hold '+JSON.stringify(this.toHoldData,null,2))
     }
+    updateBuyingRate(){
+        let dtoTotal = 0;   
+        let additonalChargeTotal = 0; 
+        let index  = this.toHoldData.findIndex(x=>x.key == this.shippingEquipTabSelected);
+        if(index != -1){
+            if(this.toHoldData[index].value.length > 0){
+                let dto = this.toHoldData[index].value[0];
+            if(this.totalSl > 0) dtoTotal +=  parseInt(this.totalSl);
+            if(this.TotalOrigincharges > 0) dtoTotal += parseInt(this.TotalOrigincharges );  
+            if(this.destinTotalCharges > 0) dtoTotal +=  parseInt(this.destinTotalCharges);
+            if(this.exWorksTotal > 0) dtoTotal += parseInt(this.exWorksTotal);
+            if(dto.additionalChargeList.length > 0){
+                dto.additionalChargeList.forEach(addCha => {
+                    if(addCha.value > 0){
+                        additonalChargeTotal = additonalChargeTotal + addCha.value;
+                    }
+                });
+            }
+                if(additonalChargeTotal > 0 ) {
+                    this.additionalChargeTotal = parseInt(additonalChargeTotal);
+                    dtoTotal = dtoTotal + parseInt(additonalChargeTotal);
+                }
+            }
+        }
+        this.buyingRate = dtoTotal > 0 ? dtoTotal : 0;
+    }
     @api handleUpdateCalculation(){
         let dtoTotal = 0;   
         let additonalChargeTotal = 0;   
@@ -310,8 +337,8 @@ export default class BAFCOLocalOperationQuoteIntakeForm extends NavigationMixin(
         if(index != -1){
             if(this.toHoldData[index].value.length > 0){
                 let dto = this.toHoldData[index].value[0];
-                //if(dto.totalRate > 0) dtoTotal +=  parseInt(dto.totalRate);  
-                if(this.totalSl > 0) dtoTotal +=  parseInt(this.totalSl);
+                if(dto.totalRate > 0) dtoTotal +=  parseInt(dto.totalRate);  
+                /*if(this.totalSl > 0) dtoTotal +=  parseInt(this.totalSl);
                 if(this.TotalOrigincharges > 0) dtoTotal += parseInt(this.TotalOrigincharges );  
                 if(this.destinTotalCharges > 0) dtoTotal +=  parseInt(this.destinTotalCharges);
                 if(this.exWorksTotal > 0) dtoTotal += parseInt(this.exWorksTotal);
@@ -325,7 +352,7 @@ export default class BAFCOLocalOperationQuoteIntakeForm extends NavigationMixin(
                 if(additonalChargeTotal > 0 ) {
                     this.additionalChargeTotal = parseInt(additonalChargeTotal);
                     dtoTotal = dtoTotal + parseInt(additonalChargeTotal);
-                }
+                }*/
                 dto.total= dtoTotal;
             }
         }
@@ -376,7 +403,7 @@ export default class BAFCOLocalOperationQuoteIntakeForm extends NavigationMixin(
         if(this.toHoldData[index].value.length == 0){
             let tempList = [];
             tempList.push({
-                //'totalRate':0,
+                'totalRate':0,
                 'quotationItemId':'',
                 'displayExworks':false,
                 'includeServiceCharge':false,
@@ -402,7 +429,7 @@ export default class BAFCOLocalOperationQuoteIntakeForm extends NavigationMixin(
             this.toHoldData[index].value = JSON.parse(JSON.stringify(tempList));
         }
         else{
-            //this.totalRate = this.toHoldData[index].value[0].totalRate ;
+            this.totalRate = this.toHoldData[index].value[0].totalRate ;
             this.quotationItemId = this.toHoldData[index].value[0].quotationItemId != undefined ? this.toHoldData[index].value[0].quotationItemId : '';                     
             if(this.toHoldData[index].value[0].additionalChargeList.length > 0){
                 this.additionalChargeList = this.toHoldData[index].value[0].additionalChargeList;
@@ -1067,10 +1094,10 @@ export default class BAFCOLocalOperationQuoteIntakeForm extends NavigationMixin(
             dto = this.toHoldData[index].value[0];
         }
         console.log('dto '+JSON.stringify(dto,null,2))
-        if(!dto.quoteBuyingRate > 0) {
-            let BuyingRateField = this.template.querySelector("[data-field='BuyingRateField']")
-            BuyingRateField.setCustomValidity("Buying rate should be greater then 0");
-            BuyingRateField.reportValidity();
+        if(!dto.totalRate > 0) {
+            let totalRateField = this.template.querySelector("[data-field='totalRateField']")
+            totalRateField.setCustomValidity("Selling rate should be greater then 0");
+            totalRateField.reportValidity();
             allValid = false;
         }
         if(allValid){
@@ -1121,7 +1148,7 @@ export default class BAFCOLocalOperationQuoteIntakeForm extends NavigationMixin(
             })
         }
     }
-    handlebuyingRateChange(e){
+    /*handlebuyingRateChange(e){
         this.buyingRate = e.target.value;
         console.log('this.buyingRate '+this.buyingRate)
         let BuyingRateField = this.template.querySelector("[data-field='BuyingRateField']")
@@ -1129,7 +1156,7 @@ export default class BAFCOLocalOperationQuoteIntakeForm extends NavigationMixin(
             BuyingRateField.reportValidity();
         this.updateTabsData();
         this.handleUpdateCalculation();
-    }
+    }*/
     handleExWorksTotalChange(e){
         let value = parseInt(e.target.value)
         this.exWorksObj.LoadCharge = value

@@ -31,6 +31,7 @@ public class BAFCOOrderItemTriggerHandlerTest {
         Target__c targObj = new Target__c();
         targObj.Target_Month__c = dt;
         targObj.Target_Value_In_Teus__c = 3;
+        targObj.Achieved_Value_In_Teus__c = 1;
         insert targObj;
         
 	    Port__c port2 = new Port__c();
@@ -83,15 +84,11 @@ public class BAFCOOrderItemTriggerHandlerTest {
         port.Name ='PortName';
         port.Sector__c = 'Africa';
         Insert port;
-        
-        
-         Order_item__c item3  = new Order_item__c();
+        Order_item__c item3  = new Order_item__c();
         item3.Port_of_Discharge_Order__c = port.id;
         item3.Port_of_Loading_Order__c =port.id;
         item3.Order__c = obj.id;
         List<Order_item__c> itemList  = new List<Order_item__c>{item2,item3};
-            
-            insert itemList;
-        // itemList;
+        insert itemList;
     }
 }

@@ -14,12 +14,33 @@ export default class BAFCOImportQuoteParent extends LightningElement {
     @track showQuoteButton = false;
     @track validityDate = '';
     @track quoteId = '';
+    minTodaysDate =''
     vectorPng = VECTOR;
     @track displayQuotationlist =[];
 
     connectedCallback(){
         document.title = 'Create Import Quote'
         this.getEnqueryDetailsOnInit();
+        let d = new Date().toISOString();  
+        this.minTodaysDate = this.formatDate(d);
+        let ddd = new Date();
+        let year = ddd.getFullYear();
+        let month = ddd.getMonth();
+        let lastdate = new Date(year, month +1, 0);
+        this.validityDate = this.formatDate(lastdate)
+    }
+    formatDate(date) {
+        let d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+    
+        if (month.length < 2) 
+            month = '0' + month;
+        if (day.length < 2) 
+            day = '0' + day;
+    
+        return [year, month, day].join('-');
     }
     getEnqueryDetailsOnInit(){
         getEnqueryDetails({enquiryID : this.enquiryId})
@@ -94,6 +115,16 @@ export default class BAFCOImportQuoteParent extends LightningElement {
                         const evt = new ShowToastEvent({
                             title: 'Error',
                             message: 'Buying rate is only valid until '+validityDateRms,
+                            variant: 'error',
+                            mode: 'dismissable'
+                        });
+                        this.dispatchEvent(evt);
+                        allValid = false
+                    }
+                    else if(this.validityDate < this.minTodaysDate){
+                        const evt = new ShowToastEvent({
+                            title: 'Error',
+                            message: 'Value must be '+this.validityDate+' or later.',
                             variant: 'error',
                             mode: 'dismissable'
                         });

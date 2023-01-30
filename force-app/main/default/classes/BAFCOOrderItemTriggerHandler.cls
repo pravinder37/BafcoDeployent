@@ -23,7 +23,7 @@ public class BAFCOOrderItemTriggerHandler {
         if(targetOwnerMap!=NULL){
             for(Order_Item__c ordItem : orderItemList){
                 Target__c targetRec = targetOwnerMap.get(oppOwnerMap.get(ordItem.Order__c));                
-                system.debug('targetRec.Achieved_Value_In_Teus__c '+targetRec.Achieved_Value_In_Teus__c+'ordItem.Teus__c '+ordItem.Teus__c);
+                //system.debug('targetRec.Achieved_Value_In_Teus__c '+targetRec.Achieved_Value_In_Teus__c+'ordItem.Teus__c '+ordItem.Teus__c);
                 if(targetRec!=null && ordItem.Teus__c!=null && targetRec.Achieved_Value_In_Teus__c!=null){
                     targetRec.Achieved_Value_In_Teus__c  = targetRec.Achieved_Value_In_Teus__c + ordItem.Teus__c;
                     targetListToUpdate.add(targetRec);
@@ -66,7 +66,7 @@ public class BAFCOOrderItemTriggerHandler {
         if(targetOwnerMap!=NULL){
             for(Order_Item__c ordItem : orderItemList){
                 Target__c targetRec = targetOwnerMap.get(oppOwnerMap.get(ordItem.Order__c));
-                system.debug('targetRec.Achieved_Value_In_Teus__c '+targetRec.Achieved_Value_In_Teus__c+'ordItem.Teus__c '+ordItem.Teus__c);
+                //system.debug('targetRec.Achieved_Value_In_Teus__c '+targetRec.Achieved_Value_In_Teus__c+'ordItem.Teus__c '+ordItem.Teus__c);
                 if(targetRec!=NULL && ordItem.Teus__c!=NULL && targetRec.Achieved_Value_In_Teus__c!=NULL){
                     targetRec.Achieved_Value_In_Teus__c  =targetRec.Achieved_Value_In_Teus__c -  ordItem.Teus__c;
                     targetListToUpdate.add(targetRec);
@@ -106,7 +106,7 @@ public class BAFCOOrderItemTriggerHandler {
             if(item.Port_of_Discharge_Order__c != null) podIds.add(item.Port_of_Discharge_Order__c); 
             if(item.Order__c != null && orderIdToAccId.containsKey(item.Order__c)) accIds.add(orderIdToAccId.get(item.Order__c));
         }
-        for(Regular_Routing__c regObj : [Select id,Account__c,Port_of_Loading__c,Port_of_Destination__c from Regular_Routing__c where Account__c in : accIds AND Port_of_Loading__c in : polIds AND Port_of_Destination__c in : podIds]){
+        for(Regular_Routing__c regObj : [Select id,Account__c,Port_of_Loading__c,Port_of_Destination__c from Regular_Routing__c where Account__c in : accIds OR Port_of_Loading__c in : polIds OR Port_of_Destination__c in : podIds]){
             if(!accIdToRegularRoute.containsKey(regObj.Account__c)){
                 accIdToRegularRoute.put(regObj.Account__c, new List<Regular_Routing__c>());
             }
@@ -119,34 +119,55 @@ public class BAFCOOrderItemTriggerHandler {
                     reguLarList = accIdToRegularRoute.get(orderIdToAccId.get(item.Order__c));
             }
             if(reguLarList.size() > 0){
+                Boolean similarFound = false;
                 for(Regular_Routing__c regObj : reguLarList){
-                    if(item.Port_of_Loading_Order__c != null 
-                       && item.Port_of_Discharge_Order__c != null 
-                       && item.Port_of_Discharge_Order__c != regobj.Port_of_Destination__c 
-                       && item.Port_of_Loading_Order__c != regObj.Port_of_Loading__c 
-                       && orderIdToAccId.get(item.Order__c) != regObj.Account__c){
-                           Regular_Routing__c newObj = new Regular_Routing__c();
-                           newObj.Account__c = orderIdToAccId.get(item.Order__c);
-                           newObj.Port_of_Destination__c = item.Port_of_Discharge_Order__c;
-                           newObj.Port_of_Loading__c = item.Port_of_Loading_Order__c;
-                           newObj.Shipping_Line__c = item.Shipping_Line__c;
-                           newObj.Pickup_Place__c = item.Pickup_Place__c;
-                           newObj.Place_of_Discharge__c = item.Place_of_Discharge__c;
-                           regList.add(newObj);
-                       }
+                    if(regObj.Account__c != null){
+                        if(regObj.Port_of_Loading__c != null){
+                            if(regObj.Port_of_Destination__c != null){
+                                if(orderIdToAccId.get(item.Order__c) == regObj.Account__c && regObj.Port_of_Destination__c == item.Port_of_Discharge_Order__c && regObj.Port_of_Loading__c == item.Port_of_Loading_Order__c){
+                                    similarFound = true;
+                                }
+                            }
+                            else if(orderIdToAccId.get(item.Order__c) == regObj.Account__c && regObj.Port_of_Loading__c == item.Port_of_Loading_Order__c && item.Port_of_Discharge_Order__c == null){
+                                similarFound = true;
+                            }
+                        }
+                        else if(regObj.Port_of_Destination__c != null){
+                            if(orderIdToAccId.get(item.Order__c) == regObj.Account__c && regObj.Port_of_Destination__c == item.Port_of_Discharge_Order__c && item.Port_of_Loading_Order__c == null){
+                                similarFound = true;
+                            }
+                        }
+                    }
+                    else if(regObj.Port_of_Loading__c != null){
+                        if(regObj.Port_of_Destination__c != null){
+                            if(regObj.Port_of_Loading__c == item.Port_of_Loading_Order__c && regObj.Port_of_Destination__c == item.Port_of_Discharge_Order__c){
+                                similarFound = true;
+                            }
+                        }
+                        else if(regObj.Port_of_Loading__c == item.Port_of_Loading_Order__c && item.Port_of_Discharge_Order__c == null){
+                            similarFound = true;
+                        }
+                    }
+                    else if(regObj.Port_of_Destination__c != null &&  regObj.Port_of_Destination__c == item.Port_of_Discharge_Order__c && item.Port_of_Loading_Order__c == null){
+                        similarFound = true;
+                    }
                 }
+                if(similarFound == false) regList.add(createRegularRouteObj(item,orderIdToAccId));
             }
             else{
-                Regular_Routing__c newObj = new Regular_Routing__c();
-                newObj.Account__c = orderIdToAccId.get(item.Order__c);
-                newObj.Port_of_Destination__c = item.Port_of_Discharge_Order__c;
-                newObj.Port_of_Loading__c = item.Port_of_Loading_Order__c;
-                newObj.Shipping_Line__c = item.Shipping_Line__c;
-                newObj.Pickup_Place__c = item.Pickup_Place__c;
-                newObj.Place_of_Discharge__c = item.Place_of_Discharge__c;
-                regList.add(newObj);
+                regList.add(createRegularRouteObj(item,orderIdToAccId));
             }
         }
         if(regList.size() > 0) insert regList;
+    }
+    public static Regular_Routing__c createRegularRouteObj(Order_Item__c item,Map<Id,Id> orderIdToAccId){
+        Regular_Routing__c newObj = new Regular_Routing__c();
+        newObj.Account__c = orderIdToAccId.containsKey(item.Order__c) ? orderIdToAccId.get(item.Order__c) : null;
+        newObj.Port_of_Destination__c = item.Port_of_Discharge_Order__c;
+        newObj.Port_of_Loading__c = item.Port_of_Loading_Order__c;
+        newObj.Shipping_Line__c = item.Shipping_Line__c;
+        newObj.Pickup_Place__c = item.Pickup_Place__c;
+        newObj.Place_of_Discharge__c = item.Place_of_Discharge__c;
+        return newObj;
     }
 }

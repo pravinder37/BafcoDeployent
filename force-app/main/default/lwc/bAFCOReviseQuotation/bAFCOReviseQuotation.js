@@ -5,6 +5,7 @@ import getquoteDetails from '@salesforce/apex/BAFCOQuotationReviseController.get
 import getQuoteLineItemRoute from '@salesforce/apex/BAFCOQuotationReviseController.getQuoteLineItemRoute';
 import getEnqueryDetails from '@salesforce/apex/BAFCOLRoutingDetailsController.getEnqueryDetails';
 import VECTOR from '@salesforce/resourceUrl/Vector';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class BAFCOReviseQuotation extends NavigationMixin(LightningElement) {
     @api quoteID ='';
     @api leadId = '';
@@ -23,11 +24,19 @@ export default class BAFCOReviseQuotation extends NavigationMixin(LightningEleme
     @track section = 'Route 1';
     @track recordtypeName = '';
     @track validityDate = '';
+    minTodaysDate ='';
     connectedCallback(){
         console.log('quotation id '+this.quoteID);
         console.log('leadId id '+this.leadId);
         document.title = 'Revise Export Quote';
         this.section = 'Route 1'
+        let d = new Date().toISOString();  
+        this.minTodaysDate = this.formatDate(d);
+        let ddd = new Date();
+        let year = ddd.getFullYear();
+        let month = ddd.getMonth();
+        let lastdate = new Date(year, month +1, 0);
+        this.validityDate = this.formatDate(lastdate)
         this.getquoteDetails();
     }
     getquoteDetails(){
@@ -40,6 +49,19 @@ export default class BAFCOReviseQuotation extends NavigationMixin(LightningEleme
         }).catch(error=>{
             console.log('getquoteDetails lead: ', JSON.stringify(error));
         });
+    }
+    formatDate(date) {
+        let d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+    
+        if (month.length < 2) 
+            month = '0' + month;
+        if (day.length < 2) 
+            day = '0' + day;
+    
+        return [year, month, day].join('-');
     }
     getquoteList(){
         getquoteList({quoteId : this.quoteID}).then(result =>{
@@ -121,10 +143,12 @@ export default class BAFCOReviseQuotation extends NavigationMixin(LightningEleme
     }
     handleGotoQuote(){
         console.log('Section '+this.section)
+        let allValid = true;
         if(this.validityDate == '' || this.validityDate == null){
             let dateField = this.template.querySelector("[data-field='dateField']");
             dateField.setCustomValidity("Complete this field.");
             dateField.reportValidity();
+            allValid = false
         }
         else{
             let index = -1;
@@ -133,8 +157,20 @@ export default class BAFCOReviseQuotation extends NavigationMixin(LightningEleme
                 index = i;
             }
             if(index != -1){
+                if(this.validityDate < this.minTodaysDate){
+                    allValid = false
+                    const evt = new ShowToastEvent({
+                        title: 'Error',
+                        message: 'Value must be '+this.validityDate+' or later.',
+                        variant: 'error',
+                        mode: 'dismissable'
+                    });
+                    this.dispatchEvent(evt);
+                }
                 setTimeout(() => {
-                    this.template.querySelectorAll("c-b-a-f-c-o-routing-details-intake-form")[index].handleGotoQuotation();
+                    if(allValid){
+                        this.template.querySelectorAll("c-b-a-f-c-o-routing-details-intake-form")[index].handleGotoQuotation();
+                    }
                 }, 200);
                 
             }

@@ -52,20 +52,20 @@
                     <template for:each={allRouteList} for:item="equip">
                         <lightning-tab label={equip.Equipment_Type__r.Name} key={equip.key} value={equip.Equipment_Type__c} onactive={handleEquipMentActive}>
                             <lightning-layout multiple-rows>
-                                <lightning-layout-item size="6" ><!-- so as to make three columns --></lightning-layout-item>
-                                <lightning-layout-item size="6" ><b>Buying Rate</b></lightning-layout-item>
-                                 <!---lightning-layout-item size="4" ><b>Selling Rate</b></lightning-layout-item-->
-                                <lightning-layout-item size="6" class="slds-m-top_large" style="font-size: 16px;">
+                                <lightning-layout-item size="4" ><!-- so as to make three columns --></lightning-layout-item>
+                                <lightning-layout-item size="4" ><b>Buying Rate</b></lightning-layout-item>
+                                 <lightning-layout-item size="4" ><b>Selling Rate</b></lightning-layout-item>
+                                <lightning-layout-item size="4" class="slds-m-top_large" style="font-size: 16px;">
                                     <b>Total</b>
                                 </lightning-layout-item>
-                                <lightning-layout-item size="6" >
-                                    <lightning-input type="number" data-id={equip.Equipment_Type__c} data-field="BuyingRateField" style="padding-right: 10px;" onchange={handlebuyingRateChange}                                                 
+                                <lightning-layout-item size="4" >
+                                    <lightning-input type="number" data-id={equip.Equipment_Type__c} disabled data-field="BuyingRateField" style="padding-right: 10px;" onchange={handlebuyingRateChange}                                                 
                                     value={buyingRate}></lightning-input>
                                 </lightning-layout-item>
-                                <!--lightning-layout-item size="4" >
+                                <lightning-layout-item size="4" >
                                     <lightning-input type="number" data-id={equip.Equipment_Type__c} data-field="totalRateField" style="padding-right: 10px;" onchange={handleTotalRateChange}                                                 
                                     value={totalRate}></lightning-input>
-                                </lightning-layout-item-->
+                                </lightning-layout-item>
                                 <!--Service Charges-->
                                 <lightning-layout-item size="12" style="padding-top: 4%;">
                                     <lightning-layout multiple-rows if:true={totalSl}>

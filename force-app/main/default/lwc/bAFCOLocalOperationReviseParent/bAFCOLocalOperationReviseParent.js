@@ -4,6 +4,7 @@ import getquoteList from '@salesforce/apex/BAFCOQuotationReviseController.getquo
 import getEnqueryDetails from '@salesforce/apex/BAFCOLRoutingDetailsController.getEnqueryDetails';
 import getQuoteLineItemRoute from '@salesforce/apex/BAFCOQuotationReviseController.getQuoteLineItemRoute';
 import VECTOR from '@salesforce/resourceUrl/Vector';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class BAFCOLocalOperationReviseParent extends LightningElement {
     @api accId = '';
     @api quoteID ='';
@@ -22,8 +23,29 @@ export default class BAFCOLocalOperationReviseParent extends LightningElement {
     @track section = 'Route 1';
     @track recordtypeName = '';
     @track validityDate = '';
+    minTodaysDate = '';
     connectedCallback(){        
         this.getquoteDetails();
+        let d = new Date().toISOString();  
+        this.minTodaysDate = this.formatDate(d);
+        let ddd = new Date();
+        let year = ddd.getFullYear();
+        let month = ddd.getMonth();
+        let lastdate = new Date(year, month +1, 0);
+        this.validityDate = this.formatDate(lastdate)
+    }
+    formatDate(date) {
+        let d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+    
+        if (month.length < 2) 
+            month = '0' + month;
+        if (day.length < 2) 
+            day = '0' + day;
+    
+        return [year, month, day].join('-');
     }
     getquoteDetails(){
         console.log('this.quoteID '+this.quoteID)
@@ -38,18 +60,11 @@ export default class BAFCOLocalOperationReviseParent extends LightningElement {
         });
     }
     getquoteList(){
-        console.log('camere herer 1 ' +this.quoteID)
-        getquoteList({quoteId : this.quoteID}).then(result =>{     
-            console.log('camere herer 2')   
-            console.log('getquoteList  result : ', JSON.stringify(result,null,2));     
+        getquoteList({quoteId : this.quoteID}).then(result =>{          
             if(result != null && result.length > 0){
-                console.log('camere herer 3')   
                 this.quoteList=result;
-                console.log('camere herer 4')   
                 this.activeTab = result[0].Id;
-                console.log('camere herer 5')   
                 this.recordtypeName = result.RecordType.Name;
-                console.log('camere herer 6') 
             }         
         }).catch(error=>{
             console.log('getquoteList error: ', JSON.stringify(error));
@@ -124,10 +139,12 @@ export default class BAFCOLocalOperationReviseParent extends LightningElement {
         dateField.reportValidity();
     }
     handleGotoQuote(e){
+        let allValid = true
         if(this.validityDate == '' || this.validityDate == null){
             let dateField = this.template.querySelector("[data-field='dateField']");
             dateField.setCustomValidity("Complete this field.");
             dateField.reportValidity();
+            allValid = false
         }
         else{
             let index = -1;
@@ -136,7 +153,19 @@ export default class BAFCOLocalOperationReviseParent extends LightningElement {
                 index = i;
             }
             if(index != -1){
-                this.template.querySelectorAll("c-b-a-f-c-o-local-operation-quote-intake-form")[index].handleGotoQuotation(this.validityDate);
+                if(this.validityDate < this.minTodaysDate){
+                    allValid = false
+                    const evt = new ShowToastEvent({
+                        title: 'Error',
+                        message: 'Value must be '+this.validityDate+' or later.',
+                        variant: 'error',
+                        mode: 'dismissable'
+                    });
+                    this.dispatchEvent(evt);
+                }
+                if(allValid){
+                    this.template.querySelectorAll("c-b-a-f-c-o-local-operation-quote-intake-form")[index].handleGotoQuotation(this.validityDate);
+                }
             }
         }
     }

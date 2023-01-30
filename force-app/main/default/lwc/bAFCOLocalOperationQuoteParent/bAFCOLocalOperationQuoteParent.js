@@ -1,6 +1,7 @@
 import { LightningElement,api,track } from 'lwc';
 import getEnqueryDetails from '@salesforce/apex/BAFCOLRoutingDetailsController.getEnqueryDetails';
 import VECTOR from '@salesforce/resourceUrl/Vector';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class BAFCOLocalOperationQuoteParent extends LightningElement {
     @api optyId = '';
     @api businessType ='';
@@ -14,8 +15,29 @@ export default class BAFCOLocalOperationQuoteParent extends LightningElement {
     @track validityDate = '';
     @track quoteId = '';
     vectorPng = VECTOR;
+    minTodaysDate = '';
     connectedCallback(){
         this.getEnqueryDetailsOnInit();
+        let d = new Date().toISOString();  
+        this.minTodaysDate = this.formatDate(d);
+        let ddd = new Date();
+        let year = ddd.getFullYear();
+        let month = ddd.getMonth();
+        let lastdate = new Date(year, month +1, 0);
+        this.validityDate = this.formatDate(lastdate)
+    }
+    formatDate(date) {
+        let d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+    
+        if (month.length < 2) 
+            month = '0' + month;
+        if (day.length < 2) 
+            day = '0' + day;
+    
+        return [year, month, day].join('-');
     }
     getEnqueryDetailsOnInit(){
         getEnqueryDetails({enquiryID : this.optyId})
@@ -66,10 +88,12 @@ export default class BAFCOLocalOperationQuoteParent extends LightningElement {
         this.showQuoteButton = true;
     }
     handleGotoQuote(e){
+        let allValid = true
         if(this.validityDate == '' || this.validityDate == null){
             let dateField = this.template.querySelector("[data-field='dateField']");
             dateField.setCustomValidity("Complete this field.");
             dateField.reportValidity();
+            allValid = false
         }
         else{
             let index = -1;
@@ -78,7 +102,19 @@ export default class BAFCOLocalOperationQuoteParent extends LightningElement {
                 index = i;
             }
             if(index != -1){
-                this.template.querySelectorAll("c-b-a-f-c-o-local-operation-quote-intake-form")[index].handleGotoQuotation(this.validityDate);
+                if(this.validityDate < this.minTodaysDate){
+                    allValid = false
+                    const evt = new ShowToastEvent({
+                        title: 'Error',
+                        message: 'Value must be '+this.validityDate+' or later.',
+                        variant: 'error',
+                        mode: 'dismissable'
+                    });
+                    this.dispatchEvent(evt);
+                }
+                if(allValid){
+                    this.template.querySelectorAll("c-b-a-f-c-o-local-operation-quote-intake-form")[index].handleGotoQuotation(this.validityDate);
+                }
             }
         }
     }

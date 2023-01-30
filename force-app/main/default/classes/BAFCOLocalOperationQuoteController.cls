@@ -97,7 +97,7 @@ public class BAFCOLocalOperationQuoteController {
         quoteItemObj.Port_of_Loading__c = dto.portLoadingId != '' ? dto.portLoadingId : null;  
         quoteItemObj.Port_of_Discharge__c = dto.portDestinationId != '' ? dto.portDestinationId : null;
         quoteItemObj.Total_Additional__c = additionalChargeTotal;
-        quoteItemObj.Sea_Freight__c = dto.total;  
+        quoteItemObj.Sea_Freight__c = dto.totalRate;  
         quoteItemObj.Quantity__c = dto.quantity;
          if(dto.exWorksObj != null){
             quoteItemObj.Ex_Works_Charge_Name__c = dto.exWorksObj.Id;

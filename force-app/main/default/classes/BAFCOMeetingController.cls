@@ -4,7 +4,7 @@ public with Sharing class BAFCOMeetingController {
         Id currentUserId = UserInfo.getUserId();
         Date filterDateTime = filteredDate != null ? Date.valueOf(filteredDate) : system.today();
         List<EventList> eventList = new List<EventList>();
-        for(Event ev : [Select id, Who.name,What.Name,StartDateTime, Purpose_of_Visit__c,Minutes_of_Meeting__c from Event where Start_Date__c =: filterDateTime /*AND createdbyId =:currentUserId*/  order by StartDateTime ]){
+        for(Event ev : [Select id, Who.name,What.Name,StartDateTime, Purpose_of_Visit__c,Minutes_of_Meeting__c from Event where Start_Date__c =: filterDateTime AND createdbyId =:currentUserId  order by StartDateTime ]){
             EventList evobj = new EventList();
             evobj.recordId = ev.id;
             evobj.accountName =  ev.WhatId != null ? ev.What.Name : (ev.WhoId != null ? ev.Who.name : '-');

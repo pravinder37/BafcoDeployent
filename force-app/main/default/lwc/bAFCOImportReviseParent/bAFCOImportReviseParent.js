@@ -4,6 +4,7 @@ import getquoteList from '@salesforce/apex/BAFCOImportQuotationReviseController.
 import getQuoteLineItemRoute from '@salesforce/apex/BAFCOQuotationReviseController.getQuoteLineItemRoute';
 import getEnqueryDetails from '@salesforce/apex/BAFCOLRoutingDetailsController.getEnqueryDetails';
 import VECTOR from '@salesforce/resourceUrl/Vector';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class BAFCOImportReviseParent extends LightningElement {
     @api quoteID
     @api leadId
@@ -22,9 +23,30 @@ export default class BAFCOImportReviseParent extends LightningElement {
     @track section = '';
     @track recordtypeName = '';
     @track validityDate = '';
+    minTodaysDate = '';
     connectedCallback(){
         document.title = 'Revise Import Quote';
         this.getquoteDetails();
+        let d = new Date().toISOString();  
+        this.minTodaysDate = this.formatDate(d);
+        let ddd = new Date();
+        let year = ddd.getFullYear();
+        let month = ddd.getMonth();
+        let lastdate = new Date(year, month +1, 0);
+        this.validityDate = this.formatDate(lastdate)
+    }
+    formatDate(date) {
+        let d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+    
+        if (month.length < 2) 
+            month = '0' + month;
+        if (day.length < 2) 
+            day = '0' + day;
+    
+        return [year, month, day].join('-');
     }
     getquoteDetails(){
         getquoteDetails({quoteId : this.quoteID}).then(result =>{
@@ -112,10 +134,12 @@ export default class BAFCOImportReviseParent extends LightningElement {
     handleGotoQuote(){
         console.log('Section '+this.section)
         console.log('validityDate '+this.validityDate)
+        let allValid = true;
         if(this.validityDate == '' || this.validityDate == null){
             let dateField = this.template.querySelector("[data-field='dateField']");
             dateField.setCustomValidity("Complete this field.");
             dateField.reportValidity();
+            allValid = false
         }
         else{
         let index = -1;
@@ -125,7 +149,19 @@ export default class BAFCOImportReviseParent extends LightningElement {
         }
         if(index != -1){
             setTimeout(() => {
-                this.template.querySelectorAll("c-b-a-f-c-o-import-route-details")[index].handleGotoQuotation();
+                if(this.validityDate < this.minTodaysDate){
+                    allValid = false
+                    const evt = new ShowToastEvent({
+                        title: 'Error',
+                        message: 'Value must be '+this.validityDate+' or later.',
+                        variant: 'error',
+                        mode: 'dismissable'
+                    });
+                    this.dispatchEvent(evt);
+                }
+                if(allValid){
+                    this.template.querySelectorAll("c-b-a-f-c-o-import-route-details")[index].handleGotoQuotation();
+                }
             }, 200);
             
         }
