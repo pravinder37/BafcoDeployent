@@ -15,22 +15,24 @@ export default class BAFCOCopyQuoteItem extends LightningElement {
     getQuoteDataOnLoad(){
         getQuoteDataOnLoad({quoteId : this.recordId})
         .then(result=>{
-            console.log('getQuoteDataOnLoad result @@ '+JSON.stringify(result,null,2))
+            console.log('getQuoteDataOnLoad result ** 5 '+JSON.stringify(result,null,2))
             if(result != null){
                 let content = 'Dear Valued Client,\n\nThank you for giving Bafco International the opportunity to quote for your order.';
                 content +='\n\nPlease find below the details:\n';
 
+                content +='Port of loading    Port of Discharge   Equiment type   Service Type  Inco Term   Total'
                 if(result.length > 0){
                     result.forEach(elem => {
-                        content += 'Port of Loading: '+elem.loadingPort;
+                       /* content += 'Port of Loading: '+elem.loadingPort;
                         content += '\nPort of Discharge: '+elem.dischargePort;
                         content += '\nEquipment Type: '+elem.equipmentType;
                         content += '\nService Type: '+elem.serviceType;
                         content += '\nINCO Term: '+elem.incoterm;
                         content += '\nFreetime at POD: '+elem.freeTimePOD;
                         content += '\nFreetime at POL: '+elem.freeTimePOL;
-                        content += '\nTotal: '+elem.currencyCode+' '+elem.total;
-                        content += '\n\n'
+                        content += '\nTotal: '+elem.currencyCode+' '+elem.total;*/
+                        content += '\n\n';
+                        content += elem.loadingPort+'              '+ elem.dischargePort+'              '+ elem.equipmentType+'           '+ elem.serviceType+'         '+ elem.incoterm+'         '+ elem.currencyCode+' '+elem.total;
                     });
                     content +='\nWe look forward to a positive response from your end.';
                     let recordtype = result[0].recordtypeName;

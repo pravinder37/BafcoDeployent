@@ -59,6 +59,7 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
     @api businessType= '';
     @track hideShippingLine = false;
     @track disableServiceType = false;
+    @api isEdit;
 
     @wire(getPicklistValuesByRecordType, { objectApiName: ROUTE_OBJECT, recordTypeId: '012000000000000AAA' })
     routeObjectData({ data, error }) {
@@ -78,7 +79,12 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
             this.isAccountObject = true;
             this.getAllRegularRoute();
         }
-        this.getDefualtValueForEnquiry();
+        if(this.isEdit == 'true'){
+            this.routeDefaultValueAssignment();
+        }
+        else{
+            this.getDefualtValueForEnquiry();
+        }
     }
     @api getDefualtValueForEnquiry(){
         this.isLoading = true 
@@ -119,6 +125,7 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
     }
     handleCopyFromAbove(e){
         let index = e.target.dataset.recordId;
+        console.log('*** '+index)
         this.leadEnquiryList.forEach(elem => {
             if(elem.leadIndex == 1) {
                 this.shipmentKind = elem.shipmentKind;
@@ -290,7 +297,7 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
         this.incoTerm = incoTermID;
         this.incoTermName = e.detail.Name
         if(this.incoTermName == 'Local Operation') this.handleLocalInco();
-        else if(this.incoTermName != 'Local Operation'){
+        else if(this.incoTermName != 'Local Operation' && this.isEdit != 'true'){
             this.serviceType = '';
             this.disableServiceType = false
         }
@@ -301,14 +308,14 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
         this.hideShippingLine = true
         this.disableAddRoute = true;
         this.disableIncoField = true;
-        this.shippingLine = '';
+        /*this.shippingLine = '';
         this.shippingLineName ='';
         this.portLoading = '';
         this.portLoadingName = '';
         this.placeOfPickup = '';
         this.portDestination = '';
         this.portDestinationName = '';
-        this.placeOfDischarge = '';
+        this.placeOfDischarge = '';*/
         if(this.businessType == 'Import' && this.incoTermName == 'Local Operation'){
             this.hidePOL = true;
             this.showPickupPlaceField = false;           
@@ -617,7 +624,6 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
         this.isLoading = true;
         this.displayIncoChanges();                
         setTimeout(() => {
-            this.serviceType = ''
             if(this.incoTermName != 'Local Operation'){   
                 let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[4];
                 field.handleRemovePill();
@@ -647,5 +653,67 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
 
     @api submitdone(){
         this.isLoading = false;
+    }
+    routeDefaultValueAssignment(){
+        console.log('hidePOL '+this.hidePOL,this.portLoading)
+        setTimeout(() => {
+            if(this.commodity != ''){
+                let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[4];
+                let Obj={Id:this.commodity,Name:this.commodityName}
+                if(field != null || field != undefined) field.handleDefaultSelected(Obj);
+            }
+            if(this.incoTerm!= undefined){
+                let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[0];
+                let Obj={Id:this.incoTerm,Name:this.incoTermName}
+                if(field != null || field != undefined) field.handleDefaultSelected(Obj);
+            }
+            //if(this.incoTermName == 'Local Operation') this.handleLocalInco();
+            if(this.hidePOL == false && this.portLoading != ''){
+                let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[1];
+                let Obj={Id:this.portLoading,Name:this.portLoadingName,index:this.leadIndex}
+                field.handleDefaultSelected(Obj);
+            }
+            if(this.hidePOD == false && this.portDestination != ''){
+                let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[2];
+                let Obj={Id:this.portDestination,Name:this.portDestinationName,index:this.leadIndex}
+                field.handleDefaultSelected(Obj);
+            }
+            if(this.hideShippingLine == false && this.shippingLine != ''){
+                let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[3];
+                let Obj={Id:this.shippingLine,Name:this.shippingLineName,index:this.leadIndex}
+                field.handleDefaultSelected(Obj);
+            }
+            if(this.serviceType != ''){
+                if(this.serviceType == 'Ex-Works'){
+                    this.showPickupPlaceField = true;
+                    this.showDischargePlaceField = true;
+                    let field2 = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[0];
+                    field2.handleRemovePill();
+                    this.incoTerm = '';
+                    this.incoTermName = '';
+                }
+                else{
+                    this.showPickupPlaceField = true;
+                    this.showDischargePlaceField = true;
+                    if(this.incoTermName != 'Local Operation'){
+                        if(this.serviceType == 'D2P' || this.serviceType ==  'D2D'){
+                            this.showPickupPlaceField = true;
+                        }
+                        else{
+                            this.showPickupPlaceField = false;
+                        }
+                        if(this.serviceType == 'P2D' || this.serviceType ==  'D2D'){
+                            this.showDischargePlaceField = true;
+                        }
+                        else{
+                            this.showDischargePlaceField = false;
+                        }
+                    }
+                    else if(this.incoTermName == 'Local Operation'){
+                        this.handleLocalInco();
+                    }
+                }
+            }
+        }, 100);
     }
 }

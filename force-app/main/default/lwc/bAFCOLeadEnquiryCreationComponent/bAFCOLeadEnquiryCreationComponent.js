@@ -9,6 +9,7 @@ import CONTAINER_PNG from '@salesforce/resourceUrl/AddContainer';
 import getAllRegularRoute from '@salesforce/apex/BAFCOLRoutingDetailsController.getAllRegularRoute';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getCommercialUserOnLoad from '@salesforce/apex/BAFCOLRoutingDetailsController.getCommercialUserOnLoad';
+import getEditOptyDetail from '@salesforce/apex/BAFCOEditOpportunityController.getEditOptyDetail';
 export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(LightningElement) {
     @track leadEnquiryList = [];
     pickListvalues = [];    
@@ -16,6 +17,8 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
     @track contractVar = 1;
     @track businessTypeSelected = '';
     @api quoteId;
+    @api optyId;
+    @api isEdit;
     @track kindOfShipmentOption= [];
     @track serviceTypeOption = [];
     @track dgClassOption = [];
@@ -35,7 +38,9 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
     @track isLoading = false;
     @track customerErrorClass = '';
     @track minDate = '';
-    @track disableAddRoute = false
+    @track disableAddRoute = false;
+    @track containerRemoveList = [];
+    @track routeRemoveList = [];
 
 
     @wire(getPicklistValues, {
@@ -68,15 +73,19 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
     connectedCallback(){
         let todaysDate = new Date();
         this.minDate = this.formatDate(todaysDate);
-        this.getCommercialUserOnLoad();
         this.getAllRegularRoute();
-        this.addRouteEnquiry();
-        this.getDefaultBusinessType();
+        if(this.isEdit == 'true'){
+            this.getEditOptyDetail();
+        }else{
+            this.getCommercialUserOnLoad();
+            this.addRouteEnquiry();            
+            this.getDefaultBusinessType();
+        }
     }
     getCommercialUserOnLoad(){
         getCommercialUserOnLoad({AccountId : this.quoteId})
         .then(result=>{
-            console.log('getCommercialUserOnLoad result'+JSON.stringify(result,null,2));
+            //console.log('getCommercialUserOnLoad result'+JSON.stringify(result,null,2));
             if(result != null){
                 let commercialUserId = result[0].Commercial_User__c;
                 let commercialUserName = result[0].Commercial_User__r.Name;
@@ -127,7 +136,8 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
             'quantity':0,
             'containerTypeErrorClass':'',
             'containerQuantityErrorClass':'',
-            'index' : this.entryIntVar +'.'+ this.contractVar
+            'index' : this.entryIntVar +'.'+ this.contractVar,
+            'id':''
         }
         let contrTempList  = [];
         contrTempList.push(containerRecord);
@@ -171,7 +181,8 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
             'cargoweightClass':'',
             'dischargePlaceClass':'',
             'pickupPlaceClass':'',
-            'disableAddRoute':false
+            'disableAddRoute':false,
+            'routeId':''
         }
         this.entryIntVar++;
        if(this.leadEnquiryList.length <= 4 ){
@@ -305,7 +316,11 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
                 businessType : this.businessTypeSelected,
                 quoteId : this.quoteId,
                 closeDate : this.closeDate,
-                commercialUserId : this.commercialUserId
+                commercialUserId : this.commercialUserId,
+                isEdit:this.isEdit,
+                containerRemoveList:this.containerRemoveList,
+                routeRemoveList:this.routeRemoveList,
+                optyId:this.optyId
             })
             .then(result =>{
                 this.isLoading = false
@@ -452,8 +467,13 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
         let LeadIndex = indexofBothList[0] - 1;
         let indexOfRemoved = indexofBothList[1] - 1;
         let containerRecords = tempLeadList[LeadIndex].containerRecord;
-        if(containerRecords.length != 1)
-        containerRecords.splice( indexOfRemoved, 1 );
+        if(containerRecords.length != 1){
+            let remIndex = containerRecords.findIndex(x=>x.index == index)
+            if(remIndex != -1){
+                if(containerRecords[remIndex].id != '')  this.containerRemoveList.push(containerRecords[remIndex].id)
+                containerRecords.splice( remIndex, 1 );
+            }
+        }
     }
     handleAddContainerType(e){
         let strIndex = e.detail
@@ -467,7 +487,8 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
             'containerType':'',
             'quantity':0,
             'containerTypeName':'',
-            'index' : strIndex +'.'+ newContainerIndex
+            'index' : strIndex +'.'+ newContainerIndex,
+            'id':''
         }
         lastContainerRecord.push(containerRecord);
         tempList[strIndex - 1].containerRecord = lastContainerRecord;
@@ -517,6 +538,7 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
         if(index != 1){
             let indexTobeRemoved = this.leadEnquiryList.findIndex(x => x.leadIndex == index );
             if(indexTobeRemoved != -1) {
+                if(this.leadEnquiryList[indexTobeRemoved].routeId != '') this.routeRemoveList.push(this.leadEnquiryList[indexTobeRemoved].routeId)
                 this.leadEnquiryList.splice( indexTobeRemoved, 1 );
             }
         }
@@ -536,5 +558,72 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
         this.commercialUserId = '';
         this.commercialUserName = '';
         this.customerErrorClass ='slds-has-error';
+    }
+    getEditOptyDetail(){
+        getEditOptyDetail({optyId:this.optyId})
+        .then(result=>{
+            console.log('getEditOptyDetail result'+JSON.stringify(result,null,2));
+            if(result != null){
+                this.businessTypeSelected = result.businessType;
+                this.closeDate = result.closeDate;
+                let commercialUserId = result.commercialUserId;
+                let commercialUserName = result.commercialUserName;
+                let field = this.template.querySelector('c-b-a-f-c-o-custom-look-up-component');
+                let Obj={Id:commercialUserId,Name:commercialUserName}
+                field.handleDefaultSelected(Obj);
+                let tempList =[];
+                if(result.routingList.length > 0){
+                    result.routingList.forEach(elem => {
+                        let leadEnqObj ={
+                            'routeName':elem.routeName,
+                            'routingRegular':elem.routingRegular,
+                            'serviceType':elem.serviceType,
+                            'incoTerm':elem.incoTerm,
+                            'incoTermName':elem.incoTermName,
+                            'portLoading':elem.portLoadingId != undefined ? elem.portLoadingId :'',
+                            'portLoadingName':elem.portLoadingId != undefined ? elem.portLoading :'',
+                            'portDestination':elem.portDestinationId != undefined ? elem.portDestinationId :'',
+                            'portDestinationName':elem.portDestinationId != undefined ? elem.portDestination :'',
+                            'shippingLine':elem.shippingLine != undefined ? elem.shippingLine :'',
+                            'shippingLineName':elem.shippingLine != undefined ? elem.shippingLineName :'',
+                            'placeOfPickup':elem.placeOfPickup,
+                            'placeOfDischarge':elem.placeOfDischarge,
+                            'commodity':elem.commodity != undefined ? elem.commodity :'',
+                            'commodityName':elem.commodity != undefined ? elem.commodityName :'',
+                            'cargoWeights':elem.cargoWeights,
+                            'dangerousGoods':elem.dangerousGoods,
+                            'remarks':elem.remarks,
+                            'dgClass':elem.dgClass,
+                            'leadIndex':parseInt(elem.leadIndex),
+                            'containerRecord': elem.containerRecord,
+                            'showDGClassField':elem.dangerousGoods,
+                            'showPickupPlaceField':false,
+                            'showDischargePlaceField':false,
+                            'incoTermField':parseInt(elem.leadIndex)+'incoTermField',
+                            'copyFromAbove':parseInt(elem.leadIndex) > 1 ? true : false,
+                            'parentId':this.quoteId,
+                            'serviceTypeClass':'',
+                            'incoTermClass':'',
+                            'portOfLoadingClass':'',
+                            'portOfDestinationClass':'',
+                            'commodityClass':'',
+                            'cargoweightClass':'',
+                            'dischargePlaceClass':'',
+                            'pickupPlaceClass':'',
+                            'disableAddRoute':false,
+                            'routeId':elem.routeId,
+                        }
+                        tempList.push(leadEnqObj);
+                    });
+                }
+                this.leadEnquiryList = tempList
+                let totalRecords = this.leadEnquiryList.length
+                this.entryIntVar = totalRecords+1;
+                console.log('leadEnquiryList $ '+JSON.stringify(this.leadEnquiryList,null,2))
+            }
+        })
+        .catch(error=>{
+            console.log('getEditOptyDetail error'+JSON.stringify(error,null,2));
+        })
     }
 }

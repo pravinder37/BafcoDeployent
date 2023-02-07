@@ -9,8 +9,16 @@ export default class BafcoLeadEnquiryEntryQty extends LightningElement {
     @api containerTypeErrorClass = '';
     @api containerQuantityErrorClass = '';
     @api cameFromAddRate = false
+    @api isEdit;
     connectedCallback(){
         if(this.cameFromAddRate == 'true' && this.containerType != ''){
+            setTimeout(() => {
+                let field = this.template.querySelector('c-b-a-f-c-o-custom-look-up-component');
+                let Obj={Id:this.containerType,Name:this.containerTypeName,index:this.index}
+                if(field != undefined) field.handleDefaultSelected(Obj);
+            }, 100);
+        }
+        else if(this.isEdit =='true' && this.containerType !=''){
             setTimeout(() => {
                 let field = this.template.querySelector('c-b-a-f-c-o-custom-look-up-component');
                 let Obj={Id:this.containerType,Name:this.containerTypeName,index:this.index}

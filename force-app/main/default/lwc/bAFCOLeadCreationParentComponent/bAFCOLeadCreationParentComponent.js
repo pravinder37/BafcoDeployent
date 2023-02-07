@@ -2,6 +2,8 @@ import { LightningElement,api } from 'lwc';
 import FORM_FACTOR from '@salesforce/client/formFactor';
 export default class BAFCOLeadCreationParentComponent extends LightningElement {
     @api quoteID;
+    @api optyId='';
+    @api isEdit;
     hideLeadDetails = false;
     connectedCallback(){
         console.log('quoteID',this.quoteID);
