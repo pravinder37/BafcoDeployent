@@ -399,7 +399,47 @@ export default class BAFCOLocalOperationQuoteIntakeForm extends NavigationMixin(
         this.profitLabel = this.currencyCode+' '+profit +' Profit.';
     }
     assignTabsData(){
+        let tempList3 = [];
         let index = this.toHoldData.findIndex(x=>x.key == this.shippingEquipTabSelected);
+        let index2  = this.allRouteList.findIndex(x=>x.Equipment_Type__c == this.shippingEquipTabSelected);
+        let seletedEquipName1 = this.allRouteList[index2].Equipment_Type__r.Name;
+        let isFdAccount = false;
+        isFdAccount = this.allRouteList[index2].Route__r.Opportunity_Enquiry__r.Account.FD__c;
+        if(seletedEquipName1 == '20ISO'){
+            tempList3.push({
+                'name':'Tank Rental Charges',
+                'value':null,
+                'index':this.additionalChargeIndex
+            })
+            this.additionalChargeIndex++;
+            this.additionalChargeList = tempList3;
+            this.displayAdditionalCharge = true
+        }
+        if(isFdAccount == true){
+            tempList3.push({
+                'name':'Freight Difference(FD)',
+                'value':null,
+                'index':this.additionalChargeIndex
+            })
+            this.additionalChargeIndex++;
+            this.additionalChargeList = tempList3;
+            this.displayAdditionalCharge = true
+        }
+        let tempServiceChargeList = {}
+        if(this.incoTerm == 'Clearance and Delivery'){
+            let destinCharge = {
+                "destinCustomClearanceCharges":1,
+                "destinTotalCharges":1,
+                "DestinTotalChanged":false
+            }
+            tempServiceChargeList = {
+                "destinChargeObj":destinCharge
+            }
+            this.serviceChargeList = tempServiceChargeList;
+            this.displayDestinCharges = true;
+            this.total
+            this.updateDestinChargeTotal();
+        }
         if(this.toHoldData[index].value.length == 0){
             let tempList = [];
             tempList.push({
@@ -414,8 +454,8 @@ export default class BAFCOLocalOperationQuoteIntakeForm extends NavigationMixin(
                 'exWorksObj':{},
                 'exWorksTotal':null,
                 'incoChargList':{},
-                'additionalChargeList' : [],
-                'serviceChargeList':{},
+                'additionalChargeList' : tempList3,
+                'serviceChargeList':tempServiceChargeList,
                 'savedClicked':false,
                 'pickupPlaceName':this.pickupPlaceName,
                 'dischargePlaceName':this.dischargePlaceName,
@@ -452,6 +492,7 @@ export default class BAFCOLocalOperationQuoteIntakeForm extends NavigationMixin(
             if(allData.currencyCode != undefined) this.currencyCode = allData.currencyCode;
         }
         this.assignServiceChargesData();
+        this.updateBuyingRate();
     }
     assignServiceChargesData(){
         if(Object.keys(this.serviceChargeList).length > 0){

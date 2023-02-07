@@ -237,21 +237,21 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
                 }
             }
             if(elem.portLoading == '') {
-                if(elem.incoTermName == 'Local Operation' && this.businessTypeSelected == 'Export'){
+                if(elem.incoTermName == 'Clearance and Delivery' && this.businessTypeSelected == 'Export'){
                     tempErrorList.push('Please fill Port of Loading')
                     elem.portOfLoadingClass = 'slds-has-error';
                 }
-                else if(elem.incoTermName != 'Local Operation'){
+                else if(elem.incoTermName != 'Clearance and Delivery'){
                     tempErrorList.push('Please fill Port of Loading')
                     elem.portOfLoadingClass = 'slds-has-error';
                 }
             }
             if(elem.portDestination == '') {
-                if(elem.incoTermName == 'Local Operation' && this.businessTypeSelected =='Import'){
+                if(elem.incoTermName == 'Clearance and Delivery' && this.businessTypeSelected =='Import'){
                     tempErrorList.push('Please fill Port of Destination')
                     elem.portOfDestinationClass = 'slds-has-error';
                 }
-                else if(elem.incoTermName != 'Local Operation'){
+                else if(elem.incoTermName != 'Clearance and Delivery'){
                     tempErrorList.push('Please fill Port of Destination')
                     elem.portOfDestinationClass = 'slds-has-error';
                 }
@@ -261,26 +261,26 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
                 elem.commodityClass = 'slds-has-error';
             }
             if(elem.serviceType == 'D2P' && elem.placeOfPickup == ''){
-                if(elem.incoTermName == 'Local Operation' && this.businessTypeSelected =='Export'){
+                if(elem.incoTermName == 'Clearance and Delivery' && this.businessTypeSelected =='Export'){
                     tempErrorList.push('Please fill Place of Pickup')
                     elem.pickupPlaceClass = 'slds-has-error';
                 }
-                else if(elem.incoTermName != 'Local Operation'){
+                else if(elem.incoTermName != 'Clearance and Delivery'){
                     tempErrorList.push('Please fill Place of Pickup')
                     elem.pickupPlaceClass = 'slds-has-error';
                 }
             }
             if(elem.serviceType == 'D2D' && elem.placeOfDischarge == ''){
-                if(elem.incoTermName == 'Local Operation' && this.businessTypeSelected =='Import'){
+                if(elem.incoTermName == 'Clearance and Delivery' && this.businessTypeSelected =='Import'){
                     tempErrorList.push('Please fill place of discharge')
                     elem.dischargePlaceClass = 'slds-has-error';
                 }
-                else if(elem.incoTermName != 'Local Operation'){
+                else if(elem.incoTermName != 'Clearance and Delivery'){
                     tempErrorList.push('Please fill place of discharge')
                     elem.dischargePlaceClass = 'slds-has-error';
                 }
             }
-            if(elem.incoTermName == 'Local Operation'){
+            if(elem.incoTermName == 'Clearance and Delivery'){
                 if(this.businessTypeSelected == 'Import' && elem.placeOfDischarge == ''){
                     tempErrorList.push('Please fill place of discharge')
                     elem.dischargePlaceClass = 'slds-has-error';
