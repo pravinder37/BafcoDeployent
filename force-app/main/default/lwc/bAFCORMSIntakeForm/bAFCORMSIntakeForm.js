@@ -60,10 +60,21 @@ export default class BAFCORMSIntakeForm extends LightningElement {
     @track shippingLineError = '';
     @track incoTermError = '';
     @track equipmentTypeError = '';
+    @track equipmentTypeErrorMsg = '';
     @track rateTypeError = '';
     @track validityError = '';
-    @track seaFreightError = '';
+    //@track seaFreightError = '';
     @track businessTypeError = '';
+    @track selectedEquip = [];
+    @track twoEquipSelected = false;
+    @track elem1Label = 'Sea Freight';
+    @track elem2Label = '';
+    @track displayElem1 = true;
+    @track displayElem2 = false;
+    @track elem1Value = null;
+    @track elem2Value = null;
+    @track displayContractNumber = false;
+    @track contractNumber = null;
 
     @wire(getPicklistValues, {
         recordTypeId : '012000000000000AAA',
@@ -207,7 +218,13 @@ export default class BAFCORMSIntakeForm extends LightningElement {
                 'currencyCode':'',
                 'customerName':'',
                 'incoTermId':null,
-                'oceanfreightCheckbox':false
+                'oceanfreightCheckbox':false,
+                'selectedEquip':[],
+                'elem1Value':null,
+                'elem2Value':null,
+                'twoEquipSelected':false,
+                'contractNumber':null,
+
             }
             this.rmsDetail = rmsDetail;
             setTimeout(() => {
@@ -298,7 +315,12 @@ export default class BAFCORMSIntakeForm extends LightningElement {
                     'currencyCode':'',
                     'customerName':'',
                     'incoTermId':null,
-                    'oceanfreightCheckbox':false
+                    'oceanfreightCheckbox':false,
+                    'selectedEquip':[],
+                    'elem1Value':null,
+                    'elem2Value':null,
+                    'twoEquipSelected':false,
+                    'contractNumber':null
                 }
                 this.rmsDetail = rmsDetail;
                 this.validity = this.formatDate(this.todaysDate,0)
@@ -474,9 +496,7 @@ export default class BAFCORMSIntakeForm extends LightningElement {
         this.isLoading = true;
         let allValid = true;
         console.log('rms '+JSON.stringify(this.rmsDetail,null,2))
-        console.log('shipp '+JSON.stringify(this.shipp,null,2))
-        console.log('inco '+JSON.stringify(this.incoCharges,null,2))
-        console.log('dest '+JSON.stringify(this.destinCharges,null,2))
+        console.log('selected '+JSON.stringify(this.selectedEquip,null,2));
         if(this.rmsDetail.loadingPortId == ''){
             allValid = false;
             this.loadingPortError = 'slds-has-error';
@@ -497,9 +517,15 @@ export default class BAFCORMSIntakeForm extends LightningElement {
             allValid = false;
             this.incoTermError = 'slds-has-error';
         }
-        if(this.rmsDetail.equipmentId == ''){
+        if(this.rmsDetail.selectedEquip.length == 0){
             allValid = false;
             this.equipmentTypeError = 'slds-has-error';
+            this.equipmentTypeErrorMsg = 'Complete this field.'
+        }
+        else if(this.rmsDetail.selectedEquip.length > 2){
+            allValid = false;
+            this.equipmentTypeError = 'slds-has-error';
+            this.equipmentTypeErrorMsg = 'Max 2 can be selected at a time.'
         }
         if(this.rmsDetail.rateType == ''){
             allValid = false;
@@ -509,9 +535,19 @@ export default class BAFCORMSIntakeForm extends LightningElement {
             allValid = false;
             this.validityError = 'slds-has-error';
         }
-        if(this.rmsDetail.seaFreight <= 0){
+        /*if(this.rmsDetail.seaFreight <= 0){
             allValid = false;
             this.seaFreightError = 'slds-has-error';
+        }*/
+        if(this.rmsDetail.elem1Value <= 0){
+            allValid = false;
+            this.elem1seaFreightError = 'slds-has-error';
+        }
+        if(this.displayElem2){
+            if(this.rmsDetail.elem2Value <= 0){
+                allValid = false;
+                this.elem2seaFreightError = 'slds-has-error';
+            }
         }
         if(this.rmsDetail.businessType == ''){
             allValid = false;
@@ -525,7 +561,8 @@ export default class BAFCORMSIntakeForm extends LightningElement {
                 totalShippChanged : this.shippTotalChanged,
                 totalIncoChanged : this.incoChargeTotalChange,
                 destinTotalChanged : this.destinTotalChanged,
-                destinCharges:this.destinCharges
+                destinCharges:this.destinCharges,
+                selectedEquip:this.selectedEquip
             })
             .then(result =>{
                 console.log('submitRMS result',JSON.stringify(result));
@@ -576,8 +613,14 @@ export default class BAFCORMSIntakeForm extends LightningElement {
         this.rmsDetail.rateType = this.rateType;
         if(this.rateType == 'Spot'){
             this.validity = this.formatDate(this.todaysDate,0)
+            this.contractNumber = null;
+            this.displayContractNumber = false;
+            this.rmsDetail.contractNumber= null;
         }
         else if(this.rateType == 'Contract'){
+            this.contractNumber = null;
+            this.displayContractNumber = true;
+            this.rmsDetail.contractNumber= null;
             let ddd = new Date();
             let year = ddd.getFullYear();
             let month = ddd.getMonth();
@@ -604,10 +647,34 @@ export default class BAFCORMSIntakeForm extends LightningElement {
         return [year, month, day].join('-');
     }
     handleSeaFreightChange(e){
-        if(e.target.value != '') this.seaFreight = parseInt(e.target.value);
+       /* if(e.target.value != '') this.seaFreight = parseInt(e.target.value);
         else this.seaFreight = 0;
         this.rmsDetail.seaFreight = this.seaFreight;
-        this.seaFreightError ='';
+        this.seaFreightError ='';*/
+    }
+    handleElem2SeaFreightChange(e){
+         if(e.target.value != '') this.elem2Value = parseInt(e.target.value);
+        else this.elem2Value = 0;
+        this.rmsDetail.elem2Value = this.elem2Value;
+        this.elem2seaFreightError ='';
+        let equipName = this.elem2Label.split(' ')[0];
+        let index = this.selectedEquip.findIndex(x=>x.label == equipName);
+        if(index != -1){
+            this.selectedEquip[index].seaFreight = this.elem2Value;
+            this.rmsDetail.selectedEquip = this.selectedEquip;
+        }
+    }
+    handleElem1SeaFreightChange(e){
+        if(e.target.value != '') this.elem1Value = parseInt(e.target.value);
+        else this.elem1Value = 0;
+        this.rmsDetail.elem1Value = this.elem1Value;
+        this.elem1seaFreightError ='';
+        let equipName = this.elem1Label.split(' ')[0];
+        let index = this.selectedEquip.findIndex(x=>x.label == equipName);
+        if(index != -1){
+            this.selectedEquip[index].seaFreight = this.elem1Value;
+            this.rmsDetail.selectedEquip = this.selectedEquip;
+        }
     }    
     handlePortSelection(e){
         this.rmsDetail.loadingPortId = e.detail.Id;
@@ -648,9 +715,69 @@ export default class BAFCORMSIntakeForm extends LightningElement {
         this.rmsDetail.equipmentId = e.target.value;
         this.equipmentType = e.target.value;
         this.equipmentTypeError = '';
+        this.equipmentTypeErrorMsg = ''
+    }
+    handleEquipChange(e){
+        this.equipmentTypeError = '';
+        this.equipmentTypeErrorMsg = '';
+        this.elem1Label = '';
+        this.elem2Label = '';
+        this.elem1Value = null;
+        this.elem2Value = null;
+        this.rmsDetail.elem1Value = null;
+        this.rmsDetail.elem2Value = null;
+        let selectedEquip = e.detail;
+        if(selectedEquip.length > 0){
+            this.elem1Label = selectedEquip[0].label +' Sea Freight';
+            this.displayElem1 = true;
+            if(selectedEquip.length > 2){
+                this.twoEquipSelected = true;
+                this.equipmentTypeError = 'slds-has-error';
+                this.equipmentTypeErrorMsg = 'Max 2 can be selected at a time.';
+                this.displayShippingCharge = false;
+                this.displayOriginCharge = false;
+                this.displayDestinCharge = false;
+                this.elem2Label = selectedEquip[1].label +' Sea Freight';
+                this.displayElem2 = true;
+            }
+            else if(selectedEquip.length == 2){
+                this.twoEquipSelected = true;
+                this.displayShippingCharge = false;
+                this.displayOriginCharge = false;
+                this.displayDestinCharge = false;
+                this.elem2Label = selectedEquip[1].label+' Sea Freight';
+                this.displayElem2 = true;
+            }
+            else{
+                this.displayElem2 = false;
+                this.elem2Label = '';
+                this.twoEquipSelected = false;
+                this.displayShippingCharge = true;
+                this.displayOriginCharge = true;
+                this.displayDestinCharge = true;
+            }
+        }
+        else{
+            this.displayElem2 = false;
+            this.elem2Label = '';
+            this.displayElem1 = false;
+            this.elem1Label = '';
+            this.displayShippingCharge = true;
+            this.displayOriginCharge = true;
+            this.displayDestinCharge = true;
+            this.twoEquipSelected = false;
+        }
+        this.selectedEquip = selectedEquip;
+        this.rmsDetail.selectedEquip = selectedEquip;
+        this.rmsDetail.twoEquipSelected = this.twoEquipSelected;
+
     }
     handleEquipmentRemoved(e){
         this.rmsDetail.equipmentId = '';
+    }
+    handlecontractNumberChange(e){
+        this.contractNumber = e.target.value;
+        this.rmsDetail.contractNumber = this.contractNumber
     }
     handleAgentSelection(e){
         this.rmsDetail.agentName = e.detail.Id;

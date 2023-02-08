@@ -105,7 +105,7 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
                         let Obj={Id:result.incoTermId,Name:result.incoTermName}
                         if(field != null || field != undefined) field.handleDefaultSelected(Obj);
                     }
-                    if(this.incoTermName == 'Clearance and Delivery') this.handleLocalInco();
+                    if(this.incoTermName == 'Clearance and Delivery' || this.incoTermName == 'Local Operation') this.handleLocalInco();
                 }, 200);
                 this.disableAddRoute = false;
                 this.disableIncoField = false;
@@ -272,7 +272,7 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
         else{
             this.showPickupPlaceField = true;
             this.showDischargePlaceField = true;
-            if(this.incoTermName != 'Clearance and Delivery'){
+            if(this.incoTermName != 'Clearance and Delivery' && this.incoTermName != 'Local Operation'){
                 if(serviceType == 'D2P' || serviceType ==  'D2D'){
                     this.showPickupPlaceField = true;
                 }
@@ -296,8 +296,8 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
         let incoTermID = e.detail.Id;
         this.incoTerm = incoTermID;
         this.incoTermName = e.detail.Name
-        if(this.incoTermName == 'Clearance and Delivery') this.handleLocalInco();
-        else if(this.incoTermName != 'Clearance and Delivery' && this.isEdit != 'true'){
+        if(this.incoTermName == 'Clearance and Delivery' || this.incoTermName == 'Local Operation') this.handleLocalInco();
+        else if((this.incoTermName != 'Clearance and Delivery' && this.incoTermName != 'Local Operation') && this.isEdit != 'true'){
             this.serviceType = '';
             this.disableServiceType = false
         }
@@ -305,36 +305,34 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
         this.updateEnquiryList();
     }
     @api handleLocalInco(){
-        this.hideShippingLine = true
-        this.disableAddRoute = true;
-        this.disableIncoField = true;
-        /*this.shippingLine = '';
-        this.shippingLineName ='';
-        this.portLoading = '';
-        this.portLoadingName = '';
-        this.placeOfPickup = '';
-        this.portDestination = '';
-        this.portDestinationName = '';
-        this.placeOfDischarge = '';*/
-        if(this.businessType == 'Import' && this.incoTermName == 'Clearance and Delivery'){
+       if(this.businessType == 'Import' && this.incoTermName == 'Clearance and Delivery'){
             this.hidePOL = true;
             this.showPickupPlaceField = false;           
             this.showDischargePlaceField = true;
             this.hidePOD = false;
             this.serviceType = 'P2D'
             this.disableServiceType = true
+            this.disableIncoField = true;
+            this.disableAddRoute = true;
+            this.hideShippingLine = true
         }
-        else if(this.businessType == 'Export' && this.incoTermName == 'Clearance and Delivery'){
+        else if(this.businessType == 'Export' && this.incoTermName == 'Local Operation'){
             this.showPickupPlaceField = true;
             this.hidePOD = true;
             this.hidePOL = false; 
             this.showDischargePlaceField = false;  
             this.disableServiceType = true
-            this.serviceType = 'D2P'       
+            this.serviceType = 'D2P'  
+            this.disableIncoField = true;   
+            this.disableAddRoute = true; 
+            this.hideShippingLine = true 
         }
-        else if(this.incoTermName != 'Clearance and Delivery'){
+        else{
             this.serviceType = '';
             this.disableServiceType = false
+            this.disableIncoField = false;
+            this.disableAddRoute = false;
+            this.hideShippingLine = false
         }
     }
     handleIncoTermRemoved(e){
@@ -624,13 +622,13 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
         this.isLoading = true;
         this.displayIncoChanges();                
         setTimeout(() => {
-            if(this.incoTermName != 'Clearance and Delivery'){   
+            if(this.incoTermName != 'Clearance and Delivery' && this.incoTermName != 'Local Operation'){   
                 let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[4];
                 field.handleRemovePill();
                 let field2 = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[0];
                 field2.handleRemovePill();
             }
-            else if(this.incoTermName == 'Clearance and Delivery'){
+            else if(this.incoTermName == 'Clearance and Delivery' || this.incoTermName == 'Local Operation'){
                 this.handleLocalInco();
             }
         }, 200); 
@@ -639,7 +637,7 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
         this.isLoading = false;
     }
     displayIncoChanges(){
-        if(this.incoTermName == 'Clearance and Delivery'){
+        if(this.incoTermName == 'Clearance and Delivery' || this.incoTermName == 'Local Operation'){
             this.hidePOL = false;
             this.showDischargePlaceField = true;           
             this.showPickupPlaceField = true;
@@ -695,7 +693,7 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
                 else{
                     this.showPickupPlaceField = true;
                     this.showDischargePlaceField = true;
-                    if(this.incoTermName != 'Clearance and Delivery'){
+                    if(this.incoTermName != 'Clearance and Delivery' && this.incoTermName != 'Local Operation'){
                         if(this.serviceType == 'D2P' || this.serviceType ==  'D2D'){
                             this.showPickupPlaceField = true;
                         }
@@ -709,7 +707,7 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
                             this.showDischargePlaceField = false;
                         }
                     }
-                    else if(this.incoTermName == 'Clearance and Delivery'){
+                    else if(this.incoTermName == 'Clearance and Delivery' || this.incoTermName == 'Local Operation'){
                         this.handleLocalInco();
                     }
                 }

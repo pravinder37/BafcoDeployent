@@ -1,8 +1,15 @@
-import { LightningElement,api,wire } from 'lwc';
+import { LightningElement,api,wire, track } from 'lwc';
 import getQuoteDataOnLoad from '@salesforce/apex/BAFCOQuoteCopyContentController.getQuoteDataOnLoad';
 import {CurrentPageReference} from 'lightning/navigation';
 export default class BAFCOCopyQuoteItem extends LightningElement {
     @api recordId;
+    @track tableData =[];
+    @track isExport = false;
+    @track isImport = false;
+    @track Header = '';
+    @track HeaderList = [];
+    @track inclHeader = '';
+    @track inclHeaderList = [];
     @wire(CurrentPageReference)
     getStateParameters(currentPageReference) {
         if (currentPageReference) {
@@ -15,22 +22,43 @@ export default class BAFCOCopyQuoteItem extends LightningElement {
     getQuoteDataOnLoad(){
         getQuoteDataOnLoad({quoteId : this.recordId})
         .then(result=>{
-            console.log('getQuoteDataOnLoad result ** 5 '+JSON.stringify(result,null,2))
-            if(result != null){
+            console.log('getQuoteDataOnLoad result ** 48 '+JSON.stringify(result,null,2));
+            this.tableData = result;
+            let recordtype = result[0].recordtypeName;
+            if(recordtype == 'Export'){ 
+                this.isExport = true;
+                this.Header = result[0].exportHeader;
+                this.HeaderList = result[0].exportHeaderList;
+                this.inclHeader = result[0].header;
+                this.inclHeaderList = result[0].headerList;
+            }
+            else if(recordtype == 'Import'){
+                 this.isImport = true;
+                 this.header = result[0].header;
+                 this.headerList = result[0].headerList;
+            }
+            console.log('isExport '+this.isExport)
+            console.log('isImport '+this.isImport)
+            let urlField = this.template.querySelector("[data-field='sellingRateField']");
+            let range = document.createRange();
+            range.selectNode(urlField)
+            window.getSelection().addRange(range) 
+            document.execCommand('copy')
+            /*if(result != null){
                 let content = 'Dear Valued Client,\n\nThank you for giving Bafco International the opportunity to quote for your order.';
                 content +='\n\nPlease find below the details:\n';
 
                 content +='Port of loading    Port of Discharge   Equiment type   Service Type  Inco Term   Total'
                 if(result.length > 0){
                     result.forEach(elem => {
-                       /* content += 'Port of Loading: '+elem.loadingPort;
+                        content += 'Port of Loading: '+elem.loadingPort;
                         content += '\nPort of Discharge: '+elem.dischargePort;
                         content += '\nEquipment Type: '+elem.equipmentType;
                         content += '\nService Type: '+elem.serviceType;
                         content += '\nINCO Term: '+elem.incoterm;
                         content += '\nFreetime at POD: '+elem.freeTimePOD;
                         content += '\nFreetime at POL: '+elem.freeTimePOL;
-                        content += '\nTotal: '+elem.currencyCode+' '+elem.total;*/
+                        content += '\nTotal: '+elem.currencyCode+' '+elem.total;
                         content += '\n\n';
                         content += elem.loadingPort+'              '+ elem.dischargePort+'              '+ elem.equipmentType+'           '+ elem.serviceType+'         '+ elem.incoterm+'         '+ elem.currencyCode+' '+elem.total;
                     });
@@ -73,7 +101,7 @@ export default class BAFCOCopyQuoteItem extends LightningElement {
                         this.disableWhatsApp = true;
                         });
                     }
-            }
+            }*/
         })
         .catch(error=>{
             console.log('getQuoteDataOnLoad error'+JSON.stringify(error,null,2))

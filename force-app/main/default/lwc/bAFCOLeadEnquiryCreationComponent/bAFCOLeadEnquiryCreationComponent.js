@@ -237,21 +237,22 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
                 }
             }
             if(elem.portLoading == '') {
-                if(elem.incoTermName == 'Clearance and Delivery' && this.businessTypeSelected == 'Export'){
+                if(elem.incoTermName == 'Local Operation' && this.businessTypeSelected == 'Export'){
                     tempErrorList.push('Please fill Port of Loading')
                     elem.portOfLoadingClass = 'slds-has-error';
                 }
-                else if(elem.incoTermName != 'Clearance and Delivery'){
+                else if(elem.incoTermName != 'Clearance and Delivery' && elem.incoTermName != 'Local Operation'){
                     tempErrorList.push('Please fill Port of Loading')
                     elem.portOfLoadingClass = 'slds-has-error';
                 }
             }
             if(elem.portDestination == '') {
                 if(elem.incoTermName == 'Clearance and Delivery' && this.businessTypeSelected =='Import'){
+                    console.log('camer here 1')
                     tempErrorList.push('Please fill Port of Destination')
                     elem.portOfDestinationClass = 'slds-has-error';
                 }
-                else if(elem.incoTermName != 'Clearance and Delivery'){
+                else if(elem.incoTermName != 'Clearance and Delivery' && elem.incoTermName != 'Local Operation'){
                     tempErrorList.push('Please fill Port of Destination')
                     elem.portOfDestinationClass = 'slds-has-error';
                 }
@@ -261,11 +262,11 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
                 elem.commodityClass = 'slds-has-error';
             }
             if(elem.serviceType == 'D2P' && elem.placeOfPickup == ''){
-                if(elem.incoTermName == 'Clearance and Delivery' && this.businessTypeSelected =='Export'){
+                if(elem.incoTermName == 'Local Operation' && this.businessTypeSelected =='Export'){
                     tempErrorList.push('Please fill Place of Pickup')
                     elem.pickupPlaceClass = 'slds-has-error';
                 }
-                else if(elem.incoTermName != 'Clearance and Delivery'){
+                else if(elem.incoTermName != 'Clearance and Delivery' || elem.incoTermName != 'Local Operation'){
                     tempErrorList.push('Please fill Place of Pickup')
                     elem.pickupPlaceClass = 'slds-has-error';
                 }
@@ -275,7 +276,7 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
                     tempErrorList.push('Please fill place of discharge')
                     elem.dischargePlaceClass = 'slds-has-error';
                 }
-                else if(elem.incoTermName != 'Clearance and Delivery'){
+                else if(elem.incoTermName != 'Clearance and Delivery' || elem.incoTermName != 'Local Operation'){
                     tempErrorList.push('Please fill place of discharge')
                     elem.dischargePlaceClass = 'slds-has-error';
                 }
@@ -285,6 +286,9 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
                     tempErrorList.push('Please fill place of discharge')
                     elem.dischargePlaceClass = 'slds-has-error';
                 }
+                
+            }
+            else if(elem.incoTermName == 'Local Operation'){
                 if(this.businessTypeSelected == 'Export' && elem.placeOfPickup == ''){
                     tempErrorList.push('Please fill Place of Pickup')
                     elem.pickupPlaceClass = 'slds-has-error';
@@ -299,6 +303,7 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
                     elem2.containerQuantityErrorClass = 'slds-has-error';
                     allValid = false
                 }
+                console.log('tempErrorList '+JSON.stringify(tempErrorList,null,2))
             })
             if(tempErrorList.length > 0){
                allValid  = false;

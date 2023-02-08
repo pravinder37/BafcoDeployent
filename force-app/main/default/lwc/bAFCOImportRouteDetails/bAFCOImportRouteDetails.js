@@ -498,7 +498,8 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                         'selectedShippLine':this.shippingTabSelected,
                         'selectedEquipment':this.shippingEquipTabSelected,
                         'agentTabSelected':this.agentTabSelected,
-                        'currencyCode':'USD'
+                        'currencyCode':'USD',
+                        'incoTermId':this.incoTermId,
                     })
                     elem.value = tempList;
                 }

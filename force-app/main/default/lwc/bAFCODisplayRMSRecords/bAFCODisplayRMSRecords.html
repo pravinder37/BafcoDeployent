@@ -53,13 +53,13 @@
                 <thead>
                     <tr>
                         <th scope="col">Shipping line</th>
-                        <th scope="col">Equipment type</th>
                         <th scope="col">Port of loading</th>
                         <th scope="col">Port of destination</th>
                         <th scope="col">Agent</th>
                         <th scope="col">Commodity</th>
                         <th scope="col">Rate Type</th>
-                        <th scope="col">Valid till</th>            
+                        <th scope="col">Valid till</th>
+                        <th scope="col">Equipment type</th>            
                         <th scope="col">Rate</th>
                         <th scope="col">Updated by</th>
                         <th scope="col">Action</th>
@@ -70,14 +70,14 @@
                         <tr key={rms.rmsID}>
                             <td>
                                 {rms.shippingLineName}                           
-                            </td>                
-                            <td>{rms.equipmentName}</td> 
+                            </td>    
                             <td>{rms.loadingPortName}</td>
                             <td>{rms.loadingDestinationName}</td>                
                             <td>{rms.agentName}</td>                                        
-                            <td>{rms.commodityName}</td>  
+                            <td>{rms.commodityName}</td> 
                             <td>{rms.rateType}</td>              
-                            <td>{rms.validity}</td>                
+                            <td>{rms.validity}</td>    
+                            <td>{rms.equipmentName}</td>             
                             <td>
                                 <span>{rms.seaFreight}</span>
                                 <span>

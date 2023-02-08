@@ -1049,7 +1049,8 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                         'similarEquipSubmitted':false,
                         'selectedShippLine':this.shippingTabSelected,
                         'selectedEquipment':this.shippingEquipTabSelected,
-                        'currencyCode':'USD'
+                        'currencyCode':'USD',
+                        'incoTermId':this.incoTermId
                     })
                     elem.value = tempList;
                 }

@@ -303,6 +303,7 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                             quoteItemId:shipValue.quoteItemId,
                             agentId:shipValue.agentId,
                             tankRentalCharge:shipValue.tankRentalCharge,
+                            incoTermId:shipValue.incoTermId,
                         })
                         elem.equipment.push({
                             key:equip,
@@ -428,6 +429,7 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 quoteItemId:shipValue.quoteItemId,
                                 agentId:shipValue.agentId,
                                 tankRentalCharge:shipValue.tankRentalCharge,
+                                incoTermId:shipValue.incoTermId,
                             })
                             elem.equipment.push({
                                 key:equip,
@@ -551,6 +553,7 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 tempList[shipIndex].quoteItemId = shipValue.quoteItemId;
                                 tempList[shipIndex].agentId = shipValue.agentId;
                                 tempList[shipIndex].tankRentalCharge=shipValue.tankRentalCharge;
+                                tempList[shipIndex].incoTermId = shipValue.incoTermId;
                             }
                             else{
                                 tempList.push({
@@ -667,6 +670,7 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                     quoteItemId:shipValue.quoteItemId,
                                     agentId:shipValue.agentId,
                                     tankRentalCharge:shipValue.tankRentalCharge,
+                                    incoTermId:shipValue.incoTermId,
                                 })
                             }
                             elem.equipment[index].value = tempList

@@ -428,8 +428,8 @@ export default class BAFCOLocalOperationQuoteIntakeForm extends NavigationMixin(
         let tempServiceChargeList = {}
         if(this.incoTerm == 'Clearance and Delivery'){
             let destinCharge = {
-                "destinCustomClearanceCharges":1,
-                "destinTotalCharges":1,
+                "destinCustomClearanceCharges":80,
+                "destinTotalCharges":80,
                 "DestinTotalChanged":false
             }
             tempServiceChargeList = {
@@ -464,7 +464,8 @@ export default class BAFCOLocalOperationQuoteIntakeForm extends NavigationMixin(
                 'selectedEquipment':this.shippingEquipTabSelected,
                 'currencyCode':'USD',
                 'portLoadingId':this.portLoadingId,
-                'portDestinationId':this.portDestinationId
+                'portDestinationId':this.portDestinationId,
+                'incoTermId':this.incoTermId
             })
             this.toHoldData[index].value = JSON.parse(JSON.stringify(tempList));
         }
