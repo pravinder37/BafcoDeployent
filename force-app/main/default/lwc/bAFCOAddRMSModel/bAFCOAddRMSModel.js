@@ -115,6 +115,17 @@ export default class BAFCOAddRMSModel
     @track validityError = '';
     @track seaFreightError = '';
 
+    @track selectedEquip = [];
+    @track twoEquipSelected = false;
+    @track elem1Label = 'Sea Freight';
+    @track elem2Label = '';
+    @track displayElem1 = true;
+    @track displayElem2 = false;
+    @track elem1Value = null;
+    @track elem2Value = null;
+    @track displayContractNumber = false;
+    @track contractNumber = null;
+
     @wire(getPicklistValues, {
         recordTypeId : '012000000000000AAA',
         fieldApiName : DIRECTION_FIELD
@@ -399,8 +410,14 @@ export default class BAFCOAddRMSModel
         this.rmsDetail.rateType = this.rateType;
         if(this.rateType == 'Spot'){
             this.validity = this.formatDate(this.todaysDate,0)
+            this.contractNumber = null;
+            this.displayContractNumber = false;
+            this.rmsDetail.contractNumber= null;
         }
         else if(this.rateType == 'Contract'){
+            this.contractNumber = null;
+            this.displayContractNumber = true;
+            this.rmsDetail.contractNumber= null;
             let ddd = new Date();
             let year = ddd.getFullYear();
             let month = ddd.getMonth();
@@ -464,9 +481,29 @@ export default class BAFCOAddRMSModel
             allValid = false;
             this.validityError = 'slds-has-error';
         }
-        if(this.rmsDetail.seaFreight == null || this.rmsDetail.seaFreight <= 0 ){
+        /*if(this.rmsDetail.seaFreight == null || this.rmsDetail.seaFreight <= 0 ){
             allValid = false;
             this.seaFreightError = 'slds-has-error';
+        }*/
+        if(this.rmsDetail.selectedEquip.length == 0){
+            allValid = false;
+            this.equipmentTypeError = 'slds-has-error';
+            this.equipmentTypeErrorMsg = 'Complete this field.'
+        }
+        else if(this.rmsDetail.selectedEquip.length > 2){
+            allValid = false;
+            this.equipmentTypeError = 'slds-has-error';
+            this.equipmentTypeErrorMsg = 'Max 2 can be selected at a time.'
+        }
+        if(this.rmsDetail.elem1Value <= 0){
+            allValid = false;
+            this.elem1seaFreightError = 'slds-has-error';
+        }
+        if(this.displayElem2){
+            if(this.rmsDetail.elem2Value <= 0){
+                allValid = false;
+                this.elem2seaFreightError = 'slds-has-error';
+            }
         }
         console.log('rms '+JSON.stringify(this.rmsDetail,null,2))
         if(allValid){
@@ -481,7 +518,8 @@ export default class BAFCOAddRMSModel
             shippingLine : this.shippingLine,
             leadId : this.leadId,
             destinTotalChanged : this.destinTotalChanged,
-            destinCharges:this.destinCharges
+            destinCharges:this.destinCharges,
+            selectedEquip:this.selectedEquip
 
         }).then(result =>{
             this.isLoading = false
@@ -636,7 +674,7 @@ export default class BAFCOAddRMSModel
             result.forEach(element => {
                 temp.push({
                     label : element.Equipment_Type__r.Name,
-                    value:element.Equipment_Type__r.Name
+                    value:element.Equipment_Type__c
                 })
                 let obj={
                     'index':this.contrIndex++,
@@ -659,9 +697,63 @@ export default class BAFCOAddRMSModel
             console.log('get equip Error '+JSON.stringify(error))
         })
     }
-    handleEquipSelection(e){
+    /*handleEquipSelection(e){
         this.equipmentType = e.detail.value;
         this.equipmentTypeError = '';
+    }*/
+    handleEquipChange(e){
+        this.equipmentTypeError = '';
+        this.equipmentTypeErrorMsg = '';
+        this.elem1Label = '';
+        this.elem2Label = '';
+        this.elem1Value = null;
+        this.elem2Value = null;
+        this.rmsDetail.elem1Value = null;
+        this.rmsDetail.elem2Value = null;
+        let selectedEquip = e.detail;
+        if(selectedEquip.length > 0){
+            this.elem1Label = selectedEquip[0].label +' Sea Freight';
+            this.displayElem1 = true;
+            if(selectedEquip.length > 2){
+                this.twoEquipSelected = true;
+                this.equipmentTypeError = 'slds-has-error';
+                this.equipmentTypeErrorMsg = 'Max 2 can be selected at a time.';
+                this.displayShippingCharge = false;
+                this.displayOriginCharge = false;
+                this.displayDestinCharge = false;
+                this.elem2Label = selectedEquip[1].label +' Sea Freight';
+                this.displayElem2 = true;
+            }
+            else if(selectedEquip.length == 2){
+                this.twoEquipSelected = true;
+                this.displayShippingCharge = false;
+                this.displayOriginCharge = false;
+                this.displayDestinCharge = false;
+                this.elem2Label = selectedEquip[1].label+' Sea Freight';
+                this.displayElem2 = true;
+            }
+            else{
+                this.displayElem2 = false;
+                this.elem2Label = '';
+                this.twoEquipSelected = false;
+                this.displayShippingCharge = true;
+                this.displayOriginCharge = true;
+                this.displayDestinCharge = true;
+            }
+        }
+        else{
+            this.displayElem2 = false;
+            this.elem2Label = '';
+            this.displayElem1 = false;
+            this.elem1Label = '';
+            this.displayShippingCharge = true;
+            this.displayOriginCharge = true;
+            this.displayDestinCharge = true;
+            this.twoEquipSelected = false;
+        }
+        this.selectedEquip = selectedEquip;
+        this.rmsDetail.selectedEquip = selectedEquip;
+        this.rmsDetail.twoEquipSelected = this.twoEquipSelected;
     }
     handleDirectionChange(event){
         this.directionValue  = event.target.value;
@@ -884,7 +976,12 @@ export default class BAFCOAddRMSModel
             'agentName':'',
             'incoTermId':'',
             'customerId':'',
-            'commodity':''
+            'commodity':'',
+            'selectedEquip':[],
+            'elem1Value':null,
+            'elem2Value':null,
+            'twoEquipSelected':false,
+            'contractNumber':null,
         }
         this.rmsDetail = rmsDetail;
         this.todaysDate = new Date().toISOString();
@@ -1026,4 +1123,32 @@ export default class BAFCOAddRMSModel
         this.customerId = e.target.value;
         this.rmsDetail.customerId = this.customerId;
     }
+    handlecontractNumberChange(e){
+        this.contractNumber = e.target.value;
+        this.rmsDetail.contractNumber = this.contractNumber
+    }
+    handleElem2SeaFreightChange(e){
+        if(e.target.value != '') this.elem2Value = parseInt(e.target.value);
+       else this.elem2Value = 0;
+       this.rmsDetail.elem2Value = this.elem2Value;
+       this.elem2seaFreightError ='';
+       let equipName = this.elem2Label.split(' ')[0];
+       let index = this.selectedEquip.findIndex(x=>x.label == equipName);
+       if(index != -1){
+           this.selectedEquip[index].seaFreight = this.elem2Value;
+           this.rmsDetail.selectedEquip = this.selectedEquip;
+       }
+   }
+   handleElem1SeaFreightChange(e){
+       if(e.target.value != '') this.elem1Value = parseInt(e.target.value);
+       else this.elem1Value = 0;
+       this.rmsDetail.elem1Value = this.elem1Value;
+       this.elem1seaFreightError ='';
+       let equipName = this.elem1Label.split(' ')[0];
+       let index = this.selectedEquip.findIndex(x=>x.label == equipName);
+       if(index != -1){
+           this.selectedEquip[index].seaFreight = this.elem1Value;
+           this.rmsDetail.selectedEquip = this.selectedEquip;
+       }
+   }    
 }

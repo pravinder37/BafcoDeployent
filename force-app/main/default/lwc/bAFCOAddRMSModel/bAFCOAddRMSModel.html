@@ -64,16 +64,23 @@
                                                         onclick={handleAddRouteEuip}></lightning-button>
                                     </span>
                                 </label>                    
-                                <lightning-combobox label="" 
+                                <!--lightning-combobox label="" 
                                                 variant="label-hidden"
                                                 required
                                                 options={pickListvalues}
                                                 value={equipmentType} 
                                                 class={equipmentTypeError}
                                                 onchange={handleEquipSelection}
-                                                placeholder="Select"></lightning-combobox>
-                                                <div class="slds-form-element__help"  style="color: rgb(194, 57, 52);" if:true={equipmentTypeError}>
-                                                    Complete this field.
+                                                placeholder="Select"></lightning-combobox-->
+                                                <c-multi-select-combobox
+                                                label=""
+                                                name=""
+                                                custom-class={equipmentTypeError}
+                                                options={pickListvalues}
+                                                onchange={handleEquipChange}
+                                              ></c-multi-select-combobox>
+                                                <div class="slds-form-element__help"  style="color: rgb(194, 57, 52);" if:true={equipmentTypeErrorMsg}>
+                                                    {equipmentTypeErrorMsg}
                                                 </div>
                             </lightning-layout-item>
                             <lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;">
@@ -144,7 +151,7 @@
                                         Complete this field.
                                     </div>
                             </lightning-layout-item>                            
-                            <lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;">
+                            <!--lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;">
                                 <lightning-input name="seaFreight"
                                     type="number"
                                     label="Sea Freight"
@@ -154,7 +161,7 @@
                                     <div class="slds-form-element__help"  style="color: rgb(194, 57, 52);" if:true={seaFreightError}>
                                         Complete this field.
                                     </div>
-                            </lightning-layout-item>                            
+                            </lightning-layout-item-->                            
                             <lightning-layout-item size="4" style="padding: 4px 20px 0px 20px;">
                                 <lightning-input label="Free Time POL" 
                                         type="Number"
@@ -179,7 +186,7 @@
                                         onchange={handleCustomerChange}
                                         placeholder="Select"></lightning-combobox>
                             </lightning-layout-item>
-                            <lightning-layout-item size="4" style="padding: 20px 20px 0px 20px;">
+                            <lightning-layout-item size="4" style="padding: 20px 20px 0px 20px;" if:false={twoEquipSelected}>
                                 <lightning-input label="All-in Rate" 
                                         type="checkbox"
                                         checked={allInRate} 
@@ -196,6 +203,35 @@
                                         type="checkbox"
                                         checked={oceanfreightCheckbox} 
                                         onchange={handleoceanfreightCheckboxChange}></lightning-input>
+                            </lightning-layout-item>
+                            <lightning-layout-item if:true={displayElem1} size="12" large-device-size="4" medium-device-size="4" small-device-size="12" style="padding: 0px 20px 0px 20px;">
+                                <lightning-input name="seaFreight"
+                                    type="number"
+                                    label={elem1Label}
+                                    value={elem1Value}
+                                    class={elem1seaFreightError}
+                                    onchange={handleElem1SeaFreightChange}></lightning-input>
+                                    <div class="slds-form-element__help"  style="color: rgb(194, 57, 52);" if:true={elem1seaFreightError}>
+                                        Complete this field.
+                                    </div>
+                            </lightning-layout-item>
+                            <lightning-layout-item if:true={displayElem2} size="12" large-device-size="4" medium-device-size="4" small-device-size="12" style="padding: 0px 20px 0px 20px;">
+                                <lightning-input name="seaFreight"
+                                    type="number"
+                                    label={elem2Label}
+                                    value={elem2Value}
+                                    class={elem2seaFreightError}
+                                    onchange={handleElem2SeaFreightChange}></lightning-input>
+                                    <div class="slds-form-element__help"  style="color: rgb(194, 57, 52);" if:true={elem2seaFreightError}>
+                                        Complete this field.
+                                    </div>
+                            </lightning-layout-item>
+                            <lightning-layout-item if:true={displayContractNumber} size="12" large-device-size="4" medium-device-size="4" small-device-size="12" style="padding: 0px 20px 0px 20px;">
+                                <lightning-input name="seaFreight"
+                                    type="text"
+                                    label='Contract Number'
+                                    value={contractNumber}
+                                    onchange={handlecontractNumberChange}></lightning-input>
                             </lightning-layout-item>
                         </lightning-layout>
                     </lightning-accordion-section>
