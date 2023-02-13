@@ -8,7 +8,7 @@ public class BAFCOLocalOperationQuoteController {
 	@AuraEnabled
     public static List<Route_Equipment__c> getRouteListOnload(String routeId){
         if(routeId != null){
-            return [Select id,Name,Equipment_type__r.name,Quantity__c from Route_Equipment__c where Route__c =: routeId ];
+            return [Select id,Name,Equipment_type__r.name,Quantity__c,Route__r.Opportunity_Enquiry__r.Account.FD__c from Route_Equipment__c where Route__c =: routeId ];
         }
         return null;
     }
@@ -99,6 +99,7 @@ public class BAFCOLocalOperationQuoteController {
         quoteItemObj.Total_Additional__c = additionalChargeTotal;
         quoteItemObj.Sea_Freight__c = dto.totalRate;  
         quoteItemObj.Quantity__c = dto.quantity;
+        quoteItemObj.INCO_Term__c = dto.incoTermId;
          if(dto.exWorksObj != null){
             quoteItemObj.Ex_Works_Charge_Name__c = dto.exWorksObj.Id;
             quoteItemObj.Ex_Works_Charge__c = dto.exWorksObj.LoadCharge;

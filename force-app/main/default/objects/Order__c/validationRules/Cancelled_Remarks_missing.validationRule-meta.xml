@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cancelled_Remarks_missing</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(ISCHANGED(Status__c),  ISBLANK(Cancelled_Remarks__c))</errorConditionFormula>
+    <errorDisplayField>Cancelled_Remarks__c</errorDisplayField>
+    <errorMessage>Please provide remarks for Order Cancellation</errorMessage>
+</ValidationRule>

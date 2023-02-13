@@ -9,5 +9,10 @@
     <columns>CORE.USERS.LAST_NAME</columns>
     <columns>LEAD.CREATED_DATE</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>CORE.USERS.LAST_NAME</field>
+        <operation>equals</operation>
+        <value>Moatasim</value>
+    </filters>
     <label>All Open Leads</label>
 </ListView>

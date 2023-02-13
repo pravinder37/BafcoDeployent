@@ -1,6 +1,8 @@
 <aura:component implements="force:hasRecordId,lightning:hasPageReference,force:lightningQuickActionWithoutHeader,lightning:isUrlAddressable"
                 access="global" >
     <aura:attribute name="refRecordId" type="String" />
+    <aura:attribute name="isEdit" type="String" default="false" />
+    <aura:attribute name="optyId" type="String" default="" />
     <aura:handler name="init" value="{!this}" action="{!c.init}" />
     <aura:html tag="style">
         .slds-modal__container{
@@ -14,6 +16,6 @@
         }
     </aura:html>
 	<div style="background: white;">
-        <c:bAFCOLeadCreationParentComponent quoteID="{!v.refRecordId}"/>
+        <c:bAFCOLeadCreationParentComponent quoteID="{!v.refRecordId}" optyId="{!v.optyId}" isEdit="{!v.isEdit}"/>
     </div>
 </aura:component>

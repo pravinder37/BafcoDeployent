@@ -406,6 +406,7 @@ quoteItemObj. = dto.value;
         quoteItemObj.Total_Additional__c = additionalChargeTotal;
         quoteItemObj.Sea_Freight__c = dto.seaFreightSellRate;
         quoteItemObj.Pickup_Place__c= dto.pickupPlace;
+        quoteItemObj.INCO_Term__c = dto.incoTermId;
         quoteItemObj.Discharge_Place__c = dto.dischargePlace;
         quoteItemObj.Buying_Rate__c = dto.quoteBuyingRate > 0 ? dto.quoteBuyingRate : null;
         quoteItemObj.Quantity__c = dto.quantity;

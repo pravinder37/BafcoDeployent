@@ -159,22 +159,22 @@ Equipment_Type__r.Name, Sea_Freight__c, Validity__c, Agent__r.Name, Shipping_Lin
             when 1 {
                 return 'Jan';
             }
-             when 2 {
+            when 2 {
                 return 'Feb';
             }
-             when 3 {
+            when 3 {
                 return 'Mar';
             }
-             when 4 {
+            when 4 {
                 return 'Apr';
             }
-             when 5 {
+            when 5 {
                 return 'May';
             }
-             when 6 {
+            when 6 {
                 return 'Jun';
             }
-             when 7 {
+            when 7 {
                 return 'Jul';
             }
             when 8 {
@@ -203,9 +203,10 @@ Equipment_Type__r.Name, Sea_Freight__c, Validity__c, Agent__r.Name, Shipping_Lin
         Boolean totalShippChanged,
         Boolean totalIncoChanged,
         Boolean destinTotalChanged,
-        BAFCODestinationChargeDto destinCharges
+        BAFCODestinationChargeDto destinCharges,
+        List<selectedEquip> selectedEquip
     ){
-        RMS__c rmsobj = new RMS__c();
+        
         Id ExportRecordTypeId = Schema.SObjectType.RMS__c.getRecordTypeInfosByName()
             .get('Export')
             .getRecordTypeId();
@@ -214,109 +215,127 @@ Equipment_Type__r.Name, Sea_Freight__c, Validity__c, Agent__r.Name, Shipping_Lin
             .get('Import')
             .getRecordTypeId();
         if(rmsDetail != null){
-            rmsobj.Port_Of_Loading__c = rmsDetail.loadingPortId != '' ? rmsDetail.loadingPortId : null;
-            rmsObj.Port_Of_Discharge__c = rmsDetail.loadingDestinationId != '' ? rmsDetail.loadingDestinationId : null;
-            rmsObj.Commodity__c = rmsDetail.commodityName != '' ? rmsDetail.commodityName : null;
-            rmsObj.Shipping_Line__c = rmsDetail.shippingLineId != '' ? rmsDetail.shippingLineId : null;
-            rmsObj.Equipment_Type__c = rmsDetail.equipmentId != '' ? rmsDetail.equipmentId : null;
-            rmsObj.Rate_Type__c = rmsDetail.rateType != '' ? rmsDetail.rateType : null;
-            rmsObj.Validity__c = rmsDetail.validity != '' ? DAte.valueOF(rmsDetail.validity) : null;
-            rmsObj.Sea_Freight__c = rmsDetail.seaFreight;
-            rmsObj.Business_Type__c = rmsDetail.businessType != '' ? rmsDetail.businessType : null;
-            rmsObj.Agent__c = rmsDetail.agentName != '' ? rmsDetail.agentName : null;  
-            rmsObj.All_in_Rate__c = rmsDetail.allInRate;
-            rmsObj.FOB_All_In__c = rmsDetail.FOBAllIn;
-            rmsObj.Ex_Works_All_In__c = rmsDetail.ExWorksIn;
-            rmsObj.Customer_Name__c = rmsDetail.customerName != '' ? rmsDetail.customerName : null;
-            rmsObj.Free_time__c = rmsDetail.FreeTime != null ? Decimal.valueOf(rmsDetail.FreeTime) : 0;
-            rmsObj.Free_time_POD__c = rmsDetail.FreeTimePOD != null ? Decimal.valueOf(rmsDetail.FreeTimePOD) : 0;
-            rmsObj.Remarks__c = rmsDetail.remarks;
-            rmsobj.INCO_Term__c = rmsDetail.incoTermId != '' ? rmsDetail.incoTermId : null;
-            
-            if(rmsDetail.businessType == 'Export') rmsObj.RecordTypeId = ExportRecordTypeId;
-            else if(rmsDetail.businessType == 'Import')rmsObj.RecordTypeId = ImportRecordTypeId;
-            insert rmsObj;
-            
-            Shipping_Line_Charge__c sLine = new Shipping_Line_Charge__c();
-            if(!totalShippChanged){
-                sLine.BAF__c = shippingChargeDto.BAF;
-                sLine.Bunker_surcharge__c = shippingChargeDto.BunkerSurcharge;
-                sLine.CMC__c = shippingChargeDto.CMC;
-                sLine.DTHC__c = shippingChargeDto.DTHC;
-                sLine.EIC__c = shippingChargeDto.EIC;
-                sLine.ISPS__c = shippingChargeDto.ISPS;
-                sline.OTHC__c = shippingChargeDto.OTHC;            
-                sline.Seal_Charges__c = shippingChargeDto.sealCharges;
+            for(selectedEquip obj : selectedEquip){
+                RMS__c rmsobj = new RMS__c();
+                rmsobj.Port_Of_Loading__c = rmsDetail.loadingPortId != '' ? rmsDetail.loadingPortId : null;
+                rmsObj.Port_Of_Discharge__c = rmsDetail.loadingDestinationId != '' ? rmsDetail.loadingDestinationId : null;
+                rmsObj.Commodity__c = rmsDetail.commodityName != '' ? rmsDetail.commodityName : null;
+                rmsObj.Shipping_Line__c = rmsDetail.shippingLineId != '' ? rmsDetail.shippingLineId : null;
+                //rmsObj.Equipment_Type__c = rmsDetail.equipmentId != '' ? rmsDetail.equipmentId : null;
+                rmsObj.Rate_Type__c = rmsDetail.rateType != '' ? rmsDetail.rateType : null;
+                rmsObj.Validity__c = rmsDetail.validity != '' ? DAte.valueOF(rmsDetail.validity) : null;
+                //rmsObj.Sea_Freight__c = rmsDetail.seaFreight;
                 
-                sline.Carriage_Congestion_Surcharge__c = shippingChargeDto.carriageCongestionSurcharg;
-                sline.Carrier_Security_Fees__c = shippingChargeDto.carrierSecurityFees;
-                sline.Cleaning_Charges__c = shippingChargeDto.cleaningCharges;
-                sline.DG_Surcharge__c = shippingChargeDto.DGSurcharge;
-                sline.Inland_Fuel_Surcharge__c = shippingChargeDto.inlandFuelSurcharge;
-                sline.Inland_Handling_Fees__c = shippingChargeDto.inlandHandlingFees;
-                sline.Inland_haulage__c = shippingChargeDto.inlandhaulage;
-                sline.Low_Sulphur_Surcharge__c = shippingChargeDto.lowSulphurSurcharge;
-                sline.Operational_Recovery_Surcharge__c = shippingChargeDto.operationalRecoverySurcharge;
-                sline.Overweight_surcharge__c = shippingChargeDto.overweightsurcharge;
-                sline.War_Risk_Surcharge__c = shippingChargeDto.warRiskSurcharge;
-            }
-            sline.RMS__c = rmsObj.id;        
-            sLine.Total__c = shippingChargeDto.Total;
-            sLine.CurrencyIsoCode= shippingChargeDto.currencyCode;
-            sLine.Offset_Value__c = shippingChargeDto.offSet;
-            
-            if(rmsObj.All_in_Rate__c == false && rmsObj.FOB_All_In__c == false && rmsObj.Ex_Works_All_In__c == false) Insert sLine;
-            
-            INCO_Charge__c iObj = new INCO_Charge__c();
-            system.debug('incoCharges '+incocharges);
-            if(!totalIncoChanged){
-                iObj.Bayan__c = incocharges.bayan;
-                iobj.Fasah_fee__c = incocharges.fasahFee;
-                iObj.Inspection__c = incocharges.inspection;
-                iObj.Lift_on_Lift_off__c = incocharges.liftOnLiftOff;
-                iObj.Origin_Customs_clearance__c = incocharges.originCustomsclearance;
-                iobj.Origin_Loading_Charges__c = incocharges.originLoadingCharges;
-                iObj.Port_Shuttling__c = incocharges.portShuttling;
-                iObj.Tabadul__c = incocharges.tabadul;
-                iObj.Xray__c = incocharges.xray;
-                iObj.Loading_Charges__c = incocharges.loadingCharge;
+                List<SelectedEquip> rmsEquipList = rmsDetail.selectedEquip;
+                for(SelectedEquip obj2 : rmsEquipList){
+                    if(obj2.label == obj.label){
+                        rmsObj.Sea_Freight__c = obj2.seaFreight;
+                        rmsObj.Equipment_Type__c = obj2.value;
+                    }
+                }
+                system.debug('rmsEquipList '+rmsEquipList);
+                rmsObj.Business_Type__c = rmsDetail.businessType != '' ? rmsDetail.businessType : null;
+                rmsObj.Agent__c = rmsDetail.agentName != '' ? rmsDetail.agentName : null;  
+                rmsObj.All_in_Rate__c = rmsDetail.allInRate;
+                rmsObj.FOB_All_In__c = rmsDetail.FOBAllIn;
+                rmsObj.Ex_Works_All_In__c = rmsDetail.ExWorksIn;
+                rmsObj.Customer_Name__c = rmsDetail.customerName != '' ? rmsDetail.customerName : null;
+                rmsObj.Free_time__c = rmsDetail.FreeTime != null ? Decimal.valueOf(rmsDetail.FreeTime) : 0;
+                rmsObj.Free_time_POD__c = rmsDetail.FreeTimePOD != null ? Decimal.valueOf(rmsDetail.FreeTimePOD) : 0;
+                rmsObj.Remarks__c = rmsDetail.remarks;
+                rmsobj.INCO_Term__c = rmsDetail.incoTermId != '' ? rmsDetail.incoTermId : null;
+                rmsObj.Contract_Number__c = String.valueOf(rmsDetail.contractNumber);
                 
-                iObj.BL_Fees__c = incoCharges.bLFees;
-                iObj.Export_Service_Fees__c = incoCharges.exportServiceFees;
-                iObj.Fuel_Surcharge__c = incoCharges.fuelSurcharge;
-                iObj.Insurance_Charges__c = incoCharges.insuranceCharges;
-                iObj.Lashing_Charges__c = incoCharges.lashingCharges;
-                iObj.Origin_Detention_Demurrage_Charges__c = incoCharges.originDetentionDemurrageCharges;
-                iObj.OTHC__c = incoCharges.OTHC;
-                iObj.Pickup_Charges__c = incoCharges.pickupCharges;
-                iObj.Reefer_Plugin_Charges__c = incoCharges.reeferPluginCharges;
-                iObj.Tarpaulin_Charges__c = incoCharges.tarpaulinCharges;
-                iObj.Truck_idling_Charges__c = incoCharges.truckidlingCharges;
-                iObj.VGM__c = incoCharges.vGM;
+                if(rmsDetail.businessType == 'Export') rmsObj.RecordTypeId = ExportRecordTypeId;
+                else if(rmsDetail.businessType == 'Import')rmsObj.RecordTypeId = ImportRecordTypeId;
+                insert rmsObj;
+                
+                Shipping_Line_Charge__c sLine = new Shipping_Line_Charge__c();
+                if(!totalShippChanged){
+                    sLine.BAF__c = shippingChargeDto.BAF;
+                    sLine.Bunker_surcharge__c = shippingChargeDto.BunkerSurcharge;
+                    sLine.CMC__c = shippingChargeDto.CMC;
+                    sLine.DTHC__c = shippingChargeDto.DTHC;
+                    sLine.EIC__c = shippingChargeDto.EIC;
+                    sLine.ISPS__c = shippingChargeDto.ISPS;
+                    sline.OTHC__c = shippingChargeDto.OTHC;            
+                    sline.Seal_Charges__c = shippingChargeDto.sealCharges;
+                    
+                    sline.Carriage_Congestion_Surcharge__c = shippingChargeDto.carriageCongestionSurcharg;
+                    sline.Carrier_Security_Fees__c = shippingChargeDto.carrierSecurityFees;
+                    sline.Cleaning_Charges__c = shippingChargeDto.cleaningCharges;
+                    sline.DG_Surcharge__c = shippingChargeDto.DGSurcharge;
+                    sline.Inland_Fuel_Surcharge__c = shippingChargeDto.inlandFuelSurcharge;
+                    sline.Inland_Handling_Fees__c = shippingChargeDto.inlandHandlingFees;
+                    sline.Inland_haulage__c = shippingChargeDto.inlandhaulage;
+                    sline.Low_Sulphur_Surcharge__c = shippingChargeDto.lowSulphurSurcharge;
+                    sline.Operational_Recovery_Surcharge__c = shippingChargeDto.operationalRecoverySurcharge;
+                    sline.Overweight_surcharge__c = shippingChargeDto.overweightsurcharge;
+                    sline.War_Risk_Surcharge__c = shippingChargeDto.warRiskSurcharge;
+                }
+                sline.RMS__c = rmsObj.id;        
+                sLine.Total__c = shippingChargeDto.Total;
+                sLine.CurrencyIsoCode= shippingChargeDto.currencyCode;
+                sLine.Offset_Value__c = shippingChargeDto.offSet;
+                
+                if(rmsObj.All_in_Rate__c == false && rmsObj.FOB_All_In__c == false && rmsObj.Ex_Works_All_In__c == false) Insert sLine;
+                
+                INCO_Charge__c iObj = new INCO_Charge__c();
+                system.debug('incoCharges '+incocharges);
+                if(!totalIncoChanged){
+                    iObj.Bayan__c = incocharges.bayan;
+                    iobj.Fasah_fee__c = incocharges.fasahFee;
+                    iObj.Inspection__c = incocharges.inspection;
+                    iObj.Lift_on_Lift_off__c = incocharges.liftOnLiftOff;
+                    iObj.Origin_Customs_clearance__c = incocharges.originCustomsclearance;
+                    iobj.Origin_Loading_Charges__c = incocharges.originLoadingCharges;
+                    iObj.Port_Shuttling__c = incocharges.portShuttling;
+                    iObj.Tabadul__c = incocharges.tabadul;
+                    iObj.Xray__c = incocharges.xray;
+                    iObj.Loading_Charges__c = incocharges.loadingCharge;
+                    
+                    iObj.BL_Fees__c = incoCharges.bLFees;
+                    iObj.Export_Service_Fees__c = incoCharges.exportServiceFees;
+                    iObj.Fuel_Surcharge__c = incoCharges.fuelSurcharge;
+                    iObj.Insurance_Charges__c = incoCharges.insuranceCharges;
+                    iObj.Lashing_Charges__c = incoCharges.lashingCharges;
+                    iObj.Origin_Detention_Demurrage_Charges__c = incoCharges.originDetentionDemurrageCharges;
+                    iObj.OTHC__c = incoCharges.OTHC;
+                    iObj.Pickup_Charges__c = incoCharges.pickupCharges;
+                    iObj.Reefer_Plugin_Charges__c = incoCharges.reeferPluginCharges;
+                    iObj.Tarpaulin_Charges__c = incoCharges.tarpaulinCharges;
+                    iObj.Truck_idling_Charges__c = incoCharges.truckidlingCharges;
+                    iObj.VGM__c = incoCharges.vGM;
+                }
+                iObj.Total__c = incocharges.total;
+                iObj.RMS__c = rmsObj.id;
+                iObj.CurrencyIsoCode = incoCharges.currencyCode;
+                iObj.Offset_Value__c = incoCharges.offSet;
+                
+                if(rmsObj.All_in_Rate__c == false && rmsObj.Ex_Works_All_In__c == false && rmsObj.FOB_All_In__c == false )  Insert iObj;
+                Destination_Charges__c desti = new Destination_Charges__c();
+                if(!destinTotalChanged){
+                    desti.Bayan_Charges__c = destinCharges.bayanCharges;
+                    desti.Custom_Clearance__c = destinCharges.customClearance;
+                    desti.DO_charges__c = destinCharges.doCharges;
+                    desti.DTHC__c = destinCharges.DTHC;
+                    desti.Fasah_Charges__c = destinCharges.fasahCharges;
+                    desti.Gate_pass_charges__c = destinCharges.gatePassCharges;
+                    desti.LOLO_Charges__c = destinCharges.LOLOCharges;
+                    desti.Transportation__c = destinCharges.transportation;
+                }
+                desti.Total__c = destinCharges.total;
+                desti.CurrencyIsoCode = destinCharges.currencyCode;
+                desti.RMS__c = rmsObj.id;
+                desti.Offset_Value__c = destinCharges.offSet;
+                insert desti;
             }
-            iObj.Total__c = incocharges.total;
-            iObj.RMS__c = rmsObj.id;
-            iObj.CurrencyIsoCode = incoCharges.currencyCode;
-            iObj.Offset_Value__c = incoCharges.offSet;
-            
-            if(rmsObj.All_in_Rate__c == false && rmsObj.Ex_Works_All_In__c == false && rmsObj.FOB_All_In__c == false )  Insert iObj;
-            Destination_Charges__c desti = new Destination_Charges__c();
-            if(!destinTotalChanged){
-                desti.Bayan_Charges__c = destinCharges.bayanCharges;
-                desti.Custom_Clearance__c = destinCharges.customClearance;
-                desti.DO_charges__c = destinCharges.doCharges;
-                desti.DTHC__c = destinCharges.DTHC;
-                desti.Fasah_Charges__c = destinCharges.fasahCharges;
-                desti.Gate_pass_charges__c = destinCharges.gatePassCharges;
-                desti.LOLO_Charges__c = destinCharges.LOLOCharges;
-                desti.Transportation__c = destinCharges.transportation;
-            }
-            desti.Total__c = destinCharges.total;
-            desti.CurrencyIsoCode = destinCharges.currencyCode;
-            desti.RMS__c = rmsObj.id;
-            desti.Offset_Value__c = destinCharges.offSet;
-            insert desti;
         }
         return rmsDetail;
+    }
+    public class selectedEquip{
+        @auraEnabled public string label{get;set;}
+        @auraEnabled public string value{get;set;}
+        @AuraEnabled public Decimal seaFreight { get; set; }
     }
 }

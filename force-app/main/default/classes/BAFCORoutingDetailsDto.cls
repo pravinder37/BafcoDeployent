@@ -39,7 +39,11 @@ public class BAFCORoutingDetailsDto {
     @AuraEnabled
     public String shippingLine { get; set; }
     @AuraEnabled
+    public String shippingLineName { get; set; }
+    @AuraEnabled
     public String commodity { get; set; }
+    @AuraEnabled
+    public String commodityName { get; set; }
     @AuraEnabled
     public Decimal cargoWeights { get; set; }
     @AuraEnabled
@@ -71,6 +75,8 @@ public class BAFCORoutingDetailsDto {
     public class containerRecord{
         @AuraEnabled
         public String containerType { get; set; }
+        @AuraEnabled
+        public String containerTypeName { get; set; }
         @AuraEnabled
         public Decimal quantity { get; set; }
         @AuraEnabled

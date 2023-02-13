@@ -27,6 +27,8 @@ public class BAFCOGenerteQuoteDto {
     @AuraEnabled
     public String pickupPlace { get; set; }
     @AuraEnabled
+    public String incoTermId { get; set; }
+    @AuraEnabled
     public String selectedEquipment { get; set; }
     @AuraEnabled
     public String dischargePlace { get; set; }

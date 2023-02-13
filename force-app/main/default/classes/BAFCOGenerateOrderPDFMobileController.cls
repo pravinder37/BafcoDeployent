@@ -27,12 +27,16 @@ public String recordId {get;set;}
         conVer.VersionData = b;
         insert conVer;
         
+        List<ContentDocumentLink> toDelete = [Select id from ContentDocumentLink where LinkedEntityId =: this.recordId];
+        if(toDelete.size() > 0) delete toDelete;
+        
+        
         Id conDoc = [SELECT ContentDocumentId FROM ContentVersion WHERE Id =:conVer.Id].ContentDocumentId;
         ContentDocumentLink conDocLink = New ContentDocumentLink();
         conDocLink.LinkedEntityId = this.recordId;
         conDocLink.ContentDocumentId = conDoc;
         conDocLink.shareType = 'V';
-       // insert conDocLink;
+        insert conDocLink;
         PageReference pg = new PageReference('/'+this.recordId);
         pg.setRedirect(true);
         return pg;  

@@ -43,7 +43,7 @@ public class BAFCOSalesOrderController {
         }
         system.debug('mapequipNameToQty '+mapequipNameToQty);
         Integer index = 1;
-        for(Quotation_Item__c item : [Select Tank_Rental_Charges__c,Agent__c,Id,Shipping_Linee__c,Buying_Rate__c,Alternate_depot_release_charges__c,Freight_Difference_FD__c,Carrier_container_repositioning_charges__c,Ex_Works_Charge__c,Ex_Works_Charge_Name__c,Included_PDF_Ex_works__c,Included_PDF_Additional__c,Included_PDF_Destination__c,Included_PDF_Origin__c,Included_PDF_ShippingLine__c,Add_to_Buying_Ex_works__c,Add_to_Buying_Additional__c,Add_to_Buying_Destination__c,Add_to_Buying_Origin__c,Add_to_Buying_ShippingLine__c,BAF__c,Bayan__c,Bayan_cancellation_charge__c,Bunker_surcharge__c,Cleaning_charges__c,
+        for(Quotation_Item__c item : [Select INCO_Term__c,Tank_Rental_Charges__c,Agent__c,Id,Shipping_Linee__c,Buying_Rate__c,Alternate_depot_release_charges__c,Freight_Difference_FD__c,Carrier_container_repositioning_charges__c,Ex_Works_Charge__c,Ex_Works_Charge_Name__c,Included_PDF_Ex_works__c,Included_PDF_Additional__c,Included_PDF_Destination__c,Included_PDF_Origin__c,Included_PDF_ShippingLine__c,Add_to_Buying_Ex_works__c,Add_to_Buying_Additional__c,Add_to_Buying_Destination__c,Add_to_Buying_Origin__c,Add_to_Buying_ShippingLine__c,BAF__c,Bayan__c,Bayan_cancellation_charge__c,Bunker_surcharge__c,Cleaning_charges__c,
                                       /*Container_Lashing_Charges__c,*/CMC__c,Container_movement_charges__c,Container_stripping__c,
                                       Destination_Customs_Clearance__c,Destination_Loading_Charges__c,DTHC__c,EIC__c,Equipment_Type__c,
                                       Fasah_fee__c,Free_time_certificate_charges__c,Fumigation__c,Inspection__c,Insurance_charges__c,
@@ -190,6 +190,7 @@ public class BAFCOSalesOrderController {
                                                   dto.tankRentalCharge = item.Tank_Rental_Charges__c > 0? item.Tank_Rental_Charges__c : 0;
                                                   dto.shippLine = item.Shipping_Linee__c;
                                                   dto.quoteItemId = item.id;
+                                                  dto.incoTermId = item.INCO_Term__c;
                                                   dto.agentId = item.Agent__c;
                                                   system.debug('item '+item);
                                                   if(item.Total__c > 0) equipLineToShipData.get(equipName).add(dto);
@@ -350,6 +351,7 @@ public class BAFCOSalesOrderController {
                             orderItem.Shipping_Line__c = orderDto.shippLine;
                             orderItem.Quotation_Item__c = orderDto.quoteItemId;
                             orderItem.Agent__c = orderDto.agentId;
+                            orderItem.INCO_Term__c = orderDto.incoTermId;
                             if(orderDto.checkBoxSelected == true) orderItemList.add(orderItem);
                         }
                     }
@@ -569,6 +571,7 @@ public class BAFCOSalesOrderController {
         @AuraEnabled public String shippLine {get; set;}
         @AuraEnabled public String quoteItemId {get; set;}
         @AuraEnabled public String agentId {get; set;}
+        @AuraEnabled public String incoTermId { get; set; }
     }
     public class consigneeList{
         @AuraEnabled public String consigneeId {get; set;}

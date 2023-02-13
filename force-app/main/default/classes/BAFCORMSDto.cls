@@ -68,4 +68,6 @@ public class BAFCORMSDto {
     @AuraEnabled public Date buyingRateValidity { get; set; }
     @AuraEnabled public Boolean fdAccount { get; set; }
     @AuraEnabled public String customerId { get; set; }
+    @AuraEnabled public List<BAFCOLeadDetailsController.selectedEquip> selectedEquip{get;set;}
+    @AuraEnabled public String contractNumber { get; set; }
 }

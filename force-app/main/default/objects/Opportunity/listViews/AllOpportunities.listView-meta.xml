@@ -10,5 +10,15 @@
     <columns>OPPORTUNITY.LAST_UPDATE</columns>
     <columns>OPPORTUNITY.RECORDTYPE</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>OPPORTUNITY.STAGE_NAME</field>
+        <operation>contains</operation>
+        <value>Qualification</value>
+    </filters>
+    <filters>
+        <field>Business_Type__c</field>
+        <operation>equals</operation>
+        <value>Import,Export</value>
+    </filters>
     <label>All Opportunities</label>
 </ListView>

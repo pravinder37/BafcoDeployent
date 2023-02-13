@@ -10,6 +10,9 @@
                             <value>Opportunity.Create_Quote</value>
                         </valueListItems>
                         <valueListItems>
+                            <value>Opportunity.Edit_Opportunity</value>
+                        </valueListItems>
+                        <valueListItems>
                             <value>ChangeOwnerOne</value>
                         </valueListItems>
                         <valueListItems>

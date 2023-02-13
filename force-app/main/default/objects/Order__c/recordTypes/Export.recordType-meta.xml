@@ -3,4 +3,15 @@
     <fullName>Export</fullName>
     <active>true</active>
     <label>Export</label>
+    <picklistValues>
+        <picklist>Status__c</picklist>
+        <values>
+            <fullName>Cancelled</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Confirmed</fullName>
+            <default>true</default>
+        </values>
+    </picklistValues>
 </RecordType>

@@ -1,0 +1,68 @@
+<template>
+    <lightning-quick-action-panel header="Copy To Mail ">
+        <p>Dear Valued Client,</p>
+        <p>Thank you for giving Bafco International the opportunity to quote for your order.</p>
+        <p>Please find below the details:</p>
+        <br/>
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+            <thead>
+                <tr class="slds-line-height_reset">
+                    <th scope="col">Port of loading</th>
+                    <th scope="col">Port of Discharge</th>
+                    <th scope="col">Equiment type</th>
+                    <th scope="col">Service Type</th>
+                    <th scope="col">Inco Term</th>
+                    <th scope="col">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <template for:each={tableData} for:item="item">
+                    <tr key={item} class="slds-hint-parent">
+                        <td scope="row">{item.loadingPort}</td>
+                        <td scope="row">{item.dischargePort}</td>
+                        <td scope="row">{item.equipmentType}</td>
+                        <td scope="row">{item.serviceType}</td>
+                        <td scope="row">{item.incoterm}</td>
+                        <td scope="row">{item.currencyCode} {item.total}</td>
+                    </tr>
+                </template>
+            </tbody>
+        </table>
+        <br/>
+        <p>We look forward to a positive response from your end.</p>
+        <br/>
+        <template if:true={isExport}>
+            <p>Exclusions:</p>
+            <p>{Header}</p>
+            <p>
+                <template for:each={HeaderList} for:item="item">
+                    <p  key={item}>{item}</p>
+                </template>
+            </p>
+            <br/>
+            <p>Inclusion:</p>
+            <p>{inclHeader}</p>
+            <p>
+                <template for:each={inclHeaderList} for:item="item">
+                    <p  key={item}>{item}</p>
+                </template>
+            </p>
+        </template>
+        <template if:true={isImport}>
+            <p>Terms & Conditions:</p>
+            <p>{Header}</p>
+            <p>
+                <template for:each={HeaderList} for:item="item">
+                    <p  key={item}>{item}</p>
+                </template>
+            </p>
+        </template>
+        <br/>
+        <p>Note:</p>
+        <p>1. Subject to equipment & vessel space availability while placing booking</p>
+        <p>2. Cargo insurance not covered in BAFCO scope.</p>
+        <p>3. Subject to war risk surcharge if any applied by line</p>
+        <p>4. Standard free time at POD unless specified above.</p>
+        <p>5. ACID Number, Importer VAT ID, Exporter VAT ID mandatory to proceed with shipment for Egypt</p>
+    </lightning-quick-action-panel>
+</template>

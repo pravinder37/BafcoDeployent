@@ -19,6 +19,8 @@ public class BAFCOImportRMSDto {
     @AuraEnabled
     public Decimal offSet { get; set; }
     @AuraEnabled
+    public String incoTermId { get; set; }
+    @AuraEnabled
     public String currencyCode { get; set; }
     @AuraEnabled
     public String pickupPlace { get; set; }

@@ -6,6 +6,7 @@
     <columns>City__c</columns>
     <columns>Country__c</columns>
     <columns>Sector__c</columns>
+    <columns>BSLS_ID__c</columns>
     <columns>LAST_UPDATE</columns>
     <columns>UPDATEDBY_USER</columns>
     <filterScope>Everything</filterScope>

@@ -437,7 +437,7 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Origin Custom Clearance"/>
-                                            <apex:outputText value="{!item.originChargesObj.originCustomClearance}"/>
+                                            <!--apex:outputText value="{!item.originChargesObj.originCustomClearance}"/-->
                                             <span style="display:{!if(item.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
                                             <span style="display:{!if(item.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
                                         </apex:panelGrid>
@@ -629,7 +629,7 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Destination Custom Clearance Charges"/>
-                                            <apex:outputText value="{!item.destinChargeObj.destinCustomClearanceCharges}"/>
+                                            <!--apex:outputText value="{!item.destinChargeObj.destinCustomClearanceCharges}"/-->
                                             <span style="display:{!if(item.destinChargeObj.includeDestinCharge == true,'block','none')}" >(Included)</span>
                                             <span style="display:{!if(item.destinChargeObj.includeDestinCharge == false,'block','none')}" >(Excluded)</span>
                                         </apex:panelGrid>
@@ -1209,7 +1209,7 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Origin Custom Clearance"/>
-                                            <apex:outputText value="{!item.dc20Charges.originChargesObj.originCustomClearance}"/>
+                                            <!--apex:outputText value="{!item.dc20Charges.originChargesObj.originCustomClearance}"/-->
                                             <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == true,'block','none')}" >(Included)</span>
                                             <span style="display:{!if(item.dc20Charges.originChargesObj.includeOriginCharge == false,'block','none')}" >(Excluded)</span>
                                         </apex:panelGrid>
@@ -1402,7 +1402,7 @@
                                     <div class="boxesCss" style="background: #EFEFEF;padding: 10px">
                                         <apex:panelGrid columns="2">
                                             <apex:outputText value="Destination Custom Clearance Charges"/>
-                                            <apex:outputText value="{!item.dc20Charges.destinChargeObj.destinCustomClearanceCharges}"/>
+                                            <!--apex:outputText value="{!item.dc20Charges.destinChargeObj.destinCustomClearanceCharges}"/-->
                                             <span style="display:{!if(item.dc20Charges.destinChargeObj.includeDestinCharge == true,'block','none')}" >(Included)</span>
                                             <span style="display:{!if(item.dc20Charges.destinChargeObj.includeDestinCharge == false,'block','none')}" >(Excluded)</span>
                                         </apex:panelGrid>

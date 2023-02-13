@@ -198,92 +198,116 @@ public without sharing  class BAFCOLRoutingDetailsController {
         return lookUpList;
     }
     @AuraEnabled
-    public static String submitRoutingList(List<BAFCORoutingDetailsDto> routingList, String businessType, String quoteId,String closeDate, String commercialUserId) {
-        system.debug('routingList '+routingList);
+    public static String submitRoutingList(List<BAFCORoutingDetailsDto> routingList, String businessType, String quoteId,String closeDate, String commercialUserId,String isEdit,List<String> containerRemoveList,List<String> routeRemoveList, String optyId) {
         List<Route__c> routeList = new List<Route__c>();
         String incoTermSelected = '';
         if(routingList.size() > 0) incoTermSelected = routingList[0].incoTermName;
         system.debug('incoTermSelected '+incoTermSelected);
         Opportunity optyObj = new Opportunity();
-        if(businessType != '' && quoteId != ''){
+        if(isEdit == 'true'){
+            optyObj.id = optyId;
+            optyObj.CloseDate = date.valueOf(closeDate);
+            optyObj.Commercial_User__c = commercialUserId != '' ? commercialUserId : null;
+            update optyObj;
+        }
+        else{
             Account acc = [Select id,name,ownerId from Account where id=: quoteId];
-            optyObj.Name = acc.Name +' - '+String.valueOf(date.today()).split(' ')[0];
-            optyObj.AccountId = acc.Id;
-            optyObj.OwnerId = acc.OwnerId;
-            optyObj.Business_Type__c = businessType;
-            try{
-                optyObj.StageName = 'Qualification';
-                optyObj.CloseDate = date.valueOf(closeDate);
-                optyObj.Commercial_User__c = commercialUserId != '' ? commercialUserId : null;
-                if(incoTermSelected == 'Local Operation') {
-                    Id LocalOperationRecId = Schema.SObjectType.Opportunity.getRecordTypeInfosByName()
-                        .get('Local Operation')
-                        .getRecordTypeId();
-                    optyObj.RecordTypeId = LocalOperationRecId;
-                }
-                else{
-                    Id FCLRecId = Schema.SObjectType.Opportunity.getRecordTypeInfosByName()
-                        .get('FCL')
-                        .getRecordTypeId();
-                    optyObj.RecordTypeId = FCLRecId;
-                }
-                insert optyObj;
-                Task tsk = new Task();
-                tsk.Subject = 'Provide Quotation';
-                tsk.Status = 'Open';
-                tsk.OwnerId = commercialUserId != '' ? commercialUserId : UserInfo.getUserId();
-                tsk.WhatId = optyObj.Id;
-                tsk.IsReminderSet = true;
-                tsk.ActivityDate = Date.valueOf(DateTime.now());
-                insert tsk;
-                system.debug('optyObj '+optyObj);
+        optyObj.Name = acc.Name +' - '+String.valueOf(date.today()).split(' ')[0];
+        optyObj.AccountId = acc.Id;
+        optyObj.OwnerId = acc.OwnerId;
+        optyObj.Business_Type__c = businessType;
+        try{
+            optyObj.StageName = 'Qualification';
+            optyObj.CloseDate = date.valueOf(closeDate);
+            optyObj.Commercial_User__c = commercialUserId != '' ? commercialUserId : null;
+            if(incoTermSelected == 'Clearance and Delivery' || incoTermSelected == 'Local Operation') {
+                Id LocalOperationRecId = Schema.SObjectType.Opportunity.getRecordTypeInfosByName()
+                    .get('Local Operation')
+                    .getRecordTypeId();
+                optyObj.RecordTypeId = LocalOperationRecId;
             }
-            catch(Exception e){
-                System.debug('Excepiton '+e.getMessage());
+            else{
+                Id FCLRecId = Schema.SObjectType.Opportunity.getRecordTypeInfosByName()
+                    .get('FCL')
+                    .getRecordTypeId();
+                optyObj.RecordTypeId = FCLRecId;
             }
-            Map<String,String> routeIndexToIdMap =  new Map<String,String>();
-            List<Route_Equipment__c> routeEquipList = new List<Route_Equipment__c>();
-            for(BAFCORoutingDetailsDto dto : routingList){
+            insert optyObj;
+            Task tsk = new Task();
+            tsk.Subject = 'Provide Quotation';
+            tsk.Status = 'Open';
+            tsk.OwnerId = commercialUserId != '' ? commercialUserId : UserInfo.getUserId();
+            tsk.WhatId = optyObj.Id;
+            tsk.IsReminderSet = true;
+            tsk.ActivityDate = Date.valueOf(DateTime.now());
+            insert tsk;
+            system.debug('optyObj '+optyObj);
+        }
+        catch(Exception e){
+            System.debug('Excepiton '+e.getMessage());
+        }
+        }
+        Map<String,String> routeIndexToIdMap =  new Map<String,String>();
+        List<Route_Equipment__c> routeEquipList = new List<Route_Equipment__c>();
+        for(BAFCORoutingDetailsDto dto : routingList){
+            Route__c routeObj = new Route__c();
+            routeObj.Cargo_Weight__c = dto.cargoWeights;
+            if(!String.isBlank(dto.commodity)) routeObj.Commodity__c =dto.commodity;
+            routeObj.Kind_Of_Shipment__c = 'FCL';
+            routeObj.Regular_Routing__c = dto.routingRegular;
+            String ObjectName = '';
+            routeObj.Regular_Routing_Lookup__c = dto.routingRegular != '' ? dto.routingRegular : null;
+            if(!String.isBlank(dto.shippingLine)) routeObj.Shipping_Line__c = dto.shippingLine;
+            routeObj.Service_Type__c = dto.serviceType;
+            if(!String.isBlank(dto.portLoading)) routeObj.Port_of_loading__c = dto.portLoading;
+            if(!String.isBlank(dto.portDestination)) routeObj.Port_of_Destination__c = dto.portDestination;
+            routeObj.Remarks__c = dto.remarks;
+            routeObj.Dangerous_Goods__c = dto.dangerousGoods;
+            routeObj.Index__c = String.valueOf(dto.leadIndex);
+            if(!String.isBlank(dto.incoTerm)) routeObj.INCO_Term__c = dto.incoTerm  ;
+            routeObj.Opportunity_Enquiry__c = optyObj.id;
+            routeObj.DG_Class__c = dto.dgClass;
+            if(!String.isBlank(dto.placeOfPickup)) routeObj.Pickup_Place__c = dto.placeOfPickup;
+            if(!String.isBlank(dto.placeOfDischarge)) routeObj.Discharge_Place__c = dto.placeOfDischarge;
+            routeObj.id = dto.routeId !='' ? dto.routeId : null;
+            routeList.add(routeObj);
+        }
+        if(routeList.size() > 0){
+            upsert routeList;
+        }        
+        for(Route__c obj : routeList){
+            routeIndexToIdMap.put(obj.Index__c, obj.Id);
+        }
+        for(BAFCORoutingDetailsDto dto : routingList){
+            for(BAFCORoutingDetailsDto.containerRecord contr : dto.containerRecord){
+                Route_Equipment__c routeQuipobj = new Route_Equipment__c();
+                if(!String.isBlank(contr.containerType)) routeQuipobj.Equipment_Type__c = contr.containerType;
+                routeQuipobj.Quantity__c = contr.quantity;
+                routeQuipobj.Route__c = routeIndexToIdMap.get(dto.leadIndex);
+                routeQuipobj.id = contr.id != '' ? contr.id : null;
+                routeEquipList.add(routeQuipobj);
+            }
+        }
+        if(routeEquipList.size() > 0){
+            upsert routeEquipList;
+        }
+        if(containerRemoveList.size() > 0){
+            List<Route_Equipment__c> containerToDel = new List<Route_Equipment__c>();
+            for(String dd : containerRemoveList){
+                Route_Equipment__c routeQuipobj = new Route_Equipment__c();
+                routeQuipobj.id = dd;
+                containerToDel.add(routeQuipobj);
+            }
+            delete containerToDel;
+        }
+        if(routeRemoveList.size() > 0){
+            List<Route__c> routeToDel = new List<Route__c>();
+            for(String dd : routeRemoveList){
                 Route__c routeObj = new Route__c();
-                routeObj.Cargo_Weight__c = dto.cargoWeights;
-                if(!String.isBlank(dto.commodity)) routeObj.Commodity__c =dto.commodity;
-                routeObj.Kind_Of_Shipment__c = 'FCL';
-                routeObj.Regular_Routing__c = dto.routingRegular;
-                String ObjectName = '';
-                routeObj.Regular_Routing_Lookup__c = dto.routingRegular != '' ? dto.routingRegular : null;
-                if(!String.isBlank(dto.shippingLine)) routeObj.Shipping_Line__c = dto.shippingLine;
-                routeObj.Service_Type__c = dto.serviceType;
-                if(!String.isBlank(dto.portLoading)) routeObj.Port_of_loading__c = dto.portLoading;
-                if(!String.isBlank(dto.portDestination)) routeObj.Port_of_Destination__c = dto.portDestination;
-                routeObj.Remarks__c = dto.remarks;
-                routeObj.Dangerous_Goods__c = dto.dangerousGoods;
-                routeObj.Index__c = String.valueOf(dto.leadIndex);
-                if(!String.isBlank(dto.incoTerm)) routeObj.INCO_Term__c = dto.incoTerm  ;
-                routeObj.Opportunity_Enquiry__c = optyObj.id;
-                routeObj.DG_Class__c = dto.dgClass;
-                if(!String.isBlank(dto.placeOfPickup)) routeObj.Pickup_Place__c = dto.placeOfPickup;
-                if(!String.isBlank(dto.placeOfDischarge)) routeObj.Discharge_Place__c = dto.placeOfDischarge;
-                routeList.add(routeObj);
+                routeObj.id = dd;
+                routeToDel.add(routeObj);
             }
-            if(routeList.size() > 0){
-                system.debug('routeList '+routeList);
-                  insert routeList;
-            }        
-            for(Route__c obj : routeList){
-                routeIndexToIdMap.put(obj.Index__c, obj.Id);
-            }
-            for(BAFCORoutingDetailsDto dto : routingList){
-                for(BAFCORoutingDetailsDto.containerRecord contr : dto.containerRecord){
-                    Route_Equipment__c routeQuipobj = new Route_Equipment__c();
-                    if(!String.isBlank(contr.containerType)) routeQuipobj.Equipment_Type__c = contr.containerType;
-                    routeQuipobj.Quantity__c = contr.quantity;
-                    routeQuipobj.Route__c = routeIndexToIdMap.get(dto.leadIndex);
-                    routeEquipList.add(routeQuipobj);
-                }
-            }
-            if(routeEquipList.size() > 0){
-                 Insert routeEquipList;
-            }
+            delete routeToDel;
         }
         return optyObj.id;
     }
@@ -432,6 +456,7 @@ public without sharing  class BAFCOLRoutingDetailsController {
         quoteItemObj.Total_Additional__c = additionalChargeTotal;
         quoteItemObj.Sea_Freight__c = dto.seaFreightSellRate;  
         quoteItemObj.Quantity__c = dto.quantity;
+        quoteItemObj.INCO_Term__c = dto.incoTermId;
         quoteItemObj.Buying_Rate__c = dto.quoteBuyingRate > 0 ? dto.quoteBuyingRate : null;
         if(dto.selectedShippLine != '' ){
             List<Shipping_Line__c> shipLine = [Select id from Shipping_Line__c where name =:dto.selectedShippLine limit 1];
@@ -631,12 +656,13 @@ public without sharing  class BAFCOLRoutingDetailsController {
         String shippingLine,
         String leadId,
         Boolean destinTotalChanged,
-        BAFCODestinationChargeDto destinCharges
+        BAFCODestinationChargeDto destinCharges,
+        List<BAFCOLeadDetailsController.selectedEquip> selectedEquip
     ){
         
         Route__c routeObj =[SELECT INCO_Term__c ,Id, Port_of_Destination__c, Port_of_loading__c, Shipping_Line__c, Commodity__c FROM Route__c where id =:routeId];
         
-        String equipId = [SELECT Max_Weight__c, Name, Id FROM Equipment_Type__c where Name =: equipmentType].id;
+        //String equipId = [SELECT Max_Weight__c, Name, Id FROM Equipment_Type__c where Name =: equipmentType].id;
         String shippingLineId = [SELECT Name, Id FROM Shipping_Line__c where Name =: shippingLine limit 1].id;
         String businesstype = [SELECT Id, Business_Type__c FROM Account where id =: leadId limit 1].Business_Type__c;
         system.debug('incocharges '+incocharges);
@@ -647,7 +673,7 @@ public without sharing  class BAFCOLRoutingDetailsController {
         Id ImportRecordTypeId = Schema.SObjectType.RMS__c.getRecordTypeInfosByName()
             .get('Import')
             .getRecordTypeId();
-        
+        for(BAFCOLeadDetailsController.selectedEquip obj : selectedEquip){
         RMS__c rmsobj = new RMS__c();
         rmsobj.Port_Of_Loading__c = routeObj.Port_of_loading__c;
         rmsObj.Port_Of_Discharge__c = routeObj.Port_of_Destination__c;
@@ -656,9 +682,17 @@ public without sharing  class BAFCOLRoutingDetailsController {
         rmsObj.Shipping_Line__c = shippingLineId;
         rmsObj.Rate_Type__c = rmsDetail.rateType;
         rmsObj.Validity__c = Date.valueOf(rmsDetail.validity);
-        rmsObj.Sea_Freight__c = rmsDetail.seaFreight;
+        //rmsObj.Sea_Freight__c = rmsDetail.seaFreight;
         rmsObj.Business_Type__c = businesstype;
-        rmsObj.Equipment_Type__c = equipId;
+        //rmsObj.Equipment_Type__c = equipId;
+        List<BAFCOLeadDetailsController.SelectedEquip> rmsEquipList = rmsDetail.selectedEquip;
+            system.debug('rmsEquipList '+rmsEquipList);
+        for(BAFCOLeadDetailsController.SelectedEquip obj2 : rmsEquipList){
+                if(obj2.label == obj.label){
+                    rmsObj.Sea_Freight__c = obj2.seaFreight;
+                    rmsObj.Equipment_Type__c = obj2.value;
+                }
+            }    
         rmsObj.Business_Type__c = rmsDetail.businessType;
         rmsObj.All_in_Rate__c = rmsDetail.allInRate;
         rmsObj.FOB_All_In__c = rmsDetail.FOBAllIn;
@@ -784,7 +818,8 @@ public without sharing  class BAFCOLRoutingDetailsController {
             proobj.RecordTypeId = ReceivedRecordtypeId;
             update proobj;
         }
-        return rmsObj.id;
+        }
+        return null;
     }
     @AuraEnabled
     public static List<Shipping_Line__c> getShipline(){

@@ -13,6 +13,7 @@ public class BAFCOOrderCreationDto {
         public List<value> value { get; set; }
     }
     public class value{
+        @AuraEnabled public String incoTermId { get; set; }
         @AuraEnabled
         public String recordtypeId { get; set; }
         @AuraEnabled

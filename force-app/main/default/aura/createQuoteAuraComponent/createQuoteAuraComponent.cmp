@@ -1,8 +1,10 @@
 <aura:component implements="lightning:isUrlAddressable,force:appHostable,force:hasRecordId,flexipage:availableForAllPageTypes,lightning:actionOverride,flexipage:availableForRecordHome,force:lightningQuickAction"
-                access="global" >
+                access="global" controller="BAFCOEditOpportunityController" >
    <lightning:navigation aura:id="navService"/>
     <aura:attribute name="pageReference" type="Object"/>
     <aura:attribute name="refRecordId" type="String" />
+    <aura:attribute name="isEdit" type="String" default="false" />
+    <aura:attribute name="optyId" type="String" default="" />
     <aura:attribute name="device" type="String" />
     <aura:handler name="init" action="{!c.navigateToLC}" value="{!this}" />
     <aura:if isTrue="{!v.device == 'PHONE'}">
@@ -18,7 +20,7 @@
         }
     </aura:html>
 	<div style="background: white;">
-        <c:bAFCOLeadCreationParentComponent quoteID="{!v.refRecordId}"/>
+        <c:bAFCOLeadCreationParentComponent quoteID="{!v.refRecordId}" optyId="{!v.optyId}" isEdit="{!v.isEdit}"/>
     </div>
     </aura:if>
 </aura:component>

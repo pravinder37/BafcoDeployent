@@ -156,7 +156,7 @@
     <label>Target</label>
     <nameField>
         <label>Target Name</label>
-        <trackHistory>false</trackHistory>
+        <trackHistory>true</trackHistory>
         <type>Text</type>
     </nameField>
     <pluralLabel>Targets</pluralLabel>
