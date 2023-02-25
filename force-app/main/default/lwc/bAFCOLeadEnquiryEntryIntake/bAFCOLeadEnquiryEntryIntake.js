@@ -475,6 +475,10 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
                 let Obj={Id:result.INCO_Term__c,Name:result.INCO_Term__r.Name}
                 if(field != null) field.handleDefaultSelected(Obj);
             }
+            else{
+                let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[0];
+                if(field != null) field.handleRemovePill();
+            }
             if(result.Port_of_Loading__c != undefined){
                 let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[1];
                 let Obj={Id:result.Port_of_Loading__c,Name:result.Port_of_Loading__r.Name,index:index}
@@ -494,6 +498,10 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
                 let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[4];
                 let Obj={Id:result.Commodity__c,Name:result.Commodity__r.Name,index:index}
                 field.handleDefaultSelected(Obj);
+            }
+            else{
+                let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[4];
+                field.handleRemovePill();
             }
             if(this.serviceType  == 'D2P' || this.serviceType  == 'D2D'){
                 this.showPickupPlaceField = true;                
