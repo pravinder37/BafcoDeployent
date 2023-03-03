@@ -191,7 +191,73 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
         }
         console.log('Lead List '+JSON.stringify(this.leadEnquiryList,null,2));
     }
-    getEditOptyDetail(){}
+    getEditOptyDetail(){
+        getEditOptyDetail({optyId:this.optyId})
+        .then(result=>{
+            console.log('getEditOptyDetail result'+JSON.stringify(result,null,2));
+            if(result != null){
+                this.businessTypeSelected = result.businessType;
+                this.closeDate = result.closeDate;
+                let commercialUserId = result.commercialUserId;
+                let commercialUserName = result.commercialUserName;
+                let field = this.template.querySelector('c-b-a-f-c-o-custom-look-up-component');
+                let Obj={Id:commercialUserId,Name:commercialUserName}
+                field.handleDefaultSelected(Obj);
+                let tempList =[];
+                if(result.routingList.length > 0){
+                    result.routingList.forEach(elem => {
+                        let leadEnqObj ={
+                            'routeName':elem.routeName,
+                            'routingRegular':elem.routingRegular,
+                            'serviceType':elem.serviceType,
+                            'incoTerm':elem.incoTerm,
+                            'incoTermName':elem.incoTermName,
+                            'portLoading':elem.portLoadingId != undefined ? elem.portLoadingId :'',
+                            'portLoadingName':elem.portLoadingId != undefined ? elem.portLoading :'',
+                            'portDestination':elem.portDestinationId != undefined ? elem.portDestinationId :'',
+                            'portDestinationName':elem.portDestinationId != undefined ? elem.portDestination :'',
+                            'shippingLine':elem.shippingLine != undefined ? elem.shippingLine :'',
+                            'shippingLineName':elem.shippingLine != undefined ? elem.shippingLineName :'',
+                            'placeOfPickup':elem.placeOfPickup,
+                            'placeOfDischarge':elem.placeOfDischarge,
+                            'commodity':elem.commodity != undefined ? elem.commodity :'',
+                            'commodityName':elem.commodity != undefined ? elem.commodityName :'',
+                            'cargoWeights':elem.cargoWeights,
+                            'dangerousGoods':elem.dangerousGoods,
+                            'remarks':elem.remarks,
+                            'dgClass':elem.dgClass,
+                            'leadIndex':parseInt(elem.leadIndex),
+                            'containerRecord': elem.containerRecord,
+                            'showDGClassField':elem.dangerousGoods,
+                            'showPickupPlaceField':false,
+                            'showDischargePlaceField':false,
+                            'incoTermField':parseInt(elem.leadIndex)+'incoTermField',
+                            'copyFromAbove':parseInt(elem.leadIndex) > 1 ? true : false,
+                            'parentId':this.quoteId,
+                            'serviceTypeClass':'',
+                            'incoTermClass':'',
+                            'portOfLoadingClass':'',
+                            'portOfDestinationClass':'',
+                            'commodityClass':'',
+                            'cargoweightClass':'',
+                            'dischargePlaceClass':'',
+                            'pickupPlaceClass':'',
+                            'disableAddRoute':false,
+                            'routeId':elem.routeId,
+                        }
+                        tempList.push(leadEnqObj);
+                    });
+                }
+                this.leadEnquiryList = tempList
+                let totalRecords = this.leadEnquiryList.length
+                this.entryIntVar = totalRecords+1;
+                console.log('leadEnquiryList $ '+JSON.stringify(this.leadEnquiryList,null,2))
+            }
+        })
+        .catch(error=>{
+            console.log('getEditOptyDetail error'+JSON.stringify(error,null,2));
+        })
+    }
     handleBusinessTypeChange(event){
         this.businessTypeSelected = event.target.value
         this.quoteTypeErrorClass ='';
@@ -540,6 +606,21 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
             lastContainerRecord.push(containerRecord);
             tempList[strIndex].containerRecord = lastContainerRecord;
             this.leadEnquiryList = JSON.parse( JSON.stringify( tempList ) );
+        }
+    }
+    handleRemoveContainerType(e){
+        let index = e.detail
+        let tempLeadList = this.leadEnquiryList;
+        let indexofBothList = index.split('.');
+        let LeadIndex = indexofBothList[0] - 1;
+        let indexOfRemoved = indexofBothList[1] - 1;
+        let containerRecords = tempLeadList[LeadIndex].containerRecord;
+        if(containerRecords.length != 1){
+            let remIndex = containerRecords.findIndex(x=>x.index == index)
+            if(remIndex != -1){
+                if(containerRecords[remIndex].id != '')  this.containerRemoveList.push(containerRecords[remIndex].id)
+                containerRecords.splice( remIndex, 1 );
+            }
         }
     }
 }

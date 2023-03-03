@@ -3,6 +3,9 @@ import getQuoteDataOnLoad from '@salesforce/apex/BAFCOQuoteCopyContentController
 import sendEmail from '@salesforce/apex/BAFCOQuoteCopyContentController.sendEmail';
 import { CloseActionScreenEvent } from 'lightning/actions';
 import {CurrentPageReference} from 'lightning/navigation';
+import Id from '@salesforce/user/Id';
+import { getRecord } from 'lightning/uiRecordApi';
+import userEmailFIELD from '@salesforce/schema/User.Email';
 export default class BAFCOQuotationSendEmail extends LightningElement {
     @api recordId;
     @track toSend = '';
@@ -17,9 +20,18 @@ export default class BAFCOQuotationSendEmail extends LightningElement {
         }
         console.log('recordId && '+this.recordId)
     }
+    @wire(getRecord, { recordId: Id, fields: [userEmailFIELD]}) 
+    currentUserInfo({error, data}) {
+        if (data) {
+            this.toCCSend = data.fields.Email.value;
+        } else if (error) {
+            this.error = error ;
+        }
+    }
     connectedCallback(){
         console.log('recordId * '+this.recordId)
         if(this.recordId != undefined) this.getQuoteDataOnLoad();
+        this.toSend = 'coml23@bafcoitl.com';
     }
     closeAction(){
         this.dispatchEvent(new CloseActionScreenEvent());

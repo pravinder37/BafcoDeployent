@@ -169,9 +169,9 @@
         <span style="margin-left: 10px; margin-top: 10px;font-weight: 700; ">Add Packages</span><span style="float: right;"><lightning-button variant="base"
             icon-name="utility:add"
             class="slds-m-top_large labelStyle"  
-            alternative-text="Add new Container"
-            label="Add new Container" 
-            title="remove containerType"
+            alternative-text="Add New Packages"
+            label="Add New Packages" 
+            title="Add New Packages"
             style="padding: 0px 20px 0px 20px;" 
             data-record-id={leadIndex} 
             onclick={handleAddContainer}></lightning-button></span>
@@ -241,7 +241,17 @@
                                     class={contr.unitsErrorClass}
                                     value={contr.units}></lightning-input>
                         </lightning-layout-item>
+                        <lightning-layout-item size="4" style ="padding:25px 0px 0px 15px;" large-device-size="4" medium-device-size="4" small-device-size="4" >
+                            <lightning-button-icon icon-name="utility:ban"
+                                variant="container"
+                                class="slds-m-top_large"  
+                                alternative-text="remove containerType" 
+                                title="remove containerType"
+                                data-record-id={contr.index}
+                                onclick={handleRemoveContainer}></lightning-button-icon>
+                        </lightning-layout-item>
                     </lightning-layout>
+                    <hr/>
                 </lightning-layout-item>
             </template>
         </lightning-layout>

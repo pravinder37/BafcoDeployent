@@ -88,7 +88,63 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
             this.getDefualtValueForEnquiry();
         }
     }
-    routeDefaultValueAssignment(){}
+    routeDefaultValueAssignment(){
+        console.log('hidePOL '+this.hidePOL,this.portLoading)
+        setTimeout(() => {
+            if(this.commodity != ''){
+                let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[4];
+                let Obj={Id:this.commodity,Name:this.commodityName}
+                if(field != null || field != undefined) field.handleDefaultSelected(Obj);
+            }
+            if(this.incoTerm!= undefined){
+                let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[0];
+                let Obj={Id:this.incoTerm,Name:this.incoTermName}
+                if(field != null || field != undefined) field.handleDefaultSelected(Obj);
+            }
+            //if(this.incoTermName == 'Local Operation') this.handleLocalInco();
+            if(this.hidePOL == false && this.portLoading != ''){
+                let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[1];
+                let Obj={Id:this.portLoading,Name:this.portLoadingName,index:this.leadIndex}
+                field.handleDefaultSelected(Obj);
+            }
+            if(this.hidePOD == false && this.portDestination != ''){
+                let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[2];
+                let Obj={Id:this.portDestination,Name:this.portDestinationName,index:this.leadIndex}
+                field.handleDefaultSelected(Obj);
+            }
+            if(this.hideShippingLine == false && this.shippingLine != ''){
+                let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[3];
+                let Obj={Id:this.shippingLine,Name:this.shippingLineName,index:this.leadIndex}
+                field.handleDefaultSelected(Obj);
+            }
+            if(this.serviceType != ''){
+                if(this.serviceType == 'Ex-Works'){
+                    this.showPickupPlaceField = true;
+                    this.showDischargePlaceField = true;
+                    let field2 = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[0];
+                    field2.handleRemovePill();
+                    this.incoTerm = '';
+                    this.incoTermName = '';
+                }
+                else{
+                    this.showPickupPlaceField = true;
+                    this.showDischargePlaceField = true;                
+                    if(this.serviceType == 'D2P' || this.serviceType ==  'D2D'){
+                        this.showPickupPlaceField = true;
+                    }
+                    else{
+                        this.showPickupPlaceField = false;
+                    }
+                    if(this.serviceType == 'P2D' || this.serviceType ==  'D2D'){
+                        this.showDischargePlaceField = true;
+                    }
+                    else{
+                        this.showDischargePlaceField = false;
+                    }
+                }
+            }
+        }, 100);
+    }
     @api getDefualtValueForEnquiry(){
         this.isLoading = true 
         getDefualtValueForEnquiry()
@@ -607,5 +663,9 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
     handleAddContainer(e){
         let strIndex = e.target.dataset.recordId;
         this.dispatchEvent(new CustomEvent('addcontainertype', { detail:  strIndex}));
+    }
+    handleRemoveContainer(e){
+        let strIndex = e.target.dataset.recordId;
+        this.dispatchEvent(new CustomEvent('removecontainertype', { detail:  strIndex}));
     }
 }
