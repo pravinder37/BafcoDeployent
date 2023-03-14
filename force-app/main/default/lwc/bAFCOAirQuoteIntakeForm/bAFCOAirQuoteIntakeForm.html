@@ -48,6 +48,20 @@
                     <template for:each={allRouteList} for:item="equip">
                         <lightning-tab label={equip.Tab_View__c} key={equip.key} value={equip.Tab_View__c} onactive={handleEquipMentActive}>
                             <lightning-layout multiple-rows>
+                                <lightning-layout-item size="6">
+                                    <label class="slds-form-element__label">
+                                        <p style="padding-left: 22px">ShippLine</p>
+                                    </label>
+                                </lightning-layout-item>
+                                <lightning-layout-item size="6">
+                                    <c-b-a-f-c-o-custom-look-up-component
+                                                    obj-name="Shipping_Line__c"
+                                                    search-placeholder="Search shipline" 
+                                                    icon-name="standard:account"
+                                                    onlookupselected={handleShipLineSelection}
+                                                    onlookupremoved={handleShipLineRemoved}></c-b-a-f-c-o-custom-look-up-component>
+                                                    
+                                </lightning-layout-item>
                                 <lightning-layout-item size="4" ><!-- so as to make three columns --></lightning-layout-item>
                                 <lightning-layout-item size="4" ><b>Buying Rate</b></lightning-layout-item>
                                  <lightning-layout-item size="4" ><b>Selling Rate</b></lightning-layout-item>
@@ -55,8 +69,8 @@
                                     <b>Total</b>
                                 </lightning-layout-item>
                                 <lightning-layout-item size="4" >
-                                    <lightning-input type="number" data-id={equip.Tab_View__c} disabled data-field="BuyingRateField" style="padding-right: 10px;" onchange={handlebuyingRateChange}                                                 
-                                    value={buyingRate}></lightning-input>
+                                    <lightning-input type="number" data-id={equip.Tab_View__c} data-field="BuyingRateField" style="padding-right: 10px;" onchange={handlebuyingRateChange}                                                 
+                                    value={buyingRateInput}></lightning-input>
                                 </lightning-layout-item>
                                 <lightning-layout-item size="4" >
                                     <lightning-input type="number" data-id={equip.Tab_View__c} data-field="totalRateField" style="padding-right: 10px;" onchange={handleTotalRateChange}                                                 

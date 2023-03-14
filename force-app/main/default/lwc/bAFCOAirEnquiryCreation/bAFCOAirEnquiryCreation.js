@@ -15,6 +15,7 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
     @api quoteId;
     @api optyId;
     @api isEdit;
+    @api isAir;
     @track entryIntVar = 1;
     @track contractVar = 1;
     @track commercialUserId = '';
@@ -545,19 +546,21 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
         this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].unitsErrorClass = '';
     }
     handleAddContainer(e){
-        let strIndex = e.detail
-        let tempList = this.leadEnquiryList;   
+        let strIndex = e.detail;
+        let tempList = this.leadEnquiryList;       
         let lastcontainer = tempList[strIndex - 1].containerRecord.length;
         let indexOfPreviousRecord = tempList[strIndex - 1].containerRecord[lastcontainer - 1].index.split('.');
         let newContainerIndex = indexOfPreviousRecord[1];
         newContainerIndex++;
         let lastContainerRecord = tempList[strIndex - 1].containerRecord;
+        console.log('lastContainerRecord ',JSON.stringify(lastContainerRecord,null,2));
+        let previousRecord = lastContainerRecord[0];
         let containerRecord = {
-            'length':null,
-            'width':null,
-            'height':null,
-            'CBM':null,
-            'Weight':null,
+            'length':previousRecord.length,
+            'width':previousRecord.width,
+            'height':previousRecord.height,
+            'CBM':previousRecord.CBM,
+            'Weight':previousRecord.Weight,
             'index' : strIndex +'.'+ newContainerIndex,
             'id':'',
             'lengthErrorClass':'',
@@ -566,9 +569,9 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
             'CBMErrorClass':'',
             'WeightErrorClass':'',
             'unitsErrorClass':'',
-            'stackable':false,
-            'palletized':false,
-            'units':'',
+            'stackable':previousRecord.stackable,
+            'palletized':previousRecord.palletized,
+            'units':previousRecord.units,
         }
         lastContainerRecord.push(containerRecord);
         tempList[strIndex - 1].containerRecord = lastContainerRecord;

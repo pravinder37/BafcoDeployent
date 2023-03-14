@@ -31,7 +31,7 @@ export default class BAFCOQuotationSendEmail extends LightningElement {
     connectedCallback(){
         console.log('recordId * '+this.recordId)
         if(this.recordId != undefined) this.getQuoteDataOnLoad();
-        this.toSend = 'coml23@bafcoitl.com';
+        this.toSend = 'coml21@bafcointl.com';
     }
     closeAction(){
         this.dispatchEvent(new CloseActionScreenEvent());
@@ -52,11 +52,13 @@ export default class BAFCOQuotationSendEmail extends LightningElement {
                     console.log('subject '+this.subject)
                     result.forEach(elem => {
                         content += '\nQuotation Name: '+elem.quoteName;
+                        content +='\nSaleman: '+elem.saleman;
+                        content +='\nContract Number: ';
                         content += '\nPort of Loading: '+elem.loadingPort;
                         content += '\nPort of Discharge: '+elem.dischargePort;
-                        content += '\nEquipment Type: '+elem.equipmentType;
-                        content += '\nCargo Weight: '+elem.cargoWeight;
+                        content += '\nEquipment Type: '+elem.equipmentType;                        
                         content += '\nQuantity: '+elem.quantity;
+                        content += '\nCargo Weight: '+elem.cargoWeight;
                         content += '\nShipping Line: '+elem.shippingLine;
                         content += '\nCustomer refrence number: '+elem.customerRefNo;
                         content += '\nCustomer PO number: '+elem.customerPONo;

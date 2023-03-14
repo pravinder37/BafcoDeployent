@@ -3,6 +3,7 @@ import getRouteListOnload from '@salesforce/apex/BAFCOAirEnquiryController.getRo
 import updateValidityDate from '@salesforce/apex/BAFCOLRoutingDetailsController.updateValidityDate';
 import genrateQuotation from '@salesforce/apex/BAFCOLocalOperationQuoteController.genrateQuotation';
 import { NavigationMixin } from 'lightning/navigation';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class BAFCOAirQuoteIntakeForm extends NavigationMixin(LightningElement) {
     @api routeName;
     @api routingRegular;
@@ -56,6 +57,7 @@ export default class BAFCOAirQuoteIntakeForm extends NavigationMixin(LightningEl
     @track margin = 0;
     @track daysLeft = 0;
     @track quotationItemId = '';
+    @track buyingRateInput ;
 
     @track incoChargList = [];
 
@@ -156,6 +158,8 @@ export default class BAFCOAirQuoteIntakeForm extends NavigationMixin(LightningEl
     @track exWorksTotal = 0;
     @track displayExworks = false;
     @track currencyCode = 'USD';
+    @track airShippline = '';
+    @track airShipplineName = '';
 
     connectedCallback(){
         if(this.businessType == 'Export'){
@@ -194,6 +198,7 @@ export default class BAFCOAirQuoteIntakeForm extends NavigationMixin(LightningEl
     resetCalculation(){
         this.totalRate = 0;
         this.buyingRate = 0;
+        this.buyingRateInput = null;
         this.rmsRemarks = '';
         this.quantity=0;
         this.sellingRate = 0;
@@ -270,6 +275,10 @@ export default class BAFCOAirQuoteIntakeForm extends NavigationMixin(LightningEl
         this.includeExWorksCharge=false
         this.currencyCode = 'USD';
         this.quotationSaved = false;
+        this.airShippline = '';
+        this.airShipplineName = '';
+        /*let childObj = this.template.querySelector('c-b-a-f-c-o-custom-look-up-component');
+        if(childObj != null) childObj.handleRemovePill();*/
     }
     handleTotalRateChange(e){
         this.totalRate = e.target.value;
@@ -300,9 +309,11 @@ export default class BAFCOAirQuoteIntakeForm extends NavigationMixin(LightningEl
                 this.toHoldData[index].value[0].includeAdditionalCharge = this.includeAdditionalCharge
                 this.toHoldData[index].value[0].includeExWorksCharge = this.includeExWorksCharge
                 this.toHoldData[index].value[0].currencyCode = this.currencyCode
+                this.toHoldData[index].value[0].buyingRateInput = this.buyingRateInput
+                this.toHoldData[index].value[0].airShippline = this.airShippline
+                this.toHoldData[index].value[0].airShipplineName = this.airShipplineName
             }
         }
-        console.log('to hold '+JSON.stringify(this.toHoldData,null,2))
     }
     updateBuyingRate(){
         let dtoTotal = 0;   
@@ -328,7 +339,10 @@ export default class BAFCOAirQuoteIntakeForm extends NavigationMixin(LightningEl
                 }
             }
         }
+        if(this.buyingRateInput > 0) dtoTotal = parseInt(dtoTotal) + parseInt(this.buyingRateInput);
         this.buyingRate = dtoTotal > 0 ? dtoTotal : 0;
+        console.log('buyingRate '+this.buyingRate);
+        console.log('buyingRateInput '+this.buyingRateInput);
     }
     @api handleUpdateCalculation(){
         let dtoTotal = 0;   
@@ -374,7 +388,7 @@ export default class BAFCOAirQuoteIntakeForm extends NavigationMixin(LightningEl
                 totalRateField.setCustomValidity("");
                 totalRateField.reportValidity();  
             }*/
-
+            console.log('buyingRate * '+this.buyingRate)
         profit = this.sellingRate - this.buyingRate;
         let margin  = profit/this.sellingRate;
         this.margin = isNaN(margin) ? 0 : margin * 100;
@@ -466,7 +480,10 @@ export default class BAFCOAirQuoteIntakeForm extends NavigationMixin(LightningEl
                 'currencyCode':'USD',
                 'portLoadingId':this.portLoadingId,
                 'portDestinationId':this.portDestinationId,
-                'incoTermId':this.incoTermId
+                'incoTermId':this.incoTermId,
+                'buyingRateInput':0,
+                'airShippline':'',
+                'airShipplineName':'',
             })
             this.toHoldData[index].value = JSON.parse(JSON.stringify(tempList));
         }
@@ -491,8 +508,16 @@ export default class BAFCOAirQuoteIntakeForm extends NavigationMixin(LightningEl
             this.savedClicked = this.toHoldData[index].value[0].savedClicked;
             this.quotationSaved = this.toHoldData[index].value[0].savedClicked;
             this.buyingRate = this.toHoldData[index].value[0].quoteBuyingRate;
+            this.buyingRateInput = this.toHoldData[index].value[0].buyingRateInput;
+            this.airShippline = this.toHoldData[index].value[0].airShippline;
+            this.airShipplineName = this.toHoldData[index].value[0].airShipplineName;
             let allData = this.serviceChargeList;
             if(allData.currencyCode != undefined) this.currencyCode = allData.currencyCode;
+            if(this.airShippline != ''){
+                let childObj = this.template.querySelector('c-b-a-f-c-o-custom-look-up-component');
+                let obj={Id:this.airShippline,Name:this.airShipplineName}
+                if(childObj != null) childObj.handleDefaultSelected(obj);
+            }
         }
         this.assignServiceChargesData();
         this.updateBuyingRate();
@@ -1144,6 +1169,12 @@ export default class BAFCOAirQuoteIntakeForm extends NavigationMixin(LightningEl
             totalRateField.reportValidity();
             allValid = false;
         }
+        if(!dto.buyingRateInput > 0){
+            let totalRateField = this.template.querySelector("[data-field='BuyingRateField']")
+            totalRateField.setCustomValidity("Buying rate should be greater then 0");
+            totalRateField.reportValidity();
+            allValid = false;
+        }
         if(allValid){
             genrateQuotation({
                 routeId: this.routeId,
@@ -1173,6 +1204,15 @@ export default class BAFCOAirQuoteIntakeForm extends NavigationMixin(LightningEl
                 console.log('generate quote error', JSON.stringify(error));
             })
         }
+        else{
+            const evt = new ShowToastEvent({
+                title: 'Missing Field',
+                message: 'Buying/Selling rate must be greater then 0.',
+                variant: 'error',
+                mode: 'dismissable'
+            });
+            this.dispatchEvent(evt);
+        }
     }
     @api handleGotoQuotation(validityDate){        
         if(this.quotationId != ''){
@@ -1195,19 +1235,30 @@ export default class BAFCOAirQuoteIntakeForm extends NavigationMixin(LightningEl
             })
         }
     }
-    /*handlebuyingRateChange(e){
-        this.buyingRate = e.target.value;
-        console.log('this.buyingRate '+this.buyingRate)
+    handlebuyingRateChange(e){
+        this.buyingRateInput = e.target.value;
         let BuyingRateField = this.template.querySelector("[data-field='BuyingRateField']")
             BuyingRateField.setCustomValidity("");
             BuyingRateField.reportValidity();
         this.updateTabsData();
         this.handleUpdateCalculation();
-    }*/
+    }
     handleExWorksTotalChange(e){
         let value = parseInt(e.target.value)
         this.exWorksObj.LoadCharge = value
         this.exWorksTotal = value
+        this.updateTabsData();
+        this.handleUpdateCalculation();
+    }
+    handleShipLineSelection(e){
+        this.airShippline = e.detail.Id;
+        this.airShipplineName = e.detail.Name;
+        this.updateTabsData();
+        this.handleUpdateCalculation();
+    }
+    handleShipLineRemoved(e){
+        this.airShippline = '';
+        this.airShipplineName ='';
         this.updateTabsData();
         this.handleUpdateCalculation();
     }

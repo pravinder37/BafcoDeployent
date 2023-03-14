@@ -60,6 +60,9 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
     @track hideShippingLine = false;
     @track disableServiceType = false;
     @api isEdit;
+    @api isAir;
+    @track portObject = 'Port__c';
+
 
     @track width;
 
@@ -77,6 +80,12 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
     }
 
     connectedCallback(){
+        if(this.isAir == 'true'){
+            this.portObject = '';
+        }
+        else{
+            this.portObject = 'Port__c';
+        }
         if(this.accountId.startsWith('001')){
             this.isAccountObject = true;
             this.getAllRegularRoute();
@@ -209,7 +218,7 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
         getRegularRouteData({rgID:rgID})
         .then(result=>{
             console.log('rsult ',JSON.stringify(result,null,2))
-            this.serviceType = result.Service_Type__c != undefined ? result.Service_Type__c : '';
+           this.serviceType = result.Service_Type__c != undefined ? result.Service_Type__c : '';
             this.incoTerm = result.INCO_Term__c != undefined ? result.INCO_Term__c : '';
             this.portLoading = result.Port_of_Loading__c != undefined ? result.Port_of_Loading__c : '';
             this.portDestination = result.Port_of_Destination__c != undefined ? result.Port_of_Destination__c : '';
@@ -219,34 +228,49 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
             this.shipmentKind = 'FCL';
             this.placeOfPickup = result.Pickup_Place__c != undefined ? result.Pickup_Place__c : '';
             this.placeOfDischarge = result.Discharge_Place__c != undefined ? result.Discharge_Place__c : '';
+            let incoTermfield = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[0];
+            let polfield = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[1];
+            let podfield = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[2];
+            let shipfield = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[3];
+            let commodityfield = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[4];
             if(result.Dangerous_Goods__c == true){
                 this.showDGClassField = true;
                 this.dgClass = result.DG_Class__c != undefined ? result.DG_Class__c : '';
             }
             if(this.incoTerm != ''){
-                let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[0];
                 let Obj={Id:result.INCO_Term__c,Name:result.INCO_Term__r.Name}
-                if(field != null) field.handleDefaultSelected(Obj);
+                if(incoTermfield != null) incoTermfield.handleDefaultSelected(Obj);
+            }
+            else{
+                if(incoTermfield != null) incoTermfield.handleRemovePill();
             }
             if(result.Port_of_Loading__c != undefined){
-                let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[1];
                 let Obj={Id:result.Port_of_Loading__c,Name:result.Port_of_Loading__r.Name,index:index}
-                field.handleDefaultSelected(Obj);
+                polfield.handleDefaultSelected(Obj);
             }
-            if(result.Port_of_Destination__c != undefined){
-                let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[2];
+            else{
+                polfield.handleRemovePill();
+            }
+            if(result.Port_of_Destination__c != undefined){                
                 let Obj={Id:result.Port_of_Destination__c,Name:result.Port_of_Destination__r.Name,index:index}
-                field.handleDefaultSelected(Obj);
+                podfield.handleDefaultSelected(Obj);
             }
-            if(result.Shipping_Line__c != undefined){
-                let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[3];
+            else{
+                podfield.handleRemovePill();
+            }
+            if(result.Shipping_Line__c != undefined){                
                 let Obj={Id:result.Shipping_Line__c,Name:result.Shipping_Line__r.Name,index:index}
-                field.handleDefaultSelected(Obj);
+                shipfield.handleDefaultSelected(Obj);
             }
-            if(result.Commodity__c != undefined){
-                let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[4];
+            else{
+                shipfield.handleRemovePill();
+            }
+            if(result.Commodity__c != undefined){                
                 let Obj={Id:result.Commodity__c,Name:result.Commodity__r.Name,index:index}
-                field.handleDefaultSelected(Obj);
+                commodityfield.handleDefaultSelected(Obj);
+            }
+            else{
+                commodityfield.handleRemovePill();
             }
             if(this.serviceType  == 'D2P' || this.serviceType  == 'D2D'){
                 this.showPickupPlaceField = true;    
