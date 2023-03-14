@@ -81,7 +81,7 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
 
     connectedCallback(){
         if(this.isAir == 'true'){
-            this.portObject = '';
+            this.portObject = 'Airport__c';
         }
         else{
             this.portObject = 'Port__c';

@@ -178,6 +178,7 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
             'dischargePlaceClass':'',
             'pickupPlaceClass':'',
             'disableAddRoute':false,
+            'isAir':this.isAir,
             'routeId':''
         }
         this.entryIntVar++;
