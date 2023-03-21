@@ -31,6 +31,7 @@ export default class BAFCOImportQuoteLineItemReviseDetail extends LightningEleme
     @track agentName = '';
     @track quotationDate ='';
     @api equipmentType ='';
+    @api cargoReadiness = '';
     @track currencyCode='USD'
     connectedCallback(){
         this.getQuoteLineItemDetails();

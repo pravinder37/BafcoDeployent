@@ -35,6 +35,7 @@ export default class BAFCOAirQuoteIntakeForm extends NavigationMixin(LightningEl
     @api portDestinationId ='';
     @api isAir=false;
     @api airQuotation;
+    @api cargoReadiness ='';
     @track displayPOL =  false;
     @track displayPOD = false;
     @track displayPlOP = false;

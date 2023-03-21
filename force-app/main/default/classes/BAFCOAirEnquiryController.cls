@@ -140,12 +140,13 @@ public class BAFCOAirEnquiryController {
         }
         List<BAFCORoutingDetailsDto> routingDetailsList = new List<BAFCORoutingDetailsDto>();
         Integer index = 1;
-        for(Route__c enqObj : [SELECT Airport_of_Loading__r.name,Airport_of_Destination__r.Name,(Select id, Equipment_Type__r.name,Quantity__c from Route_Equipments__r),Place_of_Discharge__r.Name,Place_of_Pickup__r.Name,Opportunity_Enquiry__c ,Regular_Routing_Lookup__r.name,Port_of_loading__c,Discharge_Place__c,Pickup_Place__c,Id, Regular_Routing__c,INCO_Term__r.name, Kind_Of_Shipment__c, Service_Type__c, Port_of_loading__r.Name, 
+        for(Route__c enqObj : [SELECT Cargo_Readiness__c,Airport_of_Loading__r.name,Airport_of_Destination__r.Name,(Select id, Equipment_Type__r.name,Quantity__c from Route_Equipments__r),Place_of_Discharge__r.Name,Place_of_Pickup__r.Name,Opportunity_Enquiry__c ,Regular_Routing_Lookup__r.name,Port_of_loading__c,Discharge_Place__c,Pickup_Place__c,Id, Regular_Routing__c,INCO_Term__r.name, Kind_Of_Shipment__c, Service_Type__c, Port_of_loading__r.Name, 
                                Port_of_Destination__r.Name, Shipping_Line__r.name, Commodity__r.Name, Cargo_Weight__c, Remarks__c, Name  
                                FROM Route__c WHERE  Id in : mapRouteIdToQuotationItem.keySet()]){
                                    BAFCORoutingDetailsDto enqDtoObj = new BAFCORoutingDetailsDto();
                                    Quotation_Item__c item = mapRouteIdToQuotationItem.get(enqObj.Id);
                                    enqDtoObj.routeName = 'Route '+ index;
+                                   enqDtoObj.cargoReadiness = enqObj.Cargo_Readiness__c != null ? (enqObj.Cargo_Readiness__c.day()+'-'+ BAFCOLeadDetailsController.getMonthName(enqObj.Cargo_Readiness__c.month()) +'-'+enqObj.Cargo_Readiness__c.year()) : '-';
                                    enqDtoObj.routingRegular = enqObj.Regular_Routing_Lookup__c != null ? enqObj.Regular_Routing_Lookup__r.name : '-';
                                    enqDtoObj.shipmentKind = enqObj.Kind_Of_Shipment__c != null ? enqObj.Kind_Of_Shipment__c : '-';
                                    enqDtoObj.serviceType = enqObj.Service_Type__c != null ? enqObj.Service_Type__c : '-';

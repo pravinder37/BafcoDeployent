@@ -52,7 +52,7 @@ public with Sharing class BAFCOMeetingController {
     public static EventRecord getIntakeMeetingObj(String eventId){
         EventRecord dto = new EventRecord();
         String objectName = '';
-        Event ev = [Select who.Name,Related_Enquiry__r.Name,id,whatId,what.Name,Start_Date__c,StartDateTime,End_Date__c,EndDateTime,Minutes_of_Meeting__c from event where id =: eventId];       	
+        Event ev = [Select Purpose_of_Visit__c, who.Name,Related_Enquiry__r.Name,id,whatId,what.Name,Start_Date__c,StartDateTime,End_Date__c,EndDateTime,Minutes_of_Meeting__c from event where id =: eventId];       	
         if(ev.WhatId != null){
             dto.objectName = getObjectNameFromId(ev.WhatId);
             dto.whatName = ev.what.Name;
@@ -70,6 +70,7 @@ public with Sharing class BAFCOMeetingController {
         dto.meetingMinute = ev.Minutes_of_Meeting__c;
         dto.relatedEnquiryId = ev.Related_Enquiry__c;
         dto.relatedEnquiryName = ev.Related_Enquiry__r.Name;
+        dto.visitForUpdate = ev.Purpose_of_Visit__c;
         return dto;
     }
     public static String getObjectNameFromId(String recordId){
@@ -93,7 +94,8 @@ public with Sharing class BAFCOMeetingController {
         String startTime,
         String meetingMinute,
         String lati,
-        String longi
+        String longi,
+        String visitForUpdate
     ){
         system.debug('enquiryId : '+enquiryId);
         List<String> dateList = startDate.split('-');
@@ -113,6 +115,7 @@ public with Sharing class BAFCOMeetingController {
         ev.Checkin_Location__Latitude__s = lati != '' ? Decimal.valueOf(lati) : null;
         ev.Checkin_Location__Longitude__s = longi !='' ?  Decimal.valueOf(longi) : null;
         ev.Minutes_of_Meeting__c = meetingMinute;
+        ev.Purpose_of_Visit__c = visitForUpdate;
         update ev;
         return ev.id;
     }
@@ -196,5 +199,7 @@ public with Sharing class BAFCOMeetingController {
         public String relatedEnquiryId{get;set;}
         @AuraEnabled 
         public String relatedEnquiryName{get;set;}
+        @AuraEnabled 
+        public String visitForUpdate{get;set;}
     }
 }

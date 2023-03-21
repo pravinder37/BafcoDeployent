@@ -36,6 +36,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
     @api quotationId = '';
     @api equipmentType = ''
     @api acctName = '';
+    @api cargoReadiness = '';
 
     @track addAgentModel = false;
     @track agentTabSelected = '';

@@ -21,7 +21,7 @@ public without sharing  class BAFCOLRoutingDetailsController {
     public static List<BAFCORoutingDetailsDto> getEnqueryDetails(String enquiryID) {
         List<BAFCORoutingDetailsDto> routingDetailsList = new List<BAFCORoutingDetailsDto>();
         Integer index = 1;
-        for(Route__c enqObj : [SELECT Airport_of_Loading__r.name,Airport_of_Destination__r.name,Opportunity_Enquiry__r.Recordtype.Name, (Select id,Equipment_Type__r.name,Quantity__c from Route_Equipments__r), Place_of_Discharge__r.Name,Place_of_Pickup__r.Name,Opportunity_Enquiry__r.Account.Name,Regular_Routing_Lookup__r.name,Port_of_loading__c,Pickup_Place__c,Discharge_Place__c,Id, Regular_Routing__c,INCO_Term__r.name, Kind_Of_Shipment__c, Service_Type__c, Port_of_loading__r.Name, 
+        for(Route__c enqObj : [SELECT Cargo_Readiness__c,Airport_of_Loading__r.name,Airport_of_Destination__r.name,Opportunity_Enquiry__r.Recordtype.Name, (Select id,Equipment_Type__r.name,Quantity__c from Route_Equipments__r), Place_of_Discharge__r.Name,Place_of_Pickup__r.Name,Opportunity_Enquiry__r.Account.Name,Regular_Routing_Lookup__r.name,Port_of_loading__c,Pickup_Place__c,Discharge_Place__c,Id, Regular_Routing__c,INCO_Term__r.name, Kind_Of_Shipment__c, Service_Type__c, Port_of_loading__r.Name, 
                                Port_of_Destination__r.Name, Shipping_Line__r.name, Commodity__r.Name, Cargo_Weight__c, Remarks__c,
                                Name,Opportunity_Enquiry__r.Business_Type__c,Opportunity_Enquiry__r.Account.FD__c,Opportunity_Enquiry__r.Account.Average_Credit_Days__c,Opportunity_Enquiry__r.Account.Best_Margin__c,Opportunity_Enquiry__r.Account.Average_Margin__c /*Enquiry__r.Account__r.Average_Margin__c,Enquiry__r.Account__r.Best_Margin__c,Enquiry__r.Account__r.Average_Credit_Days__c,Enquiry__r.Business_Type__c*/  
                                FROM Route__c WHERE Opportunity_Enquiry__c=:enquiryID]){
@@ -46,6 +46,7 @@ public without sharing  class BAFCOLRoutingDetailsController {
                                    }
                                    enqDtoObj.commodity = enqObj.Commodity__r.Name != null ? enqObj.Commodity__r.name : '-';
                                    enqDtoObj.cargoWeights = enqObj.Cargo_Weight__c != null ? enqObj.Cargo_Weight__c : 0 ;
+                                   enqDtoObj.cargoReadiness = enqObj.Cargo_Readiness__c != null ? (enqObj.Cargo_Readiness__c.day()+'-'+ BAFCOLeadDetailsController.getMonthName(enqObj.Cargo_Readiness__c.month()) +'-'+enqObj.Cargo_Readiness__c.year()) : '-';
                                    enqDtoObj.remarks = enqObj.Remarks__c != null ? enqObj.Remarks__c : '-';
                                    enqDtoObj.routeId = enqObj.Id;
                                    enqDtoObj.shippingLine = enqObj.Shipping_Line__r.name != null ? enqObj.Shipping_Line__r.name : '-';

@@ -70,7 +70,7 @@ public class BAFCOQuotationReviseController {
         List<BAFCORoutingDetailsDto> routingDetailsList = new List<BAFCORoutingDetailsDto>();
         Integer index = 1;
         for(Route__c enqObj : [SELECT (Select id, Equipment_Type__r.name,Quantity__c from Route_Equipments__r),Place_of_Discharge__r.Name,Place_of_Pickup__r.Name,Opportunity_Enquiry__c ,Regular_Routing_Lookup__r.name,Port_of_loading__c,Discharge_Place__c,Pickup_Place__c,Id, Regular_Routing__c,INCO_Term__r.name, Kind_Of_Shipment__c, Service_Type__c, Port_of_loading__r.Name, 
-                               Port_of_Destination__r.Name, Shipping_Line__r.name, Commodity__r.Name, Cargo_Weight__c, Remarks__c, Name  
+                               Port_of_Destination__r.Name, Shipping_Line__r.name, Commodity__r.Name, Cargo_Weight__c, Remarks__c,Cargo_Readiness__c, Name  
                                FROM Route__c WHERE  Id in : mapRouteIdToQuotationItem.keySet()]){
                                    BAFCORoutingDetailsDto enqDtoObj = new BAFCORoutingDetailsDto();
                                    enqDtoObj.routeName = 'Route '+ index;
@@ -89,6 +89,7 @@ public class BAFCOQuotationReviseController {
                                    enqDtoObj.enquiryId = enqObj.Opportunity_Enquiry__c;
                                    enqDtoObj.placeOfPickupName = enqObj.Pickup_Place__c;
                                    enqDtoObj.placeOfDischargeName = enqObj.Discharge_Place__c;
+                                   enqDtoObj.cargoReadiness = enqObj.Cargo_Readiness__c != null ? (enqObj.Cargo_Readiness__c.day()+'-'+ BAFCOLeadDetailsController.getMonthName(enqObj.Cargo_Readiness__c.month()) +'-'+enqObj.Cargo_Readiness__c.year()) : '-';
                                    if(enqObj.Route_Equipments__r.size() > 0){
                                        String equipmentType ='';
                                        for(Route_Equipment__c rr : enqObj.Route_Equipments__r){

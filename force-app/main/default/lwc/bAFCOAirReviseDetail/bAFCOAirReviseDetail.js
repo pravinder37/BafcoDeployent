@@ -15,6 +15,7 @@ export default class BAFCOAirReviseDetail extends LightningElement {
     @api dangerousGoods;
     @api remarks;
     @api routeId;
+    @api cargoReadiness = '';
     @api pickupPlaceName = '';
     @api dischargePlaceName = '';
     @track quoteLineItemList = [];

@@ -86,6 +86,11 @@
                                         <p if:true={map.value.Remarks__c} class="labelDataCss">{map.value.Remarks__c}</p>
                                         <p if:false={map.value.Remarks__c} class="labelDataCss">-</p>
                                     </lightning-layout-item>
+                                    <lightning-layout-item size="3" style="padding-left: 2%;padding-top: 1%;">
+                                        <span class="labelCss">Cargo Readiness</span>
+                                        <p if:true={map.value.Cargo_Readiness__c} class="labelDataCss"><lightning-formatted-date-time value={map.value.Cargo_Readiness__c}></lightning-formatted-date-time></p>
+                                        <p if:false={map.value.Cargo_Readiness__c} class="labelDataCss">-</p>
+                                    </lightning-layout-item>
                                 </lightning-layout>
                             </lightning-tab>
                         </template>

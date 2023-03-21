@@ -21,7 +21,7 @@ public class BAFCOSalesOrderController {
             routeId.add(item.Route__c);
         }
         if(routeId.size()>0){
-            for(Route__c routeObj : [SELECT Opportunity_Enquiry__c ,Port_of_loading__c,/*Place_of_Discharge__c,Place_of_Pickup__c*/Discharge_Place__c,Pickup_Place__c,Id, Regular_Routing__c,INCO_Term__r.name, Kind_Of_Shipment__c, Service_Type__c, Port_of_loading__r.Name, 
+            for(Route__c routeObj : [SELECT Cargo_Readiness__c,Opportunity_Enquiry__c ,Port_of_loading__c,/*Place_of_Discharge__c,Place_of_Pickup__c*/Discharge_Place__c,Pickup_Place__c,Id, Regular_Routing__c,INCO_Term__r.name, Kind_Of_Shipment__c, Service_Type__c, Port_of_loading__r.Name, 
                                      Port_of_Destination__r.Name, Shipping_Line__r.name, Commodity__r.Name, Cargo_Weight__c, Remarks__c, Name  
                                      FROM Route__c WHERE  Id in : routeId]){
                                          if(!mapRouteIdToName.containsKey(routeObj.Id)){

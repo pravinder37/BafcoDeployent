@@ -31,7 +31,8 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
     @track displayIntakeForm = false;
     @track eventId = '';
     @track displayInitial = true;
-    @track accountObjectChoosed = false
+    @track accountObjectChoosed = false;
+    @track visitForUpdate = '';
     get radioOptions() {
         return [
             { label: 'Lead', value: 'Lead' },
@@ -285,6 +286,7 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
                 this.endDate1 = JSON.parse(JSON.stringify(result.endDate))
                 this.endTime1 = this.formatTime1(result.endTime)
                 this.meetinginute1 = result.meetingMinute  
+                this.visitForUpdate = result.visitForUpdate
                 console.log('*********** '+result.relatedEnquiryId)
                 if(result.objectName == 'Lead') this.filter1 = 'Lead = \''+result.whatId+'\'';
                 else if(result.objectName == 'Account') this.filter1 = 'Account__c = \''+result.whatId+'\'';
@@ -370,7 +372,8 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
                     startTime:this.startTime1,
                     meetingMinute:this.meetinginute1,
                     lati:this.lati1,
-                    longi:this.longi1
+                    longi:this.longi1,
+                    visitForUpdate: this.visitForUpdate
                 })
                 .then(result=>{
                     console.log('result ',result)
@@ -436,6 +439,12 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
     handleMeetingMinuteChange(e){
         this.meetinginute1 = e.detail.value
         let Field = this.template.querySelector("[data-field='meetingMinute1']");
+        Field.setCustomValidity(''); 
+        Field.reportValidity();
+    }
+    handlevisitUpdateForChange(e){
+        this.visitForUpdate = e.target.value;
+        let Field = this.template.querySelector("[data-field='visitForUpdate']");
         Field.setCustomValidity(''); 
         Field.reportValidity();
     }
