@@ -17,6 +17,10 @@ public class BAFCOGenerteQuoteDto {
     @AuraEnabled
     public String quotationItemId { get; set; }
     @AuraEnabled
+    public String airShippline { get; set; }
+    @AuraEnabled
+    public Boolean isAir { get; set; }
+    @AuraEnabled
     public String pickupPlaceName { get; set; }
     @AuraEnabled
     public String portLoadingId { get; set; } 
@@ -30,6 +34,7 @@ public class BAFCOGenerteQuoteDto {
     public String incoTermId { get; set; }
     @AuraEnabled
     public String selectedEquipment { get; set; }
+    @AuraEnabled public boolean isLCL {get;set;}
     @AuraEnabled
     public String dischargePlace { get; set; }
     @AuraEnabled

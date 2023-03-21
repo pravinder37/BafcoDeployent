@@ -11,8 +11,11 @@ public without sharing class BAFCOGeneratePDFController {
     public Boolean showCharges {get;set;}
     public Boolean isPhone {get;set;}
     public String recordId {get;set;}
+    public Boolean isLCL {get;set;}
     
      public String subject { get; set; }
+    public String loadingPortLabel { get; set; }
+    public String destinationPortLabel { get; set; }
  public String body { get; set; }
  public String emailid{get; set;}
     
@@ -38,10 +41,20 @@ public without sharing class BAFCOGeneratePDFController {
         Boolean has40HCEquip = false;
         Boolean DC20Added = false;
         if(this.recordId != null ){
-            Quotation__c quoteObj = [Select Recordtype.Name,Terms_and_Conditions__c,RecordtypeId,Effective_From__c,Payment_Terms__c,Inclusions__c,Exclusions__c,Remarks__c,Account__r.Name,Name,(Select Route__r.Service_Type__c,Route__r.INCO_Term__r.name from Quotation_Items__r),createdDate,CreatedBy.Name,Quotation_Validity__c from Quotation__c where id =: this.recordId];
+            Quotation__c quoteObj = [Select isAir__c,isLCL__c,Recordtype.Name,Terms_and_Conditions__c,RecordtypeId,Effective_From__c,Payment_Terms__c,Inclusions__c,Exclusions__c,Remarks__c,Account__r.Name,Name,(Select Route__r.Service_Type__c,Route__r.INCO_Term__r.name from Quotation_Items__r),createdDate,CreatedBy.Name,Quotation_Validity__c from Quotation__c where id =: this.recordId];
             this.dto.quoteNumber = quoteObj.Name;
             if(quoteObj.Quotation_Validity__c != null )this.dto.validityTo = quoteObj.Quotation_Validity__c.day()+'-'+ BAFCOLeadDetailsController.getMonthName(quoteObj.Quotation_Validity__c.month()) +'-'+quoteObj.Quotation_Validity__c.year();
             this.dto.customerName = quoteObj.Account__r.Name;
+            if(quoteObj.isLCL__c == true || quoteObj.isAir__c == true) this.isLCL = true;
+            else this.isLCL = false;
+            if(quoteObj.isAir__c == true){
+                this.loadingPortLabel ='Airport of Loading :';
+                this.destinationPortLabel = 'Airport of Destination :';
+            }
+            else{
+                this.loadingPortLabel ='Port of Loading :';
+                this.destinationPortLabel = 'Port of Destination :';
+            }
             this.dto.quoteIssued = quoteObj.createdDate.day()+'-'+ BAFCOLeadDetailsController.getMonthName(quoteObj.createdDate.month()) +'-'+quoteObj.createdDate.year();
             this.dto.preparedBy = quoteObj.CreatedBy.Name;
             this.dto.paymentTerm = quoteObj.Payment_Terms__c;
@@ -107,7 +120,7 @@ public without sharing class BAFCOGeneratePDFController {
                 this.dto.phone = '-';
                 this.dto.email ='-';
             }
-            List<Quotation_Item__c> quoteItem = [Select Tank_Rental_Charges__c,Freight_Difference_FD__c,Carrier_container_repositioning_charges__c,Alternate_depot_release_charges__c,Included_PDF_ShippingLine__c,Included_PDF_Origin__c,Included_PDF_Ex_works__c,Included_PDF_Destination__c,Included_PDF_Additional__c,Route__r.Service_Type__c,Ex_Works_Charge__c,Ex_Works_Charge_Name__r.name,Place_of_Discharge__r.Name,Place_of_Pickup__r.Name,Port_of_Discharge__r.name,Port_of_Loading__r.name,BAF__c,Bayan__c,Bayan_cancellation_charge__c,Bunker_surcharge__c,Cleaning_charges__c,
+            List<Quotation_Item__c> quoteItem = [Select Airport_of_Loading__r.name,Airport_of_Destination__r.name,Quotation__r.isAir__c,Quotation__r.isLCL__c,Tab_View__c,Tank_Rental_Charges__c,Freight_Difference_FD__c,Carrier_container_repositioning_charges__c,Alternate_depot_release_charges__c,Included_PDF_ShippingLine__c,Included_PDF_Origin__c,Included_PDF_Ex_works__c,Included_PDF_Destination__c,Included_PDF_Additional__c,Route__r.Service_Type__c,Ex_Works_Charge__c,Ex_Works_Charge_Name__r.name,Place_of_Discharge__r.Name,Place_of_Pickup__r.Name,Port_of_Discharge__r.name,Port_of_Loading__r.name,BAF__c,Bayan__c,Bayan_cancellation_charge__c,Bunker_surcharge__c,Cleaning_charges__c,
                                                  CMC__c,Container_movement_charges__c,Container_stripping__c,
                                                  Destination_Customs_Clearance__c,Destination_Loading_Charges__c,DTHC__c,EIC__c,Equipment_Type__c,
                                                  Fasah_fee__c,Free_time_certificate_charges__c,Fumigation__c,Inspection__c,Insurance_charges__c,
@@ -128,12 +141,171 @@ public without sharing class BAFCOGeneratePDFController {
                 Map<string,Quotation_Item__c> shipLineToitem = new Map<string,Quotation_Item__c>();
                 List<BAFCOGeneratePDFDto.serviceChargeList> quoteItemDto = new List<BAFCOGeneratePDFDto.serviceChargeList>();
                 for(Quotation_Item__c item  : quoteItem){
-                    if(item.Equipment_Type__r.Name == '20DC'){
+                    if(item.Equipment_Type__r.Name == '20DC' && item.Quotation__r.isLCL__c != true && item.Quotation__r.isAir__c != true){
                         String UniqKey = item.Shipping_Line__c+'-'+item.Port_of_Loading__c+'-'+item.Port_of_Discharge__c;
                         shipLineToitem.put(UniqKey,item);
                     }
                 }
                 for(Quotation_Item__c item  : quoteItem){
+                    if(item.Quotation__r.isLCL__c == true || item.Quotation__r.isAir__c == true){
+                        BAFCOGeneratePDFDto.serviceChargeList itemDto = new BAFCOGeneratePDFDto.serviceChargeList();
+                            itemDto.shippingLine = item.Shipping_Line__c ;
+                            itemDto.transitTime = '** (Not Mapped) **';
+                            itemDto.serviceType = item.Route__r.Service_Type__c;
+                            //itemDto.placeOfPickup = item.Place_of_Pickup__c != null ? item.Place_of_Pickup__r.Name : null;
+                            //itemDto.placeOfDischarge = item.Place_of_Discharge__c != null ? item.Place_of_Discharge__r.Name : null;
+                            itemDto.placeOfPickup = item.Pickup_Place__c;
+                        	itemDto.placeOfDischarge = item.Discharge_Place__c;
+                            if(item.Quotation__r.isAir__c == true){
+                                itemDto.portOfLoading = item.Airport_of_Loading__r.name;
+                                itemDto.portOfDestination = item.Airport_of_Destination__r.name;
+                            }
+                            else{
+                                itemDto.portOfLoading = item.Port_of_Loading__r.name;
+                                itemDto.portOfDestination = item.Port_of_Discharge__r.name;
+                            }
+                            itemDto.total = item.Total__c;
+                            itemDto.equipmentType = item.Tab_View__c;
+                            //ServiceCharges
+                            BAFCOImportRMSDto.servichargesObj serviceChargeObj = new BAFCOImportRMSDto.servichargesObj();
+                            serviceChargeObj.BAF = item.BAF__c > 0 ? item.BAF__c : null;
+                            serviceChargeObj.bunkerCharges = item.Bunker_surcharge__c > 0 ? item.Bunker_surcharge__c : null;
+                            serviceChargeObj.cleaningCharges = item.Cleaning_charges__c > 0 ? item.Cleaning_charges__c : null;
+                            serviceChargeObj.CMC = item.CMC__c > 0 ? item.CMC__c : null;
+                            serviceChargeObj.carriageCongestionSurcharge = item.Carriage_Congestion_Surcharge__c > 0 ? item.Carriage_Congestion_Surcharge__c : null;
+                            serviceChargeObj.carrierSecurityFees = item.Carrier_Security_Fees__c > 0 ? item.Carrier_Security_Fees__c : null;
+                            serviceChargeObj.dgSurcharge = item.DG_Surcharge__c > 0 ? item.DG_Surcharge__c : null;
+                            serviceChargeObj.DTHC = item.DTHC__c > 0 ? item.DTHC__c : null;
+                            serviceChargeObj.equipmentImbalance = item.EIC__c > 0 ? item.EIC__c : null;
+                            serviceChargeObj.inlandFuelCharges = item.Inland_Fuel_Surcharge__c > 0 ? item.Inland_Fuel_Surcharge__c : null;
+                            serviceChargeObj.inlandHandlingfees = item.Inland_Handling_Fees__c > 0 ? item.Inland_Handling_Fees__c : null;
+                            serviceChargeObj.inlandHaulage = item.Inland_haulage__c > 0 ? item.Inland_haulage__c : null;
+                            serviceChargeObj.ISPS = item.ISPS__c > 0 ? item.ISPS__c : null;
+                            serviceChargeObj.lowerSulphurSurcharge = item.Low_Sulphur_Surcharge__c > 0 ? item.Low_Sulphur_Surcharge__c : null;
+                            serviceChargeObj.operationalRecovery = item.Operational_Recovery_Surcharge__c > 0 ? item.Operational_Recovery_Surcharge__c : null;
+                            serviceChargeObj.OTHC = item.OTHC__c > 0 ? item.OTHC__c : null;
+                            serviceChargeObj.overWeightCharge = item.Overweight_surcharge__c > 0 ? item.Overweight_surcharge__c : null;
+                            serviceChargeObj.sealCharges = item.Seal_Charges__c > 0 ? item.Seal_Charges__c : null;
+                            serviceChargeObj.warRiskSurcharges = item.War_Risk_Surcharge__c > 0 ? item.War_Risk_Surcharge__c : null;
+                            serviceChargeObj.totalSl = item.Total_SL__c > 0 ? item.Total_SL__c : null;
+                            serviceChargeObj.includeServiceCharge = item.Included_PDF_ShippingLine__c;
+                            if(item.BAF__c > 0 || item.Bunker_surcharge__c  > 0 || 
+                               item.Cleaning_charges__c > 0 || item.CMC__c > 0 || 
+                               item.Carriage_Congestion_Surcharge__c > 0 || item.Carrier_Security_Fees__c > 0 || 
+                               item.DG_Surcharge__c > 0 || item.DTHC__c > 0 || item.EIC__c > 0 || 
+                               item.Inland_Fuel_Surcharge__c > 0 || item.Inland_Handling_Fees__c > 0 || 
+                               item.Inland_haulage__c > 0 || item.ISPS__c > 0 || 
+                               item.Low_Sulphur_Surcharge__c > 0 || item.Operational_Recovery_Surcharge__c > 0 || 
+                               item.OTHC__c > 0 || item.Overweight_surcharge__c > 0 || item.Seal_Charges__c > 0 || 
+                               item.War_Risk_Surcharge__c > 0 ){
+                                   serviceChargeObj.shippTotalChanged = false;
+                               }
+                            else{
+                                serviceChargeObj.shippTotalChanged = true;
+                            }
+                            itemDto.servichargesObj = serviceChargeObj;
+                            
+                            // origin Charges 
+                            BAFCOImportRMSDto.originChargesObj orgnChargeObj = new BAFCOImportRMSDto.originChargesObj();
+                            orgnChargeObj.bayan = item.Bayan__c > 0 ? item.Bayan__c : null; 
+                            orgnChargeObj.blFees = item.BL_Fees__c > 0 ? item.BL_Fees__c : null; 
+                            orgnChargeObj.originCustomClearance = item.Origin_Customs_clearance__c > 0 ? item.Origin_Customs_clearance__c : null; 
+                            orgnChargeObj.exportServiceFees = item.Export_Service_Fees__c > 0 ? item.Export_Service_Fees__c : null; 
+                            orgnChargeObj.fasahFees = item.Fasah_fee__c > 0 ? item.Fasah_fee__c : null; 
+                            orgnChargeObj.inspection = item.Inspection__c > 0 ? item.Inspection__c : null; 
+                            orgnChargeObj.insuranceCharges = item.Insurance_charges__c > 0 ? item.Insurance_charges__c : null; 
+                            orgnChargeObj.liftOnLiftOff = item.Lift_on_Lift_off__c > 0 ? item.Lift_on_Lift_off__c : null; 
+                            orgnChargeObj.OriginDetention = item.Origin_Detention_Demurrage_Charges__c > 0 ? item.Origin_Detention_Demurrage_Charges__c : null; 
+                            orgnChargeObj.OriginLoadingCharges = item.Origin_Loading_Charges__c > 0 ? item.Origin_Loading_Charges__c : null; 
+                            orgnChargeObj.pickUpCharges = item.Pickup_Charges__c > 0 ? item.Pickup_Charges__c : null; 
+                            orgnChargeObj.ReeferControlPlugInCharge = item.Reefer_cntr_plug_in_charges__c > 0 ? item.Reefer_cntr_plug_in_charges__c : null; 
+                            orgnChargeObj.tabadul = item.Tabadul__c > 0 ? item.Tabadul__c : null; 
+                            orgnChargeObj.trapulinCharges = item.Tarpauline_charge__c > 0 ? item.Tarpauline_charge__c : null; 
+                            orgnChargeObj.truckIdlingCharges = item.Truck_idling_charges__c > 0 ? item.Truck_idling_charges__c : null;
+                            orgnChargeObj.vgm = item.VGM__c > 0 ? item.VGM__c : null; 
+                            orgnChargeObj.xray = item.Xray__c > 0 ? item.Xray__c : null; 
+                            orgnChargeObj.lashingCharges = item.Lashing_Charges__c > 0 ? item.Lashing_Charges__c : null; 
+                            orgnChargeObj.fuelSurcharge = item.Fuel_Surcharge__c > 0 ? item.Fuel_Surcharge__c : null; 
+                            orgnChargeObj.TotalOrigincharges = item.Total_INCO__c > 0 ? item.Total_INCO__c : null; 
+                            orgnChargeObj.includeOriginCharge = item.Included_PDF_Origin__c;
+                            if(item.Bayan__c > 0 || item.BL_Fees__c > 0 ||  
+                               item.Origin_Customs_clearance__c > 0 ||   item.Export_Service_Fees__c > 0 ||   
+                               item.Fasah_fee__c > 0 ||   item.Inspection__c > 0 ||  
+                               item.Insurance_charges__c > 0 ||   item.Lift_on_Lift_off__c > 0 ||   
+                               item.Origin_Detention_Demurrage_Charges__c > 0 ||  
+                               item.Origin_Loading_Charges__c > 0 ||   item.Reefer_cntr_plug_in_charges__c > 0 || 
+                               item.Tarpauline_charge__c > 0 ||   item.Truck_idling_charges__c > 0 ||   
+                               item.Lashing_Charges__c > 0 ||   item.Fuel_Surcharge__c  > 0 ){
+                                   orgnChargeObj.originTotalChanged = false;
+                               }
+                            else{
+                                orgnChargeObj.originTotalChanged = true;
+                            }
+                            itemDto.originChargesObj = orgnChargeObj;
+                            
+                            //Destination Charges 
+                            BAFCOImportRMSDto.destinChargeObj destinObj = new BAFCOImportRMSDto.destinChargeObj();
+                            destinObj.destinBayanCharges = item.Bayan_Charges__c > 0 ? item.Bayan_Charges__c : null ;        
+                            destinObj.destinCustomClearanceCharges = item.Destination_Customs_Clearance__c > 0 ? item.Destination_Customs_Clearance__c : null ;        
+                            destinObj.destinDOCharges = item.DO_charges__c > 0 ? item.DO_charges__c : null ;  
+                            destinObj.destinFasahCharges = item.Fasah_Charges__c > 0 ? item.Fasah_Charges__c : null ;        
+                            destinObj.destinGatePassCharges = item.Gate_pass_charges__c > 0 ? item.Gate_pass_charges__c : null ;        
+                            destinObj.destinLOLOCharges = item.LOLO_Charges__c > 0 ? item.LOLO_Charges__c : null ;        
+                            destinObj.includeDestinCharge = item.Included_PDF_Destination__c ;           
+                            destinObj.destinTotalCharges = item.Total_Dest__c > 0 ? item.Total_Dest__c : null ;
+                            if(item.Bayan_Charges__c > 0 ||  item.Destination_Customs_Clearance__c  > 0 ||  
+                               item.DO_charges__c > 0 || item.Fasah_Charges__c  > 0 ||  
+                               item.Gate_pass_charges__c  > 0 ||  item.LOLO_Charges__c > 0 ){
+                                   destinObj.DestinTotalChanged = false;
+                               }
+                            else{
+                                destinObj.DestinTotalChanged = true;
+                            }
+                            itemDto.destinChargeObj = destinObj;
+                            
+                            //Additional Charges
+                            BAFCOImportRMSDto.additionalChargesObj addnObj = new BAFCOImportRMSDto.additionalChargesObj();
+                            addnObj.Bayancancellationcharge = item.Bayan_cancellation_charge__c > 0 ? item.Bayan_cancellation_charge__c : null;
+                            addnObj.Cleaningcharges = item.Cleaning_charges__c > 0 ? item.Cleaning_charges__c : null;
+                            addnObj.ContainerLashingCharges = item.Container_Lashing_Charges__c > 0 ? item.Container_Lashing_Charges__c : null;
+                            addnObj.Containermovementcharges = item.Container_movement_charges__c > 0 ? item.Container_movement_charges__c : null;
+                            addnObj.Containerstripping = item.Container_stripping__c > 0 ? item.Container_stripping__c : null;
+                            addnObj.Freetimecertificatecharges = item.Free_time_certificate_charges__c > 0 ? item.Free_time_certificate_charges__c : null;
+                            addnObj.Fumigation = item.Fumigation__c > 0 ? item.Fumigation__c : null;
+                            addnObj.Inspection = item.Inspection__c > 0 ? item.Inspection__c : null;
+                            addnObj.Insurancecharges = item.Insurance_charges__c > 0 ? item.Insurance_charges__c : null;
+                            addnObj.MinistryclearncechargeforOOGcargo = item.Ministry_clearnce_charge_for_OOG_cargo__c > 0 ? item.Ministry_clearnce_charge_for_OOG_cargo__c : null;
+                            addnObj.Miscellaneous = item.Miscellaneous__c > 0 ? item.Miscellaneous__c : null;
+                            addnObj.MOTfinecharges = item.MOT_fine_charges__c > 0 ? item.MOT_fine_charges__c : null;
+                            addnObj.NonPalletizedSurcharge = item.Non_Palletized_Surcharge__c > 0 ? item.Non_Palletized_Surcharge__c : null;
+                            addnObj.Pestcontrol = item.Pest_control__c > 0 ? item.Pest_control__c : null;
+                            addnObj.Repalletization = item.Re_palletization__c > 0 ? item.Re_palletization__c : null;
+                            addnObj.Reefercntrplugincharges = item.Reefer_cntr_plug_in_charges__c > 0 ? item.Reefer_cntr_plug_in_charges__c : null;
+                            addnObj.ReeferPTIcharges = item.Reefer_PTI_charges__c > 0 ? item.Reefer_PTI_charges__c : null;
+                            addnObj.Reefersteamwash = item.Reefer_steam_wash__c > 0 ? item.Reefer_steam_wash__c : null;
+                            addnObj.StuffingCharges = item.Stuffing_Charges__c > 0 ? item.Stuffing_Charges__c : null;
+                            addnObj.SweepingCleaning = item.SweepingCleaning__c > 0 ? item.SweepingCleaning__c : null;
+                            addnObj.TruckHeadcharges = item.Truck_Head_charges__c > 0 ? item.Truck_Head_charges__c : null;
+                            addnObj.Truckidlingcharges = item.Truck_idling_charges__c > 0 ? item.Truck_idling_charges__c : null;
+                            addnObj.Vesselcertificatecharges = item.Vessel_certificate_charges__c > 0 ? item.Vessel_certificate_charges__c : null;
+                            addnObj.Wrappingpackingcharges = item.Wrappingpacking_charges__c > 0 ? item.Wrappingpacking_charges__c : null;
+                            addnObj.totalAdditional = item.Total_Additional__c > 0 ? item.Total_Additional__c : null;
+                            addnObj.includeAdditionalCharge =item.Included_PDF_Additional__c;
+                            addnObj.AlternateDepotReleaseCharges = item.Alternate_depot_release_charges__c > 0 ? item.Alternate_depot_release_charges__c : null;
+                        	addnObj.FreightDifference = item.Freight_Difference_FD__c > 0 ? item.Freight_Difference_FD__c : null;
+                        	addnObj.CarrierContainerRepositioningCharges = item.Carrier_container_repositioning_charges__c > 0 ? item.Carrier_container_repositioning_charges__c : null;
+                            addnObj.tankRentalCharge = item.Tank_Rental_Charges__c > 0 ? item.Tank_Rental_Charges__c : null;
+                            itemDto.additionalChargesObj = addnObj;
+                            
+                            //ExWorks Charges
+                            BAFCOImportRMSDto.exWorksObj xWorksObj = new BAFCOImportRMSDto.exWorksObj();
+                            xWorksObj.LoadCharge = item.Ex_Works_Charge__c  > 0 ?  item.Ex_Works_Charge__c : null ;
+                            xWorksObj.Id = item.Ex_Works_Charge_Name__c != null ? item.Ex_Works_Charge_Name__r.name : null;
+                            xWorksObj.includeExWorksCharge = item.Included_PDF_Ex_works__c ;
+                            itemDto.exWorksObj = xWorksObj;
+                        quoteItemDto.add(itemDto);
+                    }
+                    else{
                     if(item.Equipment_Type__r.Name != '20DC'){
                         BAFCOGeneratePDFDto.serviceChargeList itemDto = new BAFCOGeneratePDFDto.serviceChargeList();
                         itemDto.shippingLine = item.Shipping_Line__c ;
@@ -445,6 +617,7 @@ public without sharing class BAFCOGeneratePDFController {
                         itemDto.exWorksObj = xWorksObj;
                         system.debug('xWorksObj.LoadCharge '+xWorksObj.LoadCharge);
                         quoteItemDto.add(itemDto);
+                    }
                     }
                 }
                // if(has40HCEquip == false){

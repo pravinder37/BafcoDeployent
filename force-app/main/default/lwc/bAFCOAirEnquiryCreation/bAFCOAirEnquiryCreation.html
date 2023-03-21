@@ -96,6 +96,8 @@
                             cargoweight-class={lead.cargoweightClass}
                             discharge-place-class={lead.dischargePlaceClass}
                             pickup-place-class={lead.pickupPlaceClass}
+                            min-date={minDate}
+                            cargo-readiness={lead.cargoReadiness}
                             disable-add-route ={lead.disableAddRoute}
                             onupdate={handleEnquiryListUpdate}
                             onlengthupdate={handleLenghtUpdate}
@@ -106,6 +108,7 @@
                             onstackableupdate={handleStackableUpdate}
                             onpalletizedupdate={handlePalletizedUpdate}
                             onunitsupdate={handleUnitsUpdate}
+                            oncargodetailsupdate={handleCargoDetailsUpdate}
                             onaddcontainertype={handleAddContainer}
                             onaddemptycontainertype={handleEmptyContainer}
                             onremovecontainertype={handleRemoveContainerType}

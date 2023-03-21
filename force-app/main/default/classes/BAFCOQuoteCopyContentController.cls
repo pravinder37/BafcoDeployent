@@ -3,7 +3,7 @@ public without sharing class BAFCOQuoteCopyContentController {
     public static List<QuoteLineList>  getQuoteDataOnLoad(String quoteId){
         List<QuoteLineList> quoteItemList = new List<QuoteLineList>();
         String SubjectLine = '';
-        List<Quotation_Item__c> quoteList = [Select CurrencyIsoCode,Quotation__r.Name,Customer_Name__c,Shipping_Linee__r.name,Quantity__c,Route__r.Cargo_Weight__c,Rms__r.Free_time_POD__c, Rms__r.Free_time__c,Route__r.INCO_Term__r.name,Route__r.Service_Type__c,id,Quotation__r.Exclusions__c,Quotation__r.Inclusions__c,Quotation__r.Terms_and_Conditions__c,Total__c,Quotation__r.Recordtype.Name,Port_of_Loading__r.Name,Port_of_Discharge__r.Name,Equipment_Type__r.Name from Quotation_Item__c where quotation__c =: quoteId];
+        List<Quotation_Item__c> quoteList = [Select Quotation__r.Account__r.Owner.Name,CurrencyIsoCode,Quotation__r.Name,Customer_Name__c,Shipping_Linee__r.name,Quantity__c,Route__r.Cargo_Weight__c,Rms__r.Free_time_POD__c, Rms__r.Free_time__c,Route__r.INCO_Term__r.name,Route__r.Service_Type__c,id,Quotation__r.Exclusions__c,Quotation__r.Inclusions__c,Quotation__r.Terms_and_Conditions__c,Total__c,Quotation__r.Recordtype.Name,Port_of_Loading__r.Name,Port_of_Discharge__r.Name,Equipment_Type__r.Name from Quotation_Item__c where quotation__c =: quoteId];
         if(quoteList.size() > 0){
             Set<String> portStringSet = new Set<String>();
             Map<Id,String> itemIdToPortString = new  Map<Id,String>();
@@ -32,6 +32,7 @@ public without sharing class BAFCOQuoteCopyContentController {
                 dto.subjectLine = SubjectLine;
                 dto.customerName = item.Customer_Name__c;
                 dto.currencyCode = item.CurrencyIsoCode;
+                dto.saleman = item.Quotation__r.Account__r.Owner.Name;
                 if(item.Route__r.INCO_Term__c != null) dto.incoterm = item.Route__r.INCO_Term__r.name;
                 else dto.incoterm = '';
                 if(item.RMS__c != null){
@@ -71,10 +72,12 @@ public without sharing class BAFCOQuoteCopyContentController {
     @AuraEnabled 
     public static void  sendEmail(String toSend,String toCCSend, String toBCCSend, String subject,String body,String quoteId){ 
         system.debug('quoteId '+quoteId);
+                    List<Messaging.EmailFileAttachment> emailFileAttList = new List<Messaging.EmailFileAttachment>();
         if(quoteId != null){
             Quotation__c quoteObj = new Quotation__c();
             quoteObj.id = quoteId;
             quoteObj.Status__c = 'Awaiting CRO';
+            emailFileAttList = getContentVers(quoteId);
             update quoteObj;
             system.debug('quoteObj '+quoteObj);
         }
@@ -93,9 +96,41 @@ public without sharing class BAFCOQuoteCopyContentController {
         }
         mail.setToAddresses(sendTo);
         mail.setSubject(subject); 
+        if(emailFileAttList.size() > 0) {
+			mail.setFileAttachments(emailFileAttList);   
+        }
         mail.setHtmlBody(body);
         mails.add(mail);
         Messaging.sendEmail(mails);
+    }
+     public static List<Messaging.EmailFileAttachment> getContentVers(Id objId) {  
+        List<Messaging.EmailFileAttachment> emailAttachList = new List<Messaging.EmailFileAttachment>();
+        List<ContentDocumentLink> CDLs = [SELECT ContentDocumentId FROM ContentDocumentLink WHERE LinkedEntityId =: objId];
+        List <Id> CDIdList = new List <Id> ();
+        
+        for (ContentDocumentLink nextCDL : CDLs) {
+            CDIdList.add(nextCDL.ContentDocumentId); 
+        }
+        List<ContentDocument> entries = [SELECT Id, Title, FileType FROM ContentDocument WHERE ContentDocument.Id IN :CDIdList];
+        if(entries.size() > 0) {
+            List<ContentVersion> cvList = [SELECT Id, title, VersionData, FileExtension, ContentDocumentId 
+                                           FROM ContentVersion 
+                                           WHERE ContentDocumentId IN:entries 
+                                           And isLatest = true];
+            for(ContentVersion cvObj : cvList) {
+                emailAttachList.add(setEmailFileAtt(cvObj));            
+            }
+            return emailAttachList;
+        }
+        return emailAttachList;
+    }
+    
+    public static Messaging.EmailFileAttachment setEmailFileAtt(ContentVersion cvObj) {
+        Messaging.EmailFileAttachment emlAtt = new Messaging.EmailFileAttachment();
+        Blob fileData = cvObj.VersionData;
+        emlAtt.setFilename(cvObj.title+'.'+ + cvObj.FileExtension);
+        emlAtt.setBody(fileData);
+        return emlAtt;
     }
     public class QuoteLineList{
         @AuraEnabled public String loadingPort{get;set;}
@@ -120,5 +155,6 @@ public without sharing class BAFCOQuoteCopyContentController {
         @AuraEnabled public String customerName{get;set;}
         @AuraEnabled public String quoteName{get;set;}
         @AuraEnabled public String currencyCode{get;set;}
+        @AuraEnabled public String saleman{get;set;}
     }
 }

@@ -13,11 +13,11 @@
             <span class=leadDetails>{incoTerm}</span>            
         </lightning-layout-item>
         <lightning-layout-item size="2" class="slds-col slds-m-vertical_medium" if:true={displayPOL}>
-            <p class="slds-m-top_small leadLabel">Port of Loading</p>
+            <p class="slds-m-top_small leadLabel">{loadingPortLabel}</p>
             <span class=leadDetails>{portLoading}</span>            
         </lightning-layout-item>
         <lightning-layout-item size="2" class="slds-col slds-m-vertical_medium" if:true={displayPOD}>
-            <p class="slds-m-top_small leadLabel">Port of Destination</p>
+            <p class="slds-m-top_small leadLabel">{destionationPortLabel}</p>
             <span class=leadDetails>{portDestination}</span>
         </lightning-layout-item>
         <lightning-layout-item size="2" class="slds-col slds-m-vertical_medium">
@@ -48,15 +48,15 @@
                     <template for:each={allRouteList} for:item="equip">
                         <lightning-tab label={equip.Tab_View__c} key={equip.key} value={equip.Tab_View__c} onactive={handleEquipMentActive}>
                             <lightning-layout multiple-rows>
-                                <lightning-layout-item size="6">
+                                <lightning-layout-item size="3" style="padding-top: 15px;">
                                     <label class="slds-form-element__label">
-                                        <p style="padding-left: 22px">ShippLine</p>
+                                        <p style="font-size: 16px;"><b>Shipping Line</b></p>
                                     </label>
                                 </lightning-layout-item>
-                                <lightning-layout-item size="6">
+                                <lightning-layout-item size="9" style="padding: 10px 0px 26px 26px">
                                     <c-b-a-f-c-o-custom-look-up-component
                                                     obj-name="Shipping_Line__c"
-                                                    search-placeholder="Search shipline" 
+                                                    search-placeholder="Search shipping line" 
                                                     icon-name="standard:account"
                                                     onlookupselected={handleShipLineSelection}
                                                     onlookupremoved={handleShipLineRemoved}></c-b-a-f-c-o-custom-look-up-component>

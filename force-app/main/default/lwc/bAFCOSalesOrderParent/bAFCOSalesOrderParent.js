@@ -305,7 +305,8 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                             tankRentalCharge:shipValue.tankRentalCharge,
                             incoTermId:shipValue.incoTermId,
                             isLCL:shipValue.isLCL,
-                            tabView:equip
+                            tabView:equip,
+                            isAir:shipValue.isAir,
                         })
                         elem.equipment.push({
                             key:equip,
@@ -434,6 +435,7 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 incoTermId:shipValue.incoTermId,
                                 isLCL:shipValue.isLCL,
                                 tabView:equip,
+                                isAir:shipValue.isAir,
                             })
                             elem.equipment.push({
                                 key:equip,
@@ -560,6 +562,7 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 tempList[shipIndex].incoTermId = shipValue.incoTermId;
                                 tempList[shipIndex].isLCL=shipValue.isLCL;
                                 tempList[shipIndex].tabView = equip
+                                tempList[shipIndex].isAir = shipValue.isAir;
                             }
                             else{
                                 tempList.push({
@@ -678,7 +681,8 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                     tankRentalCharge:shipValue.tankRentalCharge,
                                     incoTermId:shipValue.incoTermId,
                                     isLCL:shipValue.isLCL,
-                                    tabView:equip
+                                    tabView:equip,
+                                    isAir:shipValue.isAir,
                                 })
                             }
                             elem.equipment[index].value = tempList

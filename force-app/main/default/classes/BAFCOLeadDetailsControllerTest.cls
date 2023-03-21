@@ -146,6 +146,13 @@ public class BAFCOLeadDetailsControllerTest {
     testmethod static void submitRMSTest(){
         Port__c portObj = [Select id from Port__c limit 1]; 
         Equipment_Type__c equip = [Select id from Equipment_Type__c limit 1]; 
+        List<BAFCOLeadDetailsController.selectedEquip> selectedEquip = new List<BAFCOLeadDetailsController.selectedEquip>();
+        BAFCOLeadDetailsController.selectedEquip obj1 = new BAFCOLeadDetailsController.selectedEquip();
+        Equipment_Type__c equipmenent = [Select id from Equipment_Type__c limit 1];
+        obj1.label = 'EquipName';
+        obj1.value = equipmenent.id;
+        obj1.seaFreight = 10;
+        selectedEquip.add(obj1);
         BAFCORMSDto rmsDetail = new BAFCORMSDto();
         rmsDetail.validity= String.valueOf(system.today());
         rmsDetail.seaFreight= 100;
@@ -156,13 +163,15 @@ public class BAFCOLeadDetailsControllerTest {
         rmsDetail.loadingPortId = portObj.id;
         rmsDetail.loadingDestinationId = portObj.id;
         rmsDetail.equipmentId = equip.id;
+        rmsDetail.selectedEquip = selectedEquip;
         shippingLineChargesDTO shippingChargeDto = new shippingLineChargesDTO();
         BAFCOIncoChargesDto incocharges = new BAFCOIncoChargesDto();
         BAFCODestinationChargeDto destinCharges = new BAFCODestinationChargeDto();
+        
         test.startTest();
-        BAFCOLeadDetailsController.submitRMS(rmsDetail, shippingChargeDto, incocharges, false, false, false, destinCharges);
+        BAFCOLeadDetailsController.submitRMS(rmsDetail, shippingChargeDto, incocharges, false, false, false, destinCharges,selectedEquip);
         rmsDetail.businessType= 'Import';
-        BAFCOLeadDetailsController.submitRMS(rmsDetail, shippingChargeDto, incocharges, false, false, false, destinCharges);
+        BAFCOLeadDetailsController.submitRMS(rmsDetail, shippingChargeDto, incocharges, false, false, false, destinCharges,selectedEquip);
         test.stopTest();
     }
     testMethod static void getMonthName(){

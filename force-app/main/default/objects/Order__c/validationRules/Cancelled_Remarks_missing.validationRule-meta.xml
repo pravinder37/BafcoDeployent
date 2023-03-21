@@ -2,7 +2,6 @@
 <ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Cancelled_Remarks_missing</fullName>
     <active>true</active>
-    <errorConditionFormula>AND(ISCHANGED(Status__c),  ISBLANK(Cancelled_Remarks__c))</errorConditionFormula>
-    <errorDisplayField>Cancelled_Remarks__c</errorDisplayField>
-    <errorMessage>Please provide remarks for Order Cancellation</errorMessage>
+    <errorConditionFormula>AND(ISCHANGED(Status__c),  OR(ISBLANK(Cancelled_Remarks__c),ISBLANK(Amendment_Remarks__c)))</errorConditionFormula>
+    <errorMessage>Please provide remarks for Order Cancellation/CRO Amendment</errorMessage>
 </ValidationRule>

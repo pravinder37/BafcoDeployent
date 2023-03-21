@@ -131,6 +131,11 @@ public class BAFCOOrderCalloutControllerTest {
     }
     testmethod static void getOrderDataTest(){
         test.startTest();
+        RestRequest request = new RestRequest();
+        Test.setMock(HttpCalloutMock.class, new BAFCOExchangeRateMockTest());
+        request.requestUri ='/services/apexrest/getSFData/getOrderData';
+        request.httpMethod = 'GET';
+        RestContext.request = request;
         BAFCOOrderCalloutController.getOrderData();
         test.stopTest();
     }

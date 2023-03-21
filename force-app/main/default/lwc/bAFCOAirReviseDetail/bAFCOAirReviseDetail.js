@@ -33,8 +33,19 @@ export default class BAFCOAirReviseDetail extends LightningElement {
     @track quotationDate = '';
     @api equipmentType =''
     @track currencyCode='USD';
+    @api isAir;
+    @track loadingPortLabel ='Port of Loading';
+    @track destionationPortLabel ='Port of Destination';
     connectedCallback(){
         this.getQuoteLineItemDetails();
+        if(this.isAir=='true'){
+            this.loadingPortLabel ='Airport of Loading';
+            this.destionationPortLabel ='Airport of Destination';
+        }
+        else{
+            this.loadingPortLabel ='Port of Loading';
+            this.destionationPortLabel ='Port of Destination';
+        }
     }
     getQuoteLineItemDetails(){
         getQuoteLineItem({

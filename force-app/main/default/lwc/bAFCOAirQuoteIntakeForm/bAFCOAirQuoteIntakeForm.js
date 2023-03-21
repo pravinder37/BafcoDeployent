@@ -33,6 +33,8 @@ export default class BAFCOAirQuoteIntakeForm extends NavigationMixin(LightningEl
     @api dischargePlaceName = '';
     @api equipmentType =''
     @api portDestinationId ='';
+    @api isAir=false;
+    @api airQuotation;
     @track displayPOL =  false;
     @track displayPOD = false;
     @track displayPlOP = false;
@@ -160,8 +162,18 @@ export default class BAFCOAirQuoteIntakeForm extends NavigationMixin(LightningEl
     @track currencyCode = 'USD';
     @track airShippline = '';
     @track airShipplineName = '';
-
+    @track loadingPortLabel ='Port of Loading';
+    @track destionationPortLabel ='Port of Destination';
     connectedCallback(){
+        if(this.airQuotation == 'true') this.isAir = true;
+        if(this.isAir){
+            this.loadingPortLabel ='Airport of Loading';
+            this.destionationPortLabel ='Airport of Destination';
+        }
+        else{
+            this.loadingPortLabel ='Port of Loading';
+            this.destionationPortLabel ='Port of Destination';
+        }
         if(this.businessType == 'Export'){
             this.displayPOL = true;
             this.displayPlOP = true;
@@ -170,6 +182,8 @@ export default class BAFCOAirQuoteIntakeForm extends NavigationMixin(LightningEl
             this.displayPOD = true;
             this.displayPlOD = true;
         }
+        console.log('portLoading '+this.portLoading);
+        console.log('displayPOL '+this.displayPOL +'-'+this.displayPlOP);
         this.getRouteListOnload();
     }
     getRouteListOnload(){
@@ -458,7 +472,7 @@ export default class BAFCOAirQuoteIntakeForm extends NavigationMixin(LightningEl
             let tempList = [];
             tempList.push({
                 'totalRate':0,
-                'isLCL':true,
+                'isLCL':this.isAir != true ? true : false,
                 'quotationItemId':'',
                 'displayExworks':false,
                 'includeServiceCharge':false,
@@ -484,6 +498,7 @@ export default class BAFCOAirQuoteIntakeForm extends NavigationMixin(LightningEl
                 'buyingRateInput':0,
                 'airShippline':'',
                 'airShipplineName':'',
+                'isAir':this.isAir
             })
             this.toHoldData[index].value = JSON.parse(JSON.stringify(tempList));
         }

@@ -74,6 +74,17 @@ public class BAFCOGeneratePDFControllerTest {
         quoteObj.Effective_From__c = system.today();
         Insert quoteObj;
         
+        Quotation__c quoteObj2 = new Quotation__c();
+        quoteObj2.Name__c= 'Quote/'+Year1+'/'+1;
+        quoteObj2.opportunity__c = opty.id;
+        quoteObj2.Customer_Name__c = 'test';
+        quoteObj2.Account__c = acc.id;
+        quoteObj2.Inclusions__c = 'Test Data ;;test data ;';
+        quoteObj2.Exclusions__c = 'Test Data ;;test data ;';
+        quoteObj2.Effective_From__c = system.today();
+        quoteObj2.isAir__c = true;
+        Insert quoteObj2;
+        
         List<Equipment_Type__c> equipList = new List<Equipment_Type__c>();
         Equipment_Type__c equip = new Equipment_Type__c();
         equip.Name='20DC';
@@ -130,11 +141,30 @@ public class BAFCOGeneratePDFControllerTest {
         quoteItem1.Sea_Freight__c = 100;
         itemList.add(quoteItem1);
         
+        Quotation_Item__c quoteItem2 = new Quotation_Item__c();
+        quoteItem2.RMS__c = rmsObj.id;
+        quoteItem2.Route__c = route.id;
+        quoteItem2.Quotation__c = quoteObj2.Id;
+        quoteItem2.Equipment_Type__c = equip2.id;
+        quoteItem2.Sea_Freight__c = 100;
+        itemList.add(quoteItem2);
+        
         insert itemList;
         
     }
     @isTest static void testController(){
         Quotation__c quoteObj = [Select id from Quotation__c limit 1];
+         PageReference testPage = Page.BAFCOGeneratePdf; 
+   		Test.setCurrentPage(testPage);
+        testPage.getParameters().put('showShippLine', 'true');
+        testPage.getParameters().put('showCharges', 'true');
+        testPage.getParameters().put('recordId', quoteObj.id);
+        ApexPages.StandardController sc = new  ApexPages.StandardController(quoteObj); 
+        BAFCOGeneratePDFController cls = new BAFCOGeneratePDFController(sc); 
+        cls.getQuoteData();
+    }
+    @isTest static void testController01(){
+        Quotation__c quoteObj = [Select id from Quotation__c where isAir__c = true limit 1];
          PageReference testPage = Page.BAFCOGeneratePdf; 
    		Test.setCurrentPage(testPage);
         testPage.getParameters().put('showShippLine', 'true');

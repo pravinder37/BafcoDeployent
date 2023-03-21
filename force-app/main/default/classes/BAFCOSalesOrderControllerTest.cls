@@ -56,7 +56,13 @@ public class BAFCOSalesOrderControllerTest {
         Route_Equipment__c rEquip = new Route_Equipment__c();
         rEquip.Route__c = route.id;
         rEquip.Equipment_Type__c = equip.id;
+        rEquip.Length__c = 1;
+        rEquip.Width__c =1;
+        rEquip.Height__c = 1;
+        rEquip.CBM__c = 1;
+        rEquip.Weight_Kgs__c =1;
         Insert rEquip;
+        
         
         RMS__c rmsObj = new RMS__c();
         rmsObj.Name ='Test';
@@ -83,13 +89,18 @@ public class BAFCOSalesOrderControllerTest {
         quoteObj.Account__c = acc.id;
         quoteObj.Customer_Name__c = 'test';
         Insert quoteObj;
-        
+        Airport__c airObj = new Airport__c();
+        airObj.Name ='tes';
+        insert airObj;
         Quotation_Item__c quoteItem = new Quotation_Item__c();
         quoteItem.RMS__c = rmsObj.id;
         quoteItem.Route__c = route.id;
         quoteItem.Quotation__c = quoteObj.Id;
         quoteItem.Equipment_Type__c = equip.id;
         quoteItem.Sea_freight__c =12;
+        quoteItem.Tab_View__c = '1x1x1| CBM : 1 | Weight : 1';
+        quoteItem.Airport_of_Destination__c = airObj.id;
+        quoteItem.Airport_of_Loading__c = airObj.id;
         Insert quoteItem;
         
     }
@@ -104,6 +115,15 @@ public class BAFCOSalesOrderControllerTest {
         String routeID = getRouteId();
         test.startTest();
         BAFCOSalesOrderController.getQuoteLineItem(quoteID,routeID);        
+        test.stopTest();
+    }
+    testmethod static void getQuoteLineItemTest01(){
+        Quotation__c quote = [Select id from Quotation__c limit 1];
+        quote.isAir__c = true;
+        update quote;
+        String routeID = getRouteId();
+        test.startTest();
+        BAFCOSalesOrderController.getQuoteLineItem(quote.id,routeID);        
         test.stopTest();
     }
     testmethod static void createOrderTest(){
@@ -138,7 +158,6 @@ public class BAFCOSalesOrderControllerTest {
         valueObj.baf = 0;
         valueObj.bayan = 0;
         valueObj.bayanCancellation = 0;
-        valueObj.enquiryId = getEnquiryId();
         valueObj.quotationId = getQuoteId();
         valueObj.shipName = 'COSCO';
         valueObj.sellingTotal = 1100;
@@ -175,10 +194,6 @@ public class BAFCOSalesOrderControllerTest {
     }
     static string getAccountId(){
         return [Select id from Account limit 1].Id;
-    }
-    static string getEnquiryId(){
-        //return [Select id from Enquiry__c limit 1].Id;
-        return null;
     }
     static string getQuoteId(){
         return [Select id from Quotation__c limit 1].Id;

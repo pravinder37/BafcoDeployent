@@ -62,6 +62,11 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
     @api isEdit;
     @api isAir;
     @track portObject = 'Port__c';
+    @track loadigPortLabel = 'Port of Loading';
+    @track destinationPortLabel = 'Port of Destination';
+    @api cargoReadiness = '';
+    @track isImport = false;
+    @api minDate = '';
 
 
     @track width;
@@ -80,11 +85,16 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
     }
 
     connectedCallback(){
+        if(this.businessType == 'Import') this.isImport = true;
         if(this.isAir == 'true'){
             this.portObject = 'Airport__c';
+            this.loadigPortLabel = 'Airport of Loading';
+            this.destinationPortLabel = 'Airport of Destination'
         }
         else{
             this.portObject = 'Port__c';
+            this.loadigPortLabel = 'Port of Loading';
+            this.destinationPortLabel = 'Port of Destination'
         }
         if(this.accountId.startsWith('001')){
             this.isAccountObject = true;
@@ -156,6 +166,8 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
     }
     @api getDefualtValueForEnquiry(){
         this.isLoading = true 
+        this.isImport = false;
+        this.cargoReadiness = '';
         getDefualtValueForEnquiry()
         .then(result=>{
             console.log(' getDefualtValueForEnquiry result', JSON.stringify(result, null, 2));
@@ -333,7 +345,8 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
              'cargoweightClass':this.cargoweightClass,
              'dischargePlaceClass':this.dischargePlaceClass,
              'pickupPlaceClass':this.pickupPlaceClass,
-             'disableAddRoute':this.disableAddRoute
+             'disableAddRoute':this.disableAddRoute,
+             'cargoReadiness':this.cargoReadiness,
          }
          let updateleadEntryDto = JSON.parse(JSON.stringify(leadEntryDto));
          this.dispatchEvent(new CustomEvent('update', { detail: { dto: updateleadEntryDto } }));
@@ -450,7 +463,8 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
         this.updateEnquiryList();
     }
     @api removeDefaultOnImport(){
-        this.isLoading = true;           
+        this.isLoading = true;      
+        this.isImport = true;     
         setTimeout(() => {
             if(this.incoTermName != 'Clearance and Delivery' && this.incoTermName != 'Local Operation'){   
                 let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[4];
@@ -465,6 +479,8 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
     }
     handleCopyFromAbove(e){
         let index = e.target.dataset.recordId;
+        if(this.businessType == 'Import') this.isImport = true;
+        else this.isImport = false;
         console.log('*** '+index)
         this.leadEnquiryList.forEach(elem => {
             if(elem.leadIndex == 1) {
@@ -492,6 +508,7 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
                 this.commodityName = elem.commodityName;
                 this.placeOfPickupName = elem.placeOfPickupName;
                 this.placeOfDischargeName = elem.placeOfDischargeName;
+                this.cargoReadiness = elem.cargoReadiness;
             }
         })
 
@@ -603,6 +620,12 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
         }
         let containerDto8 = JSON.parse(JSON.stringify(obj8));
         this.dispatchEvent(new CustomEvent('unitsupdate', { detail: { dto: containerDto8 } })); 
+        let obj9={
+            'index':finalIndex,
+            'cargoDetails':containerRecord.cargoDetails,
+        }
+        let containerDto9 = JSON.parse(JSON.stringify(obj9));
+        this.dispatchEvent(new CustomEvent('cargodetailsupdate', { detail: { dto: containerDto9 } })); 
     }
     handlelengthChange(e){
         let index = e.target.dataset.recordId;
@@ -684,6 +707,20 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
         let containerDto = JSON.parse(JSON.stringify(obj));
         this.dispatchEvent(new CustomEvent('unitsupdate', { detail: { dto: containerDto } })); 
     }
+    handleCargoDetailsChange(e){
+        console.log('ccme '+JSON.stringify(e.target.dataset.recordId,null,2))
+        console.log('ccme '+JSON.stringify(e.target.value,null,2))
+        let index = e.target.dataset.recordId;
+        let value = e.target.value;
+        let obj={
+            'index':index,
+            'cargoDetails':value,
+        }
+        let containerDto = JSON.parse(JSON.stringify(obj));
+        console.log('ccme '+JSON.stringify(containerDto,null,2))
+        this.dispatchEvent(new CustomEvent('cargodetailsupdate', { detail: { dto: containerDto } }));
+        console.log('ccme deployed'+JSON.stringify(obj,null,2))
+    }
     handleAddContainer(e){
         let strIndex = e.target.dataset.recordId;
         this.dispatchEvent(new CustomEvent('addcontainertype', { detail:  strIndex}));
@@ -691,5 +728,9 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
     handleRemoveContainer(e){
         let strIndex = e.target.dataset.recordId;
         this.dispatchEvent(new CustomEvent('removecontainertype', { detail:  strIndex}));
+    }
+    handelCargoReadinessDate(e){
+        this.cargoReadiness = e.target.value;
+        this.updateEnquiryList();
     }
 }

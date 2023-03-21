@@ -19,7 +19,7 @@ public class BAFCOLeadDetailsController {
             leadDetailsDto.createdDate =  leadObj.CreatedDate.format('dd-MMM-YYYY');
             
             leadDetailsDto.leadId = leadObj.Id;
-            leadDetailsDto.businessType =leadObj.Business_Type__c != null ? leadObj.Business_Type__c : '-';
+            leadDetailsDto.businessType = leadObj.Business_Type__c != null ? leadObj.Business_Type__c : '';
             leadDetailsDto.modes = leadObj.Modes__c !=null ? leadObj.Modes__c : '-';
             if(contactList.size() > 0 ){
                 leadDetailsDto.contactMobile = contactList[0].MobilePhone != null ? contactList[0].MobilePhone : '-';

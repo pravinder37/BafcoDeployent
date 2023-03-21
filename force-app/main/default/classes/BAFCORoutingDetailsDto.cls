@@ -67,10 +67,14 @@ public class BAFCORoutingDetailsDto {
     @AuraEnabled
     public String parentId { get; set; }
     @AuraEnabled
+    public String cargoReadiness { get; set; }
+    @AuraEnabled
     public String equipmentType { get; set; }
     @AuraEnabled public String acctName { get; set; }
     @AuraEnabled
     public List<BAFCORoutingDetailsDto.containerRecord> containerRecord { get; set; }
+    @AuraEnabled
+    public Boolean isAir { get; set; }
     
     public class containerRecord{
         @AuraEnabled
@@ -83,5 +87,14 @@ public class BAFCORoutingDetailsDto {
         public String index { get; set; }
         @AuraEnabled
         public String id { get; set; }
+        @AuraEnabled public Decimal length { get; set; }
+        @AuraEnabled public Decimal width { get; set; }
+        @AuraEnabled public Decimal height { get; set; }
+        @AuraEnabled public Decimal CBM { get; set; }
+        @AuraEnabled public Decimal Weight { get; set; }
+        @AuraEnabled public Decimal units { get; set; }
+        @AuraEnabled public Boolean stackable { get; set; }
+        @AuraEnabled public Boolean palletized { get; set; }
+        @AuraEnabled public String cargoDetails { get; set; }
     }
 }

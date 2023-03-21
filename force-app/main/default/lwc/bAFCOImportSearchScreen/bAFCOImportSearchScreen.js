@@ -1,6 +1,7 @@
 import { LightningElement,track } from 'lwc';
 import getImportItem from '@salesforce/apex/BAFCOImportSearchController.getImportItem';
 import updateQuoteItem from '@salesforce/apex/BAFCOImportSearchController.updateQuoteItem';
+import getImportItemOnLoad from '@salesforce/apex/BAFCOImportSearchController.getImportItemOnLoad';
 import { NavigationMixin } from 'lightning/navigation';
 export default class BAFCOImportSearchScreen extends NavigationMixin(LightningElement) {
     isLoading = false;
@@ -14,6 +15,28 @@ export default class BAFCOImportSearchScreen extends NavigationMixin(LightningEl
     displayModal = false;
     @track fromVesselETD = null;
     @track toVesselETD = null;
+    @track shippingLineId = '';
+    @track shippingLineName = '';
+    @track selectedShippLineError = '';
+    @track isLoading2 = false;
+    connectedCallback(){
+        this.getImportItemOnLoad();
+    }
+    getImportItemOnLoad(){
+        this.isLoading = true;
+        getImportItemOnLoad()
+        .then(result=>{
+            console.log('getImportItemOnLoad result',JSON.stringify(result,null,2));
+            this.isLoading = false;
+            this.quoteList = result;
+            if(this.quoteList.length > 0) this.noRecord = false
+            else this.noRecord = true
+        })
+        .catch(error=>{
+            console.log('getImportItemOnLoad error',JSON.stringify(error,null,2));
+            this.isLoading = false;
+        })
+    }
     handleAgentSelection(e){
         this.agentId = e.detail.Id;
         this.selectedAgentError = '';
@@ -60,11 +83,27 @@ export default class BAFCOImportSearchScreen extends NavigationMixin(LightningEl
         this.agentId = '';
     }
     handleEditItem(e){
+        this.isLoading = true;
        this.quoteItemId = e.target.value;
        let item = this.quoteList.filter(x=>x.Id == this.quoteItemId);
        this.buyingRate = item[0].Buying_Rate__c;
        this.totalSellingRate = item[0].Total_Order__c;
+       if(item[0].Shipping_Line__c != undefined){        
+        setTimeout(() => {
+            this.isLoading = true;
+            this.shippingLineId = item[0].Shipping_Line__c;
+            this.shippingLineName = item[0].Shipping_Line__r.Name;
+            let shippLineField = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[1];
+            if(shippLineField != null){
+                let obj = {Id:this.shippingLineId,Name:this.shippingLineName};
+                shippLineField.handleDefaultSelected(obj);
+            }
+            this.isLoading = false;
+        }, 300);
+       }
+
        this.displayModal = true;
+       this.isLoading = false;
     }
     handleNewQuote(e){
         this.isLoading =true
@@ -98,30 +137,41 @@ export default class BAFCOImportSearchScreen extends NavigationMixin(LightningEl
         totalRateField.reportValidity();  
     }
     handleUpdateItemClicked(){
+        this.isLoading2 = true;
         let allValid = true;
         if(this.buyingRate <= 0) {
             allValid = false
             let buyingRateField = this.template.querySelector("[data-field='buyingRateField']");
             buyingRateField.setCustomValidity("Buying Rate must be greater than 0.");
             buyingRateField.reportValidity();
+            this.isLoading2 = false;
         }
         if(this.totalSellingRate <= 0){
             allValid = false
             let totalRateField = this.template.querySelector("[data-field='totalRateField']");
             totalRateField.setCustomValidity("Total must be greater than 0.");
-            totalRateField.reportValidity();  
+            totalRateField.reportValidity();
+            this.isLoading2 = false;  
+        }
+        if(this.shippingLineId == ''){
+            allValid = false;
+            this.selectedShippLineError = 'slds-has-error';
+            this.isLoading2 = false;
         }
         if(allValid){
             updateQuoteItem({
                 buyingRate : this.buyingRate,
                 sellingRate: this.totalSellingRate,
                 recordId : this.quoteItemId,
+                shippingLineId : this.shippingLineId
             }).then(result=>{
+                this.quoteList = [];
                 console.log('result '+result);
                 this.displayModal= false;
-                this.handleSearchItem();
+                this.isLoading2 = false;
+                this.getImportItemOnLoad();
             })
-            .catch(error=>{console.log('error '+JSON.stringify(error));})
+            .catch(error=>{console.log('error '+JSON.stringify(error));this.isLoading2 = false;})
         }
     }
     handleOrderItemClicked(e){
@@ -160,5 +210,15 @@ export default class BAFCOImportSearchScreen extends NavigationMixin(LightningEl
         let toVesselETD = this.template.querySelector("[data-field='toVesselETD']");
         toVesselETD.setCustomValidity("");
         toVesselETD.reportValidity();
+    }
+    handleShippingLineSelection(e){
+        this.shippingLineId = e.detail.Id;
+        this.shippingLineName = e.detail.Name;
+        this.selectedShippLineError = '';
+    }
+    handleShippingLineRemoved(e){
+        this.shippingLineId = '';
+        this.shippingLineName = '';
+        this.selectedShippLineError = 'slds-has-error';
     }
 }

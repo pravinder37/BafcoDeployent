@@ -19,12 +19,19 @@ public class BAFCOImportSearchController {
         return itemList;
     }
     @AuraEnabled
-    public static order_item__c updateQuoteItem(Decimal buyingRate, Decimal sellingRate, String recordId){
+    public static order_item__c updateQuoteItem(Decimal buyingRate, Decimal sellingRate, String recordId, String shippingLineId){
         order_item__c item = new order_item__c();
         item.Id = recordId;
         item.Buying_Rate__c = buyingRate;
         item.Total_Order__c = sellingRate;
+        item.Shipping_Line__c = shippingLineId;
         update item ;
         return item;
+    }
+    @AuraEnabled
+    public static List<order_item__c> getImportItemOnLoad(){
+        List<Order_item__c> itemList =  new List<Order_item__c>();
+        itemList = [Select quantity__c,Order__r.Account_Order__c,Agent__r.name,Shipping_Line__r.Name,Vessel_ETD__c,Port_of_Discharge_Order__r.Name,Port_of_Loading_Order__r.Name,Order__r.Quotation__r.Name,Order__r.Name,Name,Total_Order__c,buying_rate__c from order_item__c where Greater_Vessel_ETD__c = true and Order__r.recordtype.name ='Import' order by order__r.Order_Validity__c desc];
+        return itemList;
     }
 }

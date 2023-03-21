@@ -6,6 +6,10 @@
     <picklistValues>
         <picklist>Status__c</picklist>
         <values>
+            <fullName>CRO Amendment Awaited</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>Cancelled</fullName>
             <default>false</default>
         </values>

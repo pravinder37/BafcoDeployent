@@ -5,6 +5,8 @@
     <aura:attribute name="refRecordId" type="String" />
     <aura:attribute name="isEdit" type="String" default="false" />
     <aura:attribute name="optyId" type="String" default="" />
+    <aura:attribute name="isLCL" type="Boolean" default="false" />
+    <aura:attribute name="isAir" type="Boolean" default="false" />
     <aura:attribute name="device" type="String" />
     <aura:handler name="init" action="{!c.navigateToLC}" value="{!this}" />
     <aura:if isTrue="{!v.device == 'PHONE'}">
@@ -20,7 +22,13 @@
         }
     </aura:html>
 	<div style="background: white;">
-        <c:bAFCOLeadCreationParentComponent quoteID="{!v.refRecordId}" optyId="{!v.optyId}" isEdit="{!v.isEdit}"/>
+        <!--c:bAFCOLeadCreationParentComponent quoteID="{!v.refRecordId}" optyId="{!v.optyId}" isEdit="{!v.isEdit}"/-->
+        <aura:if isTrue="{!AND(v.isLCL == false,v.isAir == false)}">
+        	<c:bAFCOLeadCreationParentComponent quoteID="{!v.refRecordId}" optyId="{!v.optyId}" isEdit="{!v.isEdit}"/>
+        </aura:if>
+        <aura:if isTrue="{!OR(v.isLCL == true,v.isAir == true)}">
+            <c:bAFCOAirFreightEnquiryParent quoteID="{!v.refRecordId}" optyId="{!v.optyId}" isEdit="{!v.isEdit}" isAir="{!v.isAir}"/>
+        </aura:if>
     </div>
     </aura:if>
 </aura:component>

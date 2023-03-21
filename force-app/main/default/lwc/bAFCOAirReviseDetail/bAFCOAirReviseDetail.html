@@ -9,11 +9,11 @@
             <span class=leadDetails>{serviceType}</span>
         </lightning-layout-item>
         <lightning-layout-item size="2" class="slds-col slds-m-vertical_medium" if:true={portLoadingId}>
-            <p class="slds-m-top_small leadLabel">Port of Loading</p>
+            <p class="slds-m-top_small leadLabel">{loadingPortLabel}</p>
             <span class=leadDetails>{portLoading}</span>            
         </lightning-layout-item>
         <lightning-layout-item size="2" class="slds-col slds-m-vertical_medium" if:true={portDestinationId}>
-            <p class="slds-m-top_small leadLabel">Port of Destination</p>
+            <p class="slds-m-top_small leadLabel">{destionationPortLabel}</p>
             <span class=leadDetails>{portDestination}</span>
         </lightning-layout-item>
         <lightning-layout-item size="2" class="slds-col slds-m-vertical_medium">

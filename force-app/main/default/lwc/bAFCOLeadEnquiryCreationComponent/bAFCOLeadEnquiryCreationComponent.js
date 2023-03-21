@@ -182,6 +182,7 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
             'dischargePlaceClass':'',
             'pickupPlaceClass':'',
             'disableAddRoute':false,
+            'cargoReadiness':'',
             'routeId':''
         }
         this.entryIntVar++;
@@ -438,6 +439,7 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
                 elem.dischargePlaceClass = prdDto.dischargePlaceClass
                 elem.pickupPlaceClass = prdDto.pickupPlaceClass
                 elem.disableAddRoute = prdDto.disableAddRoute
+                elem.cargoReadiness = prdDto.cargoReadiness
                 if(elem.disableAddRoute == true) this.disableAddRoute = true
             }
         })
@@ -599,6 +601,7 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
                             'dangerousGoods':elem.dangerousGoods,
                             'remarks':elem.remarks,
                             'dgClass':elem.dgClass,
+                            'cargoReadiness':elem.cargoReadiness != undefined ? elem.cargoReadiness : '',
                             'leadIndex':parseInt(elem.leadIndex),
                             'containerRecord': elem.containerRecord,
                             'showDGClassField':elem.dangerousGoods,

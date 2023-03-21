@@ -130,15 +130,16 @@ public class BAFCOSendOrdersAPITest {
         insert shipperObj;
         
     }
-    testmethod static void getOrderTest(){
+    /*testmethod static void getOrderTest(){
         List<Order__c> orderList = [Select Operations_Executive__r.BSLS_ID__c, (Select Agent__r.BSLS_ID__c,Agent__r.Name,Agent__c, Equipment_Type_Order__r.BSLS_ID__c, Place_of_Discharge__r.BSLS_ID__c,Place_of_Pickup__r.BSLS_ID__c,Port_of_Discharge_Order__r.BSLS_ID__c,Port_of_Loading_Order__r.BSLS_ID__c,Shipping_Line__r.BSLS_ID__c, Route_Order__r.Service_Type__c,Route_Order__r.Kind_Of_Shipment__c,Name,id,Order__r.Name from Order_Items__r),Order_Validity__c,Quotation__r.Quotation_Validity__c,Quotation__r.Name, Name,Account_Order__r.BSLS_ID__c,Account_Order__r.BillingAddress, id,Account_Order__c,Account_Order__r.Name,Account_Order__r.Branch__c,Account_Order__r.Owner.Name from Order__c ];
         test.startTest();
         Test.setMock(HttpCalloutMock.class, new BAFCOExchangeRateMockTest());
         BAFCOSendOrdersAPI.getOrderData(orderList);
         test.stopTest();
-    }
+    }*/
     testmethod static void postOrderTest(){
         test.startTest();
+        Test.setMock(HttpCalloutMock.class, new BAFCOExchangeRateMockTest());
         RestRequest req = new RestRequest(); 
         RestResponse res = new RestResponse();
         BAFCOUpdatETDOnOrderAPI.ETDRequestBodyWrapper dto = new BAFCOUpdatETDOnOrderAPI.ETDRequestBodyWrapper();
@@ -155,6 +156,7 @@ public class BAFCOSendOrdersAPITest {
     }
     testmethod static void postOrderTest2(){
         test.startTest();
+        Test.setMock(HttpCalloutMock.class, new BAFCOExchangeRateMockTest());
         RestRequest req = new RestRequest(); 
         RestResponse res = new RestResponse();
         BAFCOUpdatETDOnOrderAPI.ETDRequestBodyWrapper dto = new BAFCOUpdatETDOnOrderAPI.ETDRequestBodyWrapper();

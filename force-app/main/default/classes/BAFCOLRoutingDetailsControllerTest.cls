@@ -60,6 +60,29 @@ public class BAFCOLRoutingDetailsControllerTest {
         tsk.IsReminderSet = true;
         tsk.ActivityDate = Date.valueOf(DateTime.now());
         insert tsk;
+        
+        String accID =  [Select id from Account limit 1].Id;
+         Id opportunityAirId = Schema.SObjectType.opportunity.getRecordTypeInfosByName()
+        .get('Air Freight')
+        .getRecordTypeId();
+        
+        opportunity opty2 = new Opportunity();
+        opty2.AccountId = accID;
+        opty2.StageName = 'Qualification';
+        opty2.CloseDate = system.today();
+        opty2.Name ='testopty';
+        opty2.Business_Type__c = 'Export';
+        opty2.RecordTypeId = opportunityAirId;
+        insert opty2;
+        Task tsk2 = new Task();
+        tsk2.Subject = 'Provide Quotation';
+        tsk2.Status = 'Open';
+        tsk2.OwnerId = UserInfo.getUserId();
+        tsk2.WhatId = opty2.Id;
+        tsk2.IsReminderSet = true;
+        tsk2.ActivityDate = Date.valueOf(DateTime.now());
+        insert tsk2;
+        
         Regular_Routing__c regObj = new Regular_Routing__c();
         regObj.Account__c = acc.id;
         regObj.Name = 'test';
@@ -73,6 +96,7 @@ public class BAFCOLRoutingDetailsControllerTest {
         place__c  placeObj = new place__c();
         placeObj.Name = 'test';
         insert placeObj;
+        List<Route__c> routeList = new List<Route__c>();
         Route__c route = new Route__c();
         route.opportunity_enquiry__c = opty.id;
         route.Port_of_Destination__c = port.id;
@@ -80,7 +104,17 @@ public class BAFCOLRoutingDetailsControllerTest {
         route.Commodity__c = comd.id;
         route.Place_of_Discharge__c = placeObj.id;
         route.Place_of_Pickup__c = placeObj.id;
-        insert route;
+        routeList.add(route);
+        
+        Route__c route1 = new Route__c();
+        route1.opportunity_enquiry__c = opty2.id;
+        route1.Port_of_Destination__c = port.id;
+        route1.Port_of_loading__c =port.id;
+        route1.Commodity__c = comd.id;
+        route1.Place_of_Discharge__c = placeObj.id;
+        route1.Place_of_Pickup__c = placeObj.id;
+        routeList.add(route1);
+        Insert routeList;
         
         Route_Equipment__c rEquip = new Route_Equipment__c();
         rEquip.Route__c = route.id;
@@ -229,6 +263,24 @@ public class BAFCOLRoutingDetailsControllerTest {
         }
         test.stopTest();
     }
+    
+    testmethod static void getEnqueryDetailsTest02(){
+       
+         Id opportunityAirId = Schema.SObjectType.opportunity.getRecordTypeInfosByName()
+        .get('Air Freight')
+        .getRecordTypeId();
+         String optyId =  [Select id from opportunity where recordtypeId =:opportunityAirId  limit 1].Id;
+        
+        test.startTest();
+        try{
+            BAFCOLRoutingDetailsController.getEnqueryDetails(optyId);
+        }
+        Catch(Exception e){
+            system.debug('getEnqueryDetailsTest '+e);
+        }
+        test.stopTest();
+    }
+    
     testmethod static void getRMSDetailsTest01(){
         String portLoading = 'PortName';
         String portDestination = 'PortName';
@@ -267,7 +319,8 @@ public class BAFCOLRoutingDetailsControllerTest {
         bafcoList.add(dto);
         String closeDate = string.valueOf(system.today());
         String quoteId = [Select id from Account limit 1].Id;
-        String optyId = BAFCOLRoutingDetailsController.submitRoutingList(bafcoList, 'Import', quoteId,closeDate,'');
+        List<String> emptylist = new List<String>();
+        String optyId = BAFCOLRoutingDetailsController.submitRoutingList(bafcoList, 'Import', quoteId,closeDate,'' ,'', emptylist, emptylist, '');
         Opportunity optyObj = [Select AccountId from Opportunity where id =: optyId];
         BAFCOLRoutingDetailsController.getCommercialUserOnLoad(optyObj.AccountId);
         BAFCOLRoutingDetailsController.getOptyBusinessType(optyId);
@@ -448,11 +501,19 @@ public class BAFCOLRoutingDetailsControllerTest {
         test.stopTest();
     }
     testMethod static void addRatesTest(){
+        List<BAFCOLeadDetailsController.selectedEquip> selectedEquip = new List<BAFCOLeadDetailsController.selectedEquip>();
+        BAFCOLeadDetailsController.selectedEquip obj1 = new BAFCOLeadDetailsController.selectedEquip();
+        Equipment_Type__c equipmenent = [Select id from Equipment_Type__c limit 1];
+        obj1.label = 'EquipName';
+        obj1.value = equipmenent.id;
+        obj1.seaFreight = 10;
+        selectedEquip.add(obj1);
         BAFCORMSDto rmsDetail = new BAFCORMSDto();
         rmsDetail.validity = '2022-07-22';
         rmsDetail.allInRate = false;
         rmsDetail.FOBAllIn = false;
         rmsDetail.ExWorksIn = false;
+        rmsDetail.selectedEquip=selectedEquip;
         String routeId = [Select id from Route__c limit 1].Id;
         shippingLineChargesDTO shippingChargeDto = new shippingLineChargesDTO();
         BAFCOIncoChargesDto incocharges = new BAFCOIncoChargesDto();
@@ -464,7 +525,7 @@ public class BAFCOLRoutingDetailsControllerTest {
         String leadId = [Select id from Account limit 1].Id;
         
         test.startTest();
-        BAFCOLRoutingDetailsController.addRates(rmsDetail, routeId, shippingChargeDto, incocharges, totalShippChanged, totalIncoChanged, equipmentType, shippingLine, leadId,false,destiObj);
+        BAFCOLRoutingDetailsController.addRates(rmsDetail, routeId, shippingChargeDto, incocharges, totalShippChanged, totalIncoChanged, equipmentType, shippingLine, leadId,false,destiObj,selectedEquip);
         test.stopTest();
     }
     testMethod static void getShiplineTest(){

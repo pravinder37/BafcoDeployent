@@ -3,10 +3,11 @@
     <fullName>Cancelled_Remarks__c</fullName>
     <externalId>false</externalId>
     <label>Cancelled Remarks</label>
-    <length>32768</length>
+    <length>255</length>
+    <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>
-    <trackHistory>false</trackHistory>
+    <trackHistory>true</trackHistory>
     <trackTrending>false</trackTrending>
-    <type>LongTextArea</type>
-    <visibleLines>3</visibleLines>
+    <type>Text</type>
+    <unique>false</unique>
 </CustomField>

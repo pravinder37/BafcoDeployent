@@ -10,6 +10,7 @@
                                 options={regularRouteOption}
                                 data-record-id={leadIndex}                                                    
                                 value={routingRegular} 
+                                disabled={isAir}
                                 style="padding: 0px 20px 0px 20px;"
                                 onchange={handleRegularRouteChange}
                                 placeholder="Select"></lightning-combobox>
@@ -51,7 +52,7 @@
         <lightning-layout-item if:false={hidePOL} size="12" class="mobilePaddingRight" large-device-size="4" medium-device-size="4" small-device-size="12">
             <div class={portOfLoadingClass}>
                 <label class="slds-form-element__label">
-                    <p style="padding: 0px 20px 0px 20px;" class="labelStyle">Port of Loading</p>
+                    <p style="padding: 0px 20px 0px 20px;" class="labelStyle">{loadigPortLabel}</p>
                 </label>
                 <c-b-a-f-c-o-custom-look-up-component
                                 obj-name={portObject}
@@ -69,7 +70,7 @@
         <lightning-layout-item if:false={hidePOD} size="12" class="mobilePaddingRight" large-device-size="4" medium-device-size="4" small-device-size="12">
             <div class={portOfDestinationClass}>
                 <label class="slds-form-element__label">
-                    <p style="padding: 0px 20px 0px 20px;" class="labelStyle">Port of Destination</p>
+                    <p style="padding: 0px 20px 0px 20px;" class="labelStyle">{destinationPortLabel}</p>
                 </label>
                 <c-b-a-f-c-o-custom-look-up-component
                                 obj-name={portObject}
@@ -162,6 +163,9 @@
                             style="padding: 0px 20px 0px 20px;" 
                             value={remarks}></lightning-textarea>
         </lightning-layout-item> 
+        <lightning-layout-item size="12" class="mobilePaddingRight" large-device-size="4" medium-device-size="4" small-device-size="12" if:true={isImport}>
+            <lightning-input type="date"  style="padding: 0px 20px 0px 20px;" class="labelStyle"  label="Cargo Readiness" value={cargoReadiness} min={minDate} onchange={handelCargoReadinessDate}></lightning-input>
+        </lightning-layout-item>
     </lightning-layout>
     <p class="slds-m-around_medium" 
         style="font-size: 1.1rem; padding: 0px 20px 0px 20px;">
@@ -181,7 +185,7 @@
             <template for:each={containerRecord} for:item="contr">
                 <lightning-layout-item size="12" key={contr}>
                     <lightning-layout multiple-rows>
-                        <lightning-layout-item size="4" large-device-size="4" medium-device-size="4" small-device-size="4" >
+                        <!--lightning-layout-item size="4" large-device-size="4" medium-device-size="4" small-device-size="4" >
                             <lightning-input type="number" label="Length"
                                     onchange={handlelengthChange}
                                     data-record-id={contr.index}  
@@ -204,9 +208,9 @@
                                     style="padding: 0px 20px 0px 20px;font-weight: 700;"
                                     class={contr.heightErrorClass}
                                     value={contr.height}></lightning-input>
-                        </lightning-layout-item>
+                        </lightning-layout-item-->
                         <lightning-layout-item size="4" large-device-size="4" medium-device-size="4" small-device-size="4" >
-                            <lightning-input type="number" label="CBM"
+                            <lightning-input type="number" label="Total CBM (M)"
                                     onchange={handleCBMChange}
                                     data-record-id={contr.index}  
                                     style="padding: 0px 20px 0px 20px;font-weight: 700;"
@@ -214,7 +218,7 @@
                                     value={contr.CBM}></lightning-input>
                         </lightning-layout-item>
                         <lightning-layout-item size="4" large-device-size="4" medium-device-size="4" small-device-size="4" >
-                            <lightning-input type="number" label="Weight"
+                            <lightning-input type="number" label="Total Gross Weight (KGs)"
                                     onchange={handleWeightChange}
                                     data-record-id={contr.index}  
                                     style="padding: 0px 20px 0px 20px;font-weight: 700;"
@@ -240,6 +244,14 @@
                                     style="padding: 0px 20px 0px 20px;font-weight: 700;"
                                     class={contr.unitsErrorClass}
                                     value={contr.units}></lightning-input>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="12" large-device-size="12" medium-device-size="12" small-device-size="12" >
+                            <lightning-textarea label="Cargo Details" 
+                                                onchange={handleCargoDetailsChange}
+                                                data-record-id={contr.index}
+                                                style="padding: 0px 20px 0px 20px;font-weight: 700;"
+                                                class={contr.cargoDetailsError}
+                                                value={contr.cargoDetails} ></lightning-textarea>
                         </lightning-layout-item>
                         <lightning-layout-item size="4" style ="padding:25px 0px 0px 15px;" large-device-size="4" medium-device-size="4" small-device-size="4" >
                             <lightning-button-icon icon-name="utility:ban"

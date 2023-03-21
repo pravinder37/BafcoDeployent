@@ -12,9 +12,9 @@
     <columns>LEAD.UNREAD</columns>
     <filterScope>Everything</filterScope>
     <filters>
-        <field>LEAD.CREATED_DATE</field>
-        <operation>equals</operation>
-        <value>TODAY</value>
+        <field>CORE.USERS.LAST_NAME</field>
+        <operation>contains</operation>
+        <value>Mahathir</value>
     </filters>
     <label>Today&apos;s Leads</label>
 </ListView>

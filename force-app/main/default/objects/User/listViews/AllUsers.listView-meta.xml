@@ -4,8 +4,8 @@
     <columns>FULL_NAME</columns>
     <columns>CORE.USERS.USERNAME</columns>
     <columns>CORE.USERS.LAST_LOGIN</columns>
-    <columns>LOCALE</columns>
     <columns>Branch__c</columns>
+    <columns>MANAGER</columns>
     <columns>CORE.USERS.ACTIVE</columns>
     <columns>CORE.PROFILE.NAME</columns>
     <columns>CORE.USER_ROLE.NAME</columns>

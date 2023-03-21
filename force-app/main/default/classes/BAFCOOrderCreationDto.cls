@@ -13,7 +13,10 @@ public class BAFCOOrderCreationDto {
         public List<value> value { get; set; }
     }
     public class value{
+        @AuraEnabled public Boolean isLCL { get; set; }
+         @AuraEnabled public Boolean isAir { get; set; }
         @AuraEnabled public String incoTermId { get; set; }
+        @AuraEnabled public String tabView { get; set; }
         @AuraEnabled
         public String recordtypeId { get; set; }
         @AuraEnabled

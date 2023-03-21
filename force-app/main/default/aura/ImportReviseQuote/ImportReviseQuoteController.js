@@ -9,6 +9,7 @@
                 console.log('quoteObj '+JSON.stringify(quoteObj))
                 let incoTerm = quoteObj.incoTerm;
                 var leadId = quoteObj.leadId;
+                let isLCL = quoteObj.isLCL;
                 var pageReference = {
                     type: 'standard__component',
                     attributes: {
@@ -17,7 +18,8 @@
                     state: {
                         c__refRecordId: cmp.get("v.recordId"),
                         c__leadId: leadId,
-                        c__incoTerm: incoTerm
+                        c__incoTerm: incoTerm,
+                        c__isLCL:  isLCL
                     }
                 };
                 cmp.set("v.pageReference", pageReference);

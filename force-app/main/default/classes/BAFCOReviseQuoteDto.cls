@@ -29,4 +29,8 @@ public class BAFCOReviseQuoteDto {
     public Decimal accountAvgCreditDays { get; set; }
     @AuraEnabled
     public Map<String, List<Quotation_Item__c>> routetoItemMap {get; set;}
+    @AuraEnabled
+    public Boolean isLCL {get; set;}
+    @AuraEnabled
+    public Boolean isAir {get; set;}
 }

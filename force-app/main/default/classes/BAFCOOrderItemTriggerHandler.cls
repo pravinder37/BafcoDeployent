@@ -96,7 +96,15 @@ public class BAFCOOrderItemTriggerHandler {
         }
     }*/
     public static void onAfterInsert(List<Order_Item__c> orderItemList){
+        system.debug('=onAfterInsert of TriggerHandeler');
         createRegularRoute(orderItemList);
+        BAFCOMarginCalculator.calculateMargins(orderItemList);
+    }
+    
+    public static void onAfterUpdate(List<Order_Item__c> orderItemList){
+        system.debug('=onAfterUpdate of TriggerHandeler');
+        createRegularRoute(orderItemList);
+        BAFCOMarginCalculator.calculateMargins(orderItemList);
     }
     public static void createRegularRoute(List<Order_Item__c> orderItemList){
         Set<Id> orderIds = new Set<Id>();
@@ -172,7 +180,7 @@ public class BAFCOOrderItemTriggerHandler {
                 regList.add(createRegularRouteObj(item,orderIdToAccId,routeIdToObjMap));
             }
         }
-        if(regList.size() > 0) insert regList;
+        //if(regList.size() > 0) insert regList;
     }
     public static Regular_Routing__c createRegularRouteObj(Order_Item__c item,Map<Id,Id> orderIdToAccId,Map<Id,Route__c> routeIdToObjMap){
         Regular_Routing__c newObj = new Regular_Routing__c();
@@ -184,6 +192,7 @@ public class BAFCOOrderItemTriggerHandler {
             Route__c routeObj = routeIdToObjMap.get(item.Route_Order__c);
             newObj.Pickup_Place__c = routeObj.Pickup_Place__c;
             newObj.Discharge_Place__c = routeObj.Discharge_Place__c;
+            system.debug('routeObj.DG_Class__c '+routeObj.DG_Class__c);
             newObj.DG_Class__c = routeObj.DG_Class__c;
             newObj.Dangerous_Goods__c = routeObj.Dangerous_Goods__c;
             newObj.Service_Type__c = routeObj.Service_Type__c;

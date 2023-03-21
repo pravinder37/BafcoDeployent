@@ -33,4 +33,9 @@
         	<c:bAFCOLocalOperationQuoteParent optyId="{!v.refRecordId}" businessType="{!v.refBusinessType}" />
         </div>
     </aura:if>
+    <aura:if isTrue="{!or(v.refRecordTypeType == 'LCL',v.refRecordTypeType == 'Air Freight')}">
+        <div style="background: white;">
+            <c:bAFCOAirQuoteParent optyId="{!v.refRecordId}" businessType="{!v.refBusinessType}" />
+        </div>
+    </aura:if>
 </aura:component>

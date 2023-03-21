@@ -3,10 +3,9 @@
     <fullName>Closed_Lost_Reason_Commercial__c</fullName>
     <externalId>false</externalId>
     <label>Closed Lost Reason(Commercial)</label>
-    <length>131072</length>
+    <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>true</trackHistory>
     <trackTrending>false</trackTrending>
-    <type>LongTextArea</type>
-    <visibleLines>3</visibleLines>
+    <type>TextArea</type>
 </CustomField>

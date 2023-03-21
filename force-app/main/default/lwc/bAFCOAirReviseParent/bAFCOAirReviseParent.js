@@ -8,6 +8,7 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class BAFCOAirReviseParent extends LightningElement {
     @api accId = '';
     @api quoteID ='';
+    @api isAir ;
     @track quoteObj = {};
     @track quoteList;
     vectorPng = VECTOR;
@@ -24,7 +25,7 @@ export default class BAFCOAirReviseParent extends LightningElement {
     @track recordtypeName = '';
     @track validityDate = '';
     minTodaysDate = '';
-    connectedCallback(){        
+    connectedCallback(){   
         this.getquoteDetails();
         let d = new Date().toISOString();  
         this.minTodaysDate = this.formatDate(d);

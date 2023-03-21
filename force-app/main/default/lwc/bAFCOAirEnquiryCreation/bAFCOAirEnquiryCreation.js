@@ -137,6 +137,8 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
             'stackable':false,
             'palletized':false,
             'units':'',
+            'cargoDetails':'',
+            'cargoDetailsError':''
         }
         let contrTempList  = [];
         contrTempList.push(containerRecord);
@@ -179,6 +181,7 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
             'pickupPlaceClass':'',
             'disableAddRoute':false,
             'isAir':this.isAir,
+            'cargoReadiness':'',
             'routeId':''
         }
         this.entryIntVar++;
@@ -228,9 +231,11 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
                             'dangerousGoods':elem.dangerousGoods,
                             'remarks':elem.remarks,
                             'dgClass':elem.dgClass,
+                            'cargoReadiness':elem.cargoReadiness != undefined ? elem.cargoReadiness : '',
                             'leadIndex':parseInt(elem.leadIndex),
                             'containerRecord': elem.containerRecord,
                             'showDGClassField':elem.dangerousGoods,
+                            'isAir':elem.isAir != undefined ? elem.isAir : false,
                             'showPickupPlaceField':false,
                             'showDischargePlaceField':false,
                             'incoTermField':parseInt(elem.leadIndex)+'incoTermField',
@@ -311,6 +316,7 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
                 elem.dischargePlaceClass = prdDto.dischargePlaceClass
                 elem.pickupPlaceClass = prdDto.pickupPlaceClass
                 elem.disableAddRoute = prdDto.disableAddRoute
+                elem.cargoReadiness = prdDto.cargoReadiness
                 if(elem.disableAddRoute == true) this.disableAddRoute = true
             }
         })
@@ -377,7 +383,7 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
                 elem.dischargePlaceClass = 'slds-has-error';
             }
             elem.containerRecord.forEach(elem2=>{
-                if(elem2.length <= 0){
+                /*if(elem2.length <= 0){
                     elem2.lengthErrorClass = 'slds-has-error';
                     allValid = false
                 }
@@ -388,7 +394,7 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
                 if(elem2.height <= 0){
                     elem2.heightErrorClass = 'slds-has-error';
                     allValid = false
-                }
+                }*/
                 if(elem2.CBM <= 0){
                     elem2.CBMErrorClass = 'slds-has-error';
                     allValid = false
@@ -399,6 +405,10 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
                 }
                 if(elem2.units <= 0){
                     elem2.unitsErrorClass = 'slds-has-error';
+                    allValid = false
+                }
+                if(elem2.cargoDetails == ''){
+                    elem2.cargoDetailsError = 'slds-has-error';
                     allValid = false
                 }
                 console.log('tempErrorList '+JSON.stringify(tempErrorList,null,2))
@@ -546,6 +556,18 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
         this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].units = prdDto.units;
         this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].unitsErrorClass = '';
     }
+    handleCargoDetailsUpdate(e){
+        console.log('came ')
+        let prdDto = JSON.parse(JSON.stringify(e.detail.dto));
+        console.log('prdDto '+JSON.stringify(prdDto,null,2))
+        let index = prdDto.index;
+        let splitIndex = index.split('.');
+        let indexOfLeadEnquiry = this.leadEnquiryList.findIndex(x => x.leadIndex == splitIndex[0] );
+        let childContainerIndex = this.leadEnquiryList[indexOfLeadEnquiry].containerRecord.findIndex(x => x.index == index );
+        this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].cargoDetails = prdDto.cargoDetails;
+        this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].cargoDetailsError = '';
+        console.log('prdDto '+JSON.stringify(this.leadEnquiryList,null,2))
+    }
     handleAddContainer(e){
         let strIndex = e.detail;
         let tempList = this.leadEnquiryList;       
@@ -573,6 +595,8 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
             'stackable':previousRecord.stackable,
             'palletized':previousRecord.palletized,
             'units':previousRecord.units,
+            'cargoDetails':previousRecord.cargoDetails,
+            'cargoDetailsError':''
         }
         lastContainerRecord.push(containerRecord);
         tempList[strIndex - 1].containerRecord = lastContainerRecord;
@@ -606,6 +630,8 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
                 'stackable':false,
                 'palletized':false,
                 'units':'',
+                'cargoDetails':'',
+                'cargoDetailsError':''
             }
             lastContainerRecord.push(containerRecord);
             tempList[strIndex].containerRecord = lastContainerRecord;

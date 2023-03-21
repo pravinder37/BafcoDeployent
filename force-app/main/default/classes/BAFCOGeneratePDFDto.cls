@@ -31,6 +31,7 @@ public class BAFCOGeneratePDFDto {
         @AuraEnabled public string portOfLoading{get;set;}
         @AuraEnabled public string portOfDestination{get;set;}
         @AuraEnabled public string equipmentType{get;set;}
+        @AuraEnabled public string lclTabView{get;set;}
         @AuraEnabled public decimal total{get;set;}
         @AuraEnabled public decimal totalDC{get;set;}
         @AuraEnabled public Boolean ShowtotalDC{get;set;}

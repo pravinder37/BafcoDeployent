@@ -100,13 +100,30 @@
                    </header>
                
                    <!-- modal body start -->
-                   <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
-                         <lightning-layout>
-                            <lightning-layout-item size="6">
+                   <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style="min-height: 260px;">
+                    <lightning-spinner size="large" variant="brand" if:true={isLoading2}></lightning-spinner>
+                         <lightning-layout multiple-rows>
+                            <lightning-layout-item size="6" style="padding-left: 22px">
                                 <lightning-input type="number" label="Buying Rate" data-field="buyingRateField" value={buyingRate} onchange={handleBuyingRateChange}></lightning-input>
                             </lightning-layout-item>
-                            <lightning-layout-item size="6">
+                            <lightning-layout-item size="6" style="padding-left: 22px">
                                 <lightning-input type="number" style="padding-left: 4px;" data-field="totalRateField" label="Total" value={totalSellingRate} onchange={handleSellingTotalChange}></lightning-input>
+                            </lightning-layout-item>
+                            <lightning-layout-item size="6">
+                                <div class={selectedShippLineError}>
+                                <label class="slds-form-element__label">
+                                    <p style="padding-left: 22px">Shipping Line</p>
+                                </label>
+                                <c-b-a-f-c-o-custom-look-up-component
+                                                obj-name="Shipping_Line__c"
+                                                search-placeholder="Search shipping line" 
+                                                icon-name="standard:opportunity"
+                                                onlookupselected={handleShippingLineSelection}
+                                                onlookupremoved={handleShippingLineRemoved}></c-b-a-f-c-o-custom-look-up-component>
+                                                <div class="slds-form-element__help" style="color: rgb(234, 0, 30); padding-left: 20px; font-weight: 600;" if:true={selectedShippLineError}>
+                                                    Complete this field
+                                                </div>
+                                            </div>
                             </lightning-layout-item>
                          </lightning-layout>
                    </div>

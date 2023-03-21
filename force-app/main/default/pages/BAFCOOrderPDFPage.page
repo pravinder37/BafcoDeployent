@@ -142,30 +142,30 @@
                     <tr style="background: #F9FAFB;">
                         <td>
                             <apex:panelGrid rendered="{!item.serviceType == 'P2P'}" columns="4">
-                                <b>Port of Loading :</b><apex:outputText value="{!item.portOfLoading}"/>
+                                <b>{!loadingPortLabel}</b><apex:outputText value="{!item.portOfLoading}"/>
                                 <b>Transit Time :</b><apex:outputText value="** not Mapped **"/>
-                                <b>Port of Destination :</b><apex:outputText value="{!item.portOfDestination}"/>
+                                <b>{!destinationPortLabel}</b><apex:outputText value="{!item.portOfDestination}"/>
                                 <apex:outputText rendered="{!showShippLine == true}"><b>ShippingLine :</b></apex:outputText> <apex:outputText rendered="{!showShippLine == true}" value="{!item.shippingLine}"/>
                             </apex:panelGrid>
                             <apex:panelGrid rendered="{!item.serviceType == 'P2D'}" columns="6">
-                                <b>Port of Loading :</b><apex:outputText value="{!item.portOfLoading}"/>
+                                <b>{!loadingPortLabel}</b><apex:outputText value="{!item.portOfLoading}"/>
                                 <apex:outputText rendered="{!item.placeOfDischarge  != NULL}"><b>Place of Discharge :</b></apex:outputText><apex:outputText rendered="{!item.placeOfDischarge  != NULL}" value="{!item.placeOfDischarge}"/>
                                 <b>Transit Time :</b><apex:outputText value="** not Mapped **"/>
-                                <b>Port of Destination :</b><apex:outputText value="{!item.portOfDestination}"/>
+                                <b>{!destinationPortLabel}</b><apex:outputText value="{!item.portOfDestination}"/>
                                 <apex:outputText rendered="{!showShippLine == true}"><b>ShippingLine :</b></apex:outputText> <apex:outputText rendered="{!showShippLine == true}" value="{!item.shippingLine}"/>
                             </apex:panelGrid>
                             <apex:panelGrid rendered="{!item.serviceType == 'D2P'}" columns="6">
-                                <b>Port of Loading :</b><apex:outputText value="{!item.portOfLoading}"/>
+                                <b>{!loadingPortLabel}</b><apex:outputText value="{!item.portOfLoading}"/>
                                 <apex:outputText rendered="{!item.placeOfPickup  != NULL}"><b>Place of Pickup :</b></apex:outputText><apex:outputText rendered="{!item.placeOfPickup  != NULL}" value="{!item.placeOfPickup}"/>
                                 <b>Transit Time :</b><apex:outputText value="** not Mapped **"/>
-                                <b>Port of Destination :</b><apex:outputText value="{!item.portOfDestination}"/>
+                                <b>{!destinationPortLabel}</b><apex:outputText value="{!item.portOfDestination}"/>
                                 <apex:outputText rendered="{!showShippLine == true}"><b>ShippingLine :</b></apex:outputText> <apex:outputText rendered="{!showShippLine == true}" value="{!item.shippingLine}"/>
                             </apex:panelGrid>
                             <apex:panelGrid rendered="{!item.serviceType == 'D2D'}" columns="6">
-                                <b>Port of Loading :</b><apex:outputText value="{!item.portOfLoading}"/>
+                                <b>{!loadingPortLabel}</b><apex:outputText value="{!item.portOfLoading}"/>
                                 <apex:outputText rendered="{!item.placeOfPickup  != NULL}"><b>Place of Pickup :</b></apex:outputText><apex:outputText rendered="{!item.placeOfPickup  != NULL}" value="{!item.placeOfPickup}"/>
                                 <b>Transit Time :</b><apex:outputText value="** not Mapped **"/>
-                                <b>Port of Destination :</b><apex:outputText value="{!item.portOfDestination}"/>
+                                <b>{!destinationPortLabel}</b><apex:outputText value="{!item.portOfDestination}"/>
                                  <apex:outputText rendered="{!item.placeOfDischarge  != NULL}"><b>Place of Discharge :</b></apex:outputText><apex:outputText rendered="{!item.placeOfDischarge  != NULL}" value="{!item.placeOfDischarge}"/> 
                                 <apex:outputText rendered="{!showShippLine == true}"><b>ShippingLine :</b></apex:outputText> <apex:outputText rendered="{!showShippLine == true}" value="{!item.shippingLine}"/>
                                 
@@ -192,7 +192,7 @@
                         <td style="padding-left:280px;">
                             <span>
                                 <b>
-                                    <apex:outputText style="font-size:large !important"  value="{0, number, #########.##} $">
+                                    <apex:outputText style="font-size:large !important;padding-left:{!if(isLCL == true,'50px','0px')}"  value="{0, number, #########.##} $">
                                         <apex:param value="{!item.total}" />
                                     </apex:outputText>
                                 </b>

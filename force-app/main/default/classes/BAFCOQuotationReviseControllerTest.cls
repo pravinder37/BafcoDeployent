@@ -206,7 +206,7 @@ public class BAFCOQuotationReviseControllerTest {
         BAFCOQuotationReviseController.getQuoteLineItemDetails(quoteId,'PortName','PortName','Test',routeId);
         test.stopTest();
     }
-    static string getQuoteId(){
+    public static string getQuoteId(){
         return [Select id from Quotation__c limit 1].Id;
     }
     static string getrouteId(){

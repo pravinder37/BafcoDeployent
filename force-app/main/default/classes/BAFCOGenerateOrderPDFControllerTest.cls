@@ -65,6 +65,12 @@ public class BAFCOGenerateOrderPDFControllerTest {
         obj.Quotation__c = quoteObj.id;
         insert obj;
         
+        Order__c obj2 = new Order__c();
+        obj2.Account_Order__c = acc.id;
+        obj2.Quotation__c = quoteObj.id;
+        obj2.isAir__c = true;
+        insert obj2;
+        
         List<Equipment_Type__c> equipList = new List<Equipment_Type__c>();
         Equipment_Type__c equip = new Equipment_Type__c();
         equip.Name='20DC';
@@ -95,10 +101,29 @@ public class BAFCOGenerateOrderPDFControllerTest {
         item2.Equipment_Type_Order__c = equip2.id;
        	orderItemList.add(item2);
         
+        Order_item__c item3 = new Order_item__c();
+        item3.Order__c = obj2.id;
+        item3.Agent__c = agentObj.id;
+        item3.Port_of_Discharge_Order__c = port.id;
+        item3.Port_of_Loading_Order__c = port.id;
+        item3.Equipment_Type_Order__c = equip2.id;
+       	orderItemList.add(item3);
+        
         insert orderItemList;
     }
     @isTest static void testController(){
         Order__c ordeObj = [Select id from order__c limit 1];
+        PageReference testPage = Page.BAFCOOrderPDFPage; 
+   		Test.setCurrentPage(testPage);
+        testPage.getParameters().put('showShippLine', 'true');
+        testPage.getParameters().put('showCharges', 'true');
+        testPage.getParameters().put('recordId', ordeObj.id);
+        ApexPages.StandardController sc = new  ApexPages.StandardController(ordeObj); 
+        BAFCOGenerateOrderPDFController ob = new BAFCOGenerateOrderPDFController(sc);
+        ob.getQuoteData();
+    }
+    @isTest static void testController01(){
+        Order__c ordeObj = [Select id from order__c where isAir__c = true limit 1];
         PageReference testPage = Page.BAFCOOrderPDFPage; 
    		Test.setCurrentPage(testPage);
         testPage.getParameters().put('showShippLine', 'true');

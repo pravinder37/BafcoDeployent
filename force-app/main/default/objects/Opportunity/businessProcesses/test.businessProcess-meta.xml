@@ -15,6 +15,10 @@
         <default>false</default>
     </values>
     <values>
+        <fullName>No Feedback from Customer</fullName>
+        <default>false</default>
+    </values>
+    <values>
         <fullName>Proposal%2FPrice Quote</fullName>
         <default>false</default>
     </values>

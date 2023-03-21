@@ -60,6 +60,9 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
     @track hideShippingLine = false;
     @track disableServiceType = false;
     @api isEdit;
+    @api cargoReadiness = '';
+    @track isImport = false;
+    @api minDate = '';
 
     @wire(getPicklistValuesByRecordType, { objectApiName: ROUTE_OBJECT, recordTypeId: '012000000000000AAA' })
     routeObjectData({ data, error }) {
@@ -75,6 +78,7 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
     }
 
     connectedCallback(){
+        if(this.businessType == 'Import') this.isImport = true;
         if(this.accountId.startsWith('001')){
             this.isAccountObject = true;
             this.getAllRegularRoute();
@@ -87,7 +91,9 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
         }
     }
     @api getDefualtValueForEnquiry(){
-        this.isLoading = true 
+        this.isLoading = true ;
+        this.isImport = false;
+        this.cargoReadiness = '';
         getDefualtValueForEnquiry()
         .then(result=>{
             console.log(' getDefualtValueForEnquiry result', JSON.stringify(result, null, 2));
@@ -125,7 +131,9 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
     }
     handleCopyFromAbove(e){
         let index = e.target.dataset.recordId;
-        console.log('*** '+index)
+        console.log('*** '+index);
+        if(this.businessType == 'Import') this.isImport = true;
+        else this.isImport = false;
         this.leadEnquiryList.forEach(elem => {
             if(elem.leadIndex == 1) {
                 this.shipmentKind = elem.shipmentKind;
@@ -152,6 +160,7 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
                 this.commodityName = elem.commodityName;
                 this.placeOfPickupName = elem.placeOfPickupName;
                 this.placeOfDischargeName = elem.placeOfDischargeName;
+                this.cargoReadiness = elem.cargoReadiness;
             }
         })
 
@@ -578,7 +587,8 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
             'cargoweightClass':this.cargoweightClass,
             'dischargePlaceClass':this.dischargePlaceClass,
             'pickupPlaceClass':this.pickupPlaceClass,
-            'disableAddRoute':this.disableAddRoute
+            'disableAddRoute':this.disableAddRoute,
+            'cargoReadiness':this.cargoReadiness
         }
         let updateleadEntryDto = JSON.parse(JSON.stringify(leadEntryDto));
         this.dispatchEvent(new CustomEvent('update', { detail: { dto: updateleadEntryDto } }));
@@ -628,6 +638,7 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
     }
     @api removeDefaultOnImport(){
         this.isLoading = true;
+        this.isImport = true;
         this.displayIncoChanges();                
         setTimeout(() => {
             if(this.incoTermName != 'Clearance and Delivery' && this.incoTermName != 'Local Operation'){   
@@ -721,5 +732,9 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
                 }
             }
         }, 100);
+    }
+    handelCargoReadinessDate(e){
+        this.cargoReadiness = e.target.value;
+        this.updateEnquiryList();
     }
 }

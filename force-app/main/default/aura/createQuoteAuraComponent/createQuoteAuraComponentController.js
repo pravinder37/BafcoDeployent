@@ -11,8 +11,23 @@
             action.setCallback(this, function(response) {
             var state = response.getState();
             if (state === "SUCCESS") {
-                console.log("From server: " + response.getReturnValue());
-                let accId = response.getReturnValue();
+                console.log("From server: " + JSON.stringify(response.getReturnValue(),null,2));
+                let optyObj = response.getReturnValue();
+                let accId = optyObj.AccountId;
+                console.log('accId '+accId);
+                if(optyObj.RecordType.Name == 'LCL'){
+                    component.set("v.isLCL", true);
+                    component.set("v.isAir", false);
+                }
+                else if(optyObj.RecordType.Name == 'Air Freight'){
+                    component.set("v.isAir", true);
+                    component.set("v.isLCL", false);
+                }
+                else {
+                    component.set("v.isAir", false);
+                    component.set("v.isLCL", false);    
+                }
+                console.log('component.get("v.isLCL") '+component.get("v.isLCL"));
                 component.set("v.device", device);
                 if(device == 'DESKTOP'){
                  var pageReference = {
@@ -23,7 +38,9 @@
                 state: {
                     c__refRecordId: accId,
                     c__isEdit:'true',
-                    c__optyId:refId
+                    c__optyId:refId,
+                    c__isLCL:component.get("v.isLCL"),
+                    c__isAir:component.get("v.isAir")
                 }
             };
             component.set("v.pageReference", pageReference);
@@ -68,7 +85,8 @@
                     componentName: 'c__createQuoteNewTabAuraComponent'
                 },
                 state: {
-                    c__refRecordId: component.get("v.recordId")
+                    c__refRecordId: component.get("v.recordId"),
+                    c__isLCL:component.get("v.isLCL")
                 }
             };
             component.set("v.pageReference", pageReference);
@@ -84,6 +102,7 @@
                 $A.get("e.force:closeQuickAction").fire();
             }
                 else if(device == 'PHONE'){
+                component.set("v.isLCL", false);
                 component.set("v.refRecordId", component.get("v.recordId"));
             }
         }

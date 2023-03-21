@@ -12,13 +12,8 @@
     <filterScope>Everything</filterScope>
     <filters>
         <field>OPPORTUNITY.STAGE_NAME</field>
-        <operation>contains</operation>
-        <value>Qualification</value>
-    </filters>
-    <filters>
-        <field>Business_Type__c</field>
         <operation>equals</operation>
-        <value>Import,Export</value>
+        <value>Qualification,Proposal/Price Quote,Negotiation</value>
     </filters>
     <label>All Opportunities</label>
 </ListView>

@@ -5,7 +5,7 @@
     <label>Status</label>
     <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>
-    <trackHistory>false</trackHistory>
+    <trackHistory>true</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Picklist</type>
     <valueSet>
@@ -21,6 +21,11 @@
                 <fullName>Cancelled</fullName>
                 <default>false</default>
                 <label>Cancelled</label>
+            </value>
+            <value>
+                <fullName>CRO Amendment Awaited</fullName>
+                <default>false</default>
+                <label>CRO Amendment Awaited</label>
             </value>
         </valueSetDefinition>
     </valueSet>
