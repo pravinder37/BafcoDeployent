@@ -20,69 +20,70 @@
                         <lightning-layout multiple-rows >
                             <lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;">
                                 <lightning-input name="portLoading"
-                                    label="Port of Loading"
+                                    label={loadigPortLabel}
                                     value={portLoading}
                                     disabled></lightning-input>
                             </lightning-layout-item>
                             <lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;">
                                 <lightning-input name="portDestination"
-                                    label="Port of Destination"
+                                    label={destinationPortLabel}
                                     value={portDestination}
                                     disabled></lightning-input>
                             </lightning-layout-item>
-                            <!--lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;">
-                                <lightning-input name="commodity"
-                                    label="Commodity"
-                                    value={commodity}
-                                    disabled></lightning-input>
-                            </lightning-layout-item-->
-                            <lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;">
+                           <lightning-layout-item size="4" if:false={isAir} style="padding: 0px 20px 0px 20px;">
                                 <lightning-input name="shippingLine"
                                     label="Shipping Line"
                                     value={shippingLine}
                                     disabled></lightning-input>
                             </lightning-layout-item>
-                            <!--lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;">
-                                <lightning-input name="incoTerm"
-                                    label="Inco Term"
-                                    value={incoTerm}
-                                    disabled></lightning-input>
-                            </lightning-layout-item-->
-                            <lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;" if:false={emptyEquipType}>
-                                <lightning-input name="equipmentType"
-                                    label="Equipment Type"
-                                    value={equipmentType}
+                            <lightning-layout-item size="4" if:true={isAir} style="padding: 0px 20px 0px 20px;">
+                                <lightning-input name="shippingLine"
+                                    label="Airline"
+                                    value={airline}
                                     disabled></lightning-input>
                             </lightning-layout-item>
-                            <lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;" if:true={emptyEquipType}>
-                                <label class="slds-form-element__label">
-                                    <span>
-                                        <b>Equipment Type</b>
-                                        <lightning-button variant="base"
-                                                        icon-name="utility:info" 
-                                                        style="padding-left: 4px;"
-                                                        onclick={handleAddRouteEuip}></lightning-button>
-                                    </span>
-                                </label>                    
-                                <!--lightning-combobox label="" 
-                                                variant="label-hidden"
-                                                required
-                                                options={pickListvalues}
-                                                value={equipmentType} 
-                                                class={equipmentTypeError}
-                                                onchange={handleEquipSelection}
-                                                placeholder="Select"></lightning-combobox-->
-                                                <c-multi-select-combobox
-                                                label=""
-                                                name=""
-                                                custom-class={equipmentTypeError}
-                                                options={pickListvalues}
-                                                onchange={handleEquipChange}
-                                              ></c-multi-select-combobox>
-                                                <div class="slds-form-element__help"  style="color: rgb(194, 57, 52);" if:true={equipmentTypeErrorMsg}>
-                                                    {equipmentTypeErrorMsg}
-                                                </div>
-                            </lightning-layout-item>
+                            <template if:false={isAir}>
+                                <lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;" if:false={emptyEquipType}>
+                                    <lightning-input name="equipmentType"
+                                        label="Equipment Type"
+                                        value={equipmentType}
+                                        disabled></lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;" if:true={emptyEquipType}>
+                                    <label class="slds-form-element__label">
+                                        <span>
+                                            <b>Equipment Type</b>
+                                            <lightning-button variant="base"
+                                                            icon-name="utility:info" 
+                                                            style="padding-left: 4px;"
+                                                            onclick={handleAddRouteEuip}></lightning-button>
+                                        </span>
+                                    </label>                    
+                                    <c-multi-select-combobox
+                                                    label=""
+                                                    name=""
+                                                    custom-class={equipmentTypeError}
+                                                    options={pickListvalues}
+                                                    onchange={handleEquipChange}
+                                                  ></c-multi-select-combobox>
+                                                    <div class="slds-form-element__help"  style="color: rgb(194, 57, 52);" if:true={equipmentTypeErrorMsg}>
+                                                        {equipmentTypeErrorMsg}
+                                                    </div>
+                                </lightning-layout-item>
+                            </template>
+                            <template if:true={isAir}>
+                                <lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;">
+                                    <lightning-combobox label="Route Equipment" 
+                                        options={airTabViewList}
+                                        value={selectedRouteEquip} 
+                                        class={airequipmentTypeError}
+                                        onchange={handleAirEquipChange}
+                                        placeholder="Select"></lightning-combobox>
+                                    <div class="slds-form-element__help"  style="color: rgb(194, 57, 52);" if:true={airequipmentTypeError}>
+                                        Complete this field.
+                                    </div>
+                                </lightning-layout-item>
+                            </template>
                             <lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;">
                                 <lightning-combobox label="Business Type" 
                                         options={pickListvaluesBusinessType}
@@ -151,24 +152,13 @@
                                         Complete this field.
                                     </div>
                             </lightning-layout-item>                            
-                            <!--lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;">
-                                <lightning-input name="seaFreight"
-                                    type="number"
-                                    label="Sea Freight"
-                                    value={seaFreight}
-                                    class={seaFreightError}
-                                    onchange={handleSeaFreightChange}></lightning-input>
-                                    <div class="slds-form-element__help"  style="color: rgb(194, 57, 52);" if:true={seaFreightError}>
-                                        Complete this field.
-                                    </div>
-                            </lightning-layout-item-->                            
-                            <lightning-layout-item size="4" style="padding: 4px 20px 0px 20px;">
+                            <lightning-layout-item size="4" style="padding: 4px 20px 0px 20px;" if:false={isAir}>
                                 <lightning-input label="Free Time POL" 
                                         type="Number"
                                         message-when-value-missing={FreeTime} 
                                         onchange={handleFreeTimeChange}></lightning-input>
                             </lightning-layout-item>
-                            <lightning-layout-item size="4" style="padding: 4px 20px 0px 20px;">
+                            <lightning-layout-item size="4" style="padding: 4px 20px 0px 20px;" if:false={isAir}>
                                 <lightning-input label="Free Time POD" 
                                         type="Number"
                                         message-when-value-missing={FreeTimePOD} 
@@ -179,7 +169,7 @@
                                         value={remarks} 
                                         onchange={handleRemarksChange}></lightning-textarea>
                             </lightning-layout-item>
-                            <lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;">
+                            <lightning-layout-item size="4" style="padding: 0px 20px 0px 20px;" if:false={isAir}>
                                 <lightning-combobox label="Customer Name(Special Filing)" 
                                         options={customerOption}
                                         value={customerId} 
@@ -190,18 +180,22 @@
                                 <lightning-input label="All-in Rate" 
                                         type="checkbox"
                                         checked={allInRate} 
+                                        disabled={isAir}
                                         onchange={handleAllInRateChange}></lightning-input>
                                 <lightning-input label="FOB All-In" 
                                         type="checkbox"
                                         checked={FOBAllIn} 
+                                        disabled={isAir}
                                         onchange={handleFOBAllInChange}></lightning-input>
                                 <lightning-input label="Ex-Works All-In" 
                                         type="checkbox"
                                         checked={ExWorksIn} 
+                                        disabled={isAir}
                                         onchange={handleExWorksChange}></lightning-input>
                                         <lightning-input label="Only Ocean Freight" 
                                         type="checkbox"
                                         checked={oceanfreightCheckbox} 
+                                        disabled={isAir}
                                         onchange={handleoceanfreightCheckboxChange}></lightning-input>
                             </lightning-layout-item>
                             <lightning-layout-item if:true={displayElem1} size="12" large-device-size="4" medium-device-size="4" small-device-size="12" style="padding: 0px 20px 0px 20px;">
@@ -232,6 +226,17 @@
                                     label='Contract Number'
                                     value={contractNumber}
                                     onchange={handlecontractNumberChange}></lightning-input>
+                            </lightning-layout-item>
+                            <lightning-layout-item if:true={isAir} size="12" large-device-size="4" medium-device-size="4" small-device-size="12" style="padding: 0px 20px 0px 20px;">
+                                <lightning-input
+                                    type="number"
+                                    label="Rate/Kgs"
+                                    value={rateKgs}
+                                    class={rateKgsError}
+                                    onchange={handleRateKgsChange}></lightning-input>
+                                    <div class="slds-form-element__help"  style="color: rgb(194, 57, 52);" if:true={rateKgsError}>
+                                        Complete this field.
+                                    </div>
                             </lightning-layout-item>
                         </lightning-layout>
                     </lightning-accordion-section>

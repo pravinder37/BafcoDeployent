@@ -68,8 +68,14 @@
                                     <lightning-layout multiple-rows if:true={equiptab.totalSl}>
                                         <lightning-layout-item size="12">
                                             <lightning-layout style="padding-bottom: 12px;">
-                                                <lightning-layout-item size="6"><b>Shipping Line Charge</b></lightning-layout-item>
-                                                <lightning-layout-item size="6"><lightning-input label="Included (Quotation PDF)" 
+                                                <lightning-layout-item size="4"><b>Shipping Line Charge</b></lightning-layout-item>
+                                                <lightning-layout-item size="4"><lightning-input label="Add To Buying Rate" 
+                                                    type="checkbox"
+                                                    disabled
+                                                    checked={equiptab.addServiceCharge} 
+                                                    ></lightning-input>
+                                                </lightning-layout-item>
+                                                <lightning-layout-item size="4"><lightning-input label="Included (Quotation PDF)" 
                                                     type="checkbox"
                                                     disabled
                                                     checked={equiptab.includeServiceCharge}
@@ -248,8 +254,14 @@
                                     <lightning-layout multiple-rows if:true={equiptab.TotalOrigincharges}>
                                         <lightning-layout-item size="12">
                                             <lightning-layout style="padding-bottom: 12px;">
-                                                <lightning-layout-item size="6"><b>Origin Charge</b></lightning-layout-item>
-                                                <lightning-layout-item size="6"><lightning-input label="Included (Quotation PDF)" 
+                                                <lightning-layout-item size="4"><b>Origin Charge</b></lightning-layout-item>
+                                                <lightning-layout-item size="4"><lightning-input label="Add To Buying Rate" 
+                                                    type="checkbox"
+                                                    disabled
+                                                    checked={equiptab.addOriginCharge} 
+                                                    ></lightning-input>
+                                                </lightning-layout-item>
+                                                <lightning-layout-item size="4"><lightning-input label="Included (Quotation PDF)" 
                                                     type="checkbox"
                                                     disabled
                                                     checked={equiptab.includeOriginCharge}
@@ -435,8 +447,14 @@
                                     <lightning-layout multiple-rows if:true={equiptab.destinTotalCharges}>
                                         <lightning-layout-item size="12">
                                             <lightning-layout style="padding-bottom: 12px;">
-                                                <lightning-layout-item size="6"><b>Destination Charges</b></lightning-layout-item>
-                                                <lightning-layout-item size="6"><lightning-input label="Included (Quotation PDF)" 
+                                                <lightning-layout-item size="4"><b>Destination Charges</b></lightning-layout-item>
+                                                <lightning-layout-item size="4"><lightning-input label="Add To Buying Rate" 
+                                                    type="checkbox"
+                                                    disabled
+                                                    checked={equiptab.addDestinCharge} 
+                                                    ></lightning-input>
+                                                </lightning-layout-item>
+                                                <lightning-layout-item size="4"><lightning-input label="Included (Quotation PDF)" 
                                                     type="checkbox"
                                                     disabled
                                                     checked={equiptab.includeDestinCharge}
@@ -520,8 +538,14 @@
                                     <lightning-layout multiple-rows if:true={equiptab.totaladditionalCharge}>
                                         <lightning-layout-item size="12">
                                             <lightning-layout style="padding-bottom: 12px;">
-                                                <lightning-layout-item size="6"><b>Additional Charges</b></lightning-layout-item>
-                                                <lightning-layout-item size="6"><lightning-input label="Included (Quotation PDF)" 
+                                                <lightning-layout-item size="4"><b>Additional Charges</b></lightning-layout-item>
+                                                <lightning-layout-item size="4"><lightning-input label="Add To Buying Rate" 
+                                                    type="checkbox"
+                                                    disabled
+                                                    checked={equiptab.addAdditionalCharge} 
+                                                    ></lightning-input>
+                                                </lightning-layout-item>
+                                                <lightning-layout-item size="4"><lightning-input label="Included (Quotation PDF)" 
                                                     type="checkbox"
                                                     disabled
                                                     checked={equiptab.includeAdditionalCharge}
@@ -551,8 +575,14 @@
                                     <lightning-layout multiple-rows if:true={equiptab.LoadCharge}>
                                         <lightning-layout-item size="12">
                                             <lightning-layout style="padding-bottom: 12px;">
-                                                <lightning-layout-item size="6"><b>Ex-works Charges</b></lightning-layout-item>
-                                                <lightning-layout-item size="6"><lightning-input label="Included (Quotation PDF)" 
+                                                <lightning-layout-item size="4"><b>Ex-works Charges</b></lightning-layout-item>
+                                                <lightning-layout-item size="4"><lightning-input label="Add To Buying Rate" 
+                                                    type="checkbox"
+                                                    disabled
+                                                    checked={equiptab.addExWorksCharge} 
+                                                    ></lightning-input>
+                                                </lightning-layout-item>
+                                                <lightning-layout-item size="4"><lightning-input label="Included (Quotation PDF)" 
                                                     type="checkbox"
                                                     disabled
                                                     checked={equiptab.includeExWorksCharge}

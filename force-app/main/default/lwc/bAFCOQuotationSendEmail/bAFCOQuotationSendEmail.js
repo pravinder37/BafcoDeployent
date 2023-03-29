@@ -52,15 +52,16 @@ export default class BAFCOQuotationSendEmail extends LightningElement {
                     console.log('subject '+this.subject)
                     result.forEach(elem => {
                         content += '\nQuotation Name: '+elem.quoteName;
-                        content +='\nSaleman: '+elem.saleman;
+                        content +='\nSalesman: '+elem.saleman;
                         content +='\nContract Number: ';
                         content += '\nPort of Loading: '+elem.loadingPort;
                         content += '\nPort of Discharge: '+elem.dischargePort;
-                        content += '\nEquipment Type: '+elem.equipmentType;                        
+                        content += '\nEquipment Type: '+elem.equipmentType;  
+                        content += '\nCommodity: '+elem.commodity;                      
                         content += '\nQuantity: '+elem.quantity;
                         content += '\nCargo Weight: '+elem.cargoWeight;
                         content += '\nShipping Line: '+elem.shippingLine;
-                        content += '\nCustomer refrence number: '+elem.customerRefNo;
+                        content += '\nCustomer reference number: '+elem.customerRefNo;
                         content += '\nCustomer PO number: '+elem.customerPONo;
                         content += '\n\n';
                     });

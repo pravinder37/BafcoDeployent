@@ -307,6 +307,7 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                             isLCL:shipValue.isLCL,
                             tabView:equip,
                             isAir:shipValue.isAir,
+                            chargesIncluded:shipValue.chargesIncluded,
                         })
                         elem.equipment.push({
                             key:equip,
@@ -436,6 +437,7 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 isLCL:shipValue.isLCL,
                                 tabView:equip,
                                 isAir:shipValue.isAir,
+                                chargesIncluded:shipValue.chargesIncluded,
                             })
                             elem.equipment.push({
                                 key:equip,
@@ -563,6 +565,7 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 tempList[shipIndex].isLCL=shipValue.isLCL;
                                 tempList[shipIndex].tabView = equip
                                 tempList[shipIndex].isAir = shipValue.isAir;
+                                tempList[shipIndex].chargesIncluded=shipValue.chargesIncluded;
                             }
                             else{
                                 tempList.push({
@@ -683,6 +686,7 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                     isLCL:shipValue.isLCL,
                                     tabView:equip,
                                     isAir:shipValue.isAir,
+                                    chargesIncluded:shipValue.chargesIncluded,
                                 })
                             }
                             elem.equipment[index].value = tempList

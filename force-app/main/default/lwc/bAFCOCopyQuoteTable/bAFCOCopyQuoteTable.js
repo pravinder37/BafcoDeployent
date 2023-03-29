@@ -9,6 +9,8 @@ export default class BAFCOCopyQuoteTable extends LightningElement {
     @track HeaderList = [];
     @track inclHeader = '';
     @track inclHeaderList = [];
+    @track havePickupPlace = false;
+    @track haveDischargePlace = false;
     connectedCallback(){
         this.getQuoteDataOnLoad();
     }
@@ -18,6 +20,10 @@ export default class BAFCOCopyQuoteTable extends LightningElement {
             console.log('getQuoteDataOnLoad result ** 48 '+JSON.stringify(result,null,2));
             this.tableData = result;
             let recordtype = result[0].recordtypeName;
+            this.tableData.forEach(elem=>{
+                if(elem.placeOfPickup != '-') this.havePickupPlace = true;
+                if(elem.placeOfDischarge != '-') this.haveDischargePlace = true;
+            })
             if(recordtype == 'Export'){ 
                 this.isExport = true;
                 this.Header = result[0].exportHeader;

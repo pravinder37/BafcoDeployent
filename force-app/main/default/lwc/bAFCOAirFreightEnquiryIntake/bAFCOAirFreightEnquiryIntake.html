@@ -87,11 +87,11 @@
         </lightning-layout-item>
         <lightning-layout-item size="12" if:false={hideShippingLine} class="mobilePaddingRight" large-device-size="4" medium-device-size="4" small-device-size="12">
             <label class="slds-form-element__label">
-                <p style="padding: 0px 20px 0px 20px;" class="labelStyle">Shipping Line</p>
+                <p style="padding: 0px 20px 0px 20px;" class="labelStyle">{shippLinePlaceLabel}</p>
             </label>
             <c-b-a-f-c-o-custom-look-up-component
-                            obj-name="Shipping_Line__c"
-                            search-placeholder="Search Shipping Line" 
+                            obj-name={shippLineObject}
+                            search-placeholder={shippLinePlaceHolder} 
                             icon-name="standard:account"
                             index={leadIndex} 
                             onlookupselected={handleShippingLineSelection}
@@ -209,39 +209,39 @@
                                     class={contr.heightErrorClass}
                                     value={contr.height}></lightning-input>
                         </lightning-layout-item-->
-                        <lightning-layout-item size="4" large-device-size="4" medium-device-size="4" small-device-size="4" >
+                        <lightning-layout-item size="6" large-device-size="4" medium-device-size="4" small-device-size="6" >
                             <lightning-input type="number" label="Total CBM (M)"
                                     onchange={handleCBMChange}
                                     data-record-id={contr.index}  
-                                    style="padding: 0px 20px 0px 20px;font-weight: 700;"
+                                    style="padding: 0px 20px 0px 0px;font-weight: 700;"
                                     class={contr.CBMErrorClass}
                                     value={contr.CBM}></lightning-input>
                         </lightning-layout-item>
-                        <lightning-layout-item size="4" large-device-size="4" medium-device-size="4" small-device-size="4" >
+                        <lightning-layout-item size="6" large-device-size="4" medium-device-size="4" small-device-size="6" >
                             <lightning-input type="number" label="Total Gross Weight (KGs)"
                                     onchange={handleWeightChange}
                                     data-record-id={contr.index}  
-                                    style="padding: 0px 20px 0px 20px;font-weight: 700;"
+                                    style="padding: 0px 20px 0px 0px;font-weight: 700;"
                                     class={contr.WeightErrorClass}
                                     value={contr.Weight}></lightning-input>
                         </lightning-layout-item>
-                        <lightning-layout-item size="4" large-device-size="4" medium-device-size="4" small-device-size="4" >
+                        <lightning-layout-item size="6" style="padding-top: 14px;" large-device-size="4" medium-device-size="4" small-device-size="6" >
                             <lightning-input type="checkbox" label="Stackable"
                                     onchange={handleStackableChange}
                                     data-record-id={contr.index}  
-                                    style="padding: 0px 20px 0px 20px;font-weight: 700;"
+                                    style="padding: 0px 20px 0px 0px;font-weight: 700;"
                                     checked={contr.stackable}></lightning-input>
                             <lightning-input type="checkbox" label="Palletized"
                                     onchange={handlePalletizedChange}
                                     data-record-id={contr.index}  
-                                    style="padding: 0px 20px 0px 20px;font-weight: 700;"
+                                    style="padding: 0px 20px 0px 0px;font-weight: 700;"
                                     checked={contr.palletized}></lightning-input>
                         </lightning-layout-item>
-                        <lightning-layout-item size="4" large-device-size="4" medium-device-size="4" small-device-size="4" >
+                        <lightning-layout-item size="6" large-device-size="4" medium-device-size="4" small-device-size="6" >
                             <lightning-input type="number" label="Units"
                                     onchange={handleUnitsChange}
                                     data-record-id={contr.index}  
-                                    style="padding: 0px 20px 0px 20px;font-weight: 700;"
+                                    style="padding: 0px 20px 0px 0px;font-weight: 700;"
                                     class={contr.unitsErrorClass}
                                     value={contr.units}></lightning-input>
                         </lightning-layout-item>
@@ -249,7 +249,7 @@
                             <lightning-textarea label="Cargo Details" 
                                                 onchange={handleCargoDetailsChange}
                                                 data-record-id={contr.index}
-                                                style="padding: 0px 20px 0px 20px;font-weight: 700;"
+                                                style="padding: 0px 20px 0px 0px;font-weight: 700;"
                                                 class={contr.cargoDetailsError}
                                                 value={contr.cargoDetails} ></lightning-textarea>
                         </lightning-layout-item>

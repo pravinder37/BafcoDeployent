@@ -10,11 +10,15 @@ import BUSINESS_TYPE_FIELD from '@salesforce/schema/RMS__c.Business_Type__c';
 import getDefualtValueForRMS from '@salesforce/apex/BAFCOLRoutingDetailsController.getDefualtValueForRMS';
 import getDefaultImportAddRate from '@salesforce/apex/BAFCOLRoutingDetailsController.getDefaultImportAddRate';
 import addRouteEquipment from '@salesforce/apex/BAFCOLRoutingDetailsController.addRouteEquipment';
+import getAirRouteEquipment from '@salesforce/apex/BAFCOAirEnquiryController.getAirRouteEquipment';
+import addRatesAir from '@salesforce/apex/BAFCOAirEnquiryController.addRatesAir';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class BAFCOAddRMSModel
  extends LightningElement {
     @api portLoading ='';
     @api portDestination ='';
+    @api airline='';
+    @api isAir = false;
     @track commodity = '';
     @api shippingLine ='';
     @api equipmentType = '';
@@ -28,6 +32,7 @@ export default class BAFCOAddRMSModel
     @track incoTermId = '';
     @api agentObject;
     @api cameFromImport = false;
+    @track airequipmentTypeError = '';
 
     @track validity = '';
     @track rateType = '';
@@ -57,6 +62,12 @@ export default class BAFCOAddRMSModel
     @track isLoading = false;
     @track customerId = '';
     @track customerOption = [];
+    @track loadigPortLabel = 'Port of Loading';
+    @track destinationPortLabel = 'Port of Destination';
+    @track rateKgs = null;
+    @track airTabViewList =[];
+    @track selectedRouteEquip = '';
+    @track rateKgsError = '';
 
     bayan = null;                
     destinationCustomsClearance = null; 
@@ -145,6 +156,20 @@ export default class BAFCOAddRMSModel
     }
 
     connectedCallback(){
+        if(this.isAir == true){
+            this.loadigPortLabel = 'Airport of Loading';
+            this.destinationPortLabel = 'Airport of Destination';
+            this.displayShippingCharge = false;
+            this.displayOriginCharge = false;
+            this.displayDestinCharge = false;
+            this.displayElem1 = false;
+            this.displayElem2 = false;
+            this.getAirRouteEquipment();
+        }
+        else{
+            this.loadigPortLabel = 'Port of Loading';
+            this.destinationPortLabel = 'Port of Destination';
+        }
        if(this.leadId != ''){
             this.customerOption.push({label:this.acctName,value:this.leadId})
         }
@@ -485,50 +510,82 @@ export default class BAFCOAddRMSModel
             allValid = false;
             this.seaFreightError = 'slds-has-error';
         }*/
-        if(this.rmsDetail.selectedEquip.length == 0){
-            allValid = false;
-            this.equipmentTypeError = 'slds-has-error';
-            this.equipmentTypeErrorMsg = 'Complete this field.'
-        }
-        else if(this.rmsDetail.selectedEquip.length > 2){
-            allValid = false;
-            this.equipmentTypeError = 'slds-has-error';
-            this.equipmentTypeErrorMsg = 'Max 2 can be selected at a time.'
-        }
-        if(this.rmsDetail.elem1Value <= 0){
-            allValid = false;
-            this.elem1seaFreightError = 'slds-has-error';
-        }
-        if(this.displayElem2){
-            if(this.rmsDetail.elem2Value <= 0){
+        if(this.isAir == false){
+            if(this.rmsDetail.selectedEquip.length == 0){
                 allValid = false;
-                this.elem2seaFreightError = 'slds-has-error';
+                this.equipmentTypeError = 'slds-has-error';
+                this.equipmentTypeErrorMsg = 'Complete this field.'
+            }
+            else if(this.rmsDetail.selectedEquip.length > 2){
+                allValid = false;
+                this.equipmentTypeError = 'slds-has-error';
+                this.equipmentTypeErrorMsg = 'Max 2 can be selected at a time.'
+            }
+            if(this.rmsDetail.elem1Value <= 0){
+                allValid = false;
+                this.elem1seaFreightError = 'slds-has-error';
+            }
+            if(this.displayElem2){
+                if(this.rmsDetail.elem2Value <= 0){
+                    allValid = false;
+                    this.elem2seaFreightError = 'slds-has-error';
+                }
             }
         }
+        if(this.isAir == true){
+            if(this.selectedRouteEquip == '') {
+                this.airequipmentTypeError= 'slds-has-error';
+                allValid = false;
+            }
+            if(!this.rateKgs > 0){
+                this.rateKgsError= 'slds-has-error';
+                allValid = false;
+            }
+        }
+        
         console.log('rms '+JSON.stringify(this.rmsDetail,null,2))
         if(allValid){
-        addRates({
-            rmsDetail: this.rmsDetail,
-            routeId : this.routeId,
-            shippingChargeDto : this.shipp,
-            incocharges : this.incoCharges,
-            totalShippChanged : this.shippTotalChanged,
-            totalIncoChanged : this.incoChargeTotalChange,
-            equipmentType : this.equipmentType,
-            shippingLine : this.shippingLine,
-            leadId : this.leadId,
-            destinTotalChanged : this.destinTotalChanged,
-            destinCharges:this.destinCharges,
-            selectedEquip:this.selectedEquip
-
-        }).then(result =>{
-            this.isLoading = false
-            console.log('result  '+JSON.stringify(result))
-            this.dispatchEvent(new CustomEvent('success'));
-        }).catch(error=>{
-            this.isLoading = false
-            console.log('error add rate : ', JSON.stringify(error));
-        });
+            if(this.isAir){
+                addRatesAir({
+                    rmsDetail: this.rmsDetail,
+                    routeId : this.routeId,
+                    airline : this.airline,
+                    rateKgs: this.rateKgs,
+                    selectedRouteEquip : this.selectedRouteEquip
+                })
+            .then(result =>{
+                this.isLoading = false
+                console.log('result  '+JSON.stringify(result))
+                this.dispatchEvent(new CustomEvent('success'));
+            }).catch(error=>{
+                this.isLoading = false
+                console.log('error add rate : ', JSON.stringify(error));
+            });
+            }
+            else{
+                addRates({
+                    rmsDetail: this.rmsDetail,
+                    routeId : this.routeId,
+                    shippingChargeDto : this.shipp,
+                    incocharges : this.incoCharges,
+                    totalShippChanged : this.shippTotalChanged,
+                    totalIncoChanged : this.incoChargeTotalChange,
+                    equipmentType : this.equipmentType,
+                    shippingLine : this.shippingLine,
+                    leadId : this.leadId,
+                    destinTotalChanged : this.destinTotalChanged,
+                    destinCharges:this.destinCharges,
+                    selectedEquip:this.selectedEquip
+        
+                }).then(result =>{
+                    this.isLoading = false
+                    console.log('result  '+JSON.stringify(result))
+                    this.dispatchEvent(new CustomEvent('success'));
+                }).catch(error=>{
+                    this.isLoading = false
+                    console.log('error add rate : ', JSON.stringify(error));
+                });
+            }
     }
     else{
         this.isLoading = false
@@ -1150,5 +1207,30 @@ export default class BAFCOAddRMSModel
            this.selectedEquip[index].seaFreight = this.elem1Value;
            this.rmsDetail.selectedEquip = this.selectedEquip;
        }
-   }    
+   }   
+   handleRateKgsChange(e){
+    this.rateKgs = e.target.value;
+    this.rateKgsError = '';
+   } 
+   getAirRouteEquipment(){
+    getAirRouteEquipment({routeId:this.routeId})
+    .then(result=>{
+        console.log('getAirRouteEquipment result = >'+JSON.stringify(result))
+        let tempList =[];
+        result.forEach(element => {
+            tempList.push({
+            label : element.Tab_View__c,
+            value:element.Id
+            })
+            this.airTabViewList = tempList;
+        })
+    })
+    .catch(error=>{
+        console.log('getAirRouteEquipment result = >'+JSON.stringify(error))
+    })
+   }
+   handleAirEquipChange(e){
+    this.selectedRouteEquip = e.target.value;
+    this.airequipmentTypeError= '';
+   }
 }

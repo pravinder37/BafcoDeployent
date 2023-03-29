@@ -67,6 +67,9 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
     @api cargoReadiness = '';
     @track isImport = false;
     @api minDate = '';
+    @track shippLineObject = 'Shipping_Line__c';
+    @track shippLinePlaceHolder = 'Search Shipping Line';
+    @track shippLinePlaceLabel = 'Shipping Line';
 
 
     @track width;
@@ -89,12 +92,18 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
         if(this.isAir == 'true'){
             this.portObject = 'Airport__c';
             this.loadigPortLabel = 'Airport of Loading';
-            this.destinationPortLabel = 'Airport of Destination'
+            this.destinationPortLabel = 'Airport of Destination';
+            this.shippLineObject = 'Airline__c';
+            this.shippLinePlaceHolder = 'Search Airline Line';
+            this.shippLinePlaceLabel = 'Airline';
         }
         else{
             this.portObject = 'Port__c';
             this.loadigPortLabel = 'Port of Loading';
-            this.destinationPortLabel = 'Port of Destination'
+            this.destinationPortLabel = 'Port of Destination';
+            this.shippLineObject = 'Shipping_Line__c';
+            this.shippLinePlaceHolder = 'Search Shipping Line';
+            this.shippLinePlaceLabel = 'Shipping Line';
         }
         if(this.accountId.startsWith('001')){
             this.isAccountObject = true;
