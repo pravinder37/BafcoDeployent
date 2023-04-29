@@ -4,6 +4,7 @@
     <columns>NAME</columns>
     <columns>Customer_Name__c</columns>
     <columns>Quotation__c</columns>
+    <columns>Order_Type__c</columns>
     <columns>Customer_Reference_Number__c</columns>
     <columns>Booking_Reference_Number__c</columns>
     <columns>RECORDTYPE</columns>

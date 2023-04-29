@@ -146,7 +146,7 @@
         <actionName>View</actionName>
         <type>Default</type>
     </actionOverrides>
-    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <compactLayoutAssignment>Custom_Layout</compactLayoutAssignment>
     <enableFeeds>true</enableFeeds>
     <enableHistory>true</enableHistory>
     <externalSharingModel>Private</externalSharingModel>

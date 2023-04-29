@@ -248,7 +248,7 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
                 }
             }
             if(elem.portDestination == '') {
-                if(elem.incoTermName == 'Clearance and Delivery' && this.businessTypeSelected =='Import'){
+                if((elem.incoTermName == 'Clearance and Delivery' || elem.incoTermName == 'Local Operation') && this.businessTypeSelected =='Import'){
                     console.log('camer here 1')
                     tempErrorList.push('Please fill Port of Destination')
                     elem.portOfDestinationClass = 'slds-has-error';
@@ -273,7 +273,7 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
                 }
             }
             if(elem.serviceType == 'D2D' && elem.placeOfDischarge == ''){
-                if(elem.incoTermName == 'Clearance and Delivery' && this.businessTypeSelected =='Import'){
+                if((elem.incoTermName == 'Clearance and Delivery' || elem.incoTermName == 'Local Operation')  && this.businessTypeSelected =='Import'){
                     tempErrorList.push('Please fill place of discharge')
                     elem.dischargePlaceClass = 'slds-has-error';
                 }
@@ -293,6 +293,10 @@ export default class BAFCOLeadEnquiryCreationComponent extends NavigationMixin(L
                 if(this.businessTypeSelected == 'Export' && elem.placeOfPickup == ''){
                     tempErrorList.push('Please fill Place of Pickup')
                     elem.pickupPlaceClass = 'slds-has-error';
+                }
+                if(this.businessTypeSelected == 'Import' && elem.placeOfDischarge == ''){
+                    tempErrorList.push('Please fill Place of discharge')
+                    elem.dischargePlaceClass = 'slds-has-error';
                 }
             }
             elem.containerRecord.forEach(elem2=>{

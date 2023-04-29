@@ -70,6 +70,8 @@ public class BAFCORoutingDetailsDto {
     public String cargoReadiness { get; set; }
     @AuraEnabled
     public String equipmentType { get; set; }
+    @AuraEnabled
+    public String cargoDetails { get; set; }
     @AuraEnabled public String acctName { get; set; }
     @AuraEnabled
     public List<BAFCORoutingDetailsDto.containerRecord> containerRecord { get; set; }

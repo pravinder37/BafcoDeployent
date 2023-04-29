@@ -139,6 +139,7 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                     tempList.push({
                         shipName: shipline,
                         Qty:quantity,
+                        QtyErrorClass:'',
                         
                     })
                     elem.equipment.push({
@@ -152,6 +153,7 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                         tempList.push({
                              shipName: shipline,
                              Qty:quantity,
+                             QtyErrorClass:'',
                         })
                         elem.equipment.push({
                             key:equip,
@@ -166,6 +168,7 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                             tempList.push({
                                 shipName: shipline,
                                 Qty:quantity,
+                                QtyErrorClass:'',
                            })
                         }
                         elem.equipment[index].value  = tempList;
@@ -173,7 +176,7 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                 }
             }
         })
-        console.log('** '+JSON.stringify(this.selectedDatalist,null,2))
+        //console.log('** '+JSON.stringify(this.selectedDatalist,null,2))
     }
     handleCheckBoxClicked(e){
         let checked = e.target.checked;
@@ -308,6 +311,9 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                             tabView:equip,
                             isAir:shipValue.isAir,
                             chargesIncluded:shipValue.chargesIncluded,
+                            quotationType:shipValue.quotationType,
+                            sellingChargesIncluded:shipValue.sellingChargesIncluded,
+                            QtyErrorClass:'',
                         })
                         elem.equipment.push({
                             key:equip,
@@ -438,6 +444,9 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 tabView:equip,
                                 isAir:shipValue.isAir,
                                 chargesIncluded:shipValue.chargesIncluded,
+                                quotationType:shipValue.quotationType,
+                                sellingChargesIncluded:shipValue.sellingChargesIncluded,
+                                QtyErrorClass:'',
                             })
                             elem.equipment.push({
                                 key:equip,
@@ -566,6 +575,9 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 tempList[shipIndex].tabView = equip
                                 tempList[shipIndex].isAir = shipValue.isAir;
                                 tempList[shipIndex].chargesIncluded=shipValue.chargesIncluded;
+                                tempList[shipIndex].quotationType=shipValue.quotationType;
+                                tempList[shipIndex].sellingChargesIncluded = shipValue.sellingChargesIncluded;
+                                tempList[shipIndex].QtyErrorClass='';
                             }
                             else{
                                 tempList.push({
@@ -687,6 +699,9 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                     tabView:equip,
                                     isAir:shipValue.isAir,
                                     chargesIncluded:shipValue.chargesIncluded,
+                                    quotationType:shipValue.quotationType,
+                                    sellingChargesIncluded:shipValue.sellingChargesIncluded,
+                                    QtyErrorClass:'',
                                 })
                             }
                             elem.equipment[index].value = tempList

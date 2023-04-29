@@ -18,13 +18,21 @@
                     <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
                         <lightning-spinner alternative-text="Loading" size="large" if:true={isLoading}></lightning-spinner>
                         <lightning-layout multiple-rows>
-                            <lightning-layout-item size="12" class="slds-p-bottom_medium">
+                            <lightning-layout-item size="12" if:false={isAir} class="slds-p-bottom_medium">
                                 <span style="font-size: 15px;">Sea Freight : </span>
                                 <span>{seaFreight}</span>
                             </lightning-layout-item>
-                            <lightning-layout-item size="12" class="slds-p-bottom_medium">
+                            <lightning-layout-item size="12" if:true={isAir} class="slds-p-bottom_medium">
+                                <span style="font-size: 15px;">Rate/Kg : </span>
+                                <span>{rateKg}</span>
+                            </lightning-layout-item>
+                            <lightning-layout-item size="12" if:false={isAir} class="slds-p-bottom_medium">
                                 <span style="font-size: 15px;">Shipping Line  : </span>
                                 <span>{shippingLineName}</span>
+                            </lightning-layout-item>
+                            <lightning-layout-item size="12" if:true={isAir} class="slds-p-bottom_medium">
+                                <span style="font-size: 15px;">Airline  : </span>
+                                <span>{airLineName}</span>
                             </lightning-layout-item>
                             <lightning-layout-item size="12" class="slds-p-bottom_medium">
                                 <span style="font-size: 15px;">Buying Rate : </span>

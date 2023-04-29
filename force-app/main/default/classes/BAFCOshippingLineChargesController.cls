@@ -108,13 +108,15 @@ public class BAFCOshippingLineChargesController {
             rmsDto.seaFreight =rmsObj.Sea_Freight__c;
             rmsDto.rmsName =rmsObj.Name;
             rmsDto.shippingLineName = rmsObj.Shipping_Line__r.name;
+            rmsDto.airLine = rmsobj.Airline__r.Name;
+            rmsDto.rateKg = rmsObj.Rate_Kg__c ;
         }
         return rmsDto;
     }
     @auraEnabled
     public static RMS__c getRmsData(String rmsRecordId){
         if(rmsRecordId != null){
-            return [Select id,name,Sea_Freight__c,Shipping_Line__r.Name from RMS__c where id =: rmsRecordId];
+            return [Select Rate_Kg__c,Airline__r.Name,id,name,Sea_Freight__c,Shipping_Line__r.Name from RMS__c where id =: rmsRecordId];
         }
         return null;
     }
@@ -131,6 +133,10 @@ public class BAFCOshippingLineChargesController {
         public String rmsName{get;set;}
         @AuraEnabled 
         public String shippingLineName{get;set;}
+        @AuraEnabled 
+        public String airLine{get;set;}
+        @AuraEnabled 
+        public decimal rateKg{get;set;}
         
     }
 }

@@ -15,6 +15,8 @@ public class BAFCOGenerteQuoteDto {
     @AuraEnabled
     public Decimal total { get; set; }
     @AuraEnabled
+    public Decimal transitTime { get; set; }
+    @AuraEnabled
     public String quotationItemId { get; set; }
     @AuraEnabled
     public String airShippline { get; set; }

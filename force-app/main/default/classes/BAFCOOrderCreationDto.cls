@@ -13,8 +13,10 @@ public class BAFCOOrderCreationDto {
         public List<value> value { get; set; }
     }
     public class value{
+        @AuraEnabled public String sellingChargesIncluded { get; set; }
+        @AuraEnabled public String quotationType { get; set; }
         @AuraEnabled public Boolean isLCL { get; set; }
-         @AuraEnabled public Boolean isAir { get; set; }
+        @AuraEnabled public Boolean isAir { get; set; }
         @AuraEnabled public String incoTermId { get; set; }
         @AuraEnabled public String tabView { get; set; }
         @AuraEnabled
@@ -93,6 +95,8 @@ public class BAFCOOrderCreationDto {
         public Decimal pestController { get; set; }
         @AuraEnabled
         public Decimal portShuttling { get; set; }
+        @AuraEnabled
+        public String chargesIncluded { get; set; }
         @AuraEnabled
         public String postOfDischarge { get; set; }
         @AuraEnabled

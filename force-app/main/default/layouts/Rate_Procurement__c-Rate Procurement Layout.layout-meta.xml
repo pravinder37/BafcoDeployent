@@ -13,10 +13,6 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>Enquiry__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
                 <field>Port_of_Loading__c</field>
             </layoutItems>
             <layoutItems>
@@ -38,6 +34,10 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Quantity__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Opportunity__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>

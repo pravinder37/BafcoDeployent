@@ -181,8 +181,10 @@ export default class BAFCOAirQuoteIntakeForm extends NavigationMixin(LightningEl
     @track addOriginCharge = true;
     @track addServiceCharge = true;
     @track disableBuyingRate = false;
+    @track rmsNotFound = false; 
 
     connectedCallback(){
+        console.log('cargoDetails ',this.cargoDetails);
         if(this.airQuotation == 'true') this.isAir = true;
         if(this.isAir){
             this.loadingPortLabel ='Airport of Loading';
@@ -250,6 +252,7 @@ export default class BAFCOAirQuoteIntakeForm extends NavigationMixin(LightningEl
     }
     resetCalculation(){
         this.chargeableWeight = null; 
+        this.rmsNotFound = false;
         this.totalRate = 0;
         this.buyingRate = 0;
         this.buyingRateInput = null;
@@ -491,6 +494,9 @@ export default class BAFCOAirQuoteIntakeForm extends NavigationMixin(LightningEl
                 chargeableBuyingRate = rmsObj.Rate_Kg__c > 0 ? rmsObj.Rate_Kg__c : null;
                 if(chargeableBuyingRate != null ) buyingRateInputInital = chargeableBuyingRate * this.chargeableWeight
                 this.buyingRateInput = buyingRateInputInital ;
+            }
+            else{
+                this.rmsNotFound = true;
             }
             tempList3.push({
                 'name':'Total Ex-Works Charges',
@@ -1307,7 +1313,8 @@ export default class BAFCOAirQuoteIntakeForm extends NavigationMixin(LightningEl
             this.dispatchEvent(evt);
         }
     }
-    @api handleGotoQuotation(validityDate){        
+    @api handleGotoQuotation(validityDate){  
+        console.log('updateValidityDate '+validityDate+' '+this.quotationId)      
         if(this.quotationId != ''){
             this.isLoading = true;
             updateValidityDate({quoteId : this.quotationId,validityDate:validityDate})

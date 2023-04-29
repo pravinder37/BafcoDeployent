@@ -40,6 +40,11 @@ public class BAFCOImportSearchControllerTest {
         quoteObj.Account__c = acc.id;
         Insert quoteObj;
         
+        Quotation_Item__c quoteItem = new Quotation_Item__c();
+        quoteItem.Quotation__c = quoteObj.Id;
+        quoteItem.Sea_freight__c =12;
+        Insert quoteItem;
+        
         Order__c obj = new Order__c();
         obj.Account_Order__c = acc.id;
         obj.Quotation__c = quoteObj.id;
@@ -62,7 +67,30 @@ public class BAFCOImportSearchControllerTest {
      testmethod static void updateQuoteItemTest(){
         String itemId = [Select id from Order_item__c limit 1].id;
         test.startTest();
-        BAFCOImportSearchController.updateQuoteItem(10,10,itemId);
+        BAFCOImportSearchController.updateQuoteItem(10,10,itemId,null);
+        test.stopTest();
+    }
+    testmethod static void getImportItemOnLoad01(){
+        test.startTest();
+        BAFCOImportSearchController.getImportItemOnLoad();
+        test.stopTest();
+    }
+    testMethod static void getOrderItemValue(){
+        String itemId = [Select id from Order_item__c limit 1].id;
+        test.startTest();
+        BAFCOImportSearchController.getOrderItemValue(itemId);
+        test.stopTest();
+    }
+    testMethod static void updateOrderItemValue(){
+        String itemId = [Select id from Order_item__c limit 1].id;
+        String quotationValidity = String.valueOf(System.today().addDays(7));
+        Shipping_Line__c shipLine = new  Shipping_Line__c();
+        shipLine.Name = 'ShipLine';
+        shipLine.BSLS_ID__c = 'test';
+        Insert shipLine;
+        test.startTest();
+        Test.setMock(HttpCalloutMock.class, new BAFCOOrderCalloutMockTest());
+         BAFCOImportSearchController.updateOrderItemValue(10, 10, shipLine.id, quotationValidity, itemId);
         test.stopTest();
     }
 }

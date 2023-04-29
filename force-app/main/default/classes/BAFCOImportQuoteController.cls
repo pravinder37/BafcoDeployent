@@ -130,10 +130,10 @@ rmsDto.quotationItemId = quoteItemToIdMap.get(key);
         return agentToEquipMap;
     }
     @AuraEnabled
-    public static String genrateQuotation(String routeId, String rmsId, String enquiryId,String quotationId, BAFCOImportRMSDto dto, String incoTerm,String remarks, Decimal additionalChargeTotal,Boolean cameReviseCompt, Boolean sameRoute,string agentName){
-        system.debug('dto '+dto);
-        system.debug('enquiryId '+enquiryId);
-        system.debug('agentName '+agentName);
+    public static String genrateQuotation(String routeId, String rmsId, String enquiryId,String quotationId, BAFCOImportRMSDto dto, String incoTerm,String remarks, Decimal additionalChargeTotal,Boolean cameReviseCompt, Boolean sameRoute,string agentName, BAFCOImportRMSDto.sellingFieldObj sellingFieldObj){
+       /// system.debug('dto '+dto);
+       // system.debug('enquiryId '+enquiryId);
+      //  system.debug('agentName '+agentName);
         List<BAFCOImportRMSDto.AdditionalCharge> additionalChargeList = dto.additionalChargeList;
         shippingLineChargesDTO shipLineDto = BAFCOshippingLineChargesController.getShippingCharges(rmsId);
         List<Quotation__c> quoteList = new List<Quotation__c>();
@@ -146,8 +146,14 @@ rmsDto.quotationItemId = quoteItemToIdMap.get(key);
                 opportunity enqObj = enqList[0];
                 //quoteObj.Leadc__c = enqObj.Lead__c;   
                 quoteObj.Account__c = enqObj.AccountId;             
-                if(enqObj.Business_Type__c == 'Export') quoteObj.recordtypeId = QUOTE_EXPORT_RECORDTYPE_Id;
-                else if(enqObj.Business_Type__c == 'Import') quoteObj.recordtypeId = QUOTE_IMPORT_RECORDTYPE_Id;
+                if(enqObj.Business_Type__c == 'Export') {
+                    quoteObj.recordtypeId = QUOTE_EXPORT_RECORDTYPE_Id;
+                    quoteObj.Quotation_Type__c = 'Sea Export';
+                }
+                else if(enqObj.Business_Type__c == 'Import') {
+                    quoteObj.recordtypeId = QUOTE_IMPORT_RECORDTYPE_Id;
+                    quoteObj.Quotation_Type__c = 'Sea Import';
+                }
                 
                 Decimal quoteNumber = enqObj.No_of_Quotes__c + 1;
                 quoteList = enqObj.Quotations__r;
@@ -159,8 +165,14 @@ rmsDto.quotationItemId = quoteItemToIdMap.get(key);
                     opportunity enqObj = enqList1[0];
                     quoteObj.Leadc__c = enqObj.Lead__c;
                     quoteObj.Account__c = enqObj.AccountId;
-                    if(enqObj.Business_Type__c == 'Export') quoteObj.recordtypeId = QUOTE_EXPORT_RECORDTYPE_Id;
-                    else if(enqObj.Business_Type__c == 'Import') quoteObj.recordtypeId = QUOTE_IMPORT_RECORDTYPE_Id;                    
+                    if(enqObj.Business_Type__c == 'Export') {
+                        quoteObj.recordtypeId = QUOTE_EXPORT_RECORDTYPE_Id;
+                        quoteObj.Quotation_Type__c = 'Sea Export';
+                    }
+                    else if(enqObj.Business_Type__c == 'Import') {
+                        quoteObj.recordtypeId = QUOTE_IMPORT_RECORDTYPE_Id;
+                        quoteObj.Quotation_Type__c = 'Sea Import';
+                    }                 
                    Decimal quoteNumber = enqObj.No_of_Quotes__c + 1;
                     quoteList = enqObj.Quotations__r;
                }
@@ -410,6 +422,14 @@ quoteItemObj. = dto.value;
         quoteItemObj.Discharge_Place__c = dto.dischargePlace;
         quoteItemObj.Buying_Rate__c = dto.quoteBuyingRate > 0 ? dto.quoteBuyingRate : null;
         quoteItemObj.Quantity__c = dto.quantity;
+        quoteItemobj.Selling_Charges_Include__c = sellingFieldObj.sellingInputField; 
+        quoteItemobj.Buying_Charges_Include__c = sellingFieldObj.InputField;
+        quoteItemobj.Total_Selling_Service_Charge__c = sellingFieldObj.sellingtotalSl;
+        quoteItemobj.Total_Selling_Origin_Charge__c = sellingFieldObj.sellingTotalOrigincharges;
+        quoteItemobj.Total_Selling_Destin_Charge__c = sellingFieldObj.sellingdestinTotalCharges;
+        quoteItemobj.Total_Selling_Additional_Charge__c = sellingFieldObj.sellingadditionalChargeTotal;
+        quoteItemobj.Total_Selling_ExWorks_Charge__c = sellingFieldObj.sellingexWorksTotal;
+       system.debug('sellingFieldObj '+sellingFieldObj);
         if(dto.selectedShippLine != '' ){
             List<Shipping_Line__c> shipLine = [Select id from Shipping_Line__c where name =:dto.selectedShippLine limit 1];
             if(shipLine.size() > 0) quoteItemObj.Shipping_Linee__c = shipLine[0].id;

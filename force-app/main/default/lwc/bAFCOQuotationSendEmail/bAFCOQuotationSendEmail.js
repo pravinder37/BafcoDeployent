@@ -6,6 +6,7 @@ import {CurrentPageReference} from 'lightning/navigation';
 import Id from '@salesforce/user/Id';
 import { getRecord } from 'lightning/uiRecordApi';
 import userEmailFIELD from '@salesforce/schema/User.Email';
+import TO_ADDRESS from '@salesforce/label/c.BAFCOSendNominationToAddress';
 export default class BAFCOQuotationSendEmail extends LightningElement {
     @api recordId;
     @track toSend = '';
@@ -29,9 +30,8 @@ export default class BAFCOQuotationSendEmail extends LightningElement {
         }
     }
     connectedCallback(){
-        console.log('recordId * '+this.recordId)
         if(this.recordId != undefined) this.getQuoteDataOnLoad();
-        this.toSend = 'coml21@bafcointl.com';
+        this.toSend = TO_ADDRESS;
     }
     closeAction(){
         this.dispatchEvent(new CloseActionScreenEvent());
@@ -47,13 +47,13 @@ export default class BAFCOQuotationSendEmail extends LightningElement {
                 content +='\n\nPlease find below the details:\n';
 
                 if(result.length > 0){
-                    this.subject = result[0].customerName != undefined ? result[0].customerName+'-' : '';
+                    this.subject = 'Branch - ';
+                    this.subject += result[0].customerName != undefined ? result[0].customerName+'-' : 'Branch - ';
                     this.subject += result[0].subjectLine;
                     console.log('subject '+this.subject)
                     result.forEach(elem => {
                         content += '\nQuotation Name: '+elem.quoteName;
                         content +='\nSalesman: '+elem.saleman;
-                        content +='\nContract Number: ';
                         content += '\nPort of Loading: '+elem.loadingPort;
                         content += '\nPort of Discharge: '+elem.dischargePort;
                         content += '\nEquipment Type: '+elem.equipmentType;  
@@ -61,6 +61,7 @@ export default class BAFCOQuotationSendEmail extends LightningElement {
                         content += '\nQuantity: '+elem.quantity;
                         content += '\nCargo Weight: '+elem.cargoWeight;
                         content += '\nShipping Line: '+elem.shippingLine;
+                        content +='\nContract Number: ';
                         content += '\nCustomer reference number: '+elem.customerRefNo;
                         content += '\nCustomer PO number: '+elem.customerPONo;
                         content += '\n\n';

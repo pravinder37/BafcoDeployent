@@ -84,7 +84,7 @@ public class BAFCOMarginCalculator {
         else{
             routeRecordToUpdate=routeMargingList[0];
         }
-        if(ordItemValue.Route_Profit_Margin__c==NULL){
+        if(ordItemValue.Route_Profit_Margin__c==NULL && !System.isFuture() && !System.isBatch()){
             updateRouteOnItem(ordItemValue.id,routeRecordToUpdate.Id,False);  
         }
         
@@ -156,7 +156,7 @@ public class BAFCOMarginCalculator {
         else{
             routeRecordToUpdate=routeMargingList[0];
         }
-        if(ordItemValue.Customer_Port_Pair_Margin__c==NULL){
+        if(ordItemValue.Customer_Port_Pair_Margin__c==NULL && !System.isFuture() && !System.isBatch()){
             updateRouteOnItem(ordItemValue.id,routeRecordToUpdate.Id,True);  
         }
         

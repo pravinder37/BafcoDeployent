@@ -157,7 +157,7 @@
     <nameField>
         <displayFormat>REQ-{00000}</displayFormat>
         <label>Route Equipment Name</label>
-        <trackHistory>false</trackHistory>
+        <trackHistory>true</trackHistory>
         <type>AutoNumber</type>
     </nameField>
     <pluralLabel>Route Equipments</pluralLabel>

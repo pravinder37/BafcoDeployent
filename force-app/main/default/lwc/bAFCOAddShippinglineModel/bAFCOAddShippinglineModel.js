@@ -7,15 +7,18 @@ export default class BAFCOAddShippinglineModel extends LightningElement {
     @track selectedShippLine = '';
     @api isAir;
     @track submitBtnLabel = 'Add Shippline';
+    @track airPopup = false;
     closeModal(){
         this.dispatchEvent(new CustomEvent('close'));
     }
     connectedCallback(){
         if(this.isAir =='true') {
+            this.airPopup = true;
             this.getAirLine();
             this.submitBtnLabel = 'Add Airline';
         }
         else {
+            this.airPopup = false;
             this.getShipline();
             this.submitBtnLabel = 'Add Shippline';
         }

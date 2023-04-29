@@ -58,11 +58,6 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>Enquiry__c</field>
-            <table>Rate_Procurement__c</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
             <field>RMS__c</field>
             <table>Rate_Procurement__c</table>
         </columns>
@@ -99,6 +94,11 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>Quantity__c</field>
+            <table>Rate_Procurement__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Opportunity__c</field>
             <table>Rate_Procurement__c</table>
         </columns>
         <masterLabel>Rates Procurement</masterLabel>

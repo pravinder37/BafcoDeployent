@@ -103,21 +103,27 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
     }
     handleCustomerChoosed(event){
         this.objectChoosed = event.target.value;
-        if(this.whatId) {
+        /*if(this.whatId) {
             let defaultLoadingDestinationField = this.template.querySelector('c-b-a-f-c-o-custom-look-up-component')
             defaultLoadingDestinationField.handleRemovePill();
-         }
+         }*/
         if(this.objectChoosed == 'Lead') {
             this.objectApiName = 'Lead'
             this.placeholder ='Search Lead'
             this.objecticon = 'standard:lead';
             this.accountObjectChoosed = false;
+            let defaultLoadingDestinationField = this.template.querySelector('c-b-a-f-c-o-custom-account-search')
+                defaultLoadingDestinationField.handleRemovePill();
         }
         else if(this.objectChoosed == 'Account'){
             this.objectApiName = 'Account'
             this.placeholder ='Search Account'
             this.objecticon = 'standard:account';
             this.accountObjectChoosed = true;
+            if(this.whatId) {
+                let defaultLoadingDestinationField = this.template.querySelector('c-b-a-f-c-o-meeting-lead-search')
+                defaultLoadingDestinationField.handleRemovePill();
+             }
         }
     }
     handleEventCardClicked(e){

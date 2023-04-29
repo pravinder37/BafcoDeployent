@@ -3,7 +3,7 @@ public class BAFCORouteTriggerController {
         Set<Id> optyId = new Set<Id>();
         Map<Id,String> optyIdToRouteName = new Map<Id,String>();
         for(Route__c routeObj : routeList){
-           optyId.add(routeObj.Opportunity_Enquiry__c);
+            optyId.add(routeObj.Opportunity_Enquiry__c);
         }
         system.debug('optyId '+optyId);
         system.debug('routeList '+routeList);

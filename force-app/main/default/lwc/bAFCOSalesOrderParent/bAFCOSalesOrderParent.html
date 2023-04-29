@@ -1,7 +1,7 @@
 <template>
     <lightning-layout multiple-rows>
         <lightning-layout-item size="3">
-            <c-b-a-f-c-o-sales-order-list customer-account={customerAccount} display-ship-consignee={displayShip_consignee} display-selected-quote-item={selectedDatalist} quantity-data={quantityDatalist} active-section={activeTab}></c-b-a-f-c-o-sales-order-list>
+            <c-b-a-f-c-o-sales-order-list qty-valid={qtyValid} customer-account={customerAccount} onvalidateqty={handleValidateQty} display-ship-consignee={displayShip_consignee} display-selected-quote-item={selectedDatalist} quantity-data={quantityDatalist} active-section={activeTab}></c-b-a-f-c-o-sales-order-list>
         </lightning-layout-item>
         <lightning-layout-item size="9">
             <lightning-layout multiple-rows class="customFont">
@@ -115,9 +115,10 @@
                                                         onchange={handleCheckBoxClicked}></lightning-input></span>
                                                     <p><span>Selling : </span><span style="background: white;color: #4CAF50; padding: 4px 2px 4px 2px">${shipLine.sellingRate}</span></p>
                                                 </lightning-layout-item>
-                                                <lightning-layout-item size="6" style="padding-left: 10%;">
+                                                <lightning-layout-item size="6" class={shipLine.QtyErrorClass} style="padding-left: 10%;">
                                                     <lightning-input type="number" 
                                                                     label="Qty"
+                                                                    class={shipLine.QtyErrorClass}
                                                                     data-equip={equip.key}
                                                                     data-shipline={shipLine.shipName}
                                                                     data-sellingtotal={shipLine.sellingRate}    

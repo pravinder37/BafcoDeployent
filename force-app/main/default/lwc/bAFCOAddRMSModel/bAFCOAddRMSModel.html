@@ -230,14 +230,104 @@
                             <lightning-layout-item if:true={isAir} size="12" large-device-size="4" medium-device-size="4" small-device-size="12" style="padding: 0px 20px 0px 20px;">
                                 <lightning-input
                                     type="number"
-                                    label="Rate/Kgs"
+                                    label="Rate/Kg"
                                     value={rateKgs}
+                                    step="0.01"
                                     class={rateKgsError}
                                     onchange={handleRateKgsChange}></lightning-input>
                                     <div class="slds-form-element__help"  style="color: rgb(194, 57, 52);" if:true={rateKgsError}>
                                         Complete this field.
                                     </div>
                             </lightning-layout-item>
+                            <lightning-layout-item if:true={isAir} size="12" large-device-size="4" medium-device-size="4" small-device-size="12" style="padding: 0px 20px 0px 20px;">
+                                <lightning-combobox label="Curency Code" 
+                                options={curencyCodeOption}
+                                value={rmscurrencyCode} 
+                                onchange={handleRMSCurrencyCodeSelection}
+                                placeholder="Select"></lightning-combobox>
+                            </lightning-layout-item>
+                            <template if:true={isAirExport}>
+                                <lightning-layout-item size="12" large-device-size="4" medium-device-size="4" small-device-size="12" style="padding: 0px 20px 0px 20px;">
+                                    <lightning-input
+                                        type="number"
+                                        label="+45"
+                                        value={x45}
+                                        step="0.01"
+                                        onchange={handle45Change}></lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item size="12" large-device-size="4" medium-device-size="4" small-device-size="12" style="padding: 0px 20px 0px 20px;">
+                                    <lightning-input
+                                        type="number"
+                                        label="+100"
+                                        value={x100}
+                                        step="0.01"
+                                        onchange={handle100Change}></lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item size="12" large-device-size="4" medium-device-size="4" small-device-size="12" style="padding: 0px 20px 0px 20px;">
+                                    <lightning-input
+                                        type="number"
+                                        label="+300"
+                                        value={x300}
+                                        step="0.01"
+                                        onchange={handle300Change}></lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item size="12" large-device-size="4" medium-device-size="4" small-device-size="12" style="padding: 0px 20px 0px 20px;">
+                                    <lightning-input
+                                        type="number"
+                                        label="+500"
+                                        value={x500}
+                                        step="0.01"
+                                        onchange={handle500Change}></lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item size="12" large-device-size="4" medium-device-size="4" small-device-size="12" style="padding: 0px 20px 0px 20px;">
+                                    <lightning-input
+                                        type="number"
+                                        label="+1000"
+                                        value={x1000}
+                                        step="0.01"
+                                        onchange={handle1000Change}></lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item size="12" large-device-size="4" medium-device-size="4" small-device-size="12" style="padding: 0px 20px 0px 20px;">
+                                    <lightning-input
+                                        type="number"
+                                        label="+3000"
+                                        value={x3000}
+                                        step="0.01"
+                                        onchange={handle3000Change}></lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item size="12" large-device-size="4" medium-device-size="4" small-device-size="12" style="padding: 0px 20px 0px 20px;">
+                                    <lightning-input
+                                        type="number"
+                                        label="+5000"
+                                        value={x5000}
+                                        step="0.01"
+                                        onchange={handle5000Change}></lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item size="12" large-device-size="4" medium-device-size="4" small-device-size="12" style="padding: 0px 20px 0px 20px;">
+                                    <lightning-input
+                                        type="number"
+                                        label="+10000"
+                                        value={x10000}
+                                        step="0.01"
+                                        onchange={handle10000Change}></lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item size="12" large-device-size="4" medium-device-size="4" small-device-size="12" style="padding: 0px 20px 0px 20px;">
+                                    <lightning-input
+                                        type="number"
+                                        label="+15000"
+                                        value={x15000}
+                                        step="0.01"
+                                        onchange={handle15000Change}></lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item size="12" large-device-size="4" medium-device-size="4" small-device-size="12" style="padding: 0px 20px 0px 20px;">
+                                    <lightning-input
+                                        type="number"
+                                        label="+20000"
+                                        value={x20000}
+                                        step="0.01"
+                                        onchange={handle20000Change}></lightning-input>
+                                </lightning-layout-item>
+                            </template>
                         </lightning-layout>
                     </lightning-accordion-section>
                     <lightning-accordion-section name="shippingLineDetail" label="Shipping Line Charges" if:true={displayShippingCharge}>

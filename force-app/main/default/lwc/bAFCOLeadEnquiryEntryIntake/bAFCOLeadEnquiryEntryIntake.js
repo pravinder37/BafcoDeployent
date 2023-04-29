@@ -314,7 +314,7 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
         this.updateEnquiryList();
     }
     @api handleLocalInco(){
-       if(this.businessType == 'Import' && this.incoTermName == 'Clearance and Delivery'){
+       if(this.businessType == 'Import' && (this.incoTermName == 'Clearance and Delivery' || this.incoTermName == 'Local Operation')){
             this.hidePOL = true;
             this.showPickupPlaceField = false;           
             this.showDischargePlaceField = true;
@@ -325,7 +325,7 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
             this.disableAddRoute = true;
             this.hideShippingLine = true
         }
-        else if(this.businessType == 'Export' && this.incoTermName == 'Local Operation'){
+        else if(this.businessType == 'Export' && (this.incoTermName == 'Local Operation' || this.incoTermName == 'Clearance and Delivery')){
             this.showPickupPlaceField = true;
             this.hidePOD = true;
             this.hidePOL = false; 
@@ -639,6 +639,7 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
     @api removeDefaultOnImport(){
         this.isLoading = true;
         this.isImport = true;
+        //this.containerRecords = this.containerRecords.slice(0,1);
         this.displayIncoChanges();                
         setTimeout(() => {
             if(this.incoTermName != 'Clearance and Delivery' && this.incoTermName != 'Local Operation'){   

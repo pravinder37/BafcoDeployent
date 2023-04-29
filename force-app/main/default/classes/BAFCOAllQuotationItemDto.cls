@@ -1,5 +1,13 @@
 public class BAFCOAllQuotationItemDto {
     //General variable 
+    @AuraEnabled public String itemId { get; set; }
+    @AuraEnabled public Decimal buyingRate { get; set; }
+    @AuraEnabled public Decimal transitTime { get; set; }
+    @AuraEnabled public Decimal buyingRatekg { get; set; }
+    @AuraEnabled public Decimal sellingRatekg { get; set; }
+    @AuraEnabled public Decimal chargeableWeight { get; set; }
+    @AuraEnabled public String includedBuyingCharges {get;set;}
+    @AuraEnabled public String includedSellingCharges {get;set;}
     @AuraEnabled public Decimal seaFreight { get; set; }
     @AuraEnabled public Decimal totalSellingRate { get; set; }
     @AuraEnabled public Decimal totalBuyingRate { get; set; }

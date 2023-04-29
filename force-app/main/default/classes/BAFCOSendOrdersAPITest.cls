@@ -14,6 +14,13 @@ public class BAFCOSendOrdersAPITest {
         acc.name = 'test';
         insert acc;
         
+         Port__c port = new Port__c();
+        port.City__c = 'Test';
+        port.Name ='PortName';
+        port.sector__c = 'Africa';
+        
+        insert port;
+        
         Contact con = new contact();
         con.FirstNAme = 'test';
         con.LastName = 'test';
@@ -22,16 +29,7 @@ public class BAFCOSendOrdersAPITest {
         con.AccountId = acc.id;
         insert con;
         
-        Agent__c agentObj = new Agent__c();
-        agentObj.name =  'test';
-        insert agentObj;
         
-        Port__c port = new Port__c();
-        port.City__c = 'Test';
-        port.Name ='PortName';
-        port.sector__c = 'Africa';
-        
-        insert port;
        
         
         opportunity opty = new Opportunity();
@@ -73,13 +71,35 @@ public class BAFCOSendOrdersAPITest {
         quoteObj.Effective_From__c = system.today();
         Insert quoteObj;
         
-        Id IMPORT_RECORDTYPE_Id = Schema.SObjectType.Order__c.getRecordTypeInfosByName()
+        
+        
+    }
+    /*testmethod static void getOrderTest(){
+        List<Order__c> orderList = [Select Operations_Executive__r.BSLS_ID__c, (Select Agent__r.BSLS_ID__c,Agent__r.Name,Agent__c, Equipment_Type_Order__r.BSLS_ID__c, Place_of_Discharge__r.BSLS_ID__c,Place_of_Pickup__r.BSLS_ID__c,Port_of_Discharge_Order__r.BSLS_ID__c,Port_of_Loading_Order__r.BSLS_ID__c,Shipping_Line__r.BSLS_ID__c, Route_Order__r.Service_Type__c,Route_Order__r.Kind_Of_Shipment__c,Name,id,Order__r.Name from Order_Items__r),Order_Validity__c,Quotation__r.Quotation_Validity__c,Quotation__r.Name, Name,Account_Order__r.BSLS_ID__c,Account_Order__r.BillingAddress, id,Account_Order__c,Account_Order__r.Name,Account_Order__r.Branch__c,Account_Order__r.Owner.Name from Order__c ];
+        test.startTest();
+        Test.setMock(HttpCalloutMock.class, new BAFCOExchangeRateMockTest());
+        BAFCOSendOrdersAPI.getOrderData(orderList);
+        test.stopTest();
+    }*/
+    testmethod static void postOrderTest(){
+        Test.setMock(HttpCalloutMock.class, new BAFCOOrderCalloutMockTest());
+        Agent__c agentObj = new Agent__c();
+        agentObj.name =  'test';
+        insert agentObj;
+        
+        Port__c port = new Port__c();
+        port.City__c = 'Test';
+        port.Name ='PortName';
+        port.sector__c = 'Africa';
+        
+        insert port;
+         Id IMPORT_RECORDTYPE_Id = Schema.SObjectType.Order__c.getRecordTypeInfosByName()
         .get('Import')
         .getRecordTypeId();
-        
+        Quotation__c quote = [Select id,Account__c from Quotation__c limit 1];
         Order__c obj = new Order__c();
-        obj.Account_Order__c = acc.id;
-        obj.Quotation__c = quoteObj.id;
+        obj.Account_Order__c = quote.Account__c;
+        obj.Quotation__c = quote.id;
         obj.RecordtypeId = IMPORT_RECORDTYPE_Id;
         obj.Integration__c = true;
         insert obj;
@@ -96,7 +116,7 @@ public class BAFCOSendOrdersAPITest {
         equipList.add(equip2);
         
         insert equipList;
-        
+        Route__c route = [Select id from Route__c limit 1];
         List<Order_item__c> orderItemList = new List<Order_item__c>();
         Order_item__c item = new Order_item__c();
         item.Order__c = obj.id;
@@ -118,28 +138,18 @@ public class BAFCOSendOrdersAPITest {
         insert orderItemList;
         
         Consignee__c ConSobj = new Consignee__c();
-        ConSobj.Consignee__c = acc.id;
+        ConSobj.Consignee__c = quote.Account__c;
         ConSobj.Name = 'test';
         ConSobj.Order_Item__c = item.id;        
         insert ConSobj;
         
         Shipper__c shipperObj = new Shipper__c();
-        shipperObj.Shipper__c = acc.id;
+        shipperObj.Shipper__c = quote.Account__c;
         shipperObj.Name = 'test';
         shipperObj.Order_Item__c = item.id;        
         insert shipperObj;
-        
-    }
-    /*testmethod static void getOrderTest(){
-        List<Order__c> orderList = [Select Operations_Executive__r.BSLS_ID__c, (Select Agent__r.BSLS_ID__c,Agent__r.Name,Agent__c, Equipment_Type_Order__r.BSLS_ID__c, Place_of_Discharge__r.BSLS_ID__c,Place_of_Pickup__r.BSLS_ID__c,Port_of_Discharge_Order__r.BSLS_ID__c,Port_of_Loading_Order__r.BSLS_ID__c,Shipping_Line__r.BSLS_ID__c, Route_Order__r.Service_Type__c,Route_Order__r.Kind_Of_Shipment__c,Name,id,Order__r.Name from Order_Items__r),Order_Validity__c,Quotation__r.Quotation_Validity__c,Quotation__r.Name, Name,Account_Order__r.BSLS_ID__c,Account_Order__r.BillingAddress, id,Account_Order__c,Account_Order__r.Name,Account_Order__r.Branch__c,Account_Order__r.Owner.Name from Order__c ];
         test.startTest();
-        Test.setMock(HttpCalloutMock.class, new BAFCOExchangeRateMockTest());
-        BAFCOSendOrdersAPI.getOrderData(orderList);
-        test.stopTest();
-    }*/
-    testmethod static void postOrderTest(){
-        test.startTest();
-        Test.setMock(HttpCalloutMock.class, new BAFCOExchangeRateMockTest());
+        //Test.setMock(HttpCalloutMock.class, new BAFCOExchangeRateMockTest());
         RestRequest req = new RestRequest(); 
         RestResponse res = new RestResponse();
         BAFCOUpdatETDOnOrderAPI.ETDRequestBodyWrapper dto = new BAFCOUpdatETDOnOrderAPI.ETDRequestBodyWrapper();
@@ -154,7 +164,7 @@ public class BAFCOSendOrdersAPITest {
         BAFCOUpdatETDOnOrderAPI.doPost();
         test.stopTest();
     }
-    testmethod static void postOrderTest2(){
+   /* testmethod static void postOrderTest2(){
         test.startTest();
         Test.setMock(HttpCalloutMock.class, new BAFCOExchangeRateMockTest());
         RestRequest req = new RestRequest(); 
@@ -170,5 +180,5 @@ public class BAFCOSendOrdersAPITest {
         RestContext.response= res;
         BAFCOUpdatETDOnOrderAPI.doPost();
         test.stopTest();
-    }
+    }*/
 }

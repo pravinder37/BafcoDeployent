@@ -68,7 +68,7 @@
                 <lightning-tabset>
                     <template for:each={allRouteList} for:item="equip">
                         <lightning-tab label={equip.Tab_View__c} key={equip.key} value={equip.Tab_View__c} onactive={handleEquipMentActive}>
-                            <lightning-layout multiple-rows>
+                            <lightning-layout multiple-rows if:false={rmsNotFound}>
                                 <lightning-layout-item size="12" style="padding-top: 15px;">
                                     <p style="font-size: 16px;"><b>Chargeable Weight : {chargeableWeight}</b></p>
                                 </lightning-layout-item>
@@ -754,7 +754,7 @@
                     </template>
                 </lightning-tabset>
             </lightning-layout-item> 
-            <lightning-layout-item size="5" class="customFont"> 
+            <lightning-layout-item size="5" class="customFont" if:false={rmsNotFound}> 
                 <div class="slds-m-top_xx-large slds-m-left_xx-large slds-m-bottom_x-large" if:false={isLoading} >
                     <lightning-layout multiple-rows style="background: #f7f7f7;">
                         <lightning-layout-item size="12" >
@@ -817,6 +817,20 @@
                 </lightning-layout-item>       
             </lightning-layout-item>      
         </lightning-layout>
+        <div if:true={rmsNotFound}>
+            <lightning-layout multiple-rows class="customFont">
+                <lightning-layout-item size="12" class="slds-m-top_small slds-align_absolute-center">
+                    RMS Rate are not available for this route.
+                </lightning-layout-item>
+                <lightning-layout-item size="12" class="slds-m-top_medium slds-align_absolute-center">
+                    <lightning-button  
+                                variant="brand" 
+                                label="Add Rates" 
+                                title="Add Rates" 
+                                onclick={handleAddAgent}></lightning-button>
+                </lightning-layout-item>
+            </lightning-layout>
+         </div>
     </template>
     <template if:true={showNewServiceCharge}>
         <c-b-a-f-c-o-import-add-service-charge onupdate={updateServiceCharges} service-charge-list={serviceChargeList} onclose={handleCloseNewServiceCharge}></c-b-a-f-c-o-import-add-service-charge>

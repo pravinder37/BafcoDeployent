@@ -7,7 +7,7 @@
     <referenceTo>Equipment_Type__c</referenceTo>
     <relationshipName>Enquiry_Equipments</relationshipName>
     <required>false</required>
-    <trackHistory>false</trackHistory>
+    <trackHistory>true</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Lookup</type>
 </CustomField>

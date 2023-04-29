@@ -40,6 +40,7 @@ public class BAFCOImportRMSDto {
     @AuraEnabled public boolean includeExWorksCharge {get;set;}
     @AuraEnabled
     public serviceChargeList serviceChargeList { get; set; }
+    @AuraEnabled public sellingFieldObj sellingFieldObj {get;set;}
     @AuraEnabled
     public List<AdditionalCharge> additionalChargeList { get; set; }
     public Class AdditionalCharge{ 
@@ -175,5 +176,14 @@ public class BAFCOImportRMSDto {
         @AuraEnabled public decimal CarrierContainerRepositioningCharges {get; set;}
         @AuraEnabled public decimal tankRentalCharge {get; set;}
         @AuraEnabled public Boolean includeAdditionalCharge { get; set; }
+    }
+    public class sellingFieldObj{
+        @AuraEnabled public String sellingInputField {get; set;}
+        @AuraEnabled public String InputField {get; set;}
+        @AuraEnabled public decimal sellingdestinTotalCharges {get; set;}
+        @AuraEnabled public decimal sellingTotalOrigincharges {get; set;}
+        @AuraEnabled public decimal sellingtotalSl {get; set;}
+        @AuraEnabled public decimal sellingexWorksTotal {get; set;}
+        @AuraEnabled public decimal sellingadditionalChargeTotal {get; set;}
     }
 }

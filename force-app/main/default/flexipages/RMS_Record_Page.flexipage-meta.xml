@@ -10,16 +10,7 @@
                             <value>FeedItem.TextPost</value>
                         </valueListItems>
                         <valueListItems>
-                            <value>Global.NewEvent</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Global.NewTask</value>
-                        </valueListItems>
-                        <valueListItems>
                             <value>Edit</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>FeedItem.ContentNote</value>
                         </valueListItems>
                         <valueListItems>
                             <value>Delete</value>
@@ -29,9 +20,6 @@
                         </valueListItems>
                         <valueListItems>
                             <value>ChangeOwnerOne</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>ChangeRecordType</value>
                         </valueListItems>
                         <valueListItems>
                             <value>PrintableView</value>
@@ -81,7 +69,7 @@
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
-                    <value>required</value>
+                    <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.Port_Of_Loading__c</fieldItem>
                 <identifier>RecordPort_Of_Loading_cField</identifier>
@@ -261,6 +249,16 @@
                 <identifier>RecordOwnerIdField</identifier>
             </fieldInstance>
         </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Rate_Kg__c</fieldItem>
+                <identifier>RecordRate_Kg_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
         <name>Facet-695a76f4-1c45-4e65-b8bb-db9c965e59cf</name>
         <type>Facet</type>
     </flexiPageRegions>
@@ -286,6 +284,138 @@
             </componentInstance>
         </itemInstances>
         <name>Facet-bc6cf028-78c2-43d5-a284-a7bd05662d69</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.X45__c</fieldItem>
+                <identifier>RecordX45_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.X100__c</fieldItem>
+                <identifier>RecordX100_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.X300__c</fieldItem>
+                <identifier>RecordX300_cField2</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.X500__c</fieldItem>
+                <identifier>RecordX500_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.X1000__c</fieldItem>
+                <identifier>RecordX1000_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>Facet-372e78bc-caa6-4d24-943b-199959798800</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.X3000__c</fieldItem>
+                <identifier>RecordX3000_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.X10000__c</fieldItem>
+                <identifier>RecordX10000_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.X15000__c</fieldItem>
+                <identifier>RecordX15000_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.X20000__c</fieldItem>
+                <identifier>RecordX20000_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Route_Equipment__c</fieldItem>
+                <identifier>RecordRoute_Equipment_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>Facet-ba2fa437-048c-4ca7-b68e-87538fc7b5d7</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-372e78bc-caa6-4d24-943b-199959798800</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:column</componentName>
+                <identifier>flexipage_column7</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-ba2fa437-048c-4ca7-b68e-87538fc7b5d7</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:column</componentName>
+                <identifier>flexipage_column8</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-9fc72ac5-7cb4-4260-83da-a92b35ecce82</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -411,6 +541,20 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>columns</name>
+                    <value>Facet-9fc72ac5-7cb4-4260-83da-a92b35ecce82</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>label</name>
+                    <value>Air Freight</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:fieldSection</componentName>
+                <identifier>flexipage_fieldSection4</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>columns</name>
                     <value>Facet-0813a0b5-39fa-47b8-98f8-3fab91d5787c</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
@@ -523,6 +667,10 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
+                <componentInstanceProperties>
+                    <name>showLegacyActivityComposer</name>
+                    <value>false</value>
+                </componentInstanceProperties>
                 <componentName>runtime_sales_activities:activityPanel</componentName>
                 <identifier>runtime_sales_activities_activityPanel</identifier>
             </componentInstance>

@@ -30,6 +30,10 @@
                 <behavior>Required</behavior>
                 <field>CurrencyIsoCode</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>Branch__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
@@ -72,14 +76,6 @@
             <layoutItems>
                 <behavior>Readonly</behavior>
                 <field>Check_in_Location_Difference__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Check_Out__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Check_Out_Location__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>

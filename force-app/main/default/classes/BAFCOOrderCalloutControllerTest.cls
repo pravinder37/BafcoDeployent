@@ -73,13 +73,27 @@ public class BAFCOOrderCalloutControllerTest {
         quoteObj.Effective_From__c = system.today();
         Insert quoteObj;
         
-        Id IMPORT_RECORDTYPE_Id = Schema.SObjectType.Order__c.getRecordTypeInfosByName()
+        
+    }
+    testmethod static void getOrderDataTest(){
+        Test.setMock(HttpCalloutMock.class, new BAFCOOrderCalloutMockTest());
+        Agent__c agentObj = new Agent__c();
+        agentObj.name =  'test';
+        insert agentObj;
+        
+        Port__c port = new Port__c();
+        port.City__c = 'Test';
+        port.Name ='PortName';
+        port.sector__c = 'Africa';
+        
+        insert port;
+         Id IMPORT_RECORDTYPE_Id = Schema.SObjectType.Order__c.getRecordTypeInfosByName()
         .get('Import')
         .getRecordTypeId();
-        
+        Quotation__c quote = [Select id,Account__c from Quotation__c limit 1];
         Order__c obj = new Order__c();
-        obj.Account_Order__c = acc.id;
-        obj.Quotation__c = quoteObj.id;
+        obj.Account_Order__c = quote.Account__c;
+        obj.Quotation__c = quote.id;
         obj.RecordtypeId = IMPORT_RECORDTYPE_Id;
         obj.Integration__c = true;
         insert obj;
@@ -96,7 +110,7 @@ public class BAFCOOrderCalloutControllerTest {
         equipList.add(equip2);
         
         insert equipList;
-        
+        Route__c route = [Select id from Route__c limit 1];
         List<Order_item__c> orderItemList = new List<Order_item__c>();
         Order_item__c item = new Order_item__c();
         item.Order__c = obj.id;
@@ -118,18 +132,16 @@ public class BAFCOOrderCalloutControllerTest {
         insert orderItemList;
         
         Consignee__c ConSobj = new Consignee__c();
-        ConSobj.Consignee__c = acc.id;
+        ConSobj.Consignee__c = quote.Account__c;
         ConSobj.Name = 'test';
         ConSobj.Order_Item__c = item.id;        
         insert ConSobj;
         
         Shipper__c shipperObj = new Shipper__c();
-        shipperObj.Shipper__c = acc.id;
+        shipperObj.Shipper__c = quote.Account__c;
         shipperObj.Name = 'test';
         shipperObj.Order_Item__c = item.id;        
         insert shipperObj;
-    }
-    testmethod static void getOrderDataTest(){
         test.startTest();
         RestRequest request = new RestRequest();
         Test.setMock(HttpCalloutMock.class, new BAFCOExchangeRateMockTest());

@@ -12,7 +12,7 @@
                 <field>Name</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Required</behavior>
+                <behavior>Edit</behavior>
                 <field>Port_Of_Loading__c</field>
             </layoutItems>
             <layoutItems>
@@ -46,6 +46,58 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Free_time_POD__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Customer_Name__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Contract_Number__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Airline__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>X45__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>X100__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>X300__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>X500__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>X1000__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>X3000__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>X5000__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>X10000__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>X15000__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>X20000__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
@@ -88,6 +140,10 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Ex_Works_All_In__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Rate_Kg__c</field>
             </layoutItems>
         </layoutColumns>
         <style>TwoColumnsTopToBottom</style>
@@ -166,24 +222,27 @@
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>
-        <fields>INCO_Term__c</fields>
         <fields>Total__c</fields>
         <relatedList>INCO_Charge__c.RMS__c</relatedList>
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>
+        <fields>Total__c</fields>
         <relatedList>Destination_Charges__c.RMS__c</relatedList>
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>
+        <fields>Total__c</fields>
         <relatedList>Quotation_Item__c.RMS__c</relatedList>
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>
+        <fields>Total_Order__c</fields>
         <relatedList>Order_Item__c.RMS_Order__c</relatedList>
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>
+        <fields>LAST_UPDATE</fields>
         <relatedList>Rate_Procurement__c.RMS__c</relatedList>
     </relatedLists>
     <relatedLists>
@@ -195,7 +254,7 @@
     <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>
     <showSubmitAndAttachButton>false</showSubmitAndAttachButton>
     <summaryLayout>
-        <masterLabel>00h8K000000RLEY</masterLabel>
+        <masterLabel>00h78000000RVT7</masterLabel>
         <sizeX>4</sizeX>
         <sizeY>2</sizeY>
         <summaryLayoutItems>

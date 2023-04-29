@@ -9,6 +9,12 @@ public class BAFCOLocalOperationQuoteControllerTest {
         port.sector__c = 'Africa';
         portList.add(port);
         
+        
+        
+        Airline__c eir = new AirLine__c();
+        eir.Name = 'test';
+        insert eir;
+        
         Port__c port2 = new Port__c();
         port2.City__c = 'Test 2';
         port2.Name ='PortName 2';
@@ -45,6 +51,7 @@ public class BAFCOLocalOperationQuoteControllerTest {
         acc.Best_Margin__c = 1;
         acc.name = 'test';
         insert acc;
+        
         opportunity opty = new Opportunity();
         opty.AccountId = acc.id;
         opty.StageName = 'Qualification';
@@ -60,6 +67,21 @@ public class BAFCOLocalOperationQuoteControllerTest {
         tsk.IsReminderSet = true;
         tsk.ActivityDate = Date.valueOf(DateTime.now());
         insert tsk;
+        
+        opportunity opty2 = new Opportunity();
+        opty2.AccountId = acc.id;
+        opty2.StageName = 'Qualification';
+        opty2.CloseDate = system.today();
+        opty2.Name ='testopty';
+        opty2.Business_Type__c = 'Import';
+        insert opty2;
+        Task tsk1 = new Task();
+        tsk1.Subject = 'Provide Quotation';
+        tsk1.Status = 'Open';
+        tsk1.OwnerId = UserInfo.getUserId();
+        tsk1.WhatId = opty2.Id;
+        tsk1.IsReminderSet = true;
+        
         Regular_Routing__c regObj = new Regular_Routing__c();
         regObj.Account__c = acc.id;
         regObj.Name = 'test';
@@ -226,7 +248,7 @@ public class BAFCOLocalOperationQuoteControllerTest {
     testMethod static void genrateQuotationTest(){
         String routeId = [Select id from Route__c limit 1].Id;
         String rmsId = [Select id from RMS__c limit 1].Id;
-        String enquiryId = [Select id from opportunity limit 1].Id;
+        String enquiryId = [Select id from opportunity where Business_Type__c = 'Export' limit 1].Id;
         String quotationId = [Select id from Quotation__c limit 1].Id;
         String incoTerm = 'IncoTerm';
         
@@ -378,5 +400,32 @@ public class BAFCOLocalOperationQuoteControllerTest {
         BAFCOLRoutingDetailsController.updateValidityDate(QuoteId, validityDate);
         BAFCOLocalOperationQuoteController.getQuoteLineItem(quoteId);
         test.stopTest();
+    }
+    testMethod static void genrateAirQuotationTest(){
+        String routeId = [Select id from Route__c limit 1].Id;
+        String rmsId = [Select id from RMS__c limit 1].Id;
+        String enquiryId = [Select id from opportunity where Business_Type__c = 'Export' limit 1].Id;
+        String quotationId = [Select id from Quotation__c limit 1].Id;
+        String incoTerm = 'IncoTerm';
+        BAFCOGenerteQuoteDto dto1 = new BAFCOGenerteQuoteDto();
+        dto1.isAir = true;
+        dto1.seaFreightSellRate = 121;
+        dto1.total = 121;
+        BAFCOLocalOperationQuoteController.genrateAirImportQuotation(routeId,enquiryId,quotationId, dto1,'test',10,false,false,'test','test');
+        String enquiryId2 = [Select id from opportunity where Business_Type__c = 'Import' limit 1].Id;
+        BAFCOLocalOperationQuoteController.genrateAirImportQuotation(routeId,enquiryId2,quotationId, dto1,'test',10,false,false,'test','test');
+        
+    }
+    testMethod static void genrateAirQuotationTest02(){
+        String routeId = [Select id from Route__c limit 1].Id;
+        String rmsId = [Select id from RMS__c limit 1].Id;
+        String enquiryId = [Select id from opportunity where Business_Type__c = 'Export' limit 1].Id;
+        String incoTerm = 'IncoTerm';
+        BAFCOGenerteQuoteDto dto1 = new BAFCOGenerteQuoteDto();
+        dto1.seaFreightSellRate = 121;
+        dto1.total = 121;
+        BAFCOLocalOperationQuoteController.genrateAirImportQuotation(routeId,enquiryId,null, dto1,'test',10,true,true,'test','test');
+         String enquiryId2 = [Select id from opportunity where Business_Type__c = 'Import' limit 1].Id;
+        BAFCOLocalOperationQuoteController.genrateAirImportQuotation(routeId,enquiryId2,null, dto1,'test',10,true,true,'test','test');
     }
 }

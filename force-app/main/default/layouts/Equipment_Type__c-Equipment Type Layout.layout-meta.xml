@@ -23,6 +23,10 @@
                 <behavior>Edit</behavior>
                 <field>Teus__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Required</behavior>
+                <field>BSLS_ID__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
@@ -62,31 +66,37 @@
         <style>CustomLinks</style>
     </layoutSections>
     <relatedLists>
-        <fields>TASK.SUBJECT</fields>
-        <fields>TASK.WHO_NAME</fields>
-        <fields>ACTIVITY.TASK</fields>
-        <fields>TASK.DUE_DATE</fields>
-        <fields>TASK.STATUS</fields>
-        <fields>TASK.PRIORITY</fields>
-        <fields>CORE.USERS.FULL_NAME</fields>
-        <relatedList>RelatedActivityList</relatedList>
-    </relatedLists>
-    <relatedLists>
-        <fields>TASK.SUBJECT</fields>
-        <fields>TASK.WHO_NAME</fields>
-        <fields>ACTIVITY.TASK</fields>
-        <fields>TASK.DUE_DATE</fields>
-        <fields>CORE.USERS.FULL_NAME</fields>
-        <fields>TASK.LAST_UPDATE</fields>
-        <relatedList>RelatedHistoryList</relatedList>
+        <fields>NAME</fields>
+        <fields>UPDATEDBY_USER</fields>
+        <fields>LAST_UPDATE</fields>
+        <relatedList>RMS__c.Equipment_Type__c</relatedList>
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>
+        <fields>UPDATEDBY_USER</fields>
+        <fields>LAST_UPDATE</fields>
+        <relatedList>Route_Equipment__c.Equipment_Type__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
+        <fields>UPDATEDBY_USER</fields>
+        <fields>LAST_UPDATE</fields>
+        <relatedList>Quotation_Item__c.Equipment_Type__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
+        <fields>UPDATEDBY_USER</fields>
+        <fields>LAST_UPDATE</fields>
         <relatedList>Order_Item__c.Equipment_Type_Order__c</relatedList>
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>
+        <fields>UPDATEDBY_USER</fields>
+        <fields>LAST_UPDATE</fields>
         <relatedList>Rate_Procurement__c.Equipment_Type__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <relatedList>RelatedEntityHistoryList</relatedList>
     </relatedLists>
     <showEmailCheckbox>false</showEmailCheckbox>
     <showHighlightsPanel>false</showHighlightsPanel>
@@ -94,7 +104,7 @@
     <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>
     <showSubmitAndAttachButton>false</showSubmitAndAttachButton>
     <summaryLayout>
-        <masterLabel>00h8K000000RLEQ</masterLabel>
+        <masterLabel>00h78000000RVSv</masterLabel>
         <sizeX>4</sizeX>
         <sizeY>0</sizeY>
         <summaryLayoutStyle>Default</summaryLayoutStyle>

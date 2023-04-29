@@ -32,7 +32,11 @@ export default class BAFCOImportQuoteLineItemReviseDetail extends LightningEleme
     @track quotationDate ='';
     @api equipmentType ='';
     @api cargoReadiness = '';
-    @track currencyCode='USD'
+    @track currencyCode='USD';
+    @track displaycheckRate = false;
+    @track itemId = '';
+    @track buyingChargesIncluded ='';
+    @track sellingChargesIncluded = '';
     connectedCallback(){
         this.getQuoteLineItemDetails();
     }
@@ -242,5 +246,17 @@ export default class BAFCOImportQuoteLineItemReviseDetail extends LightningEleme
             this.quotationMap = JSON.parse(JSON.stringify(quoteMap));
         } 
         this.dispatchEvent(new CustomEvent('updatecalculation', { detail: this.quotationMap })); 
+    }
+    handleCheckRate(event){
+        this.itemId = event.currentTarget.dataset.recordid;
+        this.buyingChargesIncluded = event.currentTarget.dataset.buyingcharges;
+        this.sellingChargesIncluded = event.currentTarget.dataset.sellingcharges;
+        this.displaycheckRate = true; 
+    }
+    handleCloseCheckRate(){
+        this.itemId = '';
+        this.buyingChargesIncluded =  '';
+        this.sellingChargesIncluded = '';
+        this.displaycheckRate = false; 
     }
 }

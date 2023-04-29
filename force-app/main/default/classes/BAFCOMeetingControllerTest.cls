@@ -30,7 +30,7 @@ public class BAFCOMeetingControllerTest {
         String eventId = BAFCOMeetingController.submitMeetingsRecords(acc.id, 'test', validityDate, timed, visitFor);
         BAFCOMeetingController.getIntakeMeetingObj(eventId);
         BAFCOMeetingController.getMeetingsRecords(validityDate);
-        BAFCOMeetingController.updateEventObject(eventId, enq.id, validityDate, timed,  'test', '28.65', '77.4');
+        BAFCOMeetingController.updateEventObject(eventId, enq.id, validityDate, timed,  'test', '28.65', '77.4',null);
         test.stopTest();
     }
     testMethod static void searchTest01(){

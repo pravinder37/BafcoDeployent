@@ -8,6 +8,7 @@ trigger QuotationItemTrigger on Quotation_Item__c (before Insert,before Update,a
     if(trigger.isAfter){
         if(trigger.isInsert){
             QuotationItemTriggerHandler.updateQuotationDetails(trigger.new);
+            QuotationItemTriggerHandler.maintaineLookupCharges(trigger.new);
         }
         if(trigger.isUpdate){
             QuotationItemTriggerHandler.afterUpdate(trigger.oldMap,trigger.new);

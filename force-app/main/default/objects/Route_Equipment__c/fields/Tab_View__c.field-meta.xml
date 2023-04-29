@@ -2,7 +2,7 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Tab_View__c</fullName>
     <externalId>false</externalId>
-    <formula>Text(Length__c) &amp;&apos;x&apos;&amp; Text(Width__c) &amp;&apos;x&apos;&amp; Text(Height__c) &amp;&apos;| CBM : &apos;&amp; Text(CBM__c) &amp;&apos; | Weight : &apos;&amp; Text(Weight_Kgs__c)</formula>
+    <formula>&apos;CBM : &apos;&amp; Text(CBM__c) &amp;&apos; | Weight : &apos;&amp; Text(Weight_Kgs__c) &amp;&apos; | Units : &apos;&amp;Text(Units__c)</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
     <label>Tab View</label>
     <required>false</required>

@@ -7,4 +7,11 @@
         <shortDescription>Exchange Rate Api  Key</shortDescription>
         <value>glNQjeQvh4c9eWz3MAro7YdoxME9nxju</value>
     </labels>
+    <labels>
+        <fullName>BAFCOSendNominationToAddress</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BAFCOSendNominationToAddress</shortDescription>
+        <value>soteam@bafcointl.com</value>
+    </labels>
 </CustomLabels>

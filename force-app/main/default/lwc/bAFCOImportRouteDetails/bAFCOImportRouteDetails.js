@@ -103,6 +103,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
     @track warRiskSurcharges;
     @track totalSl;
     @track shippTotalChanged =false;
+    @track displayAdditionalTotal = false;
 
 
     //@
@@ -148,6 +149,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
     @track displayDestinCharges = true;
 
     @track additionalChargeTotal = 0;
+    @track sellingadditionalChargeTotal = 0;
     @track displayAdditionalCharge;
     @track showAdditionalChargetemplate = false;
     @track quoteRemarks = '';
@@ -171,6 +173,65 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
     @track exWorksTotal = 0;
     @track displayExworks = false;
     @track currencyCode = 'USD';
+
+
+    // SELLING Variable ////
+        ///////////
+        @track sellingBAF ;
+        @track sellingbunkerCharges;
+        @track sellingcleaningCharges;
+        @track sellingCMC;
+        @track sellingcarriageCongestionSurcharge;
+        @track sellingcarrierSecurityFees;
+        @track sellingdgSurcharge;
+        @track sellingDTHC;
+        @track sellingequipmentImbalance;
+        @track sellinginlandFuelCharges;
+        @track sellinginlandHandlingfees;
+        @track sellinginlandHaulage;
+        @track sellingISPS;
+        @track sellinglowerSulphurSurcharge;
+        @track sellingoperationalRecovery;
+        @track sellingOTHC;
+        @track sellingoverWeightCharge;
+        @track sellingsealCharges;
+        @track sellingwarRiskSurcharges;
+        @track sellingtotalSl;
+        @track sellingexWorksTotal;
+    
+    
+        //@
+        @track sellingbayan;
+        @track sellingblFees;
+        @track sellingoriginCustomClearance;
+        @track sellingexportServiceFees;
+        @track sellingfasahFees;
+        @track sellingfuelSurcharge;
+        @track sellinginspection;
+        @track sellinginsuranceCharges;
+        @track sellingliftOnLiftOff;
+        @track sellingOriginDetention;
+        @track sellingOriginLoadingCharges;
+        @track sellingpickUpCharges;
+        @track sellingReeferControlPlugInCharge;
+        @track sellingtabadul;
+        @track sellingtrapulinCharges;
+        @track sellingtruckIdlingCharges;
+        @track sellingtransportationCharges;
+        @track sellingvgm;
+        @track sellinglashingCharges;
+        @track sellingxray;
+        @track sellingTotalOrigincharges;
+
+        @track sellingdestinBayanCharges;
+        @track sellingdestinCustomClearanceCharges;
+        @track sellingdestinDOCharges;
+        @track sellingdestinFasahCharges;
+        @track sellingdestinGatePassCharges;
+        @track sellingdestinLOLOCharges;
+        @track sellingdestinTransPortationCharges;
+        @track sellingdestinTotalCharges;
+    // ****************////
 
     connectedCallback(){     
         if(this.routeId){
@@ -288,6 +349,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
         this.dgSurcharge = '';
         this.DTHC = '';
         this.equipmentImbalance = '';
+        this.displayAdditionalTotal = false;
         this.inlandFuelCharges = '';
         this.inlandHandlingfees = '';
         this.inlandHaulage = '';
@@ -336,10 +398,65 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
         this.displayAdditionalCharge = false;
         this.additionalChargeList= [];
         this.additionalChargeTotal = null;
+        this.sellingadditionalChargeTotal = null;
         this.exWorksObj = {};
         this.displayExworks =false;
         this.exWorksTotal = null;
         this.currencyCode = 'USD';
+        this.sellingBAF = null;
+        this.sellingbunkerCharges = null;
+        this.sellingcleaningCharges = null;
+        this.sellingCMC = null;
+        this.sellingcarriageCongestionSurcharge = null;
+        this.sellingcarrierSecurityFees = null;
+        this.sellingdgSurcharge = null;
+        this.sellingDTHC = null;
+        this.sellingequipmentImbalance = null;
+        this.sellinginlandFuelCharges = null;
+        this.sellinginlandHandlingfees = null;
+        this.sellinginlandHaulage = null;
+        this.sellingISPS = null;
+        this.sellinglowerSulphurSurcharge = null;
+        this.sellingoperationalRecovery = null;
+        this.sellingOTHC = null;
+        this.sellingoverWeightCharge = null;
+        this.sellingsealCharges = null;
+        this.sellingwarRiskSurcharges = null;
+        this.sellingtotalSl = null;
+        this.sellingexWorksTotal = null;
+    
+    
+        //@
+        this.sellingbayan = null;
+        this.sellingblFees = null;
+        this.sellingoriginCustomClearance = null;
+        this.sellingexportServiceFees = null;
+        this.sellingfasahFees = null;
+        this.sellingfuelSurcharge = null;
+        this.sellinginspection = null;
+        this.sellinginsuranceCharges = null;
+        this.sellingliftOnLiftOff = null;
+        this.sellingOriginDetention = null;
+        this.sellingOriginLoadingCharges = null;
+        this.sellingpickUpCharges = null;
+        this.sellingReeferControlPlugInCharge = null;
+        this.sellingtabadul = null;
+        this.sellingtrapulinCharges = null;
+        this.sellingtruckIdlingCharges = null;
+        this.sellingtransportationCharges = null;
+        this.sellingvgm = null;
+        this.sellinglashingCharges = null;
+        this.sellingxray = null;
+        this.sellingTotalOrigincharges = null;
+
+        this.sellingdestinBayanCharges = null;
+        this.sellingdestinCustomClearanceCharges = null;
+        this.sellingdestinDOCharges = null;
+        this.sellingdestinFasahCharges = null;
+        this.sellingdestinGatePassCharges = null;
+        this.sellingdestinLOLOCharges = null;
+        this.sellingdestinTransPortationCharges = null;
+        this.sellingdestinTotalCharges = null;
     }
     
     @api handleShowaddAgentModel(){
@@ -447,7 +564,8 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
             tankTempList.push({
                 'name':'Tank Rental Charges',
                 'value':null,
-                'index':this.additionalChargeIndex
+                'index':this.additionalChargeIndex,
+                'sellingCharge':null
             })
             this.additionalChargeIndex++;
             this.additionalChargeList = tankTempList;
@@ -457,7 +575,8 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
             tankTempList.push({
                 'name':'Freight Difference(FD)',
                 'value':null,
-                'index':this.additionalChargeIndex
+                'index':this.additionalChargeIndex,
+                'sellingCharge':null
             })
             this.additionalChargeIndex++;
             this.additionalChargeList = tankTempList;
@@ -501,6 +620,60 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                         'agentTabSelected':this.agentTabSelected,
                         'currencyCode':'USD',
                         'incoTermId':this.incoTermId,
+                        'sellingBAF':null,
+                        'sellingbunkerCharges':null,
+                        'sellingcleaningCharges':null,
+                        'sellingCMC':null,
+                        'sellingcarriageCongestionSurcharge':null,
+                        'sellingcarrierSecurityFees':null,
+                        'sellingdgSurcharge':null,
+                        'sellingDTHC':null,
+                        'sellingequipmentImbalance':null,
+                        'sellinginlandFuelCharges':null,
+                        'sellinginlandHandlingfees':null,
+                        'sellinginlandHaulage':null,
+                        'sellingISPS':null,
+                        'sellinglowerSulphurSurcharge':null,
+                        'sellingoperationalRecovery':null,
+                        'sellingOTHC':null,
+                        'sellingoverWeightCharge':null,
+                        'sellingsealCharges':null,
+                        'sellingwarRiskSurcharges':null,
+                        'sellingtotalSl':null,
+                        'sellingexWorksTotal':null,
+                    
+                    
+                        
+                        'sellingbayan':null,
+                        'sellingblFees':null,
+                        'sellingoriginCustomClearance':null,
+                        'sellingexportServiceFees':null,
+                        'sellingfasahFees':null,
+                        'sellingfuelSurcharge':null,
+                        'sellinginspection':null,
+                        'sellinginsuranceCharges':null,
+                        'sellingliftOnLiftOff':null,
+                        'sellingOriginDetention':null,
+                        'sellingOriginLoadingCharges':null,
+                        'sellingpickUpCharges':null,
+                        'sellingReeferControlPlugInCharge':null,
+                        'sellingtabadul':null,
+                        'sellingtrapulinCharges':null,
+                        'sellingtruckIdlingCharges':null,
+                        'sellingtransportationCharges':null,
+                        'sellingvgm':null,
+                        'sellinglashingCharges':null,
+                        'sellingxray':null,
+                        'sellingTotalOrigincharges':null,
+                
+                        'sellingdestinBayanCharges':null,
+                        'sellingdestinCustomClearanceCharges':null,
+                        'sellingdestinDOCharges':null,
+                        'sellingdestinFasahCharges':null,
+                        'sellingdestinGatePassCharges':null,
+                        'sellingdestinLOLOCharges':null,
+                        'sellingdestinTransPortationCharges':null,
+                        'sellingdestinTotalCharges':null,
                     })
                     elem.value = tempList;
                 }
@@ -528,6 +701,58 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                     this.includeDestinCharge = elem.value[0].includeDestinCharge;
                     this.includeAdditionalCharge = elem.value[0].includeAdditionalCharge;
                     this.includeExWorksCharge = elem.value[0].includeExWorksCharge;
+                    this.sellingBAF = elem.value[0].sellingBAF
+                    this.sellingbunkerCharges = elem.value[0].sellingbunkerCharges
+                    this.sellingcleaningCharges = elem.value[0].sellingcleaningCharges
+                    this.sellingCMC = elem.value[0].sellingCMC
+                    this.sellingcarriageCongestionSurcharge = elem.value[0].sellingcarriageCongestionSurcharge
+                    this.sellingcarrierSecurityFees = elem.value[0].sellingcarrierSecurityFees
+                    this.sellingdgSurcharge = elem.value[0].sellingdgSurcharge
+                    this.sellingDTHC = elem.value[0].sellingDTHC
+                    this.sellingequipmentImbalance = elem.value[0].sellingequipmentImbalance
+                    this.sellinginlandFuelCharges = elem.value[0].sellinginlandFuelCharges
+                    this.sellinginlandHandlingfees = elem.value[0].sellinginlandHandlingfees
+                    this.sellinginlandHaulage = elem.value[0].sellinginlandHaulage
+                    this.sellingISPS = elem.value[0].sellingISPS
+                    this.sellinglowerSulphurSurcharge = elem.value[0].sellinglowerSulphurSurcharge
+                    this.sellingoperationalRecovery = elem.value[0].sellingoperationalRecovery
+                    this.sellingOTHC = elem.value[0].sellingOTHC
+                    this.sellingoverWeightCharge = elem.value[0].sellingoverWeightCharge
+                    this.sellingsealCharges = elem.value[0].sellingsealCharges
+                    this.sellingwarRiskSurcharges = elem.value[0].sellingwarRiskSurcharges
+                    this.sellingtotalSl = elem.value[0].sellingtotalSl
+                    this.sellingexWorksTotal = elem.value[0].sellingexWorksTotal
+                    
+                    this.sellingbayan = elem.value[0].sellingbayan
+                    this.sellingblFees = elem.value[0].sellingblFees
+                    this.sellingoriginCustomClearance = elem.value[0].sellingoriginCustomClearance
+                    this.sellingexportServiceFees = elem.value[0].sellingexportServiceFees
+                    this.sellingfasahFees = elem.value[0].sellingfasahFees
+                    this.sellingfuelSurcharge = elem.value[0].sellingfuelSurcharge
+                    this.sellinginspection = elem.value[0].sellinginspection
+                    this.sellinginsuranceCharges = elem.value[0].sellinginsuranceCharges
+                    this.sellingliftOnLiftOff = elem.value[0].sellingliftOnLiftOff
+                    this.sellingOriginDetention = elem.value[0].sellingOriginDetention
+                    this.sellingOriginLoadingCharges = elem.value[0].sellingOriginLoadingCharges
+                    this.sellingpickUpCharges = elem.value[0].sellingpickUpCharges
+                    this.sellingReeferControlPlugInCharge = elem.value[0].sellingReeferControlPlugInCharge
+                    this.sellingtabadul = elem.value[0].sellingtabadul
+                    this.sellingtrapulinCharges = elem.value[0].sellingtrapulinCharges
+                    this.sellingtruckIdlingCharges = elem.value[0].sellingtruckIdlingCharges
+                    this.sellingtransportationCharges = elem.value[0].sellingtransportationCharges
+                    this.sellingvgm = elem.value[0].sellingvgm
+                    this.sellinglashingCharges = elem.value[0].sellinglashingCharges
+                    this.sellingxray = elem.value[0].sellingxray
+                    this.sellingTotalOrigincharges = elem.value[0].sellingTotalOrigincharges
+            
+                    this.sellingdestinBayanCharges = elem.value[0].sellingdestinBayanCharges
+                    this.sellingdestinCustomClearanceCharges = elem.value[0].sellingdestinCustomClearanceCharges
+                    this.sellingdestinDOCharges = elem.value[0].sellingdestinDOCharges
+                    this.sellingdestinFasahCharges = elem.value[0].sellingdestinFasahCharges
+                    this.sellingdestinGatePassCharges = elem.value[0].sellingdestinGatePassCharges
+                    this.sellingdestinLOLOCharges = elem.value[0].sellingdestinLOLOCharges
+                    this.sellingdestinTransPortationCharges = elem.value[0].sellingdestinTransPortationCharges
+                    this.sellingdestinTotalCharges = elem.value[0].sellingdestinTotalCharges
                     let allData = this.serviceChargeList;
                     if(allData.currencyCode != undefined) this.currencyCode = allData.currencyCode;
                 }
@@ -614,7 +839,8 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
     @api handleUpdateCalculation(){
         
         let dtoTotal = 0;  
-        let additonalChargeTotal = 0;      
+        let additonalChargeTotal = 0; 
+        let sellingAdditionalCharge = 0;     
         let keyName = this.agentTabSelected+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected;
         this.toHoldData.forEach(elem => {
                 if(elem.key == keyName){
@@ -629,6 +855,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                                     additonalChargeTotal = additonalChargeTotal + addCha.value;
                                     //dtoTotal = dtoTotal + addCha.value;
                                 }
+                                if(addCha.sellingCharge >0) sellingAdditionalCharge += addCha.sellingCharge
                             });
                         }
                         if(dto.addServiceCharge == false && this.totalSl > 0) dtoTotal = dtoTotal + this.totalSl       
@@ -640,11 +867,21 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                             if(dto.addAdditionalCharge == false) dtoTotal = dtoTotal + additonalChargeTotal;
                             this.additionalChargeTotal = additonalChargeTotal;
                         }
-                        if(dto.addExWorksCharge == false && this.exWorksTotal > 0) dtoTotal = dtoTotal + this.exWorksTotal
+                        if(dto.addExWorksCharge == false && this.exWorksTotal > 0) dtoTotal = dtoTotal + this.exWorksTotal;
+                        if(this.sellingtotalSl > 0 ) dtoTotal = dtoTotal + this.sellingtotalSl;
+                        if(this.sellingexWorksTotal > 0 ) dtoTotal = dtoTotal + this.sellingexWorksTotal;
+                        if(this.sellingTotalOrigincharges > 0) dtoTotal = dtoTotal + this.sellingTotalOrigincharges;
+                        if(this.sellingdestinTotalCharges > 0) dtoTotal = dtoTotal + this.sellingdestinTotalCharges;
+                        if(sellingAdditionalCharge > 0) {
+                            dtoTotal = dtoTotal + sellingAdditionalCharge;
+                            this.sellingadditionalChargeTotal = sellingAdditionalCharge;
+                        }
                         
                     }
                 }
             });
+            if(sellingAdditionalCharge > 0 || additonalChargeTotal > 0 ) this.displayAdditionalTotal = true;
+            else this.displayAdditionalTotal = false
            if(!isNaN(dtoTotal)){
                 this.sellingRate = parseInt(dtoTotal);
                 this.total = dtoTotal;
@@ -905,7 +1142,62 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                     elem.value[0].includeAdditionalCharge = this.includeAdditionalCharge
                     elem.value[0].includeExWorksCharge = this.includeExWorksCharge
                     elem.value[0].quoteBuyingRate = this.buyingRate;
-                    elem.value[0].currencyCode = this.currencyCode
+                    elem.value[0].currencyCode = this.currencyCode;
+
+                    elem.value[0].sellingBAF = this.sellingBAF ;
+                    elem.value[0].sellingbunkerCharges = this.sellingbunkerCharges;
+                    elem.value[0].sellingcleaningCharges = this.sellingcleaningCharges;
+                    elem.value[0].sellingCMC = this.sellingCMC;
+                    elem.value[0].sellingcarriageCongestionSurcharge = this.sellingcarriageCongestionSurcharge;
+                    elem.value[0].sellingcarrierSecurityFees = this.sellingcarrierSecurityFees;
+                    elem.value[0].sellingdgSurcharge = this.sellingdgSurcharge;
+                    elem.value[0].sellingDTHC = this.sellingDTHC;
+                    elem.value[0].sellingequipmentImbalance = this.sellingequipmentImbalance;
+                    elem.value[0].sellinginlandFuelCharges = this.sellinginlandFuelCharges;
+                    elem.value[0].sellinginlandHandlingfees = this.sellinginlandHandlingfees;
+                    elem.value[0].sellinginlandHaulage = this.sellinginlandHaulage;
+                    elem.value[0].sellingISPS = this.sellingISPS;
+                    elem.value[0].sellinglowerSulphurSurcharge = this.sellinglowerSulphurSurcharge;
+                    elem.value[0].sellingoperationalRecovery = this.sellingoperationalRecovery;
+                    elem.value[0].sellingOTHC = this.sellingOTHC;
+                    elem.value[0].sellingoverWeightCharge = this.sellingoverWeightCharge;
+                    elem.value[0].sellingsealCharges = this.sellingsealCharges;
+                    elem.value[0].sellingwarRiskSurcharges = this.sellingwarRiskSurcharges;
+                    elem.value[0].sellingtotalSl = this.sellingtotalSl;
+                    elem.value[0].sellingexWorksTotal = this.sellingexWorksTotal;
+                
+                
+                    
+                    elem.value[0].sellingbayan = this.sellingbayan;
+                    elem.value[0].sellingblFees = this.sellingblFees;
+                    elem.value[0].sellingoriginCustomClearance = this.sellingoriginCustomClearance;
+                    elem.value[0].sellingexportServiceFees = this.sellingexportServiceFees;
+                    elem.value[0].sellingfasahFees = this.sellingfasahFees;
+                    elem.value[0].sellingfuelSurcharge = this.sellingfuelSurcharge;
+                    elem.value[0].sellinginspection = this.sellinginspection;
+                    elem.value[0].sellinginsuranceCharges = this.sellinginsuranceCharges;
+                    elem.value[0].sellingliftOnLiftOff = this.sellingliftOnLiftOff;
+                    elem.value[0].sellingOriginDetention = this.sellingOriginDetention;
+                    elem.value[0].sellingOriginLoadingCharges = this.sellingOriginLoadingCharges;
+                    elem.value[0].sellingpickUpCharges = this.sellingpickUpCharges;
+                    elem.value[0].sellingReeferControlPlugInCharge = this.sellingReeferControlPlugInCharge;
+                    elem.value[0].sellingtabadul = this.sellingtabadul;
+                    elem.value[0].sellingtrapulinCharges = this.sellingtrapulinCharges;
+                    elem.value[0].sellingtruckIdlingCharges = this.sellingtruckIdlingCharges;
+                    elem.value[0].sellingtransportationCharges = this.sellingtransportationCharges;
+                    elem.value[0].sellingvgm = this.sellingvgm;
+                    elem.value[0].sellinglashingCharges = this.sellinglashingCharges;
+                    elem.value[0].sellingxray = this.sellingxray;
+                    elem.value[0].sellingTotalOrigincharges = this.sellingTotalOrigincharges;
+
+                    elem.value[0].sellingdestinBayanCharges = this.sellingdestinBayanCharges;
+                    elem.value[0].sellingdestinCustomClearanceCharges = this.sellingdestinCustomClearanceCharges;
+                    elem.value[0].sellingdestinDOCharges = this.sellingdestinDOCharges;
+                    elem.value[0].sellingdestinFasahCharges = this.sellingdestinFasahCharges;
+                    elem.value[0].sellingdestinGatePassCharges = this.sellingdestinGatePassCharges;
+                    elem.value[0].sellingdestinLOLOCharges = this.sellingdestinLOLOCharges;
+                    elem.value[0].sellingdestinTransPortationCharges = this.sellingdestinTransPortationCharges;
+                    elem.value[0].sellingdestinTotalCharges = this.sellingdestinTotalCharges;
                 }
             }
         });        
@@ -947,8 +1239,158 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
             this.showErrorToast();
             console.log('@@@@ came here')
         }
+        console.log('came here 1' );
         if(allValid){
-            genrateQuotation({
+            console.log('came here 2' );
+        let sellingInputField = '';
+        let InputField = '';
+        if(this.sellingBAF > 0) sellingInputField += '\nBAF : '+this.sellingBAF;
+        if(this.sellingbunkerCharges> 0) sellingInputField += '\nBunker Charges : '+this.sellingbunkerCharges
+        if(this.sellingcleaningCharges> 0) sellingInputField += '\nCleaning Charges : '+this.sellingcleaningCharges
+        if(this.sellingCMC> 0) sellingInputField += '\nContainer Maintenance Charges : '+this.sellingCMC
+        if(this.sellingcarriageCongestionSurcharge> 0) sellingInputField += '\nCongestion Surcharge : '+this.sellingcarriageCongestionSurcharge
+        if(this.sellingcarrierSecurityFees> 0) sellingInputField += '\ncarrier Security Fees : '+this.sellingcarrierSecurityFees
+        if(this.sellingdgSurcharge> 0) sellingInputField += '\nDG Surcharge : '+this.sellingdgSurcharge
+        if(this.sellingDTHC> 0) sellingInputField += '\nDTHC : '+this.sellingDTHC
+        if(this.sellingequipmentImbalance> 0) sellingInputField += '\nEquipment Imbalance : '+this.sellingequipmentImbalance
+        if(this.sellinginlandFuelCharges> 0) sellingInputField += '\nInLand FuelCharges : '+this.sellinginlandFuelCharges
+        if(this.sellinginlandHandlingfees> 0) sellingInputField += '\nInLand Handling Fees : '+this.sellinginlandHandlingfees
+        if(this.sellinginlandHaulage> 0) sellingInputField += '\nInLand Haulage : '+this.sellinginlandHaulage
+        if(this.sellingISPS> 0) sellingInputField += '\nISPS : '+this.sellingISPS
+        if(this.sellinglowerSulphurSurcharge> 0) sellingInputField += '\nLower Sulphur Surcharge : '+this.sellinglowerSulphurSurcharge
+        if(this.sellingoperationalRecovery> 0) sellingInputField += '\nOperational Recovery : '+this.sellingoperationalRecovery
+        if(this.sellingOTHC> 0) sellingInputField += '\nOTHC : '+this.sellingOTHC
+        if(this.sellingoverWeightCharge> 0) sellingInputField += '\nOver Weight Charge : '+this.sellingoverWeightCharge
+        if(this.sellingsealCharges> 0) sellingInputField += '\nSeal Charges : '+this.sellingsealCharges
+        if(this.sellingwarRiskSurcharges> 0) sellingInputField += '\nWar Risk Charges : '+this.sellingwarRiskSurcharges
+        if(this.sellingtotalSl> 0 && this.displayAllServiceChargeField == false) sellingInputField += '\nTotal Shipping Line Charge : '+this.sellingtotalSl
+         //@
+         console.log('came here 3' );
+        if(this.sellingbayan> 0) sellingInputField += '\nBayan : '+this.sellingbayan
+        if(this.sellingblFees> 0) sellingInputField += '\nBL Fees : '+this.sellingblFees
+        if(this.sellingoriginCustomClearance> 0) sellingInputField += '\norigin Custom Clearance : '+this.sellingoriginCustomClearance
+        if(this.sellingexportServiceFees> 0) sellingInputField += '\nExport Service Fees : '+this.sellingexportServiceFees
+        if(this.sellingfasahFees> 0) sellingInputField += '\nFasah Fees : '+this.sellingfasahFees
+        if(this.sellingfuelSurcharge> 0) sellingInputField += '\nFuel Surcharges : '+this.sellingfuelSurcharge
+        if(this.sellinginspection> 0) sellingInputField += '\nInspection : '+this.sellinginspection
+        if(this.sellinginsuranceCharges> 0) sellingInputField += '\nInsurance Charges : '+this.sellinginsuranceCharges
+        if(this.sellingliftOnLiftOff> 0) sellingInputField += '\nLift On Lift Off : '+this.sellingliftOnLiftOff
+        if(this.sellingOriginDetention> 0) sellingInputField += '\nOrigin Detention : '+this.sellingOriginDetention
+        if(this.sellingOriginLoadingCharges> 0) sellingInputField += '\nOrigin Loading Charges : '+this.sellingOriginLoadingCharges
+        if(this.sellingpickUpCharges> 0) sellingInputField += '\nPickUp Charges : '+this.sellingpickUpCharges
+        if(this.sellingReeferControlPlugInCharge> 0) sellingInputField += '\nReefer Control Plug In Charge : '+this.sellingReeferControlPlugInCharge
+        if(this.sellingtabadul> 0) sellingInputField += '\nTabadul : '+this.sellingtabadul
+        if(this.sellingtrapulinCharges> 0) sellingInputField += '\nTarpulin Charges : '+this.sellingtrapulinCharges
+        if(this.sellingtruckIdlingCharges> 0) sellingInputField += '\nTruck Idling Charges : '+this.sellingtruckIdlingCharges
+        if(this.sellingtransportationCharges> 0) sellingInputField += '\nTransportation Charges : '+this.sellingtransportationCharges
+        if(this.sellingvgm> 0) sellingInputField += '\nVGM : '+this.sellingvgm
+        if(this.sellinglashingCharges> 0) sellingInputField += '\nLashing Charge : '+this.sellinglashingCharges
+        if(this.sellingxray> 0) sellingInputField += '\nXray : '+this.sellingxray
+        if(this.sellingTotalOrigincharges> 0 && this.displayOriginChargeCharge == false) sellingInputField += '\nTotal Origin Charges : '+this.sellingTotalOrigincharges
+        console.log('came here 4' );
+        if(this.sellingdestinBayanCharges> 0) sellingInputField += '\nBayan Charges : '+this.sellingdestinBayanCharges
+        if(this.sellingdestinCustomClearanceCharges> 0) sellingInputField += '\nCustom Clearance Charges : '+this.sellingdestinCustomClearanceCharges
+        if(this.sellingdestinDOCharges> 0) sellingInputField += '\n DO Charges : '+this.sellingdestinDOCharges
+        if(this.sellingdestinFasahCharges> 0) sellingInputField += '\n Fasah Charges : '+this.sellingdestinFasahCharges
+        if(this.sellingdestinGatePassCharges> 0) sellingInputField += '\n Gate Pass Charges : '+this.sellingdestinGatePassCharges
+        if(this.sellingdestinLOLOCharges> 0) sellingInputField += '\n LOLO Charges : '+this.sellingdestinLOLOCharges
+        if(this.sellingdestinTransPortationCharges> 0) sellingInputField += '\n Transportation Charges : '+this.sellingdestinTransPortationCharges
+        if(this.sellingdestinTotalCharges> 0 && this.displayDestinCharges == false) sellingInputField += '\n Total Destination Charges : '+this.sellingdestinTotalCharges;
+
+        console.log('came here 5' );
+        //buuying Input Code 
+        if(dto.serviceChargeList != null){
+            console.log('came here 51' +JSON.stringify(dto.serviceChargeList.servichargesObj) );
+            if(dto.serviceChargeList.servichargesObj != null || dto.serviceChargeList.servichargesObj != undefined){
+                console.log('came here 52' );
+                if(dto.serviceChargeList.servichargesObj.shippTotalChanged == false){
+                    console.log('came here 53' );
+                    console.log('came here1  '+InputField);
+                    console.log('came here2  '+this.BAF);
+                    if(this.BAF > 0) InputField += '\nBAF : '+this.BAF;
+                    console.log('came here3  '+InputField);
+                    if(this.bunkerCharges> 0) InputField += '\nBunker Charges : '+this.bunkerCharges
+                    if(this.cleaningCharges> 0) InputField += '\nCleaning Charges : '+this.cleaningCharges
+                    if(this.CMC> 0) InputField += '\nContainer Maintenance Charges : '+this.CMC
+                    if(this.carriageCongestionSurcharge> 0) InputField += '\nCongestion Surcharge : '+this.carriageCongestionSurcharge
+                    if(this.carrierSecurityFees> 0) InputField += '\ncarrier Security Fees : '+this.carrierSecurityFees
+                    if(this.dgSurcharge> 0) InputField += '\nDG Surcharge : '+this.dgSurcharge
+                    if(this.DTHC> 0) InputField += '\nDTHC : '+this.DTHC
+                    if(this.equipmentImbalance> 0) InputField += '\nEquipment Imbalance : '+this.equipmentImbalance
+                    if(this.inlandFuelCharges> 0) InputField += '\nInLand FuelCharges : '+this.inlandFuelCharges
+                    if(this.inlandHandlingfees> 0) InputField += '\nInLand Handling Fees : '+this.inlandHandlingfees
+                    if(this.inlandHaulage> 0) InputField += '\nInLand Haulage : '+this.inlandHaulage
+                    if(this.ISPS> 0) InputField += '\nISPS : '+this.ISPS
+                    if(this.lowerSulphurSurcharge> 0) InputField += '\nLower Sulphur Surcharge : '+this.lowerSulphurSurcharge
+                    if(this.operationalRecovery> 0) InputField += '\nOperational Recovery : '+this.operationalRecovery
+                    if(this.OTHC> 0) InputField += '\nOTHC : '+this.OTHC
+                    if(this.overWeightCharge> 0) InputField += '\nOver Weight Charge : '+this.overWeightCharge
+                    if(this.sealCharges> 0) InputField += '\nSeal Charges : '+this.sealCharges
+                    if(this.warRiskSurcharges> 0) InputField += '\nWar Risk Charges : '+this.warRiskSurcharges
+                }
+                else if(this.totalSl > 0) InputField += '\nTotal ServiceCharge : '+this.totalSl
+            }
+            if(dto.serviceChargeList.originChargesObj != null || dto.serviceChargeList.originChargesObj != undefined){
+                console.log('came here 55' );
+                if(dto.serviceChargeList.originChargesObj.originTotalChanged == false){
+                    if(this.bayan> 0) InputField += '\nBayan : '+this.bayan
+                    if(this.blFees> 0) InputField += '\nBL Fees : '+this.blFees
+                    if(this.originCustomClearance> 0) InputField += '\norigin Custom Clearance : '+this.originCustomClearance
+                    if(this.exportServiceFees> 0) InputField += '\nExport Service Fees : '+this.exportServiceFees
+                    if(this.fasahFees> 0) InputField += '\nFasah Fees : '+this.fasahFees
+                    if(this.fuelSurcharge> 0) InputField += '\nFuel Surcharges : '+this.fuelSurcharge
+                    if(this.inspection> 0) InputField += '\nInspection : '+this.inspection
+                    if(this.insuranceCharges> 0) InputField += '\nInsurance Charges : '+this.insuranceCharges
+                    if(this.liftOnLiftOff> 0) InputField += '\nLift On Lift Off : '+this.liftOnLiftOff
+                    if(this.OriginDetention> 0) InputField += '\nOrigin Detention : '+this.OriginDetention
+                    if(this.OriginLoadingCharges> 0) InputField += '\nOrigin Loading Charges : '+this.OriginLoadingCharges
+                    if(this.pickUpCharges> 0) InputField += '\nPickUp Charges : '+this.pickUpCharges
+                    if(this.ReeferControlPlugInCharge> 0) InputField += '\nReefer Control Plug In Charge : '+this.ReeferControlPlugInCharge
+                    if(this.tabadul> 0) InputField += '\nTabadul : '+this.tabadul
+                    if(this.trapulinCharges> 0) InputField += '\nTarpulin Charges : '+this.trapulinCharges
+                    if(this.truckIdlingCharges> 0) InputField += '\nTruck Idling Charges : '+this.truckIdlingCharges
+                    if(this.transportationCharges> 0) InputField += '\nTransportation Charges : '+this.transportationCharges
+                    if(this.vgm> 0) InputField += '\nVGM : '+this.vgm
+                    if(this.lashingCharges> 0) InputField += '\nLashing Charge : '+this.lashingCharges
+                    if(this.xray> 0) InputField += '\nXray : '+this.xray
+                     
+                }
+                else if(this.TotalOrigincharges > 0 ) InputField += '\nTotal Origin Charges : '+this.TotalOrigincharges
+            }
+            if(dto.serviceChargeList.destinChargeObj != null || dto.serviceChargeList.destinChargeObj != undefined){
+                if(dto.serviceChargeList.destinChargeObj.DestinTotalChanged == false){
+                    console.log('came here 56' );
+                    if(this.destinBayanCharges> 0) InputField += '\nBayan Charges : '+this.destinBayanCharges
+                    if(this.destinCustomClearanceCharges> 0) InputField += '\nCustom Clearance Charges : '+this.destinCustomClearanceCharges
+                    if(this.destinDOCharges> 0) InputField += '\n DO Charges : '+this.destinDOCharges
+                    if(this.destinFasahCharges> 0) InputField += '\n Fasah Charges : '+this.destinFasahCharges
+                    if(this.destinGatePassCharges> 0) InputField += '\n Gate Pass Charges : '+this.destinGatePassCharges
+                    if(this.destinLOLOCharges> 0) InputField += '\n LOLO Charges : '+this.destinLOLOCharges
+                    if(this.destinTransPortationCharges> 0) InputField += '\n Transportation Charges : '+this.destinTransPortationCharges                
+                }
+                else if(this.destinTotalCharges> 0) InputField += '\n Total Destination Charges : '+this.destinTotalCharges;
+            }
+            
+        }
+        console.log('came here 6' );
+        dto.additionalChargeList.forEach(elem=>{
+            if(elem.sellingCharge > 0) sellingInputField += '\n '+elem.name+' : '+elem.sellingCharge
+            if(elem.value > 0) InputField += '\n '+elem.name+' : '+elem.value
+        })
+        if(this.sellingexWorksTotal > 0)  sellingInputField += '\n'+dto.exWorksObj.Name+' : '+this.sellingexWorksTotal 
+        if(this.exWorksTotal > 0)  InputField += '\n'+dto.exWorksObj.Name+' : '+this.exWorksTotal ;
+        console.log('InputField '+InputField);
+        let sellingFieldObj = {
+            'sellingInputField' : sellingInputField,
+            'InputField':InputField,
+            'sellingdestinTotalCharges':this.sellingdestinTotalCharges > 0 ? this.sellingdestinTotalCharges : 0,
+            'sellingTotalOrigincharges':this.sellingTotalOrigincharges > 0 ? this.sellingTotalOrigincharges :0,
+            'sellingtotalSl': this.sellingtotalSl > 0? this.sellingtotalSl :0,
+            'sellingexWorksTotal':this.sellingexWorksTotal > 0 ? this.sellingexWorksTotal : 0, 
+            'sellingadditionalChargeTotal':this.sellingadditionalChargeTotal > 0 ? this.sellingadditionalChargeTotal :0
+        }
+        console.log('InputField '+JSON.stringify(sellingFieldObj,null,2))
+        genrateQuotation({
                 routeId: this.routeId,
                 rmsId: this.rmsId,
                 enquiryId : this.enquiryId,
@@ -959,7 +1401,8 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                 additionalChargeTotal : this.additionalChargeTotal,
                 cameReviseCompt : this.cameReviseCompt,
                 sameRoute:this.sameRoute,
-                agentName:this.agentTabSelected
+                agentName:this.agentTabSelected,
+                sellingFieldObj : sellingFieldObj
             }).then(result =>{
                 console.log('generate quote result : ', JSON.stringify(result,null,2));
                 let keyName = this.agentTabSelected+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected;
@@ -1065,7 +1508,8 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
             tempList2.push({
                 'name':elem.Name,
                 'value':elem.value,
-                'index':this.additionalChargeIndex
+                'index':this.additionalChargeIndex,
+                'sellingCharge':null
             })
             this.additionalChargeIndex++;
         });
@@ -1101,7 +1545,8 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
             tempList2.push({
                 'name':elem.recName,
                 'value':0,
-                'index':this.additionalChargeIndex
+                'index':this.additionalChargeIndex,
+                'sellingCharge':null
             })
             this.additionalChargeIndex++;
         });
@@ -1117,6 +1562,14 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
         })
         this.updateTabsData();
         this.handleBuyingRate();
+        this.handleUpdateCalculation();
+    }
+    handleSellingAdditionalChange(event){
+        let index = event.target.dataset.recordId;
+        this.additionalChargeList.forEach(elem=>{
+            if(elem.index == index) elem.sellingCharge = parseInt(event.target.value);
+        })
+        this.updateTabsData();
         this.handleUpdateCalculation();
     }
     removeAdditionalCharge(event){
@@ -1515,37 +1968,37 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
     }
 
     handleDestinBayanChargeChange(e){
-        this.destinBayanCharges = e.target.value;
+        this.destinBayanCharges = e.detail;
         this.serviceChargeList.destinChargeObj.destinBayanCharges = this.destinBayanCharges;
         this.updateDestinChargeTotal();
     }
     handleDestinCustomClearanceChargeChange(e){
-        this.destinCustomClearanceCharges = e.target.value;
+        this.destinCustomClearanceCharges = e.detail;
         this.serviceChargeList.destinChargeObj.destinCustomClearanceCharges = this.destinCustomClearanceCharges;
         this.updateDestinChargeTotal();
     }
     handleDestinDOChargeChange(e){
-        this.destinDOCharges = e.target.value;
+        this.destinDOCharges = e.detail;
         this.serviceChargeList.destinChargeObj.destinDOCharges = this.destinDOCharges;
         this.updateDestinChargeTotal();
     }    
     handleDestinFasahChargeChange(e){
-        this.destinFasahCharges = e.target.value;
+        this.destinFasahCharges = e.detail;
         this.serviceChargeList.destinChargeObj.destinFasahCharges = this.destinFasahCharges;
         this.updateDestinChargeTotal();
     }
     handleDestinGatePassChange(e){
-        this.destinGatePassCharges = e.target.value;
+        this.destinGatePassCharges = e.detail;
         this.serviceChargeList.destinChargeObj.destinGatePassCharges = this.destinGatePassCharges;
         this.updateDestinChargeTotal();
     }
     handleDestinLOLOChargeChange(e){
-        this.destinLOLOCharges = e.target.value;
+        this.destinLOLOCharges = e.detail;
         this.serviceChargeList.destinChargeObj.destinLOLOCharges = this.destinLOLOCharges;
         this.updateDestinChargeTotal();
     }
     handleDestinTansPortationChange(e){
-        this.destinTransPortationCharges = e.target.value;
+        this.destinTransPortationCharges = e.detail;
         this.serviceChargeList.destinChargeObj.destinTransPortationCharges = this.destinTransPortationCharges;
         this.updateDestinChargeTotal();
     }
@@ -1818,5 +2271,282 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
         let index2 = data.findIndex(x=>x.uniqueEquip == this.shippingEquipTabSelected);
         ToReturnValidity = data[index2].buyingRateValidity;
         return ToReturnValidity;
+    }
+    handlesellingBAFBAFChange(e){
+        this.sellingBAF = parseInt(e.target.value);
+        this.updateTotalSellingSL();
+    }
+    handleSellingBunkerChargesChange(e){
+        this.sellingbunkerCharges = parseInt(e.target.value);
+        this.updateTotalSellingSL();
+    }
+    handleSellingCleaningChargesChange(e){
+        this.sellingcleaningCharges = parseInt(e.target.value);
+        this.updateTotalSellingSL();
+    }
+    handlesellingCMCChange(e){
+        this.sellingCMC = parseInt(e.target.value);
+        this.updateTotalSellingSL();
+    }
+    handleSellingCarriageCongestionChange(e){
+        this.sellingcarriageCongestionSurcharge = parseInt(e.target.value);
+        this.updateTotalSellingSL();
+    }
+    handleSellingSecurityFeeChange(e){
+        this.sellingcarrierSecurityFees = parseInt(e.target.value);
+        this.updateTotalSellingSL();
+    }
+    handleSellingDGSurchargeChange(e){
+        this.sellingdgSurcharge = parseInt(e.target.value);
+        this.updateTotalSellingSL();
+    }
+    handleSellingDTHCChange(e){
+        this.sellingDTHC = parseInt(e.target.value);
+        this.updateTotalSellingSL();
+    }
+    handleSellingequipmentImblanceChange(e){
+        this.sellingequipmentImbalance = parseInt(e.target.value);
+        this.updateTotalSellingSL();
+    }
+    handleSellingInlandFuelChange(e){
+        this.sellinginlandFuelCharges= parseInt(e.target.value);
+        this.updateTotalSellingSL();
+    }
+    handleSellingInlandHandlingfeesChange(e){
+        this.sellinginlandHandlingfees = parseInt(e.target.value);
+        this.updateTotalSellingSL();
+    }
+    handleSellingInlandHaulageChange(e){
+        this.sellinginlandHaulage = parseInt(e.target.value);
+        this.updateTotalSellingSL();
+    }
+    handleSellingISPSChange(e){
+        this.sellingISPS = parseInt(e.target.value);
+        this.updateTotalSellingSL();
+    }
+    handleSellingLowerSulpherChange(e){
+        this.sellinglowerSulphurSurcharge = parseInt(e.target.value);
+        this.updateTotalSellingSL();
+    }
+    handleSellingOperationalRecoveryChange(e){
+        this.sellingoperationalRecovery = parseInt(e.target.value);
+        this.updateTotalSellingSL();
+    }
+    andleSellingOTHCChange(e){
+        this.sellingOTHC = parseInt(e.target.value);
+        this.updateTotalSellingSL();
+    }
+    handleSellingOverWeightChange(e){
+        this.sellingoverWeightCharge = parseInt(e.target.value);
+        this.updateTotalSellingSL();
+    }
+    handleSellingSealChargesChange(e){
+        this.sellingsealCharges = parseInt(e.target.value);
+        this.updateTotalSellingSL();
+    }
+    handleSellingWarRiskSurchgesChange(e){
+        this.sellingwarRiskSurcharges = parseInt(e.target.value);
+        this.updateTotalSellingSL();
+    }
+    handleSellingOTHCChange(e){
+        this.sellingOTHC = parseInt(e.target.value);
+        this.updateTotalSellingSL();
+    }
+    updateTotalSellingSL(){
+        let Total = 0;
+        Total = Total + (this.sellingBAF > 0 ? parseInt(this.sellingBAF) : 0) ;
+        Total = Total + (this.sellingbunkerCharges > 0 ? parseInt(this.sellingbunkerCharges) : 0);
+        Total = Total + (this.sellingcleaningCharges > 0 ? parseInt(this.sellingcleaningCharges) : 0);
+        Total = Total + (this.sellingCMC > 0 ? parseInt(this.sellingCMC) : 0);
+        Total = Total + (this.sellingcarriageCongestionSurcharge > 0 ? parseInt(this.sellingcarriageCongestionSurcharge) : 0);
+        Total = Total + (this.sellingcarrierSecurityFees > 0 ? parseInt(this.sellingcarrierSecurityFees) : 0);
+        Total = Total + (this.sellingdgSurcharge > 0 ? parseInt(this.sellingdgSurcharge) : 0);
+        Total = Total + (this.sellingDTHC > 0 ? parseInt(this.sellingDTHC) : 0);
+        Total = Total + (this.sellingequipmentImbalance > 0 ? parseInt(this.sellingequipmentImbalance) : 0);
+        Total = Total + (this.sellinginlandFuelCharges > 0 ? parseInt(this.sellinginlandFuelCharges) : 0);
+        Total = Total + (this.sellinginlandHandlingfees > 0 ? parseInt(this.sellinginlandHandlingfees) : 0);
+        Total = Total + (this.sellinginlandHaulage > 0 ? parseInt(this.sellinginlandHaulage) : 0);
+        Total = Total + (this.sellingISPS > 0 ? parseInt(this.sellingISPS) : 0);
+        Total = Total + (this.sellinglowerSulphurSurcharge > 0 ? parseInt(this.sellinglowerSulphurSurcharge) : 0);
+        Total = Total + (this.sellingoperationalRecovery > 0 ? parseInt(this.sellingoperationalRecovery) : 0);
+        Total = Total + (this.sellingOTHC > 0 ? parseInt(this.sellingOTHC) : 0);
+        Total = Total + (this.sellingoverWeightCharge > 0 ? parseInt(this.sellingoverWeightCharge) : 0);
+        Total = Total + (this.sellingsealCharges > 0 ? parseInt(this.sellingsealCharges) : 0);
+        Total = Total + (this.sellingwarRiskSurcharges > 0 ? parseInt(this.sellingwarRiskSurcharges) : 0);
+        this.sellingtotalSl = Total;
+        this.updateTabsData();
+        this.handleUpdateCalculation();
+    }
+    handleSellingBayanChange(e){
+        this.sellingbayan = parseInt(e.target.value);
+        this.updateSellingOriginTotal();
+    }
+    handleSellingBLFeesChange(e){
+        this.sellingblFees = parseInt(e.target.value);
+        this.updateSellingOriginTotal();
+    }
+    handleSellingoriginCustomClerancehange(e){
+        this.sellingoriginCustomClearance = parseInt(e.target.value);
+        this.updateSellingOriginTotal();
+    }
+    handleSellingExportServicehange(e){
+        this.sellingexportServiceFees = parseInt(e.target.value);
+        this.updateSellingOriginTotal();
+    }
+    handleSellingFasahFeeChange(e){
+        this.sellingfasahFees = parseInt(e.target.value);
+        this.updateSellingOriginTotal();
+    }
+    handleSellingFuelsurchargeChange(e){
+        this.sellingfuelSurcharge = parseInt(e.target.value);
+        this.updateSellingOriginTotal();
+    }
+    handleSellingInspectionChange(e){
+        this.sellinginspection = parseInt(e.target.value);
+        this.updateSellingOriginTotal();
+    }
+    handleSellinginsuranceChargeChange(e){
+        this.sellinginsuranceCharges = parseInt(e.target.value);
+        this.updateSellingOriginTotal();
+    }
+    handleSellingLiftOnOffChange(e){
+        this.sellingliftOnLiftOff = parseInt(e.target.value);
+        this.updateSellingOriginTotal();
+    }
+    handleSellingOriginDetentionChange(e){
+        this.sellingOriginDetention = parseInt(e.target.value);
+        this.updateSellingOriginTotal();
+    }
+    handleSellingOriginLoadingChargesChange(e){
+        this.sellingOriginLoadingCharges = parseInt(e.target.value);
+        this.updateSellingOriginTotal();
+    }
+    handleSellingPickUpChargeChange(e){
+        this.sellingpickUpCharges = parseInt(e.target.value);
+        this.updateSellingOriginTotal();
+    }
+    handleSellingReferPlugInChange(e){
+        this.sellingReeferControlPlugInCharge = parseInt(e.target.value);
+        this.updateSellingOriginTotal();
+    }
+    handleSellingtabadulChange(e){
+        this.sellingtabadul = parseInt(e.target.value);
+        this.updateSellingOriginTotal();
+    }
+    handleSellingTrapulinChargesChange(e){
+        this.sellingtrapulinCharges = parseInt(e.target.value);
+        this.updateSellingOriginTotal();
+    }
+    handleSellingTruckIdlingChange(e){
+        this.sellingtruckIdlingCharges = parseInt(e.target.value);
+        this.updateSellingOriginTotal();
+    }
+    handleSellingTransPortationChange(e){
+        this.sellingtransportationCharges = parseInt(e.target.value);
+        this.updateSellingOriginTotal();
+    }
+    handleSellingVGMChange(e){
+        this.sellingvgm = parseInt(e.target.value);
+        this.updateSellingOriginTotal();
+    }
+    handleSellinglashingChargesChange(e){
+        this.sellinglashingCharges = parseInt(e.target.value);
+        this.updateSellingOriginTotal();
+    }
+    handleSellingxrayChange(e){
+        this.sellingxray = parseInt(e.target.value);
+        this.updateSellingOriginTotal();
+    }
+    updateSellingOriginTotal(){
+        let total = 0;
+        console.log('total ' +total)
+        total = total + (this.sellingbayan > 0 ? parseInt(this.sellingbayan) : 0)
+            total = total + (this.sellingblFees > 0 ? parseInt(this.sellingblFees) : 0)
+            total = total + (this.sellingoriginCustomClearance > 0 ? parseInt(this.sellingoriginCustomClearance) : 0)
+            total = total + (this.sellingexportServiceFees > 0 ? parseInt(this.sellingexportServiceFees) : 0)
+            total = total + (this.sellingfasahFees > 0 ? parseInt(this.sellingfasahFees) : 0)
+            total = total + (this.sellingfuelSurcharge > 0 ? parseInt(this.sellingfuelSurcharge) : 0)
+            total = total + (this.sellinginspection > 0 ? parseInt(this.sellinginspection) : 0)
+            total = total + (this.sellinginsuranceCharges > 0 ? parseInt(this.sellinginsuranceCharges) : 0)
+            total = total + (this.sellingliftOnLiftOff > 0 ? parseInt(this.sellingliftOnLiftOff) : 0)
+            total = total + (this.sellingOriginDetention > 0 ? parseInt(this.sellingOriginDetention) : 0)
+            total = total + (this.sellingOriginLoadingCharges > 0 ? parseInt(this.sellingOriginLoadingCharges) : 0)
+            total = total + (this.sellingpickUpCharges > 0 ? parseInt(this.sellingpickUpCharges) : 0)
+            total = total + (this.sellingReeferControlPlugInCharge > 0 ? parseInt(this.sellingReeferControlPlugInCharge) : 0)
+            total = total + (this.sellingtabadul > 0 ? parseInt(this.sellingtabadul) : 0)
+            total = total + (this.sellingtrapulinCharges > 0 ? parseInt(this.sellingtrapulinCharges) : 0)
+            total = total + (this.sellingtruckIdlingCharges > 0 ? parseInt(this.sellingtruckIdlingCharges) : 0)
+            total = total + (this.sellingtransportationCharges > 0 ? parseInt(this.sellingtransportationCharges) : 0)
+            total = total + (this.sellingvgm > 0 ? parseInt(this.sellingvgm) : 0)
+            total = total + (this.sellinglashingCharges > 0 ? parseInt(this.sellinglashingCharges) : 0)
+            total = total + (this.sellingxray > 0 ? parseInt(this.sellingxray) : 0)
+            console.log('total ' +total)
+            this.sellingTotalOrigincharges = total;
+            this.updateTabsData();
+            this.handleUpdateCalculation();
+    }
+    handleDestinSellingBayanChargeChange(e){
+        this.sellingdestinBayanCharges = parseInt(e.detail);
+        this.updateSellingDestinChargeTotal();
+    }
+    handleDestinSellingCustomClearanceChargeChange(e){
+        this.sellingdestinCustomClearanceCharges = parseInt(e.detail);
+        this.updateSellingDestinChargeTotal();
+    }
+    handleDestinSellingDOChargeChange(e){
+        this.sellingdestinDOCharges = parseInt(e.detail);
+        this.updateSellingDestinChargeTotal();
+    }
+    handleSellingDestinFasahChargeChange(e){
+        this.sellingdestinFasahCharges = parseInt(e.detail);
+        this.updateSellingDestinChargeTotal();
+    }
+    handleSellingDestinGatePassChange(e){
+        this.sellingdestinGatePassCharges = parseInt(e.detail);
+        this.updateSellingDestinChargeTotal();
+    }
+    handleSellingDestinLOLOChargeChange(e){
+        this.sellingdestinLOLOCharges = parseInt(e.detail);
+        this.updateSellingDestinChargeTotal();
+    }
+    handleSellingDestinTansPortationChange(e){
+        this.sellingdestinTransPortationCharges = parseInt(e.detail);
+        this.updateSellingDestinChargeTotal();
+    }
+    handleSellingDestinTotalChange(e){
+        this.sellingdestinBayanCharges = parseInt(e.detail);
+    }
+    updateSellingDestinChargeTotal(){
+        let total = 0;
+        total = total +(this.sellingdestinBayanCharges > 0 ? parseInt(this.sellingdestinBayanCharges) : 0);
+        total = total +(this.sellingdestinCustomClearanceCharges > 0 ? parseInt(this.sellingdestinCustomClearanceCharges) : 0);
+        total = total +(this.sellingdestinDOCharges > 0 ? parseInt(this.sellingdestinDOCharges) : 0);
+        total = total +(this.sellingdestinFasahCharges > 0 ? parseInt(this.sellingdestinFasahCharges) : 0);
+        total = total +(this.sellingdestinGatePassCharges > 0 ? parseInt(this.sellingdestinGatePassCharges) : 0);
+        total = total +(this.sellingdestinLOLOCharges > 0 ? parseInt(this.sellingdestinLOLOCharges) : 0);
+        total = total +(this.sellingdestinTransPortationCharges > 0 ? parseInt(this.sellingdestinTransPortationCharges) : 0);
+        this.sellingdestinTotalCharges = total;
+        this.updateTabsData();
+        this.handleUpdateCalculation();
+    }
+    handletotalSellingOriginChange(e){
+        this.sellingTotalOrigincharges = parseInt(e.target.value);
+        this.updateTabsData();
+        this.handleUpdateCalculation();
+    }
+    handleSellingtotalDestinChange(e){
+        this.sellingdestinTotalCharges = parseInt(e.target.value);
+        this.updateTabsData();
+        this.handleUpdateCalculation();
+    }
+    handleSellingtotalSlChange(e){
+        this.sellingtotalSl = parseInt(e.target.value);
+        this.updateTabsData();
+        this.handleUpdateCalculation();
+    }
+    handleSellingExWorksTotalChange(e){
+        this.sellingexWorksTotal = parseInt(e.target.value);
+        this.updateTabsData();
+        this.handleUpdateCalculation();
     }
 }

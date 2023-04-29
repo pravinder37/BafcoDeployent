@@ -18,7 +18,16 @@
         }
     </aura:html>
     <aura:if isTrue="{!OR(v.isLCL == 'true',v.isAir == 'true')}">
-        <div style="background: white;"><c:bAFCOAirReviseParent quoteID="{!v.refRecordId}" accId ="{!v.leadId}" isAir="{!v.isAir}"/></div>
+        <aura:if isTrue="{!v.isLCL == 'true'}">
+            <div style="background: white;">
+                <c:bAFCOAirReviseParent quoteID="{!v.refRecordId}" accId ="{!v.leadId}" isAir="{!v.isAir}"/>
+        	</div>
+        </aura:if> 
+        <aura:if isTrue="{!v.isAir == 'true'}">
+            <div style="background: white;">
+            <c:bAFCOAirExportReviseParent quoteID="{!v.refRecordId}" leadId ="{!v.leadId}"/>
+            </div>
+        </aura:if>
         <aura:set attribute="else">
             <aura:if isTrue="{!v.incoTerm == 'Local Operation'}">
                 <div style="background: white;">

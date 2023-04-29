@@ -11,6 +11,7 @@ export default class BAFCOServiceChargesHelpComponent extends NavigationMixin(Li
     @track destinationChargesList = [];
     @track rmsName = '';
     @track seaFreight;
+    @api isAir ;
     BAFValue;
     BunkerSurchargeValue;
     ISPSValue;
@@ -24,6 +25,8 @@ export default class BAFCOServiceChargesHelpComponent extends NavigationMixin(Li
     @track  isLoading= false;
     @track shipLine = {};
     @track shippingLineName = '';
+    @track airLineName = '';
+    @track rateKg ;
 
     connectedCallback(){
         console.log('rmsId',this.rmsId);
@@ -52,6 +55,8 @@ export default class BAFCOServiceChargesHelpComponent extends NavigationMixin(Li
             this.rmsName = result.rmsName;
             this.seaFreight = result.seaFreight;
             this.shippingLineName = result.shippingLineName
+            this.rateKg = result.rateKg;
+            this.airLineName = result.airLine
             this.isLoading = false;
         })
         .catch(error=>{

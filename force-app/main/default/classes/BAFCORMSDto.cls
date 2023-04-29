@@ -63,6 +63,11 @@ public class BAFCORMSDto {
     @AuraEnabled
     public String FreeTimePOD { get; set; }
     @AuraEnabled
+    public Decimal chargeableWeight { get; set; }
+    @AuraEnabled
+    public Decimal rateKgs { get; set; }
+    @AuraEnabled public boolean isFDAccount{get;set;}
+    @AuraEnabled
     public String remarks { get; set; }
     @AuraEnabled public String commodity { get; set; }
     @AuraEnabled public Date buyingRateValidity { get; set; }

@@ -15,6 +15,10 @@ public class BAFCOAirEnquiryControllerTest {
         port2.sector__c = 'Africa';
         portList.add(port2);
         
+        Airline__c obj = new Airline__c();
+        obj.Name ='test';
+        insert obj;
+        
         insert portList;
         
         List<Commodity__c> comodityLis = new List<Commodity__c>();
@@ -37,6 +41,10 @@ public class BAFCOAirEnquiryControllerTest {
         equip.Name='EquipName';
         equip.BSLS_ID__c = 'test';
         Insert equip;
+        
+        Agent__c agentObj = new Agent__c();
+        agentObj.Name ='tets';
+        insert agentObj;
         
         Account acc = new Account();
         acc.Branch__c = 'Jeddah';
@@ -68,6 +76,10 @@ public class BAFCOAirEnquiryControllerTest {
         cont.Email = 'test@email.com';
         insert cont;
         
+        AirPort__c airPort = new airPort__c();
+        airPort.Name ='Airport';
+        insert airPort;
+        
         Enquiry__c enq = new Enquiry__c();
         enq.Name = 'Test';
         insert enq;
@@ -76,12 +88,19 @@ public class BAFCOAirEnquiryControllerTest {
         route.Opportunity_Enquiry__c = opty.id;
         route.Port_of_Destination__c = port.id;
         route.Port_of_loading__c =port.id;
+        route.Airport_of_Destination__c = airPort.id;
+        route.Airport_of_Loading__c = airPort.id;
         route.Commodity__c = comd.id;
         insert route;
         
         Route_Equipment__c rEquip = new Route_Equipment__c();
         rEquip.Route__c = route.id;
+        rEquip.CBM__c = 100;
+        rEquip.Weight_Kgs__c =100;
+        rEquip.Units__c = 100;
         Insert rEquip;
+        
+        System.debug('Tab Vide : '+ [Select Tab_View__c from Route_Equipment__c]);
         
         Loading_Charge__c exWorks= new Loading_Charge__c();
         exWorks.Name  = 'tes';
@@ -90,6 +109,10 @@ public class BAFCOAirEnquiryControllerTest {
         exWorks.Direction__c = 'One Way';
         insert exWorks;
         
+        
+        Id RMS_EXPORT_RECORDTYPE_Id = Schema.SObjectType.RMS__c.getRecordTypeInfosByName()
+            .get('Export')
+            .getRecordTypeId();
         
         RMS__c rmsObj = new RMS__c();
         rmsObj.Name ='Test';
@@ -100,7 +123,14 @@ public class BAFCOAirEnquiryControllerTest {
         rmsObj.Equipment_Type__c = equip.id;
         rmsObj.Validity__c = System.today().addDays(5);
         rmsObj.Sea_Freight__c = 1000;
+        rmsObj.Airline__c = obj.id;
+        rmsObj.Rate_Kg__c = 10;
+        rmsObj.Agent__c =agentObj.id;
+        rmsObj.Airport_of_Destination__c = airPort.id;
+        rmsObj.Airport_of_Loading__c = airPort.id;
+        rmsObj.RecordTypeId  = RMS_EXPORT_RECORDTYPE_Id;
         insert rmsObj;
+        
         INCO_Charge__c incharge = new INCO_Charge__c();
         incharge.RMS__c = rmsObj.Id;
         incharge.Origin_Loading_Charges__c = 10;
@@ -142,6 +172,7 @@ public class BAFCOAirEnquiryControllerTest {
         quoteItem.Quotation__c = quoteObj.Id;
         quoteItem.Equipment_Type__c = equip.id;
         quoteItem.Origin_Loading_Charges__c = 10;
+        quoteItem.Tab_View__c = 'CBM : 100 | Weight : 100 | Units : 100';
         quoteItem.Bayan__c = 10;
         quoteItem.Destination_Customs_Clearance__c = 10;
         quoteItem.Destination_Loading_Charges__c = 10;
@@ -188,6 +219,10 @@ public class BAFCOAirEnquiryControllerTest {
         quoteItem.Total_Dest__c = 10;
         quoteItem.Total_INCO__c = 10;
         quoteItem.Total_SL__c = 10;
+        quoteItem.Airline__c = obj.id;
+        quoteItem.Agent__c =agentObj.id;
+        quoteItem.Tank_Rental_Charges__c = 10;
+        quoteItem.Total_Ex_Works_Charges__c = 10;
         Insert quoteItem;
         
     }
@@ -195,7 +230,7 @@ public class BAFCOAirEnquiryControllerTest {
         List<BAFCORoutingDetailsDto> bafcoList = new List<BAFCORoutingDetailsDto>();
         BAFCORoutingDetailsDto.containerRecord contRecord = new  BAFCORoutingDetailsDto.containerRecord();
         contRecord.stackable = true;
-         contRecord.palletized = true;
+        contRecord.palletized = true;
         List<BAFCORoutingDetailsDto.containerRecord> contList = new List<BAFCORoutingDetailsDto.containerRecord>();
         contList.add(contRecord);
         BAFCORoutingDetailsDto dto = new BAFCORoutingDetailsDto();
@@ -223,7 +258,7 @@ public class BAFCOAirEnquiryControllerTest {
         List<BAFCORoutingDetailsDto> bafcoList = new List<BAFCORoutingDetailsDto>();
         BAFCORoutingDetailsDto.containerRecord contRecord = new  BAFCORoutingDetailsDto.containerRecord();
         contRecord.stackable = true;
-         contRecord.palletized = true;
+        contRecord.palletized = true;
         List<BAFCORoutingDetailsDto.containerRecord> contList = new List<BAFCORoutingDetailsDto.containerRecord>();
         contList.add(contRecord);
         BAFCORoutingDetailsDto dto = new BAFCORoutingDetailsDto();
@@ -249,6 +284,73 @@ public class BAFCOAirEnquiryControllerTest {
         string quoteId = [Select id from Quotation__c limit 1].id;
         test.startTest();
         BAFCOAirEnquiryController.getQuoteLineItem(quoteId);
+        test.stopTest();
+    }
+    static testmethod void getAirLineTest(){
+        BAFCOAirEnquiryController.getAirLine();
+    }
+    static testmethod void addRatesAir(){
+        String routeId = [Select id from Route__c limit 1].Id;
+        BAFCOAirEnquiryController.airCharges obj = new BAFCOAirEnquiryController.airCharges();
+        obj.x45 = 10 ;
+        obj.x100 = 10 ;
+        obj.x300 = 10 ;
+        obj.x500 = 10 ;
+        obj.x1000 = 10 ;
+        obj.x3000 = 10 ;
+        obj.x5000 = 10 ;
+        obj.x10000 = 10 ;
+        obj.x15000 = 10 ;
+        obj.x20000 = 10 ;
+        BAFCORMSDto rmsDetail = new BAFCORMSDto();
+        rmsDetail.validity = '2022-07-22';
+        rmsDetail.allInRate = false;
+        rmsDetail.FOBAllIn = false;
+        rmsDetail.ExWorksIn = false;
+        test.startTest();
+        BAFCOAirEnquiryController.addRatesAir(rmsDetail, routeId, 'test', 10, null, 'USD', 'Export', obj);
+        test.stopTest();
+    }
+    static testmethod void getAirRouteEquipment(){
+        String routeId = [Select id from Route__c limit 1].Id;
+        test.startTest();
+        BAFCOAirEnquiryController.getAirRouteEquipment(routeId);
+        BAFCOAirEnquiryController.getRouteListAirImport(routeId);
+        test.stopTest();
+    }
+    static testmethod void getQuoteLineItemDetails(){
+        String routeId = [Select id from Route__c limit 1].Id;
+        string quoteId = [Select id from Quotation__c limit 1].id;
+        test.startTest();
+        BAFCOAirEnquiryController.getQuoteLineItemDetails(quoteId,routeId);
+        test.stopTest();
+    }
+    static testmethod void getRMSDetails(){
+        String routeId = [Select id from Route__c limit 1].id;
+        String optyId = [Select id from opportunity limit 1].id;
+        test.startTest();
+        BAFCOAirEnquiryController.getRMSDetails('Airport', 'Airport', 'commodity', routeId, optyId);
+        test.stopTest();
+    }
+    static testmethod void genrateQuotation(){
+        String routeId = [Select id from Route__c limit 1].id;
+        String rmsId = [Select id from RMS__c limit 1].id;
+        String optyId = [Select id from opportunity limit 1].id;
+        String quotationId = [Select id from Quotation__c limit 1].Id;
+        BAFCOGenerteQuoteDto dto1 = new BAFCOGenerteQuoteDto();
+        dto1.isAir = true;
+        dto1.seaFreightSellRate = 121;
+        dto1.total = 121;
+        test.startTest();
+        BAFCOAirEnquiryController.genrateQuotation(routeId, rmsId, optyId, quotationId, dto1, 'incoTerm', false, false, 'quoteRemarks', 10, 'test');
+        BAFCOAirEnquiryController.genrateQuotation(routeId, rmsId, optyId, null, dto1, 'incoTerm', true, true, 'quoteRemarks', 10, 'test');
+        test.stopTest();
+    }
+    static testmethod void getQuoteExportLineItemDetails(){
+        String quotationId = [Select id from Quotation__c limit 1].Id;
+        String routeId = [Select id from Route__c limit 1].id;
+        test.startTest();
+        BAFCOAirEnquiryController.getQuoteExportLineItemDetails(quotationId, 'Airport', 'Airport', 'commodity', routeId);
         test.stopTest();
     }
 }

@@ -36,5 +36,9 @@
 		<members>*</members>
 		<name>quickaction</name>
 	</types>
+	<types>
+		<members>*</members>
+		<name>folder</name>
+	</types>
 	<version>55.0</version>
 </Package>

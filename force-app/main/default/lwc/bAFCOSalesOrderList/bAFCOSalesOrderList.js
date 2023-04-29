@@ -1,6 +1,7 @@
 import { LightningElement,api,track } from 'lwc';
 import createOrder from '@salesforce/apex/BAFCOSalesOrderController.createOrder';
-import { NavigationMixin } from 'lightning/navigation';
+import { NavigationMixin } from 'lightning/navigation';	
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class BAFCOSalesOrderList extends NavigationMixin(LightningElement) {
     @api displaySelectedQuoteItem = [];
     @api activeSection;
@@ -56,7 +57,9 @@ export default class BAFCOSalesOrderList extends NavigationMixin(LightningElemen
         return [year, month, day].join('-');
     }
     hideCreateOrder(){
-        this.isLoading = true
+        this.isLoading = true;
+        let allValid = true;
+        let validQty = true;
        if(this.validityDate == '' || this.validityDate == null){
             let dateField = this.template.querySelector("[data-field='dateField']");
             dateField.setCustomValidity("Complete this field.");
@@ -72,25 +75,55 @@ export default class BAFCOSalesOrderList extends NavigationMixin(LightningElemen
         else{
             let hasValue = false;
             this.displaySelectedQuoteItem.forEach(ele=>{
-                if(ele.equipment.length > 0) hasValue = true; 
+                if(ele.equipment.length > 0) {
+                    hasValue = true;
+                    ele.equipment.forEach(ele2=>{
+                        ele2.value.forEach(ele3=>{
+                            console.log('ele3.checkBoxSelected '+ele3.checkBoxSelected);
+                            console.log('ele3.checkBoxSelected '+ele3.Qty);
+                            if(ele3.checkBoxSelected == undefined){
+                                allValid = false;
+                                console.log('came here 2')
+                            }                            
+                            else if(ele3.checkBoxSelected == true && (ele3.Qty == undefined || ele3.Qty <= 0)){
+                                validQty = false;
+                                allValid = false;
+                                console.log('came here 3')
+                            }
+                        })
+                    })
+                } 
             });
-           console.log('hasValue ',hasValue)
+            console.log('hasValue ',hasValue)
+            console.log('validQty ',validQty)
+            console.log('allValid ',allValid)
             if(!hasValue){
                 this.isLoading = false
                 this.errorMsg='Please select atleast one item to create order';
             }
-            else{
+            if(!validQty){
+                this.isLoading = false;
+                const evt = new ShowToastEvent({
+                    title: 'Required field missing.',
+                    message: 'Please provide quantity for every selected item.',
+                    variant: 'error',
+                    mode: 'dismissable'
+                });
+                this.dispatchEvent(evt);
+
+            }
+            if(allValid && hasValue){
                 this.isLoading = true;
                 let saveDto = [];
                 saveDto = JSON.parse(JSON.stringify(this.displaySelectedQuoteItem))   
                 console.log('saveDto ',JSON.stringify(saveDto,null,2))             
                 createOrder({
-                     orderCreationList : saveDto,
-                     validityDate : this.validityDate,
-                     custRefNumber : this.custRefNumber,
-                     bookRefNumber : this.bookRefNumber,
-                     consigneeList : this.consigneeList,
-                     shipperList : this.shipperList
+                        orderCreationList : saveDto,
+                        validityDate : this.validityDate,
+                        custRefNumber : this.custRefNumber,
+                        bookRefNumber : this.bookRefNumber,
+                        consigneeList : this.consigneeList,
+                        shipperList : this.shipperList
                     })
                 .then(result=>{
                     console.log('createOrder result',JSON.stringify(result,null,2))
@@ -110,6 +143,7 @@ export default class BAFCOSalesOrderList extends NavigationMixin(LightningElemen
                     console.log('createOrder error',JSON.stringify(error,null,2))
                 })
             }
+            else this.isLoading = false;
         }
     }
     handleValidityChange(e){

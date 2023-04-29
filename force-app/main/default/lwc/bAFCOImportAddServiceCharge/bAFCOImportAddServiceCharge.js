@@ -10,6 +10,7 @@ export default class BAFCOImportAddServiceCharge extends LightningElement {
     @track offSet ;
     @track disableIncoOffSet = true;
     @api serviceChargeList;
+    @api defaultCurrencyCode ='';
 
     @track BAF ;
     @track bunkerCharges;
@@ -93,9 +94,18 @@ export default class BAFCOImportAddServiceCharge extends LightningElement {
 
     connectedCallback(){
         console.log('serviceChargeList ',JSON.stringify(this.serviceChargeList,null,2)) 
+        console.log('defaultCurrencyCode ',JSON.stringify(this.defaultCurrencyCode,null,2))
+        if(this.defaultCurrencyCode != ''){
+            console.log('came here ')
+            this.currencyCode = this.defaultCurrencyCode;
+        }
+        else  
         if(Object.keys(this.serviceChargeList).length > 0){
             let allData = this.serviceChargeList;
-            if(allData.currencyCode != undefined) this.currencyCode = allData.currencyCode;
+            if(allData.currencyCode != undefined) {
+                console.log('came here 2 ')
+                this.currencyCode = allData.currencyCode;
+            }
             if(allData.offset != undefined) this.offSet = allData.offset;
             if(this.currencyCode == 'USD') {
                 this.disableIncoOffSet = true;

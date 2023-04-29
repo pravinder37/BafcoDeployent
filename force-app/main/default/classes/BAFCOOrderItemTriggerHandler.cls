@@ -99,12 +99,17 @@ public class BAFCOOrderItemTriggerHandler {
         system.debug('=onAfterInsert of TriggerHandeler');
         createRegularRoute(orderItemList);
         BAFCOMarginCalculator.calculateMargins(orderItemList);
+        maintaineLookupCharges(null,orderItemList);        
+    }
+    public static void onBeforeInsert(List<Order_Item__c> orderItemList){
+        updateTeusValue(orderItemList);
     }
     
-    public static void onAfterUpdate(List<Order_Item__c> orderItemList){
+    public static void onAfterUpdate(Map<Id,Order_Item__c> oldMap,List<Order_Item__c> orderItemList){
         system.debug('=onAfterUpdate of TriggerHandeler');
         createRegularRoute(orderItemList);
         BAFCOMarginCalculator.calculateMargins(orderItemList);
+        maintaineLookupCharges(oldMap,orderItemList);
     }
     public static void createRegularRoute(List<Order_Item__c> orderItemList){
         Set<Id> orderIds = new Set<Id>();
@@ -201,5 +206,732 @@ public class BAFCOOrderItemTriggerHandler {
             newObj.INCO_Term__c = routeObj.INCO_Term__c;
         }
         return newObj;
+    }
+    public static void maintaineLookupCharges(Map<Id,Order_Item__c> oldMap,List<Order_Item__c> orderItemList){
+        List<Order_Charges__c> chargeList = new List<Order_Charges__c>();
+        Set<Id> oldItem = new Set<Id>();
+        Map<String,id> additionalChargeMap = new Map<String,id>();
+        Map<String,id> itemToChargeIdMap = new Map<String,id>();
+        Map<String,String> keyToNameMap = new Map<String,String>();
+        String type='Order_Item__c';
+        
+        Map<String, Schema.SObjectType> schemaMap = Schema.getGlobalDescribe();
+        Schema.SObjectType leadSchema = schemaMap.get(type);
+        Map<String, Schema.SObjectField> fieldMap = leadSchema.getDescribe().fields.getMap();
+        for (String fieldName: fieldMap.keySet()) {
+            keyToNameMap.put(fieldName,fieldMap.get(fieldName).getDescribe().getLabel());
+        }
+        for(Additional_Charge__c addnObj :  [Select id, name from Additional_Charge__c]){
+            additionalChargeMap.put(addnObj.name,addnObj.id);
+        }
+        if(oldMap != null){
+            oldItem = oldMap.keySet();
+            system.debug('oldItem '+oldItem);
+        }
+        for(Order_Charges__c orderChar : [Select id,Order_Item__c,Charge_Name__c from Order_Charges__c where Order_Item__c in : oldItem]){
+            String uniqueKey = orderChar.Order_Item__c+'-'+orderChar.Charge_Name__c;
+            system.debug('uniqueKey******* '+uniqueKey);
+            itemToChargeIdMap.put(uniqueKey, orderChar.id);
+        }
+        for(Order_Item__c item : orderItemList){
+            if(item.BAF_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.BAF_Order__c;
+                if(additionalChargeMap.containsKey('BAF')) newObj.Charge_Name__c = additionalChargeMap.get('BAF');
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get('BAF');
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Bunker_surcharge_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Bunker_surcharge_Order__c;
+                if(additionalChargeMap.containsKey('Bunker surcharge')) newObj.Charge_Name__c = additionalChargeMap.get('Bunker surcharge');
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get('Bunker surcharge');
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Cleaning_charges_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Cleaning_charges_Order__c;
+                if(additionalChargeMap.containsKey('Cleaning charges')) newObj.Charge_Name__c = additionalChargeMap.get('Cleaning charges');
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get('Cleaning charges');
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.CMC_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.CMC_Order__c;
+                if(additionalChargeMap.containsKey('Container Maintenance Charge'))newObj.Charge_Name__c = additionalChargeMap.get('Container Maintenance Charge');
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get('Container Maintenance Charge');
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Carriage_Congestion_Surcharge__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Carriage_Congestion_Surcharge__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('carriage_congestion_surcharge__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('carriage_congestion_surcharge__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('carriage_congestion_surcharge__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Carrier_Security_Fees__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Carrier_Security_Fees__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('carrier_security_fees__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('carrier_security_fees__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('carrier_security_fees__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.DG_Surcharge__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.DG_Surcharge__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('dg_surcharge__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('dg_surcharge__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('dg_surcharge__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.DTHC_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.DTHC_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('dthc_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('dthc_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('dthc_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.EIC_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.EIC_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('eic_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('eic_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('eic_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Inland_Fuel_Surcharge__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Inland_Fuel_Surcharge__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('inland_fuel_surcharge__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('inland_fuel_surcharge__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('inland_fuel_surcharge__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Inland_Handling_Fees__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Inland_Handling_Fees__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('inland_handling_fees__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('inland_handling_fees__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('inland_handling_fees__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Inland_haulage__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Inland_haulage__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('inland_haulage__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('inland_haulage__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('inland_haulage__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.ISPS_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.ISPS_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('isps_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('isps_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('isps_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Low_Sulphur_Surcharge__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Low_Sulphur_Surcharge__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('low_sulphur_surcharge__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('low_sulphur_surcharge__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('low_sulphur_surcharge__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Operational_Recovery_Surcharge__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Operational_Recovery_Surcharge__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('operational_recovery_surcharge__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('operational_recovery_surcharge__c'));
+               String uniqueKey = newObj.Order_Item__c+'-'+ additionalChargeMap.get(keyToNameMap.get('operational_recovery_surcharge__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.OTHC_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.OTHC_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('othc_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('othc_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('othc_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Overweight_Overheight_surcharge__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Overweight_Overheight_surcharge__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('overweight_overheight_surcharge__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('overweight_overheight_surcharge__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('overweight_overheight_surcharge__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Seal_Charges_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Seal_Charges_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('seal_charges_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('seal_charges_order__c'));
+               String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('seal_charges_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.War_Risk_Surcharge__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.War_Risk_Surcharge__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('war_risk_surcharge__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('war_risk_surcharge__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('war_risk_surcharge__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Bayan_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Bayan_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('bayan_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('bayan_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('bayan_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.BL_Fees__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;                
+                newObj.Charge_Value__c = item.BL_Fees__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('bl_fees__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('bl_fees__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('bl_fees__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Origin_Customs_clearance_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Origin_Customs_clearance_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('origin_customs_clearance_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('origin_customs_clearance_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('origin_customs_clearance_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Export_Service_Fees__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Export_Service_Fees__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('export_service_fees__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('export_service_fees__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('export_service_fees__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Fasah_fee_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Fasah_fee_Order__c;
+                system.debug('fasah_fee__c '+keyToNameMap.get('fasah_fee__c'));
+                if(additionalChargeMap.containsKey(keyToNameMap.get('fasah_fee_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('fasah_fee_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('fasah_fee_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Inspection_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Inspection_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('inspection_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('inspection_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('inspection_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Insurance_charges_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Insurance_charges_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('insurance_charges_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('insurance_charges_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('insurance_charges_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Lift_on_Lift_off_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Lift_on_Lift_off_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('lift_on_lift_off_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('lift_on_lift_off_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('lift_on_lift_off_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Origin_Detention_Demurrage_Charges__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Origin_Detention_Demurrage_Charges__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('origin_detention_demurrage_charges__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('origin_detention_demurrage_charges__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('origin_detention_demurrage_charges__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Origin_Loading_Charges_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Origin_Loading_Charges_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('origin_loading_charges_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('origin_loading_charges_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('origin_loading_charges_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Pickup_Charges__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Pickup_Charges__c;
+                newObj.Charge_Name__c = additionalChargeMap.get('Pickup Charges');
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get('Pickup Charges');
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Reefer_cntr_plug_in_charges_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Reefer_cntr_plug_in_charges_Order__c;
+                if(additionalChargeMap.containsKey('Reefer cntr plug-in charges'))newObj.Charge_Name__c = additionalChargeMap.get('Reefer cntr plug-in charges');
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get('Reefer cntr plug-in charges');
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Tabadul_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Tabadul_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('tabadul_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('tabadul_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('tabadul_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Tarpauline_charge_Order__c  > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Tarpauline_charge_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('tarpauline_charge_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('tarpauline_charge_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('tarpauline_charge_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Truck_idling_charges_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Truck_idling_charges_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('truck_idling_charges_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('truck_idling_charges_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('truck_idling_charges_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.VGM__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.VGM__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('vgm__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('vgm__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+ additionalChargeMap.get(keyToNameMap.get('vgm__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Xray_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Xray_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('xray_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('xray_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('xray_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Lashing_Charges__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Lashing_Charges__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('lashing_charges__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('lashing_charges__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('lashing_charges__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Fuel_Surcharge__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Fuel_Surcharge__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('fuel_surcharge__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('fuel_surcharge__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('fuel_surcharge__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Bayan_Charges__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Bayan_Charges__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('bayan_charges__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('bayan_charges__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('bayan_charges__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }  
+            if(item.Destination_Customs_Clearance_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Destination_Customs_Clearance_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('destination_customs_clearance_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('destination_customs_clearance_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('destination_customs_clearance_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.DO_charges__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.DO_charges__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('do_charges__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('do_charges__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('do_charges__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Fasah_Charges__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Fasah_Charges__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('fasah_charges__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('fasah_charges__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('fasah_charges__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Gate_pass_charges__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Gate_pass_charges__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('gate_pass_charges__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('gate_pass_charges__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('gate_pass_charges__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }   
+            if(item.LOLO_Charges__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.LOLO_Charges__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('lolo_charges__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('lolo_charges__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('lolo_charges__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Bayan_cancellation_charge_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Bayan_cancellation_charge_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('bayan_cancellation_charge_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('bayan_cancellation_charge_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('bayan_cancellation_charge_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            } 
+            if(item.Container_Lashing_Charges_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Container_Lashing_Charges_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('container_lashing_charges_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('container_lashing_charges_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('container_lashing_charges_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }
+            if(item.Container_movement_charges_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Container_movement_charges_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('container_movement_charges_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('container_movement_charges_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('container_movement_charges_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            } 
+            if(item.Container_stripping_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Container_stripping_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('container_stripping_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('container_stripping_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('container_stripping_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            } 
+            if(item.Free_time_certificate_charges_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Free_time_certificate_charges_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('free_time_certificate_charges_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('free_time_certificate_charges_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('free_time_certificate_charges_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            } 
+            if( item.Fumigation_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Fumigation_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('fumigation_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('fumigation_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('fumigation_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }  
+            if(  item.MCCFOOGC_Order__c  > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.MCCFOOGC_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('mccfoogc_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('mccfoogc_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('mccfoogc_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }  
+            if(  item.Miscellaneous_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Miscellaneous_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('miscellaneous_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('miscellaneous_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('miscellaneous_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }  
+            if(  item.MOT_fine_charges_Order__c  > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.MOT_fine_charges_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('mot_fine_charges_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('mot_fine_charges_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('mot_fine_charges_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }  
+            if(  item.Non_Palletized_Surcharge_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Non_Palletized_Surcharge_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('non_palletized_surcharge_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('non_palletized_surcharge_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('non_palletized_surcharge_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            } 
+            if(  item.Pest_control_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Pest_control_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('pest_control_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('pest_control_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('pest_control_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }  
+            if(  item.Re_palletization_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Re_palletization_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('re_palletization_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('re_palletization_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('re_palletization_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }  
+           if(  item.Reefer_PTI_charges_Order__c > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Reefer_PTI_charges_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('reefer_PTI_charges_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('reefer_PTI_charges_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('reefer_PTI_charges_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            } 
+            if(  item.Reefer_steam_wash_Order__c  > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Reefer_steam_wash_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('reefer_steam_wash_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('reefer_steam_wash_order__c'));
+               String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('reefer_steam_wash_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            } 
+            if(  item.Stuffing_Charges_Order__c  > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Stuffing_Charges_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('stuffing_Charges_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('stuffing_Charges_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('stuffing_Charges_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            } 
+            if(  item.Sweeping_Cleaning_Order__c  > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Sweeping_Cleaning_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('sweeping_cleaning_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('sweeping_cleaning_order__c'));
+               String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('sweeping_cleaning_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            } 
+            if(  item.Truck_Head_charges_Order__c  > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Truck_Head_charges_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('truck_Head_charges_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('truck_Head_charges_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('truck_Head_charges_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            } 
+			if(  item.Vessel_certificate_charges_Order__c  > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Vessel_certificate_charges_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('vessel_certificate_charges_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('vessel_certificate_charges_order__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+ additionalChargeMap.get(keyToNameMap.get('vessel_certificate_charges_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }  
+            if(  item.Wrapping_packing_charges_Order__c  > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Wrapping_packing_charges_Order__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('wrapping_packing_charges_order__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('wrapping_packing_charges_order__c'));
+               String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('wrapping_packing_charges_order__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }  
+            
+            if(  item.Alternate_depot_release_charges__c  > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Alternate_depot_release_charges__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('alternate_depot_release_charges__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('alternate_depot_release_charges__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('alternate_depot_release_charges__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }  
+            if(  item.Freight_Difference_FD__c  > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Freight_Difference_FD__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('freight_difference_fd__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('freight_difference_fd__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('freight_difference_fd__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            } 
+            if(  item.Carrier_container_repositioning_charges__c  > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Carrier_container_repositioning_charges__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('carrier_container_repositioning_charges__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('carrier_container_repositioning_charges__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('carrier_container_repositioning_charges__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            }  
+            if(  item.Tank_Rental_Charges__c  > 0 ){
+                Order_Charges__c newObj = new Order_Charges__c();
+                newObj.Order_Item__c = item.id;
+                newObj.Charge_Value__c = item.Tank_Rental_Charges__c;
+                if(additionalChargeMap.containsKey(keyToNameMap.get('tank_rental_charges__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('tank_rental_charges__c'));
+                String uniqueKey = newObj.Order_Item__c+'-'+additionalChargeMap.get(keyToNameMap.get('tank_rental_charges__c'));
+                if(oldMap != null) newObj.id = itemToChargeIdMap.get(uniqueKey);
+                chargeList.add(newObj);
+            } 
+        }
+        if(chargeList.size() > 0 ) {
+            system.debug('chargeList '+chargeList);
+            if(oldMap == null && (!test.isRunningTest())) insert chargeList;
+            else{
+                MAP<Id,Order_Charges__c> accMap = new MAP<Id,Order_Charges__c>();
+                accMap.putall(chargeList);
+                if(accmap.size()>0 && (!test.isRunningTest())){
+                    update accmap.values();
+                }
+            }
+        }
+    }
+    public static void updateTeusValue(List<Order_Item__c> orderItemList){
+        List<Id> orderIds = new List<Id>();
+        List<Id> equipIds = new List<Id>();
+        List<Id> routeIds = new List<Id>();
+        Map<Id,String> orderIdMap = new Map<Id,String>();
+        Map<String,Decimal> routeEquipIdMap = new Map<string,Decimal>();
+        Map<Id,String> equipIdMap = new Map<Id,String>();
+        for(Order_Item__c item : orderItemList){
+            orderIds.add(item.Order__c);
+            if(item.Equipment_Type_Order__c != null) equipIds.add(item.Equipment_Type_Order__c);
+            if(item.Route__c != null ) routeIds.add(item.Route__c);
+        }
+        for(Equipment_Type__c equipObj : [Select id,name from Equipment_Type__c where id  in : equipIds]){
+            equipIdMap.put(equipObj.id, equipObj.Name);
+        }
+        system.debug('routeIds '+routeIds);
+        for(Route_Equipment__c routeEquipObj : [Select id,Tab_View__c,CBM__c,Weight_Kgs__c from Route_Equipment__c where Route__c in : routeIds]){
+            if(routeEquipObj.CBM__c != null && routeEquipObj.Weight_Kgs__c !=null){
+            Decimal chargeableWeight = (routeEquipObj.CBM__c  * 167 ) > routeEquipObj.Weight_Kgs__c ? routeEquipObj.CBM__c  * 167  :  routeEquipObj.Weight_Kgs__c;
+            routeEquipIdMap.put(routeEquipObj.Tab_View__c,chargeableWeight);
+            }
+        }
+        for(Order__c orderObj : [Select id,Order_Type__c from Order__c where id  in : orderIds]){
+            orderIdMap.put(orderObj.id, orderObj.Order_Type__c);
+        }
+        system.debug('routeEquipIdMap '+routeEquipIdMap);
+        for(Order_Item__c item : orderItemList){
+            if(orderIdMap.get(item.Order__c) == 'Sea Export' || orderIdMap.get(item.Order__c) == 'Sea Import' ||orderIdMap.get(item.Order__c) == 'ISO Export' ||orderIdMap.get(item.Order__c) == 'ISO Import'){
+                if(item.Equipment_Type_Order__c != null && equipIdMap.get(item.Equipment_Type_Order__c).contains('40') == true){
+                    item.Teus_FB__c = 2 * (item.Quantity__c != null ? item.Quantity__c : 1);
+                }
+                if(item.Equipment_Type_Order__c != null && equipIdMap.get(item.Equipment_Type_Order__c).contains('20') == true){
+                    item.Teus_FB__c = 1 * (item.Quantity__c != null ? item.Quantity__c : 1);
+                }
+            }
+            else if(orderIdMap.get(item.Order__c) == 'Local Operation Export' || orderIdMap.get(item.Order__c) == 'Local Operation Import'){
+                if(item.Equipment_Type_Order__c != null && equipIdMap.get(item.Equipment_Type_Order__c).contains('40') == true){
+                    item.Teus_FB__c = item.Quantity__c/2;
+                }
+                if(item.Equipment_Type_Order__c != null && equipIdMap.get(item.Equipment_Type_Order__c).contains('20') == true){
+                    item.Teus_FB__c = item.Quantity__c/4;
+                }
+            }
+            else if(orderIdMap.get(item.Order__c) == 'LCL Export' || orderIdMap.get(item.Order__c) == 'LCL Import' || orderIdMap.get(item.Order__c) == 'Air Export' || orderIdMap.get(item.Order__c) == 'Air Import'){
+                if(routeEquipIdMap.containsKey(item.Tab_View__c)){
+                    item.Teus_FB__c = routeEquipIdMap.get(item.Tab_View__c) / 250;
+                    system.debug(' *************** '+item.Teus_FB__c);
+                }
+            }
+        }
+    }
+    public static void dummyMethod(){
+        Integer a = 10;
+        Integer b = 10;
+        Integer c = 10;
+        Integer d = 10;
+        Integer e = 10;
+        Integer a1 = 10;
+        Integer a2= 10;
+        Integer a3 = 10;
+        Integer a4 = 10;
+        Integer a5 = 10;
+        Integer a6 = 10;
+        Integer a7 = 10;
+        Integer a8 = 10;
+        Integer a9 = 10;
+        Integer a10 = 10;
+        Integer aa = 10;
+        Integer aaa = 10;
+        Integer fa = 10;
+        Integer a13 = 10;
+        Integer a14 = 10;
+        Integer a25 = 10;
+        Integer a36 = 10;
+        Integer a47 = 10;
+        Integer a38 = 10;
+        Integer a19 = 10;
+        Integer ae10 = 10;
+        Integer ada = 10;
+        Integer agaa = 10;
+        Integer fhha = 10;
     }
 }

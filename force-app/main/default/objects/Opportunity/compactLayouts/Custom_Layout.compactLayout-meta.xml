@@ -6,6 +6,5 @@
     <fields>CloseDate</fields>
     <fields>Branch__c</fields>
     <fields>Business_Type__c</fields>
-    <fields>Amount</fields>
     <label>Custom Layout</label>
 </CompactLayout>

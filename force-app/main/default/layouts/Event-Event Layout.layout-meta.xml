@@ -27,8 +27,12 @@
                 <field>EndDateTime</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Required</behavior>
-                <field>CurrencyIsoCode</field>
+                <behavior>Readonly</behavior>
+                <field>Branch__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>Related_To_ID__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
@@ -60,6 +64,14 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Related_Enquiry__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Type</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Account_Name__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>

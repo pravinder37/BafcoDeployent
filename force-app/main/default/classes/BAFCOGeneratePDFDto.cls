@@ -37,6 +37,8 @@ public class BAFCOGeneratePDFDto {
         @AuraEnabled public Boolean ShowtotalDC{get;set;}
         @AuraEnabled public string equipmentTypeDC{get;set;}
         @AuraEnabled public string serviceType{get;set;}
+        @AuraEnabled public string commodity{get;set;}
+         @AuraEnabled public Decimal quantity{get;set;}
         @AuraEnabled
         public BAFCOImportRMSDto.destinChargeObj destinChargeObj { get; set; }
         @AuraEnabled

@@ -6,14 +6,14 @@
     <columns>Business_Type__c</columns>
     <columns>routes__c</columns>
     <columns>CORE.USERS.FULL_NAME</columns>
+    <columns>OPPORTUNITY.RECORDTYPE</columns>
     <columns>OPPORTUNITY.STAGE_NAME</columns>
     <columns>OPPORTUNITY.LAST_UPDATE</columns>
-    <columns>OPPORTUNITY.RECORDTYPE</columns>
     <filterScope>Everything</filterScope>
     <filters>
         <field>OPPORTUNITY.STAGE_NAME</field>
         <operation>equals</operation>
-        <value>Qualification,Proposal/Price Quote,Negotiation</value>
+        <value>Qualification,Proposal/Price Quote,Negotiation,Closed Lost</value>
     </filters>
     <label>All Opportunities</label>
 </ListView>

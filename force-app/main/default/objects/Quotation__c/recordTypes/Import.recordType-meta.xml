@@ -19,6 +19,41 @@
         </values>
     </picklistValues>
     <picklistValues>
+        <picklist>Quotation_Type__c</picklist>
+        <values>
+            <fullName>Air Export</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Air Import</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>LCL Export</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>LCL Import</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Local Operation Export</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Local Operation Import</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sea Export</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sea Import</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
         <picklist>Status__c</picklist>
         <values>
             <fullName>Awaiting CRO</fullName>

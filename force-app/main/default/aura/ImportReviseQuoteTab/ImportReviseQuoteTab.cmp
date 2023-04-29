@@ -4,6 +4,7 @@
     <aura:attribute name="leadId" type="String" />
     <aura:attribute name="incoTerm" type="String" />
     <aura:attribute name="isLCL" type="Boolean" />
+    <aura:attribute name="isAir" type="Boolean" />
     <aura:handler name="init" value="{!this}" action="{!c.init}" />
     <aura:html tag="style">
         .slds-modal__container{
@@ -16,8 +17,18 @@
         max-height:unset !important;
         }
     </aura:html>
-    <aura:if isTrue="{!v.isLCL == 'true'}">
-        <div style="background: white;"><c:bAFCOAirReviseParent quoteID="{!v.refRecordId}" accId ="{!v.leadId}"/></div>
+    <aura:if isTrue="{!OR(v.isLCL == 'true',v.isAir =='true')}">
+        <aura:if isTrue="{!v.isLCL == 'true'}">
+            <div style="background: white;">
+                <c:bAFCOAirReviseParent quoteID="{!v.refRecordId}" accId ="{!v.leadId}"/>
+            </div>
+        </aura:if>
+        <aura:if isTrue="{!v.isAir == 'true'}">
+            <div style="background: white;">
+                <c:bAFCOAirImportReviseParent quoteID="{!v.refRecordId}" accId ="{!v.leadId}"/>
+            </div>
+        </aura:if>
+        
         <aura:set attribute="else">
             <aura:if isTrue="{!v.incoTerm == 'Local Operation'}">
                 <div style="background: white;">

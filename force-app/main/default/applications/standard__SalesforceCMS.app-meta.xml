@@ -10,92 +10,27 @@
     <tabs>standard-CmsChannel</tabs>
     <tabs>standard-CmsWorkspaces</tabs>
     <tabs>standard-CmsExperiences</tabs>
-    <tabs>INCO_Charge__c</tabs>
-    <tabs>INCO_Term__c</tabs>
-    <tabs>Port__c</tabs>
-    <tabs>Place__c</tabs>
-    <tabs>Shipping_Line__c</tabs>
-    <tabs>Equipment_Type__c</tabs>
-    <tabs>Commodity__c</tabs>
-    <tabs>RMS__c</tabs>
-    <tabs>Shipping_Line_Charge__c</tabs>
-    <tabs>Additional_Charge__c</tabs>
-    <tabs>Loading_Charge__c</tabs>
-    <tabs>Quotation__c</tabs>
-    <tabs>Quotation_Item__c</tabs>
-    <tabs>Route__c</tabs>
-    <tabs>Route_Equipment__c</tabs>
-    <tabs>template__c</tabs>
-    <tabs>Order__c</tabs>
-    <tabs>Agent__c</tabs>
-    <tabs>Exchange_Rate__c</tabs>
-    <tabs>Destination_Charges__c</tabs>
-    <tabs>Regular_Routing__c</tabs>
-    <tabs>Rate_Procurement__c</tabs>
+    <tabs>Target__c</tabs>
+    <tabs>Shipper__c</tabs>
+    <tabs>Consignee__c</tabs>
+    <tabs>Route_Profit_Margin__c</tabs>
+    <tabs>Airline__c</tabs>
     <uiType>Lightning</uiType>
     <workspaceConfig>
         <mappings>
-            <tab>Additional_Charge__c</tab>
+            <tab>Airline__c</tab>
         </mappings>
         <mappings>
-            <tab>Agent__c</tab>
+            <tab>Consignee__c</tab>
         </mappings>
         <mappings>
-            <tab>Commodity__c</tab>
+            <tab>Route_Profit_Margin__c</tab>
         </mappings>
         <mappings>
-            <tab>Destination_Charges__c</tab>
+            <tab>Shipper__c</tab>
         </mappings>
         <mappings>
-            <tab>Equipment_Type__c</tab>
-        </mappings>
-        <mappings>
-            <tab>Exchange_Rate__c</tab>
-        </mappings>
-        <mappings>
-            <tab>INCO_Charge__c</tab>
-        </mappings>
-        <mappings>
-            <tab>INCO_Term__c</tab>
-        </mappings>
-        <mappings>
-            <tab>Loading_Charge__c</tab>
-        </mappings>
-        <mappings>
-            <tab>Order__c</tab>
-        </mappings>
-        <mappings>
-            <tab>Place__c</tab>
-        </mappings>
-        <mappings>
-            <tab>Port__c</tab>
-        </mappings>
-        <mappings>
-            <tab>Quotation_Item__c</tab>
-        </mappings>
-        <mappings>
-            <tab>Quotation__c</tab>
-        </mappings>
-        <mappings>
-            <tab>RMS__c</tab>
-        </mappings>
-        <mappings>
-            <tab>Rate_Procurement__c</tab>
-        </mappings>
-        <mappings>
-            <tab>Regular_Routing__c</tab>
-        </mappings>
-        <mappings>
-            <tab>Route_Equipment__c</tab>
-        </mappings>
-        <mappings>
-            <tab>Route__c</tab>
-        </mappings>
-        <mappings>
-            <tab>Shipping_Line_Charge__c</tab>
-        </mappings>
-        <mappings>
-            <tab>Shipping_Line__c</tab>
+            <tab>Target__c</tab>
         </mappings>
         <mappings>
             <tab>standard-CmsAuthorHome</tab>
@@ -108,9 +43,6 @@
         </mappings>
         <mappings>
             <tab>standard-CmsWorkspaces</tab>
-        </mappings>
-        <mappings>
-            <tab>template__c</tab>
         </mappings>
     </workspaceConfig>
 </CustomApplication>

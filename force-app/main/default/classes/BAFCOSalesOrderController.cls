@@ -45,7 +45,7 @@ public class BAFCOSalesOrderController {
         }
         system.debug('mapequipNameToQty '+mapequipNameToQty);
         Integer index = 1;
-        for(Quotation_Item__c item : [Select Airport_of_Loading__c,Airport_of_Destination__c,Quotation__r.isAir__c,Quotation__r.isLCL__c,Tab_View__c,INCO_Term__c,Tank_Rental_Charges__c,Agent__c,Id,Shipping_Linee__c,Buying_Rate__c,Alternate_depot_release_charges__c,Freight_Difference_FD__c,Carrier_container_repositioning_charges__c,Ex_Works_Charge__c,Ex_Works_Charge_Name__c,Included_PDF_Ex_works__c,Included_PDF_Additional__c,Included_PDF_Destination__c,Included_PDF_Origin__c,Included_PDF_ShippingLine__c,Add_to_Buying_Ex_works__c,Add_to_Buying_Additional__c,Add_to_Buying_Destination__c,Add_to_Buying_Origin__c,Add_to_Buying_ShippingLine__c,BAF__c,Bayan__c,Bayan_cancellation_charge__c,Bunker_surcharge__c,Cleaning_charges__c,
+        for(Quotation_Item__c item : [Select Selling_Charges_Include__c,Quotation__r.Quotation_type__c,Charges_Included__c,Airport_of_Loading__c,Airport_of_Destination__c,Quotation__r.isAir__c,Quotation__r.isLCL__c,Tab_View__c,INCO_Term__c,Tank_Rental_Charges__c,Agent__c,Id,Shipping_Linee__c,Buying_Rate__c,Alternate_depot_release_charges__c,Freight_Difference_FD__c,Carrier_container_repositioning_charges__c,Ex_Works_Charge__c,Ex_Works_Charge_Name__c,Included_PDF_Ex_works__c,Included_PDF_Additional__c,Included_PDF_Destination__c,Included_PDF_Origin__c,Included_PDF_ShippingLine__c,Add_to_Buying_Ex_works__c,Add_to_Buying_Additional__c,Add_to_Buying_Destination__c,Add_to_Buying_Origin__c,Add_to_Buying_ShippingLine__c,BAF__c,Bayan__c,Bayan_cancellation_charge__c,Bunker_surcharge__c,Cleaning_charges__c,
                                       CMC__c,Container_movement_charges__c,Container_stripping__c,
                                       Destination_Customs_Clearance__c,Destination_Loading_Charges__c,DTHC__c,EIC__c,Equipment_Type__c,
                                       Fasah_fee__c,Free_time_certificate_charges__c,Fumigation__c,Inspection__c,Insurance_charges__c,
@@ -64,13 +64,15 @@ public class BAFCOSalesOrderController {
                                       where Quotation__c =: quoteId 
                                       And Route__c =:routeId]){
                                           system.debug('item.Equipment_Type__c '+item.Equipment_Type__c+' - '+item.Equipment_Type__r.name);
+                                          system.debug('item.Quotation__r.isLCL__c '+item.Quotation__r.isLCL__c);
+                                          system.debug('item.Quotation__r.isAir__c '+item.Quotation__r.isAir__c);
                                           if(item.Quotation__r.isLCL__c == true || item.Quotation__r.isAir__c == true){
                                               if(mapDimensionToQty.containsKey(item.Tab_View__c)){
                                                   if(!equipLineToShipData.containsKey(item.Tab_View__c)){
                                                       equipLineToShipData.put(item.Tab_View__c,new List<EquipData>());
                                                   }
                                                   EquipData dto = new EquipData();
-                                                  dto.Qty = mapDimensionToQty.get(item.Tab_View__c);
+                                                  //dto.Qty = mapDimensionToQty.get(item.Tab_View__c);
                                                   if(item.Quotation__r.isLCL__c == true) dto.isLCL = true;                                                  
                                                   else if(item.Quotation__r.isAir__c == true) dto.isAir = true;
                                                   system.debug(' dto.Qty '+ dto.Qty);
@@ -89,7 +91,7 @@ public class BAFCOSalesOrderController {
                                                       }
                                                       EquipData dto = new EquipData();
                                                       system.debug('here '+mapequipNameToQty.get(item.Equipment_Type__r.Name));
-                                                      dto.Qty = mapequipNameToQty.get(item.Equipment_Type__r.Name);
+                                                      //dto.Qty = mapequipNameToQty.get(item.Equipment_Type__r.Name);
                                                       dto.isLCL = false;
                                                       system.debug(' dto.Qty '+ dto.Qty);
                                                       if(item.Shipping_Line__c != null){
@@ -107,7 +109,10 @@ public class BAFCOSalesOrderController {
         return equipLineToShipData;
     }
     private static EquipData assignquoteItemToDto(EquipData dto,Quotation_Item__c item){
+        dto.sellingChargesIncluded = item.Selling_Charges_Include__c;
+        dto.quotationType = item.Quotation__r.Quotation_Type__c;
         dto.sellingRate = item.Total__c;
+        dto.chargesIncluded = item.Charges_Included__c;
         dto.checkBoxSelected = false;
         dto.accountId = item.Quotation__r.Account__c;
         dto.enquiryId = item.Quotation__r.Opportunity__c;
@@ -263,6 +268,7 @@ public class BAFCOSalesOrderController {
                 orderObj.Order_Item_Link__c = key;
                 orderObj.isLCL__c = orderData.isLCL == true ? true : false;
                 orderObj.isAir__c = orderData.isAir == true ? true : false;
+                orderObj.Order_Type__c = orderData.quotationType;
                 orderList.add(orderObj);
             }
         }
@@ -290,6 +296,7 @@ public class BAFCOSalesOrderController {
                             orderItem.Destination_Loading_Charges_Order__c = orderDto.destinationLoading;
                             orderItem.DTHC_Order__c = orderDto.dthc;
                             orderItem.EIC_Order__c = orderDto.eic;
+                            orderItem.Route__c = orderDto.routeID;
                             orderITem.Equipment_Type_Order__c = orderDto.equipmentType;
                             orderItem.Fasah_fee_Order__c = orderDto.fasahFee;
                             orderItem.Free_time_certificate_charges_Order__c = orderDto.freeTimeCertification;
@@ -391,6 +398,8 @@ public class BAFCOSalesOrderController {
                             orderItem.Quotation_Item__c = orderDto.quoteItemId;
                             orderItem.Agent__c = orderDto.agentId;
                             orderItem.INCO_Term__c = orderDto.incoTermId;
+                            orderItem.Charges_Included__c = orderDto.chargesIncluded;
+                            orderItem.Selling_Charges_Included__c = orderDto.sellingChargesIncluded;
                             if(orderDto.checkBoxSelected == true) orderItemList.add(orderItem);
                         }
                     }
@@ -435,6 +444,8 @@ public class BAFCOSalesOrderController {
     }
     public class EquipData{
         @AuraEnabled
+        public String quotationType { get; set; }
+        @AuraEnabled
         public String shipName { get; set; }
         @AuraEnabled
         public Boolean isLCL { get; set; }
@@ -443,9 +454,13 @@ public class BAFCOSalesOrderController {
         @AuraEnabled
         public String recordtypeId { get; set; }
         @AuraEnabled
+        public String chargesIncluded { get; set; }
+        @AuraEnabled
         public String quotationId { get; set; }
         @AuraEnabled
         public String enquiryId { get; set; }
+        @AuraEnabled
+        public String sellingChargesIncluded { get; set; }
         @AuraEnabled
         public String accountId { get; set; }
         @AuraEnabled

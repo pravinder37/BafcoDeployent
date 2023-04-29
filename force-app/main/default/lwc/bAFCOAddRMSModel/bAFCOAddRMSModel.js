@@ -68,6 +68,17 @@ export default class BAFCOAddRMSModel
     @track airTabViewList =[];
     @track selectedRouteEquip = '';
     @track rateKgsError = '';
+    @track isAirExport = false;
+    @track x45 = null;
+    @track x100 = null;
+    @track x300 = null;
+    @track x500 = null;
+    @track x1000 = null;
+    @track x3000 = null;
+    @track x5000 = null;
+    @track x10000 = null;
+    @track x15000 = null;
+    @track x20000 = null;
 
     bayan = null;                
     destinationCustomsClearance = null; 
@@ -117,6 +128,7 @@ export default class BAFCOAddRMSModel
     @track contrIndex = 0;
     @track noRecord = false;
     @track toDeleteRecord = [];
+    @track rmscurrencyCode = 'USD';
 
 
     @track commodityError = '';
@@ -165,6 +177,7 @@ export default class BAFCOAddRMSModel
             this.displayElem1 = false;
             this.displayElem2 = false;
             this.getAirRouteEquipment();
+            if(this.businessType == 'Export' ) this.isAirExport = true;
         }
         else{
             this.loadigPortLabel = 'Port of Loading';
@@ -173,7 +186,7 @@ export default class BAFCOAddRMSModel
        if(this.leadId != ''){
             this.customerOption.push({label:this.acctName,value:this.leadId})
         }
-        this.getRouteEquipType();
+        if(!this.isAir) this.getRouteEquipType();
         this.getExchangeRate();
         this.getDefualtValueForRMS();
         let templist = {
@@ -546,12 +559,28 @@ export default class BAFCOAddRMSModel
         console.log('rms '+JSON.stringify(this.rmsDetail,null,2))
         if(allValid){
             if(this.isAir){
+                let obj={
+                    x45:this.x45 > 0 ? this.x45 : 0,
+                    x100:this.x100 > 0 ? this.x100 : 0,
+                    x300:this.x300 > 0 ? this.x300 : 0,
+                    x500:this.x500 > 0 ? this.x500 : 0,
+                    x1000:this.x1000 > 0 ? this.x1000 : 0,
+                    x3000:this.x3000 > 0 ? this.x3000 : 0,
+                    x5000:this.x5000 > 0 ? this.x5000 : 0,
+                    x10000:this.x10000 > 0 ? this.x10000 : 0,
+                    x15000:this.x15000 > 0 ? this.x15000 : 0,
+                    x20000:this.x20000 > 0 ? this.x20000 : 0,
+                }
+                console.log('obj '+JSON.stringify(obj,null,2))
                 addRatesAir({
                     rmsDetail: this.rmsDetail,
                     routeId : this.routeId,
                     airline : this.airline,
                     rateKgs: this.rateKgs,
-                    selectedRouteEquip : this.selectedRouteEquip
+                    selectedRouteEquip : this.selectedRouteEquip,
+                    rmscurrencyCode  :this.rmscurrencyCode,
+                    businessType : this.businessType,
+                    obj:obj
                 })
             .then(result =>{
                 this.isLoading = false
@@ -814,7 +843,7 @@ export default class BAFCOAddRMSModel
     }
     handleDirectionChange(event){
         this.directionValue  = event.target.value;
-        this.getLoadingCharges();
+        if(!this.isAir )this.getLoadingCharges();
     }
     getLoadingCharges(){
         if(this.pickupPlace != undefined && this.portLoadingId != undefined && this.directionValue != undefined){
@@ -1222,8 +1251,9 @@ export default class BAFCOAddRMSModel
             label : element.Tab_View__c,
             value:element.Id
             })
-            this.airTabViewList = tempList;
         })
+        this.airTabViewList = tempList;
+        this.selectedRouteEquip = tempList[0].value;
     })
     .catch(error=>{
         console.log('getAirRouteEquipment result = >'+JSON.stringify(error))
@@ -1232,5 +1262,38 @@ export default class BAFCOAddRMSModel
    handleAirEquipChange(e){
     this.selectedRouteEquip = e.target.value;
     this.airequipmentTypeError= '';
+   }
+   handleRMSCurrencyCodeSelection(e){
+    this.rmscurrencyCode=e.target.value;
+   }
+   handle20000Change(e){
+    this.x20000 = parseInt(e.target.value);
+   }
+   handle15000Change(e){
+    this.x15000 = parseInt(e.target.value);
+   }
+   handle10000Change(e){
+    this.x10000 = parseInt(e.target.value);
+   }
+   handle5000Change(e){
+    this.x5000 = parseInt(e.target.value);
+   }
+   handle3000Change(e){
+    this.x3000 = parseInt(e.target.value);
+   }
+   handle1000Change(e){
+    this.x1000 = parseInt(e.target.value);
+   }
+   handle500Change(e){
+    this.x500 = parseInt(e.target.value);
+   }
+   handle300Change(e){
+    this.x300 = parseInt(e.target.value);
+   }
+   handle100Change(e){
+    this.x100 = parseInt(e.target.value);
+   }
+   handle45Change(e){
+    this.x45 = parseInt(e.target.value);
    }
 }

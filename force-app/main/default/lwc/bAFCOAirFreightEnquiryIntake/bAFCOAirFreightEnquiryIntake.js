@@ -70,6 +70,7 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
     @track shippLineObject = 'Shipping_Line__c';
     @track shippLinePlaceHolder = 'Search Shipping Line';
     @track shippLinePlaceLabel = 'Shipping Line';
+    @track displayAddPackage = true;
 
 
     @track width;
@@ -96,6 +97,7 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
             this.shippLineObject = 'Airline__c';
             this.shippLinePlaceHolder = 'Search Airline Line';
             this.shippLinePlaceLabel = 'Airline';
+           if(this.businessType == 'Import') this.displayAddPackage = false;
         }
         else{
             this.portObject = 'Port__c';
@@ -104,6 +106,7 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
             this.shippLineObject = 'Shipping_Line__c';
             this.shippLinePlaceHolder = 'Search Shipping Line';
             this.shippLinePlaceLabel = 'Shipping Line';
+            this.displayAddPackage = true;
         }
         if(this.accountId.startsWith('001')){
             this.isAccountObject = true;
@@ -198,6 +201,7 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
                 }, 200);
                 this.disableAddRoute = false;
                 this.disableIncoField = false;
+                this.displayAddPackage = true;
             }
             this.updateEnquiryList();
             this.isLoading = false;
@@ -473,7 +477,31 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
     }
     @api removeDefaultOnImport(){
         this.isLoading = true;      
-        this.isImport = true;     
+        this.isImport = true;
+        this.displayAddPackage =false;  
+        let index = this.leadIndex+'.'+'1';
+        let obj={
+            "length": null,
+            "width": null,
+            "height": null,
+            "CBM": null,
+            "Weight": null,
+            "index": index,
+            "id": "",
+            "lengthErrorClass": "",
+            "widthErrorClass": "",
+            "heightErrorClass": "",
+            "CBMErrorClass": "",
+            "WeightErrorClass": "",
+            "unitsErrorClass": "",
+            "stackable": false,
+            "palletized": false,
+            "units": "",
+            "cargoDetails": "",
+            "cargoDetailsError": ""
+          }
+          this.containerRecord = [];
+          this.containerRecord.push(obj)
         setTimeout(() => {
             if(this.incoTermName != 'Clearance and Delivery' && this.incoTermName != 'Local Operation'){   
                 let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[4];
@@ -490,7 +518,6 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
         let index = e.target.dataset.recordId;
         if(this.businessType == 'Import') this.isImport = true;
         else this.isImport = false;
-        console.log('*** '+index)
         this.leadEnquiryList.forEach(elem => {
             if(elem.leadIndex == 1) {
                 this.shipmentKind = elem.shipmentKind;

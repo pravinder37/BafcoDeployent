@@ -306,9 +306,18 @@ public class BAFCOImportQuoteControllerTest {
         
         dto.exWorksObj = exWorksDto;
         
+        BAFCOImportRMSDto.sellingFieldObj objSell = new BAFCOImportRMSDto.sellingFieldObj();
+        objSell.sellingdestinTotalCharges = 110;
+        objSell.sellingTotalOrigincharges  = 110;
+        objSell.sellingtotalSl  = 110;
+        objSell.sellingexWorksTotal  = 110;
+        objSell.sellingadditionalChargeTotal  = 110;
+        objSell.InputField = 'test';
+        objSell.sellingInputField ='test';
+        
         test.startTest();
-        String QuoteId = BAFCOImportQuoteController.genrateQuotation(routeId, rmsId, enquiryId, quotationId, dto, incoTerm, 'test', 1, false, false, agentId);
-        String QuoteId1 = BAFCOImportQuoteController.genrateQuotation(routeId, rmsId, enquiryId, quotationId, dto, incoTerm, 'test', 1, true, true, agentId);
+        String QuoteId = BAFCOImportQuoteController.genrateQuotation(routeId, rmsId, enquiryId, quotationId, dto, incoTerm, 'test', 1, false, false, agentId,objSell);
+        String QuoteId1 = BAFCOImportQuoteController.genrateQuotation(routeId, rmsId, enquiryId, quotationId, dto, incoTerm, 'test', 1, true, true, agentId,objSell);
         test.stopTest();
     }
     testmethod static void getAgentsRecordsTest(){

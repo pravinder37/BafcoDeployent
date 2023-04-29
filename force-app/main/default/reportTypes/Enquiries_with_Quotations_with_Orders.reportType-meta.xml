@@ -4,14 +4,6 @@
     <category>other</category>
     <deployed>true</deployed>
     <description>Enquiries with Quotations with Orders</description>
-    <join>
-        <join>
-            <outerJoin>false</outerJoin>
-            <relationship>Orders__r</relationship>
-        </join>
-        <outerJoin>false</outerJoin>
-        <relationship>Quotations__r</relationship>
-    </join>
     <label>Enquiries with Quotations with Orders</label>
     <sections>
         <columns>
@@ -81,11 +73,6 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>No_of_Quotes__c</field>
-            <table>Enquiry__c</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
             <field>Closed_Lost_Reason__c</field>
             <table>Enquiry__c</table>
         </columns>
@@ -99,182 +86,6 @@
             <field>Competitor_Rate__c</field>
             <table>Enquiry__c</table>
         </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Teus__c</field>
-            <table>Enquiry__c</table>
-        </columns>
         <masterLabel>Enquiries</masterLabel>
-    </sections>
-    <sections>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Id</field>
-            <table>Enquiry__c.Quotations__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>true</checkedByDefault>
-            <field>Name</field>
-            <table>Enquiry__c.Quotations__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>CreatedDate</field>
-            <table>Enquiry__c.Quotations__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>CreatedBy</field>
-            <table>Enquiry__c.Quotations__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>LastModifiedDate</field>
-            <table>Enquiry__c.Quotations__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>LastModifiedBy</field>
-            <table>Enquiry__c.Quotations__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>LastActivityDate</field>
-            <table>Enquiry__c.Quotations__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Account__c</field>
-            <table>Enquiry__c.Quotations__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Leadc__c</field>
-            <table>Enquiry__c.Quotations__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Amount__c</field>
-            <table>Enquiry__c.Quotations__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Enquiry_Created__c</field>
-            <table>Enquiry__c.Quotations__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Quotation_Turnaround_Time__c</field>
-            <table>Enquiry__c.Quotations__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Name__c</field>
-            <table>Enquiry__c.Quotations__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Quotation_Validity__c</field>
-            <table>Enquiry__c.Quotations__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Branch__c</field>
-            <table>Enquiry__c.Quotations__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Business_Type__c</field>
-            <table>Enquiry__c.Quotations__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Remarks__c</field>
-            <table>Enquiry__c.Quotations__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Charges_Included__c</field>
-            <table>Enquiry__c.Quotations__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Total__c</field>
-            <table>Enquiry__c.Quotations__r</table>
-        </columns>
-        <masterLabel>Quotations</masterLabel>
-    </sections>
-    <sections>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Id</field>
-            <table>Enquiry__c.Quotations__r.Orders__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>true</checkedByDefault>
-            <field>Name</field>
-            <table>Enquiry__c.Quotations__r.Orders__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>CreatedDate</field>
-            <table>Enquiry__c.Quotations__r.Orders__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>CreatedBy</field>
-            <table>Enquiry__c.Quotations__r.Orders__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>LastModifiedDate</field>
-            <table>Enquiry__c.Quotations__r.Orders__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>LastModifiedBy</field>
-            <table>Enquiry__c.Quotations__r.Orders__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>LastActivityDate</field>
-            <table>Enquiry__c.Quotations__r.Orders__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Account_Order__c</field>
-            <table>Enquiry__c.Quotations__r.Orders__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Enquiry_Order__c</field>
-            <table>Enquiry__c.Quotations__r.Orders__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Enquiry_Created_Order__c</field>
-            <table>Enquiry__c.Quotations__r.Orders__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Leadc_Order__c</field>
-            <table>Enquiry__c.Quotations__r.Orders__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Order_Turnaround_Time_Order__c</field>
-            <table>Enquiry__c.Quotations__r.Orders__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Order_Validity__c</field>
-            <table>Enquiry__c.Quotations__r.Orders__r</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Customer_Name__c</field>
-            <table>Enquiry__c.Quotations__r.Orders__r</table>
-        </columns>
-        <masterLabel>Orders</masterLabel>
     </sections>
 </ReportType>

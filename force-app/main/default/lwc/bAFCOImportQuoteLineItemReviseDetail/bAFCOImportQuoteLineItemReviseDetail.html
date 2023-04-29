@@ -68,8 +68,20 @@
                                                         <lightning-layout-item size="12">
                                                             <lightning-layout >
                                                             <lightning-layout-item size="4" ><!-- so as to make three columns --></lightning-layout-item>
-                                                            <lightning-layout-item size="4" ><b>Buying Rate</b></lightning-layout-item>
-                                                            <lightning-layout-item size="4" ><b>Selling Rate</b></lightning-layout-item>
+                                                            <lightning-layout-item size="4" ><b>Buying Rate</b> <lightning-button variant="base"
+                                                                icon-name="utility:info" 
+                                                                data-recordid={equiptab.itemId}
+                                                                data-buyingcharges={equiptab.includedBuyingCharges}
+                                                                data-sellingcharges={equiptab.includedSellingCharges}
+                                                                style="padding-left: 4px;"
+                                                                onclick={handleCheckRate}></lightning-button></lightning-layout-item>
+                                                            <lightning-layout-item size="4" ><b>Selling Rate</b><lightning-button variant="base"
+                                                                icon-name="utility:info" 
+                                                                data-recordid={equiptab.itemId}
+                                                                data-buyingcharges={equiptab.includedBuyingCharges}
+                                                                data-sellingcharges={equiptab.includedSellingCharges}
+                                                                style="padding-left: 4px;"
+                                                                onclick={handleCheckRate}></lightning-button></lightning-layout-item>
                                                         </lightning-layout>
                                                         </lightning-layout-item>
                                                         <lightning-layout-item size="12">
@@ -81,10 +93,10 @@
                                                                     onclick={handleShowServiceCharge}></lightning-button>
                                                                 </lightning-layout-item>
                                                                 <lightning-layout-item size="4" >
-                                                                    <lightning-input style="padding-right: 10px;" disabled value={equiptab.totalBuyingRate} if:true={equiptab.totalBuyingRate}></lightning-input>
+                                                                    <lightning-input style="padding-right: 10px;" disabled value={equiptab.buyingRate} if:true={equiptab.totalBuyingRate}></lightning-input>
                                                                 </lightning-layout-item>
                                                                 <lightning-layout-item size="4" >
-                                                                    <lightning-input style="padding-right: 10px;" disabled value={equiptab.totalSellingRate} if:true={equiptab.totalSellingRate}></lightning-input>
+                                                                    <lightning-input style="padding-right: 10px;" disabled value={equiptab.seaFreight} if:true={equiptab.seaFreight}></lightning-input>
                                                                 </lightning-layout-item>
                                                             </lightning-layout>                                            
                                                         </lightning-layout-item>
@@ -679,5 +691,8 @@
     </template>
     <template if:true={showServiceChargeModal}>
         <c-b-a-f-c-o-service-charges-help-component rms-id={rmsId} onclose={handleCloseModal}></c-b-a-f-c-o-service-charges-help-component>
+    </template>
+    <template if:true={displaycheckRate}>
+        <c-b-a-f-c-o-selling-rate-popup selling-charges-included={sellingChargesIncluded} buying-charges-included={buyingChargesIncluded} item-id={itemId} onclose={handleCloseCheckRate}></c-b-a-f-c-o-selling-rate-popup>
     </template>
 </template>

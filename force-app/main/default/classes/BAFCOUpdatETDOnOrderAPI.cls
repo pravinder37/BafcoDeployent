@@ -11,10 +11,19 @@ global class BAFCOUpdatETDOnOrderAPI{
             ETDRequestBodyWrapper reqWrapper = (ETDRequestBodyWrapper) JSON.deserialize(requestBody, ETDRequestBodyWrapper.class);
             Order__c Order = [Select Id FROM Order__c WHERE Name = :reqWrapper.OrderNumber Limit 1];
             if(Order != null){
-                OrderItemList = [Select Id , Vessel_ETD__c FROM Order_Item__c WHERE Order__c =: Order.Id];
+                OrderItemList = [Select Id , Vessel_ETD__c,Order__r.Opportunity_Order__r.Commercial_User__c FROM Order_Item__c WHERE Order__c =: Order.Id];
                 Set<Id> accountIds = new Set<Id>();
+                List<Task> newTasksList = new List<Task>();
                 for(Order_Item__c OrderItem : OrderItemList){
                     OrderItem.Vessel_ETD__c=reqWrapper.VesselETD;
+                    Task newTask = new Task();
+                    newTask.OwnerId = OrderItem.Order__r.Opportunity_Order__r.Commercial_User__c;
+                    newTask.WhatId = OrderItem.ID;
+                    newTask.Subject = 'Update Selling Rate';  
+                    newTasksList.add(newTask);
+                }
+                if(newTasksList!=NULL){
+                    database.insert(newTasksList);
                 }
                 database.update(OrderItemList);                        
             }

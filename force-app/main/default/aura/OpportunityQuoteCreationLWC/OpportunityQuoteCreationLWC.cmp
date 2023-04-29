@@ -33,9 +33,21 @@
         	<c:bAFCOLocalOperationQuoteParent optyId="{!v.refRecordId}" businessType="{!v.refBusinessType}" />
         </div>
     </aura:if>
-    <aura:if isTrue="{!or(v.refRecordTypeType == 'LCL',v.refRecordTypeType == 'Air Freight')}">
+    <aura:if isTrue="{!v.refRecordTypeType == 'LCL'}"> 
         <div style="background: white;">
             <c:bAFCOAirQuoteParent optyId="{!v.refRecordId}" businessType="{!v.refBusinessType}" />
         </div>
+    </aura:if>
+    <aura:if isTrue="{!v.refRecordTypeType == 'Air Freight'}">
+         <aura:if isTrue="{!v.refBusinessType == 'Export'}">
+            <div style="background: white;">
+                <c:bAFCOAirExportQuoteParent optyId="{!v.refRecordId}" businessType="{!v.refBusinessType}" />
+            </div>	
+        </aura:if>
+        <aura:if isTrue="{!v.refBusinessType == 'Import'}">
+            <div style="background: white;">
+                <c:bAFCOAirImportQuoteParent optyId="{!v.refRecordId}" businessType="{!v.refBusinessType}" />
+            </div>	
+        </aura:if>
     </aura:if>
 </aura:component>

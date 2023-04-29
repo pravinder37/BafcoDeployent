@@ -133,6 +133,38 @@ public class QuotationItemTriggerHandlerTest {
         quoteItem.Total_Dest__c = 10;
         quoteItem.Total_INCO__c = 10;
         quoteItem.Total_SL__c = 10;
+        
+        quoteItem.BAF__c = 10;
+        quoteItem.Bunker_surcharge__c = 10;
+        quoteItem.CMC__c = 10;
+        quoteItem.Carriage_Congestion_Surcharge__c = 10;
+        quoteItem.Carrier_Security_Fees__c = 10;
+        quoteItem.DG_Surcharge__c = 10;
+        quoteItem.DTHC__c = 10;
+        quoteItem.EIC__c = 10;
+        quoteItem.Inland_Fuel_Surcharge__c = 10;
+        quoteItem.Inland_Handling_Fees__c = 10;
+        quoteItem.Inland_haulage__c = 10;
+        quoteItem.ISPS__c = 10;
+        quoteItem.Low_Sulphur_Surcharge__c = 10;
+        quoteItem.Operational_Recovery_Surcharge__c = 10;
+        quoteItem.OTHC__c = 10;
+        quoteItem.Overweight_surcharge__c = 10;
+        quoteItem.Seal_Charges__c = 10;
+        quoteItem.War_Risk_Surcharge__c = 10;
+        quoteItem.BL_Fees__c = 10;
+        quoteItem.Export_Service_Fees__c = 10;
+        quoteItem.Origin_Detention_Demurrage_Charges__c = 10;
+        quoteItem.Pickup_Charges__c = 10;
+        quoteItem.Tarpauline_charge__c = 10;
+        quoteItem.VGM__c = 10;
+        quoteItem.Lashing_Charges__c = 10;
+        quoteItem.Fuel_Surcharge__c = 10;
+        quoteItem.Fasah_Charges__c = 10;
+        quoteItem.DO_charges__c = 10;
+        quoteItem.Gate_pass_charges__c = 10;
+        quoteItem.LOLO_Charges__c = 10;
+        quoteItem.Tank_Rental_Charges__c = 10;
         quoteItemList.add(quoteItem);
         
         Quotation_Item__c quoteItem1 = new Quotation_Item__c();

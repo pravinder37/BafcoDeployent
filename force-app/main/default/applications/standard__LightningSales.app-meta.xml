@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata">
     <actionOverrides>
+        <actionName>Tab</actionName>
+        <content>Home_Page_Default4</content>
+        <formFactor>Large</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>standard-home</pageOrSobjectType>
+    </actionOverrides>
+    <actionOverrides>
         <actionName>View</actionName>
         <comment>Action override created by Lightning App Builder during activation.</comment>
         <content>Case_Record_Page1</content>
@@ -47,50 +55,43 @@
     </actionOverrides>
     <brand>
         <headerColor>#0070D2</headerColor>
+        <logo>BAFCO_Logo</logo>
+        <logoVersion>1</logoVersion>
         <shouldOverrideOrgTheme>false</shouldOverrideOrgTheme>
     </brand>
-    <description>Manage your sales process with accounts, leads, opportunities, and more</description>
+    <description>Manage your sales process with accounts, leads, opportunities, quotations and orders.</description>
+    <formFactors>Small</formFactors>
     <formFactors>Large</formFactors>
     <isNavAutoTempTabsDisabled>false</isNavAutoTempTabsDisabled>
     <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>
     <isNavTabPersistenceDisabled>false</isNavTabPersistenceDisabled>
     <label>Sales</label>
     <navType>Standard</navType>
-    <setupExperience>essentials</setupExperience>
+    <profileActionOverrides>
+        <actionName>Tab</actionName>
+        <content>Home_Page_Default</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>standard-home</pageOrSobjectType>
+        <type>Flexipage</type>
+        <profile>Sales Profile</profile>
+    </profileActionOverrides>
+    <setupExperience>all</setupExperience>
     <tabs>standard-home</tabs>
+    <tabs>standard-Today</tabs>
+    <tabs>Meetings</tabs>
     <tabs>standard-Lead</tabs>
     <tabs>standard-Account</tabs>
-    <tabs>standard-Contact</tabs>
     <tabs>standard-Opportunity</tabs>
-    <tabs>standard-Case</tabs>
+    <tabs>standard-Dashboard</tabs>
+    <tabs>sansancard__ScanToSalesforce</tabs>
     <tabs>standard-Task</tabs>
     <tabs>standard-Event</tabs>
-    <tabs>standard-report</tabs>
-    <tabs>standard-Dashboard</tabs>
-    <tabs>INCO_Charge__c</tabs>
-    <tabs>INCO_Term__c</tabs>
-    <tabs>Port__c</tabs>
-    <tabs>Place__c</tabs>
-    <tabs>Shipping_Line__c</tabs>
-    <tabs>Equipment_Type__c</tabs>
-    <tabs>Commodity__c</tabs>
-    <tabs>RMS__c</tabs>
-    <tabs>Shipping_Line_Charge__c</tabs>
-    <tabs>Additional_Charge__c</tabs>
-    <tabs>Loading_Charge__c</tabs>
-    <tabs>Quotation__c</tabs>
-    <tabs>Quotation_Item__c</tabs>
-    <tabs>Route__c</tabs>
-    <tabs>Route_Equipment__c</tabs>
-    <tabs>template__c</tabs>
-    <tabs>standard-Quote</tabs>
-    <tabs>standard-Order</tabs>
     <tabs>Order__c</tabs>
-    <tabs>Agent__c</tabs>
-    <tabs>Exchange_Rate__c</tabs>
-    <tabs>Destination_Charges__c</tabs>
-    <tabs>Regular_Routing__c</tabs>
-    <tabs>Rate_Procurement__c</tabs>
+    <tabs>Quotation__c</tabs>
+    <tabs>standard-report</tabs>
+    <tabs>Target__c</tabs>
+    <tabs>standard-Contact</tabs>
+    <tabs>standard-Feed</tabs>
     <uiType>Lightning</uiType>
-    <utilityBar>Sales_UtilityBar</utilityBar>
+    <utilityBar>LightningSales_UtilityBar</utilityBar>
 </CustomApplication>

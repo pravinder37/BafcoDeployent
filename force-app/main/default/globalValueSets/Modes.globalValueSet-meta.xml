@@ -6,14 +6,15 @@
         <label>Sea</label>
     </customValue>
     <customValue>
-        <fullName>Land</fullName>
-        <default>false</default>
-        <label>Land</label>
-    </customValue>
-    <customValue>
         <fullName>Air</fullName>
         <default>false</default>
         <label>Air</label>
+    </customValue>
+    <customValue>
+        <fullName>Land</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Land</label>
     </customValue>
     <masterLabel>Modes</masterLabel>
     <sorted>false</sorted>
