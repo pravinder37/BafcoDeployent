@@ -3,7 +3,7 @@
     <head>
         <style >
             @page {
-            size: a4 portrait;
+            size: a4 portrait; 
             margin: 0px 0px 12px 0px;
             @top-center {
             content: element(header);

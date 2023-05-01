@@ -155,9 +155,10 @@
     <externalSharingModel>Private</externalSharingModel>
     <label>Consignee</label>
     <nameField>
+        <displayFormat>Consignee-{00000}</displayFormat>
         <label>Consignee Name</label>
         <trackHistory>false</trackHistory>
-        <type>Text</type>
+        <type>AutoNumber</type>
     </nameField>
     <pluralLabel>Consignees</pluralLabel>
     <searchLayouts></searchLayouts>

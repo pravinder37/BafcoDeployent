@@ -3,7 +3,7 @@ public class BAFCORouteEquipmentTriggerControllerTest {
     testmethod static void insertRouteProcumnetExport(){
         Port__c port = new Port__c();
         port.City__c = 'Test 2';
-        port.Name ='PortName 2';
+        port.Name ='PortName 2'; 
         port.sector__c = 'Africa';
         insert port;
         

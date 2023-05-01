@@ -155,9 +155,10 @@
     <externalSharingModel>Private</externalSharingModel>
     <label>Shipper</label>
     <nameField>
+        <displayFormat>Shipper-{00000}</displayFormat>
         <label>Shipper Name</label>
         <trackHistory>false</trackHistory>
-        <type>Text</type>
+        <type>AutoNumber</type>
     </nameField>
     <pluralLabel>Shippers</pluralLabel>
     <searchLayouts></searchLayouts>

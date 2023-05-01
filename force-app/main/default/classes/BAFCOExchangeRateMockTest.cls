@@ -2,7 +2,7 @@
 global class BAFCOExchangeRateMockTest implements HttpCalloutMock{
     global HttpResponse respond(HttpRequest request) {
         String json = '{'+
-		'    \"success\": true,'+
+		'    \"success\": true,'+ 
 		'    \"timestamp\": 1664000763,'+
 		'    \"base\": \"USD\",'+
 		'    \"date\": \"2022-09-24\",'+

@@ -2,7 +2,7 @@
 public class BAFCOGeneratePDFMobileControllerTest {
     @TestSetup
     static void setup() {
-        account acc = new Account();
+        account acc = new Account(); 
         acc.Branch__c = 'Jeddah';
         acc.Average_Credit_Days__c = 2;
         acc.Average_Margin__c =2;

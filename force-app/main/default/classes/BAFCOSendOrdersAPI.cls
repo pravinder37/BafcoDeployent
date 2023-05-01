@@ -3,7 +3,7 @@ public class BAFCOSendOrdersAPI {
     public static void sendOrderData(List<ID> orderIDList) {
         List<Order__c> orderList = [Select Order__c.Integration__c, Operations_Executive__r.BSLS_ID__c,Id,Account_Order__r.BSLS_ID__c,Account_Order__r.name,Account_Order__r.Branch__c,
                                     Account_Order__r.Owner.BSLS_ID__c	,Account_Order__r.BillingAddress,Name,Quotation__r.Name,
-                                    Quotation__r.Quotation_Validity__c,Order_Validity__c,(Select id,Order__r.Name,Name,Route_Order__r.Kind_Of_Shipment__c,Route_Order__r.Service_Type__c,
+                                    Quotation__r.Quotation_Validity__c,Order_Validity__c,(Select Order__r.Opportunity_Order__r.Commercial_User__r.Name,Total_Order__c,Quantity__c,id,Order__r.Name,Name,Route_Order__r.Kind_Of_Shipment__c,Route_Order__r.Service_Type__c,
                                     Shipping_Line__r.BSLS_ID__c,Pickup_Place__c,Discharge_Place__c,Port_of_Loading_Order__r.BSLS_ID__c,Port_of_Discharge_Order__r.BSLS_ID__c,
                                     Place_of_Pickup__r.BSLS_ID__c,Place_of_Discharge__r.BSLS_ID__c,Equipment_Type_Order__r.BSLS_ID__c,Agent__r.Name,Agent__r.BSLS_ID__c from Order_Items__r)  
                                     from Order__c where ID IN: orderIDList];
@@ -101,6 +101,9 @@ public class BAFCOSendOrdersAPI {
                             itemDto.placeOfPickup = item.Pickup_Place__c ;
                             itemDto.placeOfDischarge = item.Discharge_Place__c ;
                             itemDto.equipmentType = item.Equipment_Type_Order__r.BSLS_ID__c ;
+                            itemDto.quantity = String.valueOf(item.Quantity__c);
+                            itemDto.SellingRate = String.valueOf(item.Total_Order__c);
+                            itemDto.CommercialUser = item.Order__r.Opportunity_Order__r.Commercial_User__r.Name;
                             if(item.Agent__c != null){
                                 Agent agentObj = new Agent();
                                 agentObj.AgentName = item.Agent__r.Name;
@@ -257,6 +260,9 @@ public class BAFCOSendOrdersAPI {
         @AuraEnabled public List<Charges> Charges {get;Set;}
         @AuraEnabled public List<Consignee> Consignee {get;Set;}
         @AuraEnabled public List<Shipper> Shipper {get;Set;}
+        @AuraEnabled public String quantity {get;Set;}
+        @AuraEnabled public String SellingRate {get;Set;}
+        @AuraEnabled public String CommercialUser {get;Set;}
     }
     public class Agent{
         @AuraEnabled public String AgentName {get;Set;}

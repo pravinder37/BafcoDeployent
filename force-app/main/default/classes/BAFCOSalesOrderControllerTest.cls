@@ -1,7 +1,7 @@
 @isTest
 public class BAFCOSalesOrderControllerTest {
     @TestSetup
-    static void setup() {
+    static void setup() { 
         Account acc = new Account();
         acc.name = 'test';
         acc.branch__c ='Jeddah';

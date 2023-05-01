@@ -56,6 +56,10 @@
                 <behavior>Edit</behavior>
                 <field>Service_Type__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>autonumber__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>

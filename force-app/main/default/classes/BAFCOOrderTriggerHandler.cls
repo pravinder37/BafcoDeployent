@@ -29,6 +29,108 @@ public class BAFCOOrderTriggerHandler {
         system.debug('orderList'+orderList);
         
     }
+    public static void updateOrderName(List<Order__c> newList){
+        system.debug('newList'+newList);
+        List<Order__c> jubailRecord = [Select ID,Record_Number__c,Name,Branch__c from Order__c Where Branch__c='Jubail' AND Record_Number__c!=NULL order by Record_Number__c DESC ];
+        List<Order__c> jeddahRecord = [Select ID,Record_Number__c,Name,Branch__c from Order__c Where Branch__c='Jeddah' AND Record_Number__c!=NULL order by Record_Number__c DESC ];
+        List<Order__c> riyadRecord =  [Select ID,Record_Number__c,Name,Branch__c from Order__c Where Branch__c='Riyadh' AND Record_Number__c!=NULL order by Record_Number__c DESC ];
+        List<Order__c> dammamRecord = [Select ID,Record_Number__c,Name,Branch__c from Order__c Where Branch__c='Dammam' AND Record_Number__c!=NULL order by Record_Number__c DESC ];
+        
+        for(Order__c newOrder : newList){
+            if(newOrder.Branch__c!=NULL){
+                Decimal latestNumber;
+                if(newOrder.Branch__c=='Jubail'){
+                    if(jubailRecord.size()>0){                        
+                        system.debug('In jubailRecord');
+                        latestNumber=jubailRecord[0].Record_Number__c;
+                        if(newOrder.Record_Number__c!=NULL){
+                            newOrder.Record_Number__c=newOrder.Record_Number__c+1;
+                        }
+                        else{
+                            newOrder.Record_Number__c=1;
+                        }
+                        newOrder.Name =getLatestNameValue(latestNumber,'JUB','O');                        
+                        
+                    }else{
+                        String yearVal = String.valueOf(system.today().year()).right(2);
+                        newOrder.Name ='JUB/O/'+yearVal+'/1';
+                        newOrder.Record_Number__c=1;
+                    }
+                }
+                else if(newOrder.Branch__c=='Jeddah'){
+                    if(jeddahRecord.size()>0){                        
+                        system.debug('In jeddahRecord');
+                        latestNumber=jeddahRecord[0].Record_Number__c;
+                        if(newOrder.Record_Number__c!=NULL){
+                            newOrder.Record_Number__c=newOrder.Record_Number__c+1;
+                        }
+                        else{
+                            newOrder.Record_Number__c=1;
+                        }
+                        newOrder.Name =getLatestNameValue(latestNumber,'JED','O');                        
+                        
+                    }else{
+                        String yearVal = String.valueOf(system.today().year()).right(2);
+                        newOrder.Name ='JED/O/'+yearVal+'/1';
+                        newOrder.Record_Number__c=1;
+                    }
+                }
+                
+                else if(newOrder.Branch__c=='Riyadh'){
+                    if(riyadRecord.size()>0){                        
+                        system.debug('In riyadRecord');
+                        latestNumber=riyadRecord[0].Record_Number__c;
+                        if(newOrder.Record_Number__c!=NULL){
+                            newOrder.Record_Number__c=newOrder.Record_Number__c+1;
+                        }
+                        else{
+                            newOrder.Record_Number__c=1;
+                        }
+                        newOrder.Name =getLatestNameValue(latestNumber,'RYD','O');                        
+                        
+                    }else{
+                        String yearVal = String.valueOf(system.today().year()).right(2);
+                        newOrder.Name ='RYD/O/'+yearVal+'/1';
+                        newOrder.Record_Number__c=1;
+                    }
+                }
+                
+                else if(newOrder.Branch__c=='Dammam'){
+                    if(dammamRecord.size()>0){                        
+                        system.debug('In dammamRecord');
+                        latestNumber=dammamRecord[0].Record_Number__c;
+                        if(newOrder.Record_Number__c!=NULL){
+                            newOrder.Record_Number__c=newOrder.Record_Number__c+1;
+                        }
+                        else{
+                            newOrder.Record_Number__c=1;
+                        }
+                        newOrder.Name =getLatestNameValue(latestNumber,'DMM','O');                        
+                        
+                    }else{
+                        String yearVal = String.valueOf(system.today().year()).right(2);
+                        newOrder.Name ='DMM/O/'+yearVal+'/1';
+                        newOrder.Record_Number__c=1;
+                    }
+                }  
+            }               
+        }
+    }
+    
+    public static String getLatestNameValue(Decimal latestNumber,String BranchCode,String recordType){
+        String latestValue;
+        String yearVal = String.valueOf(system.today().year()).right(2);
+        //latestNumber = latestNumber.right(4);
+        system.debug('latestNumber'+latestNumber);
+        //Integer latestNumberVal = Integer.valueOf(latestNumber) + 1;
+        Decimal latestNumberVal = latestNumber+1;
+        system.debug('latestNumberVal : '+latestNumberVal);
+        
+        latestValue = BranchCode+'/'+recordType+'/'+yearVal+'/'+latestNumberVal;
+        system.debug('latestValue : '+latestValue);
+        return latestValue;        
+    }
+    
     public static void afterAction(List<Order__c> orderList){
         set<ID> orderIDSet = new Set<ID>();
         List<ID> orderIDList = new List<ID>();

@@ -5,7 +5,7 @@ public class QuotationItemTriggerHandlerTest {
        
         Account acc = new Account();
         acc.name = 'test';
-        acc.Branch__c = 'Jeddah';
+        acc.Branch__c = 'Jeddah'; 
         insert acc;
         opportunity opty = new Opportunity();
         opty.AccountId = acc.id;

@@ -3,7 +3,7 @@ public class BAFCOExchangeRateSchedulerTest {
 	public static testMethod void testschedule() {
         Exchange_Rate__c exObj = new Exchange_Rate__c();
         exObj.Currency_Code__c = 'INR';
-        exObj.Name = 'Indian Rupees';
+        exObj.Name = 'Indian Rupees'; 
         Insert exObj;
 		Test.StartTest();
         Test.setMock(HttpCalloutMock.class, new BAFCOExchangeRateMockTest());

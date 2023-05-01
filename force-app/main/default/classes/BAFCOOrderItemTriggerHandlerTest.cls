@@ -3,7 +3,7 @@ public class BAFCOOrderItemTriggerHandlerTest {
     @TestSetup
     static void setup() {
         Account acc = new Account();
-        acc.name = 'test';
+        acc.name = 'test'; 
         acc.branch__c ='Jeddah';
         insert acc;
         opportunity opty = new Opportunity();

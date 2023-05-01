@@ -1,7 +1,7 @@
 @isTest
 public class BAFCOImportQuoteControllerTest {
 	@TestSetup
-    static void setup() {
+    static void setup() { 
         Lead__c ld = new Lead__c();
         ld.Business_Type__c = 'Import';
         insert ld;

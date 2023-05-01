@@ -416,7 +416,7 @@ public class BAFCOSalesOrderController {
                         for(consigneeList consObj : consigneeList){
                             if(consObj.consigneeId != null){
                                 Consignee__c coObj = new Consignee__c();
-                                coObj.name= consObj.consigneeName;
+                                //coObj.name= consObj.consigneeName;
                                 coObj.Consignee__c=consObj.consigneeId;
                                 coObj.Order_Item__c = item.id;
                                 conList.add(coObj);
@@ -426,7 +426,7 @@ public class BAFCOSalesOrderController {
                     if(shipperList.size() > 0){
                         for(shipperList ssObj : shipperList){
                             Shipper__c shipObj = new Shipper__c();
-                            shipObj.name =ssObj.shipperName;
+                            //shipObj.name =ssObj.shipperName;
                             shipObj.Shipper__c = ssObj.shipperId;
                             shipObj.Order_Item__c= item.id;
                             shipList.add(shipObj);

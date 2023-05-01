@@ -3,7 +3,7 @@ public class BafcoDtoTest {
     testmethod static void justToCoverOrderDataWrapperDto(){
         OrderDataWrapper.OrderData orderDto = new OrderDataWrapper.OrderData();
         orderDto.Account = 'test';
-        orderDto.Amount = 'test';
+        orderDto.Amount = 'test'; 
         orderDto.Branch = 'test';
         orderDto.BusinessType = 'test';
         orderDto.Enquiry = 'test';

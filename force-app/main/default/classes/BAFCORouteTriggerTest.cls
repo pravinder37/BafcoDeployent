@@ -2,7 +2,7 @@
 public class BAFCORouteTriggerTest {
     @TestSetup
     static void setup() {
-        Account acc = new Account();
+        Account acc = new Account(); 
         acc.name = 'test';
         acc.Branch__c = 'Jeddah';
         insert acc;

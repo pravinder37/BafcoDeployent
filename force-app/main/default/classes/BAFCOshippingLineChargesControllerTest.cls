@@ -1,7 +1,7 @@
 @isTest
 public class BAFCOshippingLineChargesControllerTest {
 	 @TestSetup
-    static void setup() {
+    static void setup() { 
         Port__c port = new Port__c();
         port.City__c = 'Test';
         port.Sector__c='Africa';

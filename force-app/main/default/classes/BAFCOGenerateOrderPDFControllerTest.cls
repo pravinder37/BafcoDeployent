@@ -2,7 +2,7 @@
 public class BAFCOGenerateOrderPDFControllerTest {
 	@TestSetup
     static void setup() {
-        account acc = new Account();
+        account acc = new Account(); 
         acc.Branch__c = 'Jeddah';
         acc.Average_Credit_Days__c = 2;
         acc.Average_Margin__c =2;
@@ -91,6 +91,9 @@ public class BAFCOGenerateOrderPDFControllerTest {
         item.Port_of_Discharge_Order__c = port.id;
         item.Port_of_Loading_Order__c = port.id;
         item.Equipment_Type_Order__c = equip.id;
+        item.Quantity__c =1;
+         item.Buying_Rate__c= 3;
+        item.Total_Order__c =2;
        	orderItemList.add(item);
         
         Order_item__c item2 = new Order_item__c();
@@ -99,6 +102,9 @@ public class BAFCOGenerateOrderPDFControllerTest {
         item2.Port_of_Discharge_Order__c = port.id;
         item2.Port_of_Loading_Order__c = port.id;
         item2.Equipment_Type_Order__c = equip2.id;
+        item.Quantity__c =1;
+         item.Buying_Rate__c =3;
+        item.Total_Order__c =2;
        	orderItemList.add(item2);
         
         Order_item__c item3 = new Order_item__c();
@@ -107,6 +113,9 @@ public class BAFCOGenerateOrderPDFControllerTest {
         item3.Port_of_Discharge_Order__c = port.id;
         item3.Port_of_Loading_Order__c = port.id;
         item3.Equipment_Type_Order__c = equip2.id;
+        item.Quantity__c =1;
+        item.Total_Order__c =2;
+        item.Buying_Rate__c= 3;
        	orderItemList.add(item3);
         
         insert orderItemList;

@@ -3,7 +3,7 @@ public without sharing class BAFCOQuoteCopyContentController {
     public static List<QuoteLineList>  getQuoteDataOnLoad(String quoteId){
         List<QuoteLineList> quoteItemList = new List<QuoteLineList>();
         String SubjectLine = '';
-        List<Quotation_Item__c> quoteList = [Select Route__r.Commodity__r.name,Discharge_Place__c,Pickup_Place__c,Quotation__r.Account__r.Owner.Name,CurrencyIsoCode,Quotation__r.Name,Customer_Name__c,Shipping_Linee__r.name,Quantity__c,Route__r.Cargo_Weight__c,Rms__r.Free_time_POD__c, Rms__r.Free_time__c,Route__r.INCO_Term__r.name,Route__r.Service_Type__c,id,Quotation__r.Exclusions__c,Quotation__r.Inclusions__c,Quotation__r.Terms_and_Conditions__c,Total__c,Quotation__r.Recordtype.Name,Port_of_Loading__r.Name,Port_of_Discharge__r.Name,Equipment_Type__r.Name from Quotation_Item__c where quotation__c =: quoteId];
+        List<Quotation_Item__c> quoteList = [Select Quotation__r.Quotation_Validity__c, Route__r.Commodity__r.name,Discharge_Place__c,Pickup_Place__c,Quotation__r.Account__r.Owner.Name,CurrencyIsoCode,Quotation__r.Name,Customer_Name__c,Shipping_Linee__r.name,Quantity__c,Route__r.Cargo_Weight__c,Rms__r.Free_time_POD__c, Rms__r.Free_time__c,Route__r.INCO_Term__r.name,Route__r.Service_Type__c,id,Quotation__r.Exclusions__c,Quotation__r.Inclusions__c,Quotation__r.Terms_and_Conditions__c,Total__c,Quotation__r.Recordtype.Name,Port_of_Loading__r.Name,Port_of_Discharge__r.Name,Equipment_Type__r.Name from Quotation_Item__c where quotation__c =: quoteId];
         if(quoteList.size() > 0){
             Set<String> portStringSet = new Set<String>();
             Map<Id,String> itemIdToPortString = new  Map<Id,String>();
@@ -17,6 +17,7 @@ public without sharing class BAFCOQuoteCopyContentController {
             SubjectLine = SubjectLine.removeEnd(',');
             for(Quotation_Item__c item : quoteList){
                 QuoteLineList dto = new QuoteLineList();
+                dto.quotationValidity = item.Quotation__r.Quotation_Validity__c != null ? (item.Quotation__r.Quotation_Validity__c.day()+'-'+ BAFCOLeadDetailsController.getMonthName(item.Quotation__r.Quotation_Validity__c.month()) +'-'+item.Quotation__r.Quotation_Validity__c.year()) : '-';
                 dto.quoteName = item.Quotation__r.name;
                 dto.loadingPort = item.Port_of_Loading__c != null ? item.Port_of_Loading__r.Name : '';
                 dto.dischargePort = item.Port_of_Discharge__c != null ? item.Port_of_Discharge__r.Name : '';
@@ -137,6 +138,7 @@ public without sharing class BAFCOQuoteCopyContentController {
     }
     public class QuoteLineList{
         @AuraEnabled public String loadingPort{get;set;}
+        @AuraEnabled public String quotationValidity{get;set;}
         @AuraEnabled public String dischargePort{get;set;}
         @AuraEnabled public String equipmentType{get;set;}
         @AuraEnabled public Decimal total{get;set;}

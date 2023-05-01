@@ -161,11 +161,10 @@
     <externalSharingModel>ControlledByParent</externalSharingModel>
     <label>Order</label>
     <nameField>
-        <displayFormat>ORD-{MM}/{YY}-{000}</displayFormat>
         <label>Order</label>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>true</trackHistory>
-        <type>AutoNumber</type>
+        <type>Text</type>
     </nameField>
     <pluralLabel>Orders</pluralLabel>
     <recordTypeTrackFeedHistory>false</recordTypeTrackFeedHistory>

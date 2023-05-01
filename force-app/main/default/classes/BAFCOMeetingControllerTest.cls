@@ -1,7 +1,7 @@
 @isTest
 public class BAFCOMeetingControllerTest {
 	@TestSetup
-    static void setup() {
+    static void setup() { 
        Account acc = new Account();
         acc.Branch__c = 'Jeddah';
         acc.Average_Credit_Days__c = 2;

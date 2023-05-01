@@ -49,6 +49,7 @@ export default class BAFCOSalesOrderParent extends LightningElement {
         });
     }
     getRouteItem(){
+        console.log('quotes '+this.quoteID)
         getRouteItem({quoteId : this.quoteID})
         .then(result =>{
             //console.log('getRouteItem  result : ', JSON.stringify(result,null,2));

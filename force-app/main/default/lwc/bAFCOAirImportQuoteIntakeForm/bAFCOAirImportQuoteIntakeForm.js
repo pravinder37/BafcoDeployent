@@ -408,7 +408,7 @@ export default class BAFCOAirImportQuoteIntakeForm extends NavigationMixin(Light
             if(elem.uniqueEquip == this.shippingEquipTabSelected)  {
                 tabView = elem.equipmentName;
                 this.chargeableWeight = elem.chargeableWeight;
-                this.buyingRateInput = parseInt(elem.chargeableWeight) * parseInt(elem.rateKgs);
+                this.buyingRateInput = (parseFloat(elem.chargeableWeight) * parseFloat(elem.rateKgs)).toFixed(2);
                 if(elem.isFDAccount == true){
                     tempList3.push({
                         'name':'Freight Difference(FD)',
@@ -670,7 +670,7 @@ export default class BAFCOAirImportQuoteIntakeForm extends NavigationMixin(Light
                 }
             }
         }
-        if(this.buyingRateInput > 0) dtoTotal = parseInt(dtoTotal) + parseInt(this.buyingRateInput);
+        if(this.buyingRateInput > 0) dtoTotal = (parseFloat(dtoTotal) + parseFloat(this.buyingRateInput)).toFixed(2);
         this.buyingRate = dtoTotal > 0 ? dtoTotal : 0;
     }
     @api handleUpdateCalculation(){
@@ -1318,7 +1318,7 @@ export default class BAFCOAirImportQuoteIntakeForm extends NavigationMixin(Light
         }
     }
     handlebuyingRateChange(e){
-        this.buyingRateInput = parseInt(e.target.value);
+        this.buyingRateInput = parseFloat(e.target.value);
         let BuyingRateField = this.template.querySelector("[data-field='BuyingRateField']")
             BuyingRateField.setCustomValidity("");
             BuyingRateField.reportValidity();

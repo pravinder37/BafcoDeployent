@@ -1,7 +1,7 @@
 @istest
 public class BAFCOQuoteCopyContentControllerTest {
 @TestSetup
-    static void setup() {
+    static void setup() { 
        
         Account acc = new Account();
         acc.name = 'test';

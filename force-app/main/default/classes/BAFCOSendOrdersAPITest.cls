@@ -139,13 +139,13 @@ public class BAFCOSendOrdersAPITest {
         
         Consignee__c ConSobj = new Consignee__c();
         ConSobj.Consignee__c = quote.Account__c;
-        ConSobj.Name = 'test';
+        //ConSobj.Name = 'test';
         ConSobj.Order_Item__c = item.id;        
         insert ConSobj;
         
         Shipper__c shipperObj = new Shipper__c();
         shipperObj.Shipper__c = quote.Account__c;
-        shipperObj.Name = 'test';
+       // shipperObj.Name = 'test';
         shipperObj.Order_Item__c = item.id;        
         insert shipperObj;
         test.startTest();

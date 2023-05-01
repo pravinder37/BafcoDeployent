@@ -161,11 +161,10 @@
     <externalSharingModel>ControlledByParent</externalSharingModel>
     <label>Quotation</label>
     <nameField>
-        <displayFormat>JED-{MM}/{YY}-{000}</displayFormat>
         <label>Quotation Number</label>
         <trackFeedHistory>false</trackFeedHistory>
         <trackHistory>true</trackHistory>
-        <type>AutoNumber</type>
+        <type>Text</type>
     </nameField>
     <pluralLabel>Quotations</pluralLabel>
     <recordTypeTrackFeedHistory>false</recordTypeTrackFeedHistory>

@@ -13,6 +13,8 @@ public class BAFCOGenerateOrderPDFController {
     public Boolean isLCL {get;set;}
     public String loadingPortLabel { get; set; }
     public String destinationPortLabel { get; set; }
+    public Boolean isImport {get;set;}
+    public Boolean isExport {get;set;}
     public BAFCOGeneratePDFDto dto {get;set;}
     public BAFCOGenerateOrderPDFController(ApexPages.StandardController controller){
         Map<String, String> pageParameters = ApexPages.currentPage().getParameters();
@@ -31,7 +33,7 @@ public class BAFCOGenerateOrderPDFController {
         Boolean has40HCEquip = false;
         Boolean DC20Added = false;
         if(this.recordId != null ){
-            Order__c orderObj = [Select isAir__c,isLCL__c,id,Recordtype.Name,Quotation__r.Terms_and_Conditions__c,RecordtypeId,
+            Order__c orderObj = [Select Quotation__r.NAme,isAir__c,isLCL__c,id,Recordtype.Name,Quotation__r.Terms_and_Conditions__c,RecordtypeId,
                                  Quotation__r.Effective_From__c,Quotation__r.Payment_Terms__c,Quotation__r.Inclusions__c,
                                  Quotation__r.Exclusions__c,Quotation__r.Remarks__c,Account_Order__r.Name,Name,
                                  (Select Route_Order__r.Service_Type__c,Route_Order__r.INCO_Term__r.name from Order_Items__r),createdDate,CreatedBy.Name,Quotation__r.Quotation_Validity__c from Order__c where id =: this.recordId];
@@ -48,11 +50,13 @@ public class BAFCOGenerateOrderPDFController {
                 this.loadingPortLabel ='Port of Loading :';
                 this.destinationPortLabel = 'Port of Destination :';
             }
-            this.dto.quoteIssued = orderObj.createdDate.day()+'-'+ BAFCOLeadDetailsController.getMonthName(orderObj.createdDate.month()) +'-'+orderObj.createdDate.year();
+            this.dto.quoteIssued =orderObj.Quotation__r.NAme+' | '+ orderObj.createdDate.day()+'-'+ BAFCOLeadDetailsController.getMonthName(orderObj.createdDate.month()) +'-'+orderObj.createdDate.year();
             this.dto.preparedBy = orderObj.CreatedBy.Name;
             this.dto.paymentTerm = orderObj.Quotation__r.Payment_Terms__c;
             this.dto.recordTypeName = orderObj.RecordType.Name;
             if(orderObj.recordtypeId == EXPORT_RECORDTYPE_Id){
+                this.isImport = false;
+                this.isExport = true;
                 List<String> inclusionList =orderObj.Quotation__r.Inclusions__c != null ? orderObj.Quotation__r.Inclusions__c.split(';;') : null; 
                 if(inclusionList != null && inclusionList.size() > 0){
                     this.dto.inclusionHeader = inclusionList[0] != null ? inclusionList[0] : null;
@@ -69,6 +73,8 @@ public class BAFCOGenerateOrderPDFController {
                 }
             }
             else if(orderObj.recordtypeId == IMPORT_RECORDTYPE_Id){
+                this.isImport = true;
+                this.isExport = false;
                 List<String> termsList =orderObj.Quotation__r.Terms_and_Conditions__c != null ? orderObj.Quotation__r.Terms_and_Conditions__c.split(';;') : null; 
                 if(termsList != null && termsList.size() > 0){
                     this.dto.termsNConditionHeader = termsList[0] != null ? termsList[0] : null;
@@ -113,7 +119,7 @@ public class BAFCOGenerateOrderPDFController {
                 this.dto.phone = '-';
                 this.dto.email ='-';
             }
-            List<Order_Item__c> quoteItem = [SELECT Commodity__c,Route__r.Commodity__r.name,Airport_of_Destination__r.name,Airport_of_Loading__r.Name,Order__r.isAir__c,Tab_View__c,Order__r.isLCL__c,Tank_Rental_Charges__c,Shipping_Line__r.name,Ex_Works_Charge_Name__r.name,Route_Order__r.Service_Type__c,Id,Route_Order__r.Name, Name, Order__c, Agent__c, BAF_Order__c, BL_Fees__c, Bayan_Charges__c,
+            List<Order_Item__c> quoteItem = [SELECT Quotation_Item__r.Quotation__r.Name,Commodity__c,Route__r.Commodity__r.name,Airport_of_Destination__r.name,Airport_of_Loading__r.Name,Order__r.isAir__c,Tab_View__c,Order__r.isLCL__c,Tank_Rental_Charges__c,Shipping_Line__r.name,Ex_Works_Charge_Name__r.name,Route_Order__r.Service_Type__c,Id,Route_Order__r.Name, Name, Order__c, Agent__c, BAF_Order__c, BL_Fees__c, Bayan_Charges__c,
                                              Bayan_Order__c, Bayan_cancellation_charge_Order__c, Bunker_surcharge_Order__c,
                                              CMC_Order__c, Carriage_Congestion_Surcharge__c, Carrier_Security_Fees__c,
                                              Cleaning_charges_Order__c, Container_Lashing_Charges_Order__c, Container_movement_charges_Order__c,
@@ -141,9 +147,30 @@ public class BAFCOGenerateOrderPDFController {
                                              where Order__c =: this.recordId];
             if(quoteItem.size() > 0){
                 List<BAFCOGeneratePDFDto.serviceChargeList> quoteItemDto = new List<BAFCOGeneratePDFDto.serviceChargeList>();
-                for(Order_Item__c item : quoteItem){
-                    BAFCOGeneratePDFDto.serviceChargeList itemDto = new BAFCOGeneratePDFDto.serviceChargeList();
-                    itemDto.shippingLine = item.Shipping_Line__r.name;
+                List<BAFCOGeneratePDFDto.ContainerList> containerDtoList = new List<BAFCOGeneratePDFDto.ContainerList>();
+                List<BAFCOGeneratePDFDto.ContainerExportList> containerExportDtoList = new List<BAFCOGeneratePDFDto.ContainerExportList>();
+                for(Order_Item__c item : quoteItem){                    
+                    BAFCOGeneratePDFDto.ContainerList contDto = new BAFCOGeneratePDFDto.ContainerList();
+                    contDto.quoteNo = item.Quotation_Item__r.Quotation__r.Name;
+                    contDto.qty = item.Quantity__c;
+                    contDto.equipmentType = item.Equipment_Type_Order__r.name;
+                    contDto.BuyingRate = item.Buying_Rate__c;
+                    contDto.exWorks = 0;
+                    contDto.perShipment = item.Buying_Rate__c;
+                    contDto.total = (item.Quantity__c > 0 ? item.Quantity__c : 0) * (item.Buying_Rate__c  > 0 ? item.Buying_Rate__c : 0);
+                    containerDtoList.add(contDto);
+                    
+                    BAFCOGeneratePDFDto.ContainerExportList conExportDto = new BAFCOGeneratePDFDto.ContainerExportList();
+                    conExportDto.quoteNo = item.Quotation_Item__r.Quotation__r.Name;
+                    conExportDto.qty = item.Quantity__c;
+                    conExportDto.equipmentType = item.Equipment_Type_Order__r.name;
+                    conExportDto.unitPrice = item.Total_Order__c;
+                    conExportDto.freight = (item.Quantity__c > 0 ? item.Quantity__c : 0) * (item.Total_Order__c  > 0 ? item.Total_Order__c : 0);
+                    conExportDto.commodity = item.Commodity__c;
+                    containerExportDtoList.add(conExportDto);
+                    
+                    BAFCOGeneratePDFDto.serviceChargeList itemDto = new BAFCOGeneratePDFDto.serviceChargeList();                       
+                    itemDto.shippingLine = item.Shipping_Line__r.name != null ? item.Shipping_Line__r.name  : '-';
                     system.debug('item.Pickup_Place__c '+item.Pickup_Place__c);
                     if(item.Pickup_Place__c != null ) this.showPickupPlace = true;
                     if(item.Discharge_Place__c != null ) this.showPickupDischarge = true;
@@ -302,6 +329,61 @@ public class BAFCOGenerateOrderPDFController {
                     quoteItemDto.add(itemDto);
                 }
                 this.dto.serviceChargeList = quoteItemDto; 
+                this.dto.ContainerList = containerDtoList;
+                this.dto.ContainerExportList = containerExportDtoList;
+                
+                //ConsigneeList
+                List<BAFCOGeneratePDFDto.consigneeList> consigneeList = new List<BAFCOGeneratePDFDto.consigneeList>();
+                List<Id> ConsigneeAcctIds = new List<Id>();
+                List<Consignee__c> consigneeRecords = new List<Consignee__c>();
+                Map<Id,Contact> acctidToContactMap = new Map<Id,Contact>();
+                for(Consignee__c consigneeObj : [Select id, Consignee__r.name from Consignee__c where Order_Item__c =: quoteItem[0].id]){
+                    ConsigneeAcctIds.add(consigneeObj.Consignee__c);
+                    consigneeRecords.add(consigneeObj);
+                }
+                for(Contact con : [Select Name,Email,phone,MobilePhone,Account.name from contact where AccountId in : ConsigneeAcctIds order by createddate desc limit 1]){
+                    acctidToContactMap.put(con.Accountid,con);
+                }
+                for(Consignee__c consigneeObj : consigneeRecords ){
+                    BAFCOGeneratePDFDto.consigneeList consDto = new BAFCOGeneratePDFDto.consigneeList();
+                    consDto.consignee = consigneeObj.Consignee__r.Name;
+                    if(acctidToContactMap.containsKey((consigneeObj.Consignee__c))){
+                        Contact cont = acctidToContactMap.get(consigneeObj.Consignee__c);
+                        consDto.contact = cont.Name;
+                        consDto.phone = cont.phone;
+                        consDto.mobile  = cont.MobilePhone;
+                        consDto.email = cont.Email;
+                    }
+                    consigneeList.add(consDto);
+                }
+                if(consigneeList.size() > 0) this.dto.consigneeList = consigneeList;
+                
+                //Shipper List 
+                
+                List<BAFCOGeneratePDFDto.shipperList> shipperList = new List<BAFCOGeneratePDFDto.shipperList>();
+                List<Id> shipperListAcctIds = new List<Id>();
+                List<Shipper__c> shipperRecords = new List<Shipper__c>();
+                Map<Id,Contact> acctidToShippContactMap = new Map<Id,Contact>();
+                for(Shipper__c ShipperObj : [Select id, Shipper__r.name from Shipper__c where Order_Item__c =: quoteItem[0].id]){
+                    shipperListAcctIds.add(ShipperObj.Shipper__c);
+                    shipperRecords.add(ShipperObj);
+                }
+                for(Contact con : [Select Name,Email,phone,MobilePhone,Account.name from contact where AccountId in : shipperListAcctIds order by createddate desc limit 1]){
+                    acctidToShippContactMap.put(con.Accountid,con);
+                }
+                for(Shipper__c ShipperObj : shipperRecords ){
+                    BAFCOGeneratePDFDto.shipperList consDto = new BAFCOGeneratePDFDto.shipperList();
+                    consDto.shipper = ShipperObj.Shipper__r.Name;
+                    if(acctidToShippContactMap.containsKey((ShipperObj.Shipper__c))){
+                        Contact cont = acctidToShippContactMap.get(ShipperObj.Shipper__c);
+                        consDto.contact = cont.Name;
+                        consDto.phone = cont.phone;
+                        consDto.mobile  = cont.MobilePhone;
+                        consDto.email = cont.Email;
+                    }
+                    shipperList.add(consDto);
+                }
+                if(shipperList.size() > 0) this.dto.shipperList = shipperList;
             }
         }
     }

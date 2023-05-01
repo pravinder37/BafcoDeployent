@@ -22,6 +22,10 @@ public class BAFCOGeneratePDFDto {
     @AuraEnabled public string termsNConditionHeader{get;set;}
     @AuraEnabled public List<string> termsNConditionList{get;set;}
     @AuraEnabled public List<serviceChargeList> serviceChargeList{get;set;}
+    @AuraEnabled public List<consigneeList> consigneeList{get;set;}
+    @AuraEnabled public List<shipperList> shipperList{get;set;}
+    @AuraEnabled public List<ContainerList> ContainerList{get;set;}
+    @AuraEnabled public List<ContainerExportList> ContainerExportList{get;set;}
     
     public class serviceChargeList{
         @AuraEnabled public string shippingLine{get;set;}
@@ -38,7 +42,7 @@ public class BAFCOGeneratePDFDto {
         @AuraEnabled public string equipmentTypeDC{get;set;}
         @AuraEnabled public string serviceType{get;set;}
         @AuraEnabled public string commodity{get;set;}
-         @AuraEnabled public Decimal quantity{get;set;}
+        @AuraEnabled public Decimal quantity{get;set;}
         @AuraEnabled
         public BAFCOImportRMSDto.destinChargeObj destinChargeObj { get; set; }
         @AuraEnabled
@@ -63,5 +67,40 @@ public class BAFCOGeneratePDFDto {
         public BAFCOImportRMSDto.additionalChargesObj additionalChargesObj { get; set; }
         @AuraEnabled
         public BAFCOImportRMSDto.exWorksObj exWorksObj { get; set; }
+    }
+    public Class consigneeList{
+        @AuraEnabled public string consignee{get;set;}
+        @AuraEnabled public string contact{get;set;}
+        @AuraEnabled public string phone{get;set;}
+        @AuraEnabled public string email{get;set;}
+        @AuraEnabled public string mobile{get;set;}
+        @AuraEnabled public string consigneeRef{get;set;}
+    }
+    public Class shipperList{
+        @AuraEnabled public string shipper{get;set;}
+        @AuraEnabled public string contact{get;set;}
+        @AuraEnabled public string phone{get;set;}
+        @AuraEnabled public string email{get;set;}
+        @AuraEnabled public string mobile{get;set;}
+        @AuraEnabled public string notify{get;set;}
+    }
+    public class ContainerList{
+        @AuraEnabled public string quoteNo{get;set;}
+        @AuraEnabled public Decimal qty{get;set;}
+        @AuraEnabled public string equipmentType{get;set;}
+        @AuraEnabled public Decimal BuyingRate{get;set;}
+        @AuraEnabled public Decimal exWorks{get;set;}
+        @AuraEnabled public Decimal perShipment{get;set;}
+        @AuraEnabled public Decimal total{get;set;}
+        @AuraEnabled public string agentShare{get;set;}
+        @AuraEnabled public Decimal agentShareTotal{get;set;}
+    }
+    public class ContainerExportList{
+        @AuraEnabled public string quoteNo{get;set;}
+        @AuraEnabled public Decimal qty{get;set;}
+        @AuraEnabled public string equipmentType{get;set;}
+        @AuraEnabled public Decimal unitPrice{get;set;}
+        @AuraEnabled public Decimal freight{get;set;}
+        @AuraEnabled public String commodity{get;set;}
     }
 }

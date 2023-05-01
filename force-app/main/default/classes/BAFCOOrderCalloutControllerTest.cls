@@ -1,7 +1,7 @@
 @isTest
 public class BAFCOOrderCalloutControllerTest {
 @TestSetup
-    static void setup() {
+    static void setup() { 
         Commodity__c comd = new Commodity__c();
         comd.Name = 'CommodityName';
         comd.DG_Class__c = 'test';
@@ -133,13 +133,11 @@ public class BAFCOOrderCalloutControllerTest {
         
         Consignee__c ConSobj = new Consignee__c();
         ConSobj.Consignee__c = quote.Account__c;
-        ConSobj.Name = 'test';
         ConSobj.Order_Item__c = item.id;        
         insert ConSobj;
         
         Shipper__c shipperObj = new Shipper__c();
         shipperObj.Shipper__c = quote.Account__c;
-        shipperObj.Name = 'test';
         shipperObj.Order_Item__c = item.id;        
         insert shipperObj;
         test.startTest();

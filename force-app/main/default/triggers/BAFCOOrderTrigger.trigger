@@ -2,6 +2,7 @@ trigger BAFCOOrderTrigger on Order__c (before Insert,after insert, after update,
     if(trigger.isBefore){
         if(trigger.isInsert){
             BAFCOOrderTriggerHandler.beforeAction(trigger.new);
+            //BAFCOOrderTriggerHandler.updateOrderName(trigger.new);
         }
     }
     if(trigger.isAfter){

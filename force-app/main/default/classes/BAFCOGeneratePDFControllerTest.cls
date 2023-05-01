@@ -1,7 +1,7 @@
 @isTest
 public class BAFCOGeneratePDFControllerTest {
     @TestSetup
-    static void setup() {
+    static void setup() { 
         account acc = new Account();
         acc.Branch__c = 'Jeddah';
         acc.Average_Credit_Days__c = 2;

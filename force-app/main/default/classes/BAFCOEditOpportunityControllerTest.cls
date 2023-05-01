@@ -3,7 +3,7 @@ public class BAFCOEditOpportunityControllerTest {
     @TestSetup
     static void setup() {   
         List<Port__c> portList = new List<Port__c>();
-        Port__c port = new Port__c();
+        Port__c port = new Port__c(); 
         port.City__c = 'Test';
         port.Name ='PortName';
         port.sector__c = 'Africa';
