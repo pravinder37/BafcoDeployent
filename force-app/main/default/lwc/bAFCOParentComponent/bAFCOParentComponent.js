@@ -14,6 +14,8 @@ export default class BAFCOParentComponent extends LightningElement {
     @track showQuoteButton = false;
     @track validityDate = '';
     @track quoteId = '';
+    @track routeCustomerAvgMargin = 0;
+    @track routeAvgMargin = 0;
     vectorPng = VECTOR;
     minTodaysDate ='';
 
@@ -50,7 +52,7 @@ export default class BAFCOParentComponent extends LightningElement {
             console.log('enquery  result : ', JSON.stringify(result,null,2));
             this.routingDetailsList = result;
             this.leadId = this.routingDetailsList[0].leadId;
-            this.accountAvgMargin = this.routingDetailsList[0].accountAvgMargin;
+            //this.accountAvgMargin = this.routingDetailsList[0].accountAvgMargin;
             this.accountBestMargin = this.routingDetailsList[0].accountBestMargin;
             this.accountAvgCreditDays = this.routingDetailsList[0].accountAvgCreditDays;
         }).catch(error=>{
@@ -81,6 +83,9 @@ export default class BAFCOParentComponent extends LightningElement {
             index = i;
         }
         if(index != -1){
+            this.accountAvgMargin = this.routingDetailsList[index].accountAvgMargin;
+            this.routeCustomerAvgMargin = this.routingDetailsList[index].routeCustomerAvgMargin;
+            this.routeAvgMargin = this.routingDetailsList[index].routeAvgMargin;
             setTimeout(() => {
                 this.template.querySelectorAll("c-b-a-f-c-o-routing-details-intake-form")[index].handleUpdateCalculation();
             }, 200);
@@ -145,5 +150,5 @@ export default class BAFCOParentComponent extends LightningElement {
         }
         dateField.reportValidity();
     }
-    
+
 }

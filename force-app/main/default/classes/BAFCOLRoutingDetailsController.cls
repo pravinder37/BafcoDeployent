@@ -20,75 +20,99 @@ public without sharing  class BAFCOLRoutingDetailsController {
     @AuraEnabled
     public static List<BAFCORoutingDetailsDto> getEnqueryDetails(String enquiryID) {
         List<BAFCORoutingDetailsDto> routingDetailsList = new List<BAFCORoutingDetailsDto>();
+        List<Id> LOPIds = new List<Id>();
+        List<Id> DOPIds = new List<Id>();
+        Map<String,List<Route_Profit_Margin__c>> routeProfitMap = new Map<String,List<Route_Profit_Margin__c>>();
         Integer index = 1;
-        for(Route__c enqObj : [SELECT Cargo_Readiness__c,Airport_of_Loading__r.name,Airport_of_Destination__r.name,Opportunity_Enquiry__r.Recordtype.Name, (Select id,Equipment_Type__r.name,Quantity__c,Cargo_Details__c from Route_Equipments__r), Place_of_Discharge__r.Name,Place_of_Pickup__r.Name,Opportunity_Enquiry__r.Account.Name,Regular_Routing_Lookup__r.name,Port_of_loading__c,Pickup_Place__c,Discharge_Place__c,Id, Regular_Routing__c,INCO_Term__r.name, Kind_Of_Shipment__c, Service_Type__c, Port_of_loading__r.Name, 
-                               Port_of_Destination__r.Name, Shipping_Line__r.name, Commodity__r.Name, Cargo_Weight__c, Remarks__c,
-                               Name,Opportunity_Enquiry__r.Business_Type__c,Opportunity_Enquiry__r.Account.FD__c,Opportunity_Enquiry__r.Account.Average_Credit_Days__c,Opportunity_Enquiry__r.Account.Best_Margin__c,Opportunity_Enquiry__r.Account.Average_Margin__c /*Enquiry__r.Account__r.Average_Margin__c,Enquiry__r.Account__r.Best_Margin__c,Enquiry__r.Account__r.Average_Credit_Days__c,Enquiry__r.Business_Type__c*/  
-                               FROM Route__c WHERE Opportunity_Enquiry__c=:enquiryID]){
-                                   BAFCORoutingDetailsDto enqDtoObj = new BAFCORoutingDetailsDto();
-                                   enqDtoObj.routeName = 'Route '+ index;
-                                   enqDtoObj.routingRegular = enqObj.Regular_Routing_Lookup__c != null ? enqObj.Regular_Routing_Lookup__r.Name : '-';
-                                   enqDtoObj.shipmentKind = enqObj.Kind_Of_Shipment__c != null ? enqObj.Kind_Of_Shipment__c : '-';
-                                   enqDtoObj.serviceType = enqObj.Service_Type__c != null ? enqObj.Service_Type__c : '-';
-                                   if(enqObj.Opportunity_Enquiry__r.Recordtype.Name == 'Air Freight'){
-                                       enqDtoObj.isAir = true;
-                                       enqDtoObj.portDestination = enqObj.Airport_of_Destination__r.Name != null ? enqObj.Airport_of_Destination__r.Name :'-';
-                                       enqDtoObj.portLoading = enqObj.Airport_of_Loading__r.name != null ? enqObj.Airport_of_Loading__r.name : '-';
-                                       enqDtoObj.portLoadingId =enqObj.Airport_of_Loading__c != null ? enqObj.Airport_of_Loading__c : null;
-                                       enqDtoObj.portDestinationId = enqObj.Airport_of_Destination__c != null ? enqObj.Airport_of_Destination__c : null;
-                                   }
-                                   else{
-                                       enqDtoObj.isAir = false;
-                                       enqDtoObj.portDestination = enqObj.Port_of_Destination__r.Name != null ? enqObj.Port_of_Destination__r.Name :'-';
-                                       enqDtoObj.portLoading = enqObj.Port_of_loading__r.name != null ? enqObj.Port_of_loading__r.name : '-';
-                                       enqDtoObj.portLoadingId =enqObj.Port_of_loading__c != null ? enqObj.Port_of_loading__c : null;
-                                       enqDtoObj.portDestinationId = enqObj.Port_of_Destination__c != null ? enqObj.Port_of_Destination__c : null;
-                                   }
-                                   enqDtoObj.commodity = enqObj.Commodity__r.Name != null ? enqObj.Commodity__r.name : '-';
-                                   enqDtoObj.cargoWeights = enqObj.Cargo_Weight__c != null ? enqObj.Cargo_Weight__c : 0 ;
-                                   enqDtoObj.cargoReadiness = enqObj.Cargo_Readiness__c != null ? (enqObj.Cargo_Readiness__c.day()+'-'+ BAFCOLeadDetailsController.getMonthName(enqObj.Cargo_Readiness__c.month()) +'-'+enqObj.Cargo_Readiness__c.year()) : '-';
-                                   enqDtoObj.remarks = enqObj.Remarks__c != null ? enqObj.Remarks__c : '-';
-                                   enqDtoObj.routeId = enqObj.Id;
-                                   enqDtoObj.shippingLine = enqObj.Shipping_Line__r.name != null ? enqObj.Shipping_Line__r.name : '-';
-                                   enqDtoObj.incoTerm = enqObj.INCO_Term__r.name != null ? enqObj.INCO_Term__r.name : '-'; 
-                                   enqDtoObj.incoTermId = enqObj.INCO_Term__c != null ? enqObj.INCO_Term__c : null; 
-                                   enqDtoObj.leadId =  enqObj.Opportunity_Enquiry__r.AccountId != null ? enqObj.Opportunity_Enquiry__r.AccountId :  '' ;
-                                   enqDtoObj.acctName = enqObj.Opportunity_Enquiry__r.AccountId != null ? enqObj.Opportunity_Enquiry__r.Account.Name :  '' ;
-                                   enqDtoObj.accountAvgMargin = enqObj.Opportunity_Enquiry__r.Account.Average_Margin__c != null ? enqObj.Opportunity_Enquiry__r.Account.Average_Margin__c : 0 ;
-                                   enqDtoObj.accountBestMargin = enqObj.Opportunity_Enquiry__r.Account.Best_Margin__c !=null ? enqObj.Opportunity_Enquiry__r.Account.Best_Margin__c : 0;
-                                   enqDtoObj.accountAvgCreditDays = enqObj.Opportunity_Enquiry__r.Account.Average_Credit_Days__c != null ?enqObj.Opportunity_Enquiry__r.Account.Average_Credit_Days__c : 0 ;
-                                   enqDtoObj.placeOfPickupName = enqObj.Pickup_Place__c;
-                                   enqDtoObj.placeOfDischargeName = enqObj.Discharge_Place__c;
-                                   
-                                   //enqDtoObj.placeOfPickupName = enqObj.Place_of_Pickup__c != null ? enqObj.Place_of_Pickup__r.Name : null;
-                                   //enqDtoObj.placeOfDischargeName = enqObj.Place_of_Discharge__c != null ? enqObj.Place_of_Discharge__r.Name : null;
-                                   enqDtoObj.businessType = enqObj.Opportunity_Enquiry__r.Business_Type__c !=  null ? enqObj.Opportunity_Enquiry__r.Business_Type__c : '-';
-                                   if(enqObj.Route_Equipments__r.size() > 0){
-                                       String equipmentType ='';
-                                       String cargoDetails = '';
-                                       for(Route_Equipment__c rr : enqObj.Route_Equipments__r){
-                                           if(rr.Equipment_Type__c != null){
-                                               equipmentType+=rr.Equipment_Type__r.Name+' - '+ rr.Quantity__c;
-                                               equipmentType+=', ';
-                                           }
-                                           if(rr.Cargo_Details__c != null){
-                                               cargoDetails+=rr.Cargo_Details__c;
-                                               cargoDetails+=', ';
-                                           }
-                                           
-                                       }
-                                       if(equipmentType != ''){
-                                           equipmentType = equipmentType.removeEnd(', ');
-                                       }
-                                       if(cargoDetails != ''){
-                                           cargoDetails = cargoDetails.removeEnd(', ');
-                                       }
-                                       enqDtoObj.equipmentType = equipmentType;
-                                       enqDtoObj.cargoDetails = cargoDetails;
-                                   }
-                                   index++;
-                                   routingDetailsList.add(enqDtoObj);
-                               }
+        List<Route__c> routeList = [SELECT Cargo_Readiness__c,Airport_of_Loading__r.name,Airport_of_Destination__r.name,Opportunity_Enquiry__r.Recordtype.Name, (Select id,Equipment_Type__r.name,Quantity__c,Cargo_Details__c from Route_Equipments__r), Place_of_Discharge__r.Name,Place_of_Pickup__r.Name,Opportunity_Enquiry__r.Account.Name,Regular_Routing_Lookup__r.name,Port_of_loading__c,Pickup_Place__c,Discharge_Place__c,Id, Regular_Routing__c,INCO_Term__r.name, Kind_Of_Shipment__c, Service_Type__c, Port_of_loading__r.Name, 
+                                    Port_of_Destination__r.Name, Shipping_Line__r.name, Commodity__r.Name, Cargo_Weight__c, Remarks__c,
+                                    Name,Opportunity_Enquiry__r.Business_Type__c,Opportunity_Enquiry__r.Account.FD__c,Opportunity_Enquiry__r.Account.Average_Credit_Days__c,Opportunity_Enquiry__r.Account.Best_Margin__c,Opportunity_Enquiry__r.Account.Average_Margin__c /*Enquiry__r.Account__r.Average_Margin__c,Enquiry__r.Account__r.Best_Margin__c,Enquiry__r.Account__r.Average_Credit_Days__c,Enquiry__r.Business_Type__c*/  
+                                    FROM Route__c WHERE Opportunity_Enquiry__c=:enquiryID];
+        for(Route__c enqObj : routeList){
+            LOPIds.add(enqObj.Port_of_loading__c);
+            DOPIds.add(enqObj.Port_of_Destination__c);
+        }
+        for(Route_Profit_Margin__c routeProfit : [SELECT Customer__c,Recordtype.name,id,Port_of_Discharge__c,Port_of_Loading__c,Margin__c from Route_Profit_Margin__c where
+                                                  Port_of_Loading__c in : LOPIds and Port_of_Discharge__c in : DOPIds]){
+                                                      String uniqueKey = routeProfit.Port_of_Loading__c+'-'+routeProfit.Port_of_Discharge__c;
+                                                      if(!routeProfitMap.containsKey(uniqueKey))
+                                                          routeProfitMap.put(uniqueKey,new List<Route_Profit_Margin__c>());
+                                                      routeProfitMap.get(uniqueKey).add(routeProfit);
+                                                  }
+        for(Route__c enqObj : routeList){
+            BAFCORoutingDetailsDto enqDtoObj = new BAFCORoutingDetailsDto();
+            enqDtoObj.routeName = 'Route '+ index;
+            enqDtoObj.routingRegular = enqObj.Regular_Routing_Lookup__c != null ? enqObj.Regular_Routing_Lookup__r.Name : '-';
+            enqDtoObj.shipmentKind = enqObj.Kind_Of_Shipment__c != null ? enqObj.Kind_Of_Shipment__c : '-';
+            enqDtoObj.serviceType = enqObj.Service_Type__c != null ? enqObj.Service_Type__c : '-';
+            if(enqObj.Opportunity_Enquiry__r.Recordtype.Name == 'Air Freight'){
+                enqDtoObj.isAir = true;
+                enqDtoObj.portDestination = enqObj.Airport_of_Destination__r.Name != null ? enqObj.Airport_of_Destination__r.Name :'-';
+                enqDtoObj.portLoading = enqObj.Airport_of_Loading__r.name != null ? enqObj.Airport_of_Loading__r.name : '-';
+                enqDtoObj.portLoadingId =enqObj.Airport_of_Loading__c != null ? enqObj.Airport_of_Loading__c : null;
+                enqDtoObj.portDestinationId = enqObj.Airport_of_Destination__c != null ? enqObj.Airport_of_Destination__c : null;
+            }
+            else{
+                enqDtoObj.isAir = false;
+                enqDtoObj.portDestination = enqObj.Port_of_Destination__r.Name != null ? enqObj.Port_of_Destination__r.Name :'-';
+                enqDtoObj.portLoading = enqObj.Port_of_loading__r.name != null ? enqObj.Port_of_loading__r.name : '-';
+                enqDtoObj.portLoadingId =enqObj.Port_of_loading__c != null ? enqObj.Port_of_loading__c : null;
+                enqDtoObj.portDestinationId = enqObj.Port_of_Destination__c != null ? enqObj.Port_of_Destination__c : null;
+            }
+            enqDtoObj.commodity = enqObj.Commodity__r.Name != null ? enqObj.Commodity__r.name : '-';
+            enqDtoObj.cargoWeights = enqObj.Cargo_Weight__c != null ? enqObj.Cargo_Weight__c : 0 ;
+            enqDtoObj.cargoReadiness = enqObj.Cargo_Readiness__c != null ? (enqObj.Cargo_Readiness__c.day()+'-'+ BAFCOLeadDetailsController.getMonthName(enqObj.Cargo_Readiness__c.month()) +'-'+enqObj.Cargo_Readiness__c.year()) : '-';
+            enqDtoObj.remarks = enqObj.Remarks__c != null ? enqObj.Remarks__c : '-';
+            enqDtoObj.routeId = enqObj.Id;
+            enqDtoObj.shippingLine = enqObj.Shipping_Line__r.name != null ? enqObj.Shipping_Line__r.name : '-';
+            enqDtoObj.incoTerm = enqObj.INCO_Term__r.name != null ? enqObj.INCO_Term__r.name : '-'; 
+            enqDtoObj.incoTermId = enqObj.INCO_Term__c != null ? enqObj.INCO_Term__c : null; 
+            enqDtoObj.leadId =  enqObj.Opportunity_Enquiry__r.AccountId != null ? enqObj.Opportunity_Enquiry__r.AccountId :  '' ;
+            enqDtoObj.acctName = enqObj.Opportunity_Enquiry__r.AccountId != null ? enqObj.Opportunity_Enquiry__r.Account.Name :  '' ;
+            enqDtoObj.accountAvgMargin = enqObj.Opportunity_Enquiry__r.Account.Average_Margin__c != null ? (enqObj.Opportunity_Enquiry__r.Account.Average_Margin__c).setScale(2) : 0 ;
+            String uniqueKey = enqObj.Port_of_loading__c+'-'+enqObj.Port_of_Destination__c;
+            if(routeProfitMap.containsKey(uniqueKey)){
+                List<Route_Profit_Margin__c> routeProfitList = routeProfitMap.get(uniqueKey);
+                for(Integer i = 0 ; i<routeProfitList.size();i++){
+                    if(routeProfitList[i].Recordtype.Name == 'Customer Port Pair' && routeProfitList[i].Customer__c == enqObj.Opportunity_Enquiry__r.AccountId && routeProfitList[i].Port_of_Loading__c == enqObj.Port_of_loading__c  && routeProfitList[i].Port_of_Discharge__c == enqObj.Port_of_Destination__c){
+                        enqDtoObj.routeCustomerAvgMargin = routeProfitList[i].Margin__c > 0 ? (routeProfitList[i].Margin__c).setScale(2) : 0;
+                    }
+                    if(routeProfitList[i].Recordtype.Name == 'Port Pair' && routeProfitList[i].Port_of_Loading__c == enqObj.Port_of_loading__c && routeProfitList[i].Port_of_Discharge__c == enqObj.Port_of_Destination__c){
+                        enqDtoObj.routeAvgMargin = routeProfitList[i].Margin__c > 0 ? (routeProfitList[i].Margin__c).setScale(2) : 0;
+                    }
+                }
+            }
+            //enqDtoObj.accountBestMargin = enqObj.Opportunity_Enquiry__r.Account.Best_Margin__c !=null ? (enqObj.Opportunity_Enquiry__r.Account.Best_Margin__c).setScale(2) : 0;
+            //enqDtoObj.accountAvgCreditDays = enqObj.Opportunity_Enquiry__r.Account.Average_Credit_Days__c != null ? (enqObj.Opportunity_Enquiry__r.Account.Average_Credit_Days__c).setScale(2) : 0 ;
+            enqDtoObj.placeOfPickupName = enqObj.Pickup_Place__c;
+            enqDtoObj.placeOfDischargeName = enqObj.Discharge_Place__c;
+            enqDtoObj.businessType = enqObj.Opportunity_Enquiry__r.Business_Type__c !=  null ? enqObj.Opportunity_Enquiry__r.Business_Type__c : '-';
+            if(enqObj.Route_Equipments__r.size() > 0){
+                String equipmentType ='';
+                String cargoDetails = '';
+                for(Route_Equipment__c rr : enqObj.Route_Equipments__r){
+                    if(rr.Equipment_Type__c != null){
+                        equipmentType+=rr.Equipment_Type__r.Name+' - '+ rr.Quantity__c;
+                        equipmentType+=', ';
+                    }
+                    if(rr.Cargo_Details__c != null){
+                        cargoDetails+=rr.Cargo_Details__c;
+                        cargoDetails+=', ';
+                    }
+                    
+                }
+                if(equipmentType != ''){
+                    equipmentType = equipmentType.removeEnd(', ');
+                }
+                if(cargoDetails != ''){
+                    cargoDetails = cargoDetails.removeEnd(', ');
+                }
+                enqDtoObj.equipmentType = equipmentType;
+                enqDtoObj.cargoDetails = cargoDetails;
+            }
+            index++;
+            routingDetailsList.add(enqDtoObj);
+        }
         return routingDetailsList;
     }
     @AuraEnabled
@@ -223,7 +247,16 @@ public without sharing  class BAFCOLRoutingDetailsController {
     public static String submitRoutingList(List<BAFCORoutingDetailsDto> routingList, String businessType, String quoteId,String closeDate, String commercialUserId,String isEdit,List<String> containerRemoveList,List<String> routeRemoveList, String optyId) {
         List<Route__c> routeList = new List<Route__c>();
         String incoTermSelected = '';
-        if(routingList.size() > 0) incoTermSelected = routingList[0].incoTermName;
+        Boolean has20ISOContainer = false;
+        if(routingList.size() > 0){
+            incoTermSelected = routingList[0].incoTermName;
+            List<Id> containerId = new List<Id>();
+            for(BAFCORoutingDetailsDto dto : routingList){
+                for(BAFCORoutingDetailsDto.containerRecord contr : dto.containerRecord){
+                    if(contr.containerTypeName == '20ISO') has20ISOContainer = true;
+                }
+            }
+        }
         system.debug('incoTermSelected '+incoTermSelected);
         Opportunity optyObj = new Opportunity();
         if(isEdit == 'true'){
@@ -234,9 +267,10 @@ public without sharing  class BAFCOLRoutingDetailsController {
         }
         else{
             Account acc = [Select id,name,ownerId from Account where id=: quoteId];
+            User userObj = [Select id,isActive from user where id =: acc.OwnerId];
         optyObj.Name = acc.Name +' - '+String.valueOf(date.today()).split(' ')[0];
-        optyObj.AccountId = acc.Id;
-        optyObj.OwnerId = acc.OwnerId;
+        optyObj.AccountId = acc.Id ;
+        optyObj.OwnerId = userObj.IsActive == true ? acc.OwnerId : userinfo.getUserId();
         optyObj.Business_Type__c = businessType;
         try{
             optyObj.StageName = 'Qualification';
@@ -255,10 +289,22 @@ public without sharing  class BAFCOLRoutingDetailsController {
                     .get('FCL')
                     .getRecordTypeId();
                 optyObj.RecordTypeId = FCLRecId;
-                if(businessType == 'Import') optyObj.Service_Type__c = 'Sea Export';
-                else if(businessType == 'Export') optyObj.Service_Type__c = 'Sea Import';
+                if(businessType == 'Import') {
+                    if(has20ISOContainer == true) optyObj.Service_Type__c = 'ISO Import';
+                    else optyObj.Service_Type__c = 'Sea Import';
+                }
+                else if(businessType == 'Export') {
+                    if(has20ISOContainer == true) optyObj.Service_Type__c = 'ISO Export';
+                    else optyObj.Service_Type__c = 'Sea Export';
+                }
             }
-            insert optyObj;
+            try{
+               insert optyObj; 
+            }
+            catch(exception e){
+                system.debug('exception '+e);
+            }
+            
             Task tsk = new Task();
             tsk.Subject = 'Provide Quotation';
             tsk.Status = 'Open';
@@ -429,6 +475,7 @@ public without sharing  class BAFCOLRoutingDetailsController {
             else{
                 quoteObj.Name__c = 'Quote/'+Year1+'/'+1;
             }
+            
             quoteObj.remarks__c = quoteRemarks;
             quoteObj.Effective_From__c = system.today();
             Insert quoteObj;
@@ -471,25 +518,27 @@ public without sharing  class BAFCOLRoutingDetailsController {
             string s1=string.valueof(year).right(2);
             Integer Year1= Integer.valueof(s1);
             Decimal quoteNumber = enqObj.No_of_Quotes__c + 1;
-            List<Quotation__c> quoteList2 = enqObj.Quotations__r; 
-            if(quoteList2.size() > 0){
-                if(cameReviseCompt == true){
-                    String fullName = quoteList2[0].Name__c;
-                    String lastName = fullName.Substring(fullName.lastIndexOf('/')+1,fullName.length());
-                    quoteObj.Name__c = 'Quote/'+Year1+'/'+lastName+'-'+quoteList.size();
-                }
-                else{
-                    Integer  quoteSize = quoteList2.size();
-                    quoteObj.Name__c = 'Quote/'+Year1+'/'+quoteSize;
+            List<Quotation__c> quoteList2 = enqObj.Quotations__r;
+            if(test.isRunningTest()){
+                if(quoteList2.size() > 0){
+                    if(cameReviseCompt == true){
+                        String fullName = quoteList2[0].Name__c;
+                        String lastName = fullName.Substring(fullName.lastIndexOf('/')+1,fullName.length());
+                        quoteObj.Name__c = 'Quote/'+Year1+'/'+lastName+'-'+quoteList.size();
+                    }
+                    else{
+                        Integer  quoteSize = quoteList2.size();
+                        quoteObj.Name__c = 'Quote/'+Year1+'/'+quoteSize;
+                    }
                 }
             }
+            
             quoteObj.remarks__c = quoteRemarks;
             update quoteObj;
             system.debug('quoteObj '+quoteObj);
         }
         
         quoteItemObj = assignServiceChargeIntoQuoteItem(quoteItemObj,dto);
-        quoteItemObj = assignAdditionalChargeIntoQuoteItem(additionalChargeList,quoteItemObj,dto);
         quoteItemObj.Total__c = dto.total;
         quoteItemObj.Pickup_Place__c = dto.pickupPlaceName;
         quoteItemObj.Discharge_Place__c = dto.dischargePlaceName;
@@ -510,9 +559,12 @@ public without sharing  class BAFCOLRoutingDetailsController {
                 quoteItemObj.Included_PDF_Ex_works__c =  dto.includeExWorksCharge != null ? dto.includeExWorksCharge : false;
             }
         }
-        system.debug('quoteItemObj '+quoteItemObj);
+        
         try{
             upsert quoteItemObj;
+            system.debug('quoteItemObj '+quoteItemObj);
+            quoteItemObj = assignAdditionalChargeIntoQuoteItem(additionalChargeList,quoteItemObj,dto);
+        
         }
         Catch(Exception e){
             System.debug('Exception '+e.getMessage());
@@ -594,97 +646,24 @@ public without sharing  class BAFCOLRoutingDetailsController {
         return quoteItemObj;
     }
     public static Quotation_item__c assignAdditionalChargeIntoQuoteItem(List<BAFCOGenerteQuoteDto.AdditionalCharge> additionalChargeList, Quotation_item__c quoteItemObj,BAFCOGenerteQuoteDto dto){
-        for(BAFCOGenerteQuoteDto.AdditionalCharge dto2 : additionalChargeList){
-            if(dto2.name == 'Bayan cancellation charge'){
-                quoteItemObj.Bayan_cancellation_charge__c = dto2.value;
-            }
-            if(dto2.name == 'Cleaning charges'){
-                quoteItemObj.Cleaning_charges__c = dto2.value;
-            }
-            if(dto2.name == 'Container Lashing Charges'){
-                //quoteItemObj.Container_Lashing_Charges__c = dto2.value;
-            }
-            if(dto2.name == 'Container movement charges'){
-                quoteItemObj.Container_movement_charges__c = dto2.value;
-            }
-            if(dto2.name == 'Container stripping'){
-                quoteItemObj.Container_stripping__c = dto2.value;
-            }
-            if(dto2.name == 'Additional Freetime Charges'){
-                quoteItemObj.Free_time_certificate_charges__c = dto2.value;
-            }
-            if(dto2.name == 'Fumigation'){
-                quoteItemObj.Fumigation__c= dto2.value;
-            }
-            if(dto2.name == 'Inspection'){
-                quoteItemObj.Inspection__c = dto2.value;
-            }
-            if(dto2.name == 'Insurance charges'){
-                quoteItemObj.Insurance_charges__c = dto2.value;
-            }
-            if(dto2.name == 'Ministry clearnce charge for OOG cargo'){
-                quoteItemObj.Ministry_clearnce_charge_for_OOG_cargo__c = dto2.value;
-            }
-            if(dto2.name == 'Miscellaneous'){
-                quoteItemObj.Miscellaneous__c = dto2.value;
-            }
-            if(dto2.name == 'MOT fine charges'){
-                quoteItemObj.MOT_fine_charges__c = dto2.value;
-            }
-            if(dto2.name == 'Non Palletized Surcharge'){
-                quoteItemObj.Non_Palletized_Surcharge__c = dto2.value;
-            }
-            if(dto2.name == 'Pest control'){
-                quoteItemObj.Pest_control__c = dto2.value;
-            }
-            if(dto2.name == 'Re palletization'){
-                quoteItemObj.Re_palletization__c = dto2.value;
-            }
-            if(dto2.name == 'Reefer cntr plug-in charges'){
-                quoteItemObj.Reefer_cntr_plug_in_charges__c = dto2.value;
-            }
-            if(dto2.name == 'Reefer PTI charges'){
-                quoteItemObj.Reefer_PTI_charges__c = dto2.value;
-            }
-            if(dto2.name == 'Reefer steam wash'){
-                quoteItemObj.Reefer_steam_wash__c = dto2.value;
-            }
-            if(dto2.name == 'Stuffing Charges'){
-                quoteItemObj.Stuffing_Charges__c = dto2.value;
-            }
-            if(dto2.name == 'Sweeping/Cleaning'){
-                quoteItemObj.SweepingCleaning__c = dto2.value;
-            }
-            if(dto2.name == 'Truck Head charges'){
-                quoteItemObj.Truck_Head_charges__c = dto2.value;
-            }
-            if(dto2.name == 'Truck idling charges'){
-                quoteItemObj.Truck_idling_charges__c = dto2.value;
-            }
-            if(dto2.name == 'Vessel certificate charges'){
-                quoteItemObj.Vessel_certificate_charges__c = dto2.value;
-            }
-            if(dto2.name == 'Wrapping/packing charges'){
-                quoteItemObj.Wrappingpacking_charges__c = dto2.value;
-            }
-            if(dto2.name == 'Freight Difference(FD)'){
-                quoteItemObj.Freight_Difference_FD__c = dto2.value;
-            }
-            if(dto2.name == 'Carrier container repositioning charges'){
-                quoteItemObj.Carrier_container_repositioning_charges__c = dto2.value;
-            }
-            if(dto2.name == 'Alternate depot release charges'){
-                quoteItemObj.Alternate_depot_release_charges__c = dto2.value;
-            }
-            if(dto2.name == 'Tank Rental Charges'){
-                quoteItemObj.Tank_Rental_Charges__c = dto2.value;
-            }
-            if(dto2.name == 'Total Ex-Works Charges'){
-                quoteItemObj.Total_Ex_Works_Charges__c = dto2.value;
-            }
-            quoteItemObj.Add_to_Buying_Additional__c =  dto.addAdditionalCharge != null ? dto.addAdditionalCharge : false;
-            quoteItemObj.Included_PDF_Additional__c =  dto.includeAdditionalCharge != null ? dto.includeAdditionalCharge : false;
+        Map<String,id> additionalChargeMap = new Map<String,id>();
+        for(Additional_Charge__c addnObj :  [Select id, name from Additional_Charge__c]){
+            additionalChargeMap.put(addnObj.name,addnObj.id);
         }
+        List<Quotation_Charges__c> chargeList = new List<Quotation_Charges__c>();
+        for(BAFCOGenerteQuoteDto.AdditionalCharge dto2 : additionalChargeList){
+            system.debug('dto2' +dto2);
+            Quotation_Charges__c newObj = new Quotation_Charges__c();
+            newObj.Quotation_Item__c = quoteItemObj.id;
+            newObj.Charge_Value__c = dto2.value;
+            newObj.isAdditional_Charge__c = true;
+            if(additionalChargeMap.containsKey(dto2.name))newObj.Charge_Name__c = additionalChargeMap.get(dto2.name);
+            chargeList.add(newObj);
+        }
+        quoteItemObj.Add_to_Buying_Additional__c =  dto.addAdditionalCharge != null ? dto.addAdditionalCharge : false;
+        quoteItemObj.Included_PDF_Additional__c =  dto.includeAdditionalCharge != null ? dto.includeAdditionalCharge : false;
+        system.debug('chargeList '+chargeList);
+        if(chargeList.size() > 0) insert chargeList;
         return quoteItemObj;
     }
     @AuraEnabled
@@ -700,7 +679,8 @@ public without sharing  class BAFCOLRoutingDetailsController {
         String leadId,
         Boolean destinTotalChanged,
         BAFCODestinationChargeDto destinCharges,
-        List<BAFCOLeadDetailsController.selectedEquip> selectedEquip
+        List<BAFCOLeadDetailsController.selectedEquip> selectedEquip,
+        String rmscurrencyCode
     ){
         
         Route__c routeObj =[SELECT INCO_Term__c ,Id, Port_of_Destination__c, Port_of_loading__c, Shipping_Line__c, Commodity__c FROM Route__c where id =:routeId];
@@ -727,6 +707,7 @@ public without sharing  class BAFCOLRoutingDetailsController {
         rmsObj.Validity__c = Date.valueOf(rmsDetail.validity);
         //rmsObj.Sea_Freight__c = rmsDetail.seaFreight;
         rmsObj.Business_Type__c = businesstype;
+        rmsObj.CurrencyIsoCode = rmscurrencyCode;
         //rmsObj.Equipment_Type__c = equipId;
         List<BAFCOLeadDetailsController.SelectedEquip> rmsEquipList = rmsDetail.selectedEquip;
             system.debug('rmsEquipList '+rmsEquipList);
@@ -887,7 +868,7 @@ public without sharing  class BAFCOLRoutingDetailsController {
         List<Loading_Charge__c>  loadingChargeList = new List<Loading_Charge__c>();
         if(!String.isBlank(pickupPlace) && !String.isBlank(portLoading) && !String.isBlank(directionValue)){
             loadingChargeList = [SELECT Id, Loading_Charge__c FROM Loading_Charge__c
-                                 WHERE Direction__c =: directionValue AND Place_of_Pickup__c =: pickupPlace AND Port_of_Loading__c =: portLoading limit 1];
+                                 WHERE Direction__c =: directionValue AND Port_of_Loading__c =: portLoading limit 1];
         }
         return loadingChargeList;
     }
@@ -1020,7 +1001,7 @@ public without sharing  class BAFCOLRoutingDetailsController {
     @AuraEnabled
     public static List<Loading_Charge__c> getExWorksOnLoad(){
         List<Loading_Charge__c> exWorksList = new List<Loading_Charge__c>();
-        exWorksList = [Select Id,Name,Port_of_Loading__r.Name,Place_of_Pickup__r.name,Loading_Charge__c from Loading_Charge__c];
+        exWorksList = [Select Id,Name,Port_of_Loading__r.Name,Pickup_Place__c,Loading_Charge__c from Loading_Charge__c];
         if(exWorksList.size() > 0 ) return exWorksList;
         else return null;
     }

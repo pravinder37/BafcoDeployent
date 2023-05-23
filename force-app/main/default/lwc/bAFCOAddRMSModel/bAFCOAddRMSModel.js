@@ -559,7 +559,7 @@ export default class BAFCOAddRMSModel
         console.log('rms '+JSON.stringify(this.rmsDetail,null,2))
         if(allValid){
             if(this.isAir){
-                let obj={
+                /*let obj={
                     x45:this.x45 > 0 ? this.x45 : 0,
                     x100:this.x100 > 0 ? this.x100 : 0,
                     x300:this.x300 > 0 ? this.x300 : 0,
@@ -571,7 +571,7 @@ export default class BAFCOAddRMSModel
                     x15000:this.x15000 > 0 ? this.x15000 : 0,
                     x20000:this.x20000 > 0 ? this.x20000 : 0,
                 }
-                console.log('obj '+JSON.stringify(obj,null,2))
+                console.log('obj '+JSON.stringify(obj,null,2))*/
                 addRatesAir({
                     rmsDetail: this.rmsDetail,
                     routeId : this.routeId,
@@ -580,7 +580,6 @@ export default class BAFCOAddRMSModel
                     selectedRouteEquip : this.selectedRouteEquip,
                     rmscurrencyCode  :this.rmscurrencyCode,
                     businessType : this.businessType,
-                    obj:obj
                 })
             .then(result =>{
                 this.isLoading = false
@@ -604,7 +603,8 @@ export default class BAFCOAddRMSModel
                     leadId : this.leadId,
                     destinTotalChanged : this.destinTotalChanged,
                     destinCharges:this.destinCharges,
-                    selectedEquip:this.selectedEquip
+                    selectedEquip:this.selectedEquip,
+                    rmscurrencyCode:this.rmscurrencyCode
         
                 }).then(result =>{
                     this.isLoading = false
@@ -1246,11 +1246,22 @@ export default class BAFCOAddRMSModel
     .then(result=>{
         console.log('getAirRouteEquipment result = >'+JSON.stringify(result))
         let tempList =[];
-        result.forEach(element => {
+        /*result.forEach(element => {
             tempList.push({
             label : element.Tab_View__c,
             value:element.Id
             })
+        })*/
+        let totalGross = 0;
+        let totalCBM = 0;
+        let totalVolumeWeigh = 0;
+        if(result.Total_Gross_Weight_KGs__c > 0 ) totalGross = result.Total_Gross_Weight_KGs__c;
+        if(result.Total_CBM__c > 0 ) totalCBM = result.Total_CBM__c;
+        if(result.Total_Volumetric_Weight__c > 0 ) totalVolumeWeigh = result.Total_Volumetric_Weight__c;
+        let label = 'Total Volumetric Weight : '+totalCBM+' | Total Gross Weight :'+totalGross+' | Total Volumetric Weight :'+totalVolumeWeigh;
+        tempList.push({
+            label : label,
+            value:result.Id
         })
         this.airTabViewList = tempList;
         this.selectedRouteEquip = tempList[0].value;

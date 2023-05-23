@@ -402,7 +402,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
         this.exWorksObj = {};
         this.displayExworks =false;
         this.exWorksTotal = null;
-        this.currencyCode = 'USD';
+        this.currencyCode = '';
         this.sellingBAF = null;
         this.sellingbunkerCharges = null;
         this.sellingcleaningCharges = null;
@@ -543,6 +543,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
         let keyName = this.agentTabSelected+'-'+this.shippingTabSelected+'-'+this.shippingEquipTabSelected;
         let seletedEquipName = '';
         let isFDAccount = false;
+        let currencyCode = 'USD';
         let dedicatedRoutingObj = this.routingListMap[this.agentTabSelected];
         let templist090 = [];
         let tankTempList =[];
@@ -557,6 +558,9 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                 if(elemIndex != -1){
                     seletedEquipName = data[elemIndex].equipmentName;
                     isFDAccount = data[elemIndex].fdAccount;
+                    currencyCode = data[elemIndex].currencyCode;
+                    console.log('data[elemIndex] '+JSON.stringify(data[elemIndex],null,2))
+                    this.currencyCode = currencyCode
                 }
             }
         }
@@ -608,7 +612,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                         'additionalChargeList':tankTempList,
                         'serviceChargeList':{},
                         'savedClicked':false,
-                        'currencyCode':'',
+                        'currencyCode':currencyCode,
                         'offSet':0,
                         'total':0,
                         'pickupPlace' : this.pickupPlaceName,
@@ -618,7 +622,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                         'selectedShippLine':this.shippingTabSelected,
                         'selectedEquipment':this.shippingEquipTabSelected,
                         'agentTabSelected':this.agentTabSelected,
-                        'currencyCode':'USD',
+                        //'currencyCode':'USD',
                         'incoTermId':this.incoTermId,
                         'sellingBAF':null,
                         'sellingbunkerCharges':null,
@@ -862,7 +866,6 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                         
                         if(dto.addOriginCharge == false && this.TotalOrigincharges > 0) dtoTotal = dtoTotal + this.TotalOrigincharges   
                         if(dto.addDestinCharge == false && this.destinTotalCharges > 0) dtoTotal = dtoTotal + this.destinTotalCharges
-                        dto.total= dtoTotal;
                         if(additonalChargeTotal > 0 ) {
                             if(dto.addAdditionalCharge == false) dtoTotal = dtoTotal + additonalChargeTotal;
                             this.additionalChargeTotal = additonalChargeTotal;
@@ -876,6 +879,7 @@ export default class BAFCOImportRouteDetails extends NavigationMixin(LightningEl
                             dtoTotal = dtoTotal + sellingAdditionalCharge;
                             this.sellingadditionalChargeTotal = sellingAdditionalCharge;
                         }
+                        dto.total= dtoTotal;
                         
                     }
                 }

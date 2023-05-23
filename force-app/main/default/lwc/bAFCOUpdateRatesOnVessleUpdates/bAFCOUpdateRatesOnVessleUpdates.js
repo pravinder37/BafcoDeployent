@@ -25,6 +25,7 @@ export default class BAFCOUpdateRatesOnVessleUpdates extends LightningElement {
             this.orderItemRecordDetails = result;
             console.log('this.orderItemRecordDetails',this.orderItemRecordDetails);
             console.log('this.orderItemRecordDetails.buyingRate'+this.orderItemRecordDetails.Buying_Rate__c);
+            console.log('this.orderItemRecordDetails.Shipping_Line__c'+this.orderItemRecordDetails.Shipping_Line__c);
             this.buyingRate=this.orderItemRecordDetails.Buying_Rate__c;
             this.shippingLineId = result.Shipping_Line__c;
             this.shippingLineName = result.Shipping_Line__r.Name;
@@ -98,6 +99,7 @@ export default class BAFCOUpdateRatesOnVessleUpdates extends LightningElement {
             this.isLoading2 = false;
         }
         if(allValid){
+            console.log('this.shippingLineId'+this.shippingLineId);
             updateOrderItem({
                 buyingRate : this.buyingRate,
                 sellingRate: this.totalSellingRate,
@@ -116,6 +118,7 @@ export default class BAFCOUpdateRatesOnVessleUpdates extends LightningElement {
                 this.dispatchEvent(evt);
                 this.isLoading2 = false;
                 this.dispatchEvent(new CustomEvent('close'));
+                location.reload();
                 //this.getImportItemOnLoad();
             })
             .catch(error=>{console.log('error '+JSON.stringify(error));this.isLoading2 = false;})

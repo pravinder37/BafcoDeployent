@@ -34,6 +34,7 @@ export default class BAFCOAirExportReviseDetail extends LightningElement {
     @track currencyCode='USD';
     @track buyingRatekg='';
     @track sellingRatekg='';
+    displayCargoDetails = false;
 
     connectedCallback(){
         console.log('getQuoteExportLineItemDetails ')
@@ -133,5 +134,11 @@ export default class BAFCOAirExportReviseDetail extends LightningElement {
                 }
             }
         }, 100);
+    }
+    handleCloseCargoDetailsPopUp(){
+        this.displayCargoDetails = false;
+    }
+    handleShowCargoDetails(){
+        this.displayCargoDetails = true;
     }
 }

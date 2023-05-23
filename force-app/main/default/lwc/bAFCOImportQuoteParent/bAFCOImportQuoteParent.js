@@ -14,6 +14,8 @@ export default class BAFCOImportQuoteParent extends LightningElement {
     @track showQuoteButton = false;
     @track validityDate = '';
     @track quoteId = '';
+    @track routeCustomerAvgMargin = 0;
+    @track routeAvgMargin = 0;
     minTodaysDate =''
     vectorPng = VECTOR;
     @track displayQuotationlist =[];
@@ -47,7 +49,7 @@ export default class BAFCOImportQuoteParent extends LightningElement {
         .then(result =>{
             this.routingDetailsList = result;
             this.leadId = this.routingDetailsList[0].leadId;
-            this.accountAvgMargin = this.routingDetailsList[0].accountAvgMargin;
+            //this.accountAvgMargin = this.routingDetailsList[0].accountAvgMargin;
             this.accountBestMargin = this.routingDetailsList[0].accountBestMargin;
             this.accountAvgCreditDays = this.routingDetailsList[0].accountAvgCreditDays;
         }).catch(error=>{
@@ -75,6 +77,9 @@ export default class BAFCOImportQuoteParent extends LightningElement {
             index = i;
         }
         if(index != -1){
+            this.accountAvgMargin = this.routingDetailsList[index].accountAvgMargin;
+            this.routeCustomerAvgMargin = this.routingDetailsList[index].routeCustomerAvgMargin;
+            this.routeAvgMargin = this.routingDetailsList[index].routeAvgMargin;
             setTimeout(() => {
                 this.template.querySelectorAll("c-b-a-f-c-o-import-route-details")[index].handleUpdateCalculation();
             }, 200);

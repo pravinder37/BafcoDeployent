@@ -400,11 +400,14 @@ export default class BAFCOLocalOperationQuoteIntakeForm extends NavigationMixin(
     }
     assignTabsData(){
         let tempList3 = [];
+        let quantity=0;
         let index = this.toHoldData.findIndex(x=>x.key == this.shippingEquipTabSelected);
         let index2  = this.allRouteList.findIndex(x=>x.Equipment_Type__c == this.shippingEquipTabSelected);
         let seletedEquipName1 = this.allRouteList[index2].Equipment_Type__r.Name;
         let isFdAccount = false;
         isFdAccount = this.allRouteList[index2].Route__r.Opportunity_Enquiry__r.Account.FD__c;
+        console.log('this.allRouteList[index2] '+JSON.stringify(this.allRouteList[index2],null,2))
+        quantity = this.allRouteList[index2].Quantity__c != undefined ? this.allRouteList[index2].Quantity__c : 0;
         if(seletedEquipName1 == '20ISO'){
             tempList3.push({
                 'name':'Tank Rental Charges',
@@ -465,7 +468,8 @@ export default class BAFCOLocalOperationQuoteIntakeForm extends NavigationMixin(
                 'currencyCode':'USD',
                 'portLoadingId':this.portLoadingId,
                 'portDestinationId':this.portDestinationId,
-                'incoTermId':this.incoTermId
+                'incoTermId':this.incoTermId,
+                'quantity':quantity,
             })
             this.toHoldData[index].value = JSON.parse(JSON.stringify(tempList));
         }

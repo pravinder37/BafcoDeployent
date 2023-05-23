@@ -1,20 +1,27 @@
 import { LightningElement,api, track } from 'lwc';
-
-export default class BAFCOOrderAddConsignee extends LightningElement {
+import { NavigationMixin } from 'lightning/navigation';
+export default class BAFCOOrderAddConsignee extends NavigationMixin(LightningElement) {
     @track consigneeList=[];
     consigneeIndex =0
     @api parentConsigneeList = [];
+    @track consigneeDisplayName = '';
+    @track consigneeId = '';
+    @track dispalayAccountDetails = false;
     connectedCallback(){
         if(this.parentConsigneeList.length > 0){
             this.consigneeList = JSON.parse(JSON.stringify(this.parentConsigneeList))
-            this.assignDefault();
+            //this.assignDefault();
+            if(this.consigneeList[0].consigneeId != null){
+                this.consigneeDisplayName = this.consigneeList[0].consigneeName;
+                this.consigneeId = this.consigneeList[0].consigneeId
+            }
         }
-        else{
+        /*else{
             this.consigneeIndex =  0
             this.addConsignee();
-        }
+        }*/
     }
-    addConsignee(){
+   /* addConsignee(){
         let consigneeObj = {
             'consigneeId':null,
             'consigneeName':null,
@@ -65,5 +72,20 @@ export default class BAFCOOrderAddConsignee extends LightningElement {
                 }
             }
         }, 100);
+    }*/
+    handleNameClicked(){
+        this[NavigationMixin.GenerateUrl]({
+            type: 'standard__recordPage',
+            attributes: {
+                recordId: this.consigneeId,
+                actionName: 'view'
+            },
+        }).then(url => { window.open(url) });
+    }
+    handleDisplayAccountDetails(){
+        this.dispalayAccountDetails = true;
+    }
+    handleHideAccountDetails(){
+        this.dispalayAccountDetails = false;
     }
 }

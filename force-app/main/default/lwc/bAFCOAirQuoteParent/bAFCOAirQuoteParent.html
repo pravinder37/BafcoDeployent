@@ -16,15 +16,18 @@
                     <lightning-layout style="padding-top: 12px;">
                         <lightning-layout-item size="4" class="slds-m-top_small " if:true={accountAvgMargin}>
                             <span style="font-size: 18px; color: #FF9800; padding-right: 36px " class="slds-align_absolute-center">{accountAvgMargin}%</span>
-                            <p style="font-size: 11px; color: #5A5A5A; ">Avg. Margin</p>
+                            <p style="font-size: 11px; color: #5A5A5A; ">Customer</p>
+                            <p style="font-size: 11px; color: #5A5A5A; ">(Avg. Margin)</p>
                         </lightning-layout-item>
-                        <lightning-layout-item size="4" class="slds-m-top_small " if:true={accountBestMargin}>
-                            <span style="font-size: 18px;color: #4CAF50; padding-right: 36px" class="slds-align_absolute-center">{accountBestMargin}%</span>
-                                <p style="font-size: 11px; color: #5A5A5A; ">Best Margin</p>
+                        <lightning-layout-item size="4" class="slds-m-top_small " if:true={routeCustomerAvgMargin}>
+                            <span style="font-size: 18px;color: #4CAF50; padding-right: 36px" class="slds-align_absolute-center">{routeCustomerAvgMargin}%</span>
+                                <p style="font-size: 11px; color: #5A5A5A; ">Customer On this Route</p>
+                                <p style="font-size: 11px; color: #5A5A5A; ">(Avg. Margin)</p>
                         </lightning-layout-item>
-                        <lightning-layout-item size="6" class="slds-m-top_small " if:true={accountAvgCreditDays}>
-                            <span style="font-size: 18px;color: #4CAF50; padding-right: 77px" class="slds-align_absolute-center">{accountAvgCreditDays}</span>
-                                <p style="font-size: 11px; color: #5A5A5A; ">Avg. Credit Days</p>
+                        <lightning-layout-item size="6" class="slds-m-top_small " if:true={routeAvgMargin}>
+                            <span style="font-size: 18px;color: #4CAF50; padding-right: 77px" class="slds-align_absolute-center">{routeAvgMargin}%</span>
+                            <p style="font-size: 11px; color: #5A5A5A; ">Route</p>
+                            <p style="font-size: 11px; color: #5A5A5A; ">(Avg. Margin)</p>
                         </lightning-layout-item>
                     </lightning-layout>
                 </lightning-layout-item>

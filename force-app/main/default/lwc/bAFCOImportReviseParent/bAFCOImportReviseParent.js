@@ -24,6 +24,9 @@ export default class BAFCOImportReviseParent extends LightningElement {
     @track recordtypeName = '';
     @track validityDate = '';
     minTodaysDate = '';
+    @track routeCustomerAvgMargin = 0;
+    @track routeAvgMargin = 0;
+    @track accountAvgMargin = 0;
     connectedCallback(){
         document.title = 'Revise Import Quote';
         this.getquoteDetails();
@@ -118,6 +121,9 @@ export default class BAFCOImportReviseParent extends LightningElement {
         this.section = section
         let index = this.routingDetailsList.findIndex(x=>x.routeName == section);
         if(index != -1){
+            this.accountAvgMargin = this.routingDetailsList[index].accountAvgMargin;
+            this.routeCustomerAvgMargin = this.routingDetailsList[index].routeCustomerAvgMargin;
+            this.routeAvgMargin = this.routingDetailsList[index].routeAvgMargin;
             setTimeout(() => {
                 this.template.querySelectorAll("c-b-a-f-c-o-import-route-details")[index].handleUpdateCalculation();
             }, 200);

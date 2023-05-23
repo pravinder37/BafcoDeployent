@@ -7,6 +7,10 @@ public class BAFCOGenerteQuoteDto {
     @AuraEnabled
     public Decimal totalRate { get; set; }
     @AuraEnabled
+    public Decimal chargeableWeight { get; set; }
+    @AuraEnabled
+    public Decimal buyingRateInput { get; set; }
+    @AuraEnabled
     public Decimal quoteBuyingRate { get; set; }
     @AuraEnabled
     public Decimal quantity { get; set; }
@@ -62,11 +66,14 @@ public class BAFCOGenerteQuoteDto {
     @AuraEnabled public boolean includeAdditionalCharge {get;set;}
     @AuraEnabled public boolean includeExWorksCharge {get;set;}
     
+    @AuraEnabled public String rmsId{get;set;}
+    
     public Class AdditionalCharge{ 
         @AuraEnabled
         public String name { get; set; }
         @AuraEnabled
         public Decimal value { get; set; }
+        @AuraEnabled public Boolean includeAdditionalCharge {get;set;} //used in pdf generation 
     }
     public class serviceChargeList{
         @AuraEnabled

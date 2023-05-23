@@ -4,7 +4,7 @@ public class BAFCOLeadDetailsController {
         system.debug('leadId '+leadId);
         BAFCOLeadDetailsDto leadDetailsDto = new BAFCOLeadDetailsDto();
         List<Account> accList = [Select id,Name,owner.name,CreatedDate,Business_Type__c,Modes__c From Account Where id =: leadId limit 1];
-        List<contact> contactList = [Select MobilePhone,Email from Contact where AccountId =: leadId order by createddate limit 1];
+        List<contact> contactList = [Select Name,MobilePhone,Email from Contact where AccountId =: leadId order by createddate limit 1];
         if(accList.size() > 0){
             leadDetailsDto =  executeMapForAccountDetails(accList,contactList);
         }
@@ -24,6 +24,7 @@ public class BAFCOLeadDetailsController {
             if(contactList.size() > 0 ){
                 leadDetailsDto.contactMobile = contactList[0].MobilePhone != null ? contactList[0].MobilePhone : '-';
                 leadDetailsDto.contactEmail = contactList[0].Email != null ? contactList[0].Email : '-';
+                leadDetailsDto.contactName = contactList[0].Name;
             }
             else{
                 leadDetailsDto.contactMobile = '-';
@@ -332,6 +333,46 @@ Equipment_Type__r.Name, Sea_Freight__c, Validity__c, Agent__r.Name, Shipping_Lin
             }
         }
         return rmsDetail;
+    }
+    @AuraEnabled 
+    public static string insertAccountDetails(String accountName, String contName, String mobile, string contEmail){
+        Id SHIPPER_RECORDTYPE_Id = Schema.SObjectType.Account.getRecordTypeInfosByName()
+        .get('Shipper')
+        .getRecordTypeId();
+        Account acc = new Account();
+        acc.RecordTypeId = SHIPPER_RECORDTYPE_Id;
+        acc.Name= accountName;
+        Insert acc;
+        Contact cont = new Contact();
+        cont.LastName = contName;
+        cont.MobilePhone = mobile;
+        cont.Email =contEmail;
+        cont.AccountId = acc.id;
+        insert cont;
+        system.debug('cont '+cont);
+        return acc.id;
+    }
+    @AuraEnabled 
+    public static List<Route_Equipment__c> getRouteEquipmentDetails(String routeId){
+        return [SELECT Volumetric_weight_Kgs__c,Route__r.Total_Volumetric_Weight__c,Weight_Kgs__c,CBM__c ,Route__r.Total_CBM__c,Route__r.Total_Gross_Weight_KGs__c,Id, Length__c, Width__c, Height__c, Units__c, UOM__c, Name FROM Route_Equipment__c where Route__c =: routeId];
+    }
+    @AuraEnabled 
+    public static void updateRouteEquipmentDetails(List<Route_Equipment__c> routeEquipList, List<String> containerRemoveList,
+                                                  Decimal totalCBMUpdate,Decimal totalGrossUpdate,Decimal totalVolumeWeightUpdate,String routeId){
+        if(routeEquipList.size() > 0) {
+            upsert routeEquipList;
+            Route__c routeObj = new Route__c();
+            routeObj.Total_CBM__c = totalCBMUpdate;
+            routeObj.Total_Gross_Weight_KGs__c = totalGrossUpdate;
+            routeObj.Total_Volumetric_Weight__c = totalVolumeWeightUpdate;
+            routeObj.Id = routeId;
+            update routeObj;
+        }
+        if(containerRemoveList.size() > 0) delete [Select id from Route_Equipment__c where id in : containerRemoveList];
+    }
+    @AuraEnabled 
+    public static Quotation__c getQuoteDetail(String recordId){
+        return [Select id,Quotation_Type__c from Quotation__c where id =: recordId limit 1];
     }
     public class selectedEquip{
         @auraEnabled public string label{get;set;}

@@ -14,6 +14,8 @@ export default class BAFCOLocalOperationQuoteParent extends LightningElement {
     @track showQuoteButton = false;
     @track validityDate = '';
     @track quoteId = '';
+    @track routeCustomerAvgMargin = 0;
+    @track routeAvgMargin = 0;
     vectorPng = VECTOR;
     minTodaysDate = '';
     connectedCallback(){
@@ -45,9 +47,9 @@ export default class BAFCOLocalOperationQuoteParent extends LightningElement {
             console.log('enquery  result : ', JSON.stringify(result,null,2));
             this.routingDetailsList = result;
             this.accountId = this.routingDetailsList[0].leadId;
-            this.accountAvgMargin = this.routingDetailsList[0].accountAvgMargin;
-            this.accountBestMargin = this.routingDetailsList[0].accountBestMargin;
-            this.accountAvgCreditDays = this.routingDetailsList[0].accountAvgCreditDays;
+            //this.accountAvgMargin = this.routingDetailsList[0].accountAvgMargin;
+            //this.accountBestMargin = this.routingDetailsList[0].accountBestMargin;
+            //this.accountAvgCreditDays = this.routingDetailsList[0].accountAvgCreditDays;
         }).catch(error=>{
             console.log('error lead: ', JSON.stringify(error));
         });
@@ -76,6 +78,9 @@ export default class BAFCOLocalOperationQuoteParent extends LightningElement {
             index = i;
         }
         if(index != -1){
+            this.accountAvgMargin = this.routingDetailsList[index].accountAvgMargin;
+            this.routeCustomerAvgMargin = this.routingDetailsList[index].routeCustomerAvgMargin;
+            this.routeAvgMargin = this.routingDetailsList[index].routeAvgMargin;
             setTimeout(() => {
                 this.template.querySelectorAll("c-b-a-f-c-o-local-operation-quote-intake-form")[index].handleUpdateCalculation();
             }, 200);

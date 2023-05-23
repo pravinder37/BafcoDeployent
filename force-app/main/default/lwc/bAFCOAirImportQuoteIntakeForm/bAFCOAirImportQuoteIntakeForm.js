@@ -11,6 +11,7 @@ export default class BAFCOAirImportQuoteIntakeForm extends NavigationMixin(Light
     @api serviceType;
     @api portLoading;
     @api portDestination;
+    @api portDestinationId;
     @api shippingLine;
     @api commodity;
     @api cargoWeights;
@@ -63,6 +64,7 @@ export default class BAFCOAirImportQuoteIntakeForm extends NavigationMixin(Light
     @track additionalChargeIndex = 0;
     @track equipmentId ='';
     @track serviceChargeObj;
+    displayCargoDetails = false;
 
     @track quantity = 0; 
     @track quotationSaved = false;
@@ -1427,5 +1429,11 @@ export default class BAFCOAirImportQuoteIntakeForm extends NavigationMixin(Light
     }
     handleCloseModal(){
         this.showServiceChargeModal = false; 
+    }
+    handleCloseCargoDetailsPopUp(){
+        this.displayCargoDetails = false;
+    }
+    handleShowCargoDetails(){
+        this.displayCargoDetails = true;
     }
 }

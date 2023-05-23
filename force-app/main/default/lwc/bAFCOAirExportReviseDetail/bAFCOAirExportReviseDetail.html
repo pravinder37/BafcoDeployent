@@ -1,9 +1,9 @@
 <template>
     <lightning-layout multiple-rows class="slds-gutters narrow-form" style="background-color: #f7f7f7;" >
-        <lightning-layout-item size="2" class="slds-col slds-m-vertical_medium">
+        <!--lightning-layout-item size="2" class="slds-col slds-m-vertical_medium">
             <p class="slds-m-top_small leadLabel">Kind of Shipment</p>
             <span class=leadDetails>{shipmentKind}</span>
-        </lightning-layout-item>
+        </lightning-layout-item-->
         <lightning-layout-item size="2" class="slds-col slds-m-vertical_medium">
             <p class="slds-m-top_small leadLabel">Service of Type</p>
             <span class=leadDetails>{serviceType}</span>
@@ -37,7 +37,11 @@
             <span class=leadDetails>{remarks}</span>
         </lightning-layout-item>
         <lightning-layout-item size="2" title={cargoDetails} style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" class="slds-col slds-m-vertical_medium">
-            <p class="slds-m-top_small leadLabel">Cargo Details</p>
+            <p class="slds-m-top_small leadLabel">Cargo Details
+                <lightning-button variant="base"
+                icon-name="utility:info" 
+                onclick={handleShowCargoDetails}></lightning-button>
+            </p>
             <span class=leadDetails>{cargoDetails}</span>
         </lightning-layout-item>
     </lightning-layout>
@@ -67,7 +71,7 @@
                                             </lightning-layout-item>
                                             <lightning-layout-item size="12">
                                                 <lightning-layout >
-                                                    <lightning-layout-item size="4" class="slds-m-top_large" style="font-size: 16px;" if:true={equiptab.totalSellingRate}>
+                                                    <lightning-layout-item size="4" class="slds-m-top_large" style="font-size: 16px;" if:true={equiptab.seaFreight}>
                                                         <b>Total</b>
                                                         <lightning-button variant="base"
                                                         icon-name="utility:info" 
@@ -77,7 +81,7 @@
                                                         <lightning-input style="padding-right: 10px;" disabled value={equiptab.buyingRate} if:true={equiptab.buyingRate}></lightning-input>
                                                     </lightning-layout-item>
                                                     <lightning-layout-item size="4" >
-                                                        <lightning-input style="padding-right: 10px;" disabled value={equiptab.totalSellingRate} if:true={equiptab.totalSellingRate}></lightning-input>
+                                                        <lightning-input style="padding-right: 10px;" disabled value={equiptab.seaFreight} if:true={equiptab.seaFreight}></lightning-input>
                                                     </lightning-layout-item>
                                                 </lightning-layout>                                          
                                             </lightning-layout-item>
@@ -672,5 +676,8 @@
     </template>
     <template if:true={showServiceChargeModal}>
         <c-b-a-f-c-o-service-charges-help-component rms-id={rmsId} onclose={handleCloseModal}></c-b-a-f-c-o-service-charges-help-component>
+    </template>
+    <template if:true={displayCargoDetails}>
+        <c-b-a-f-c-o-display-cargo-details route-id={routeId} onclose={handleCloseCargoDetailsPopUp}></c-b-a-f-c-o-display-cargo-details>
     </template>
 </template>

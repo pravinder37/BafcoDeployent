@@ -1,9 +1,9 @@
 <template>
     <lightning-layout multiple-rows class="slds-gutters narrow-form" style="background-color: #f7f7f7;" >
-        <lightning-layout-item size="2" class="slds-col slds-m-vertical_medium">
+        <!--lightning-layout-item size="2" class="slds-col slds-m-vertical_medium">
             <p class="slds-m-top_small leadLabel">Kind of Shipment</p>
             <span class=leadDetails>{shipmentKind}</span>
-        </lightning-layout-item>
+        </lightning-layout-item-->
         <lightning-layout-item size="2" class="slds-col slds-m-vertical_medium">
             <p class="slds-m-top_small leadLabel">Service of Type</p>
             <span class=leadDetails>{serviceType}</span>
@@ -36,6 +36,14 @@
             <p class="slds-m-top_small leadLabel">Cargo Readiness</p>
             <span class=leadDetails>{cargoReadiness}</span>
         </lightning-layout-item>
+        <lightning-layout-item size="2" if:true={cargoDetails} title={cargoReadiness} class="slds-col slds-m-vertical_medium">
+            <p class="slds-m-top_small leadLabel">Cargo Details
+                <lightning-button variant="base"
+                icon-name="utility:info" 
+                onclick={handleShowCargoDetails}></lightning-button>
+            </p>
+            <span class=leadDetails>{cargoDetails}</span>
+        </lightning-layout-item>
     </lightning-layout>
     <template if:true={quoteLineItemList}>
         <lightning-layout style="background: white;">
@@ -53,6 +61,10 @@
                                             <template for:each={shipLine.value2} for:item="equiptab">
                                                 <lightning-tab label={equiptab.equipmentName} data-field="EquipTabField" key={equiptab.equipmentName} value={equiptab.equipmentName} onactive={handleEquipmentActive}>
                                                     <lightning-layout multiple-rows>
+                                                        <lightning-layout-item size="12"><b>Chargeable Weight : {equiptab.chargeableWeight}</b></lightning-layout-item>
+                                                        <lightning-layout-item size="12"> 
+                                                            <lightning-input disabled label="Transit Time" style="font-weight: 600;" variant="label-inline" value={equiptab.transitTime}></lightning-input>
+                                                        </lightning-layout-item>
                                                         <lightning-layout-item size="12">
                                                             <lightning-layout >
                                                             <lightning-layout-item size="4" ><!-- so as to make three columns --></lightning-layout-item>
@@ -63,7 +75,7 @@
                                                         <lightning-layout-item size="12">
                                                             <lightning-layout >
                                                                 <lightning-layout-item size="4" class="slds-m-top_large" style="font-size: 16px;" if:true={equiptab.totalSellingRate}>
-                                                                    <b>Sea Freight</b>
+                                                                    <b>Total</b>
                                                                     <lightning-button variant="base"
                                                                     icon-name="utility:info" 
                                                                     onclick={handleShowServiceCharge}></lightning-button>
@@ -72,7 +84,7 @@
                                                                     <lightning-input style="padding-right: 10px;" disabled value={equiptab.buyingRate} if:true={equiptab.buyingRate}></lightning-input>
                                                                 </lightning-layout-item>
                                                                 <lightning-layout-item size="4" >
-                                                                    <lightning-input style="padding-right: 10px;" disabled value={equiptab.totalSellingRate} if:true={equiptab.totalSellingRate}></lightning-input>
+                                                                    <lightning-input style="padding-right: 10px;" disabled value={equiptab.seaFreight} if:true={equiptab.seaFreight}></lightning-input>
                                                                 </lightning-layout-item>
                                                             </lightning-layout>                                            
                                                         </lightning-layout-item>
@@ -635,11 +647,13 @@
                         <lightning-layout-item size="5" class="buyingRateStyle">
                             <span style="color: #3A88F7;font-size: 20px;">{currencyCode} {buyingRate}</span>
                             <p class="slds-align_absolute-center" style="color: #5A5A5A;">Buying Rate</p>
+                            <p class="slds-align_absolute-center" style="color: #5A5A5A; padding-top: 2px;font-size: 11px;">(Rate Kg : {buyingRateKg})</p>
                          </lightning-layout-item>
                          <lightning-layout-item size="1"></lightning-layout-item>
                          <lightning-layout-item size="5" class="sellingRateStyle">
                             <span style="color: #4CAF50; font-size: 20px;">{currencyCode} {sellingRate}</span>
                             <p class="slds-align_absolute-center" style="color: #4CAF50;">Selling Rate</p>
+                            <p class="slds-align_absolute-center" style="color: #5A5A5A; padding-top: 2px;font-size: 11px;">(Rate Kg : {sellingRatekg})</p>
                          </lightning-layout-item>
                          <lightning-layout-item size="12" style="text-align: center;">
                             <span>Quotation Date : </span><span>{quotationDate}</span>
@@ -664,5 +678,11 @@
                 </div>
             </lightning-layout-item>
         </lightning-layout>
+    </template>
+    <template if:true={showServiceChargeModal}>
+        <c-b-a-f-c-o-service-charges-help-component is-air={isAir} rms-id={rmsId} onclose={handleCloseModal}></c-b-a-f-c-o-service-charges-help-component>
+    </template>
+    <template if:true={displayCargoDetails}>
+        <c-b-a-f-c-o-display-cargo-details route-id={routeId} onclose={handleCloseCargoDetailsPopUp}></c-b-a-f-c-o-display-cargo-details>
     </template>
 </template>

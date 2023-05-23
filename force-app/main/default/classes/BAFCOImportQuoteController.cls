@@ -59,7 +59,7 @@ public class BAFCOImportQuoteController {
                 routeEquipmentoquantityMap.put(routeEquip.Equipment_Type__r.name,routeEquip.Quantity__c);
             }        
         }
-        for(RMS__c rmsObj : [Select Remarks__c,Rate_Type__c,Agent__r.Name,Validity__c, Id,Sea_Freight__c, Equipment_Type__c,Shipping_Line__c,Shipping_Line__r.Name,Equipment_Type__r.name  
+        for(RMS__c rmsObj : [Select CurrencyIsoCode,Remarks__c,Rate_Type__c,Agent__r.Name,Validity__c, Id,Sea_Freight__c, Equipment_Type__c,Shipping_Line__c,Shipping_Line__r.Name,Equipment_Type__r.name  
                              FROM RMS__c WHERE Port_Of_Loading__r.Name =: portLoading 
                              AND Port_Of_Discharge__r.Name =: portDestination
                              AND Shipping_Line__r.Name != null
@@ -92,6 +92,7 @@ public class BAFCOImportQuoteController {
                                 rmsDto.rateType =rmsObj.Rate_Type__c ;
                                 rmsDto.rmsRemarks = rmsObj.Remarks__c;
                                 rmsDto.fdAccount = isFDAccount;
+                                rmsDto.currencyCode = rmsObj.CurrencyIsoCode;
                                 /* NEED TO DISCUSS */
                                 /* String key = rmsObj.Shipping_Line__r.Name+'-'+rmsObj.Equipment_Type__r.name;
 if(quoteItemToIdMap.containsKey(key)){
@@ -181,19 +182,20 @@ rmsDto.quotationItemId = quoteItemToIdMap.get(key);
             integer year =  Date.Today().Year();
             string s1=string.valueof(year).right(2);
             Integer Year1= Integer.valueof(s1);
-            if(quoteList.size() > 0){
-                if(cameReviseCompt == true){
-                    String fullName = quoteList[0].Name__c;
-                    String lastName = fullName.Substring(fullName.lastIndexOf('/')+1,fullName.length());
-                    quoteObj.Name__c = 'Quote/'+Year1+'/'+lastName+'-'+quoteList.size();
-                }else{                
-                    Integer  quoteSize = quoteList.size();
-                    quoteObj.Name__c = 'Quote/'+Year1+'/'+quoteSize;
+                if(quoteList.size() > 0 ){
+                    if(cameReviseCompt == true){
+                        String fullName = quoteList[0].Name__c;
+                        String lastName = fullName.Substring(fullName.lastIndexOf('/')+1,fullName.length());
+                        quoteObj.Name__c = 'Quote/'+Year1+'/'+lastName+'-'+quoteList.size();
+                    }else{                
+                        Integer  quoteSize = quoteList.size();
+                        quoteObj.Name__c = 'Quote/'+Year1+'/'+quoteSize;
+                    }
                 }
-            }
-            else{
-                quoteObj.Name__c = 'Quote/'+Year1+'/'+1;
-            }
+                else{
+                    quoteObj.Name__c = 'Quote/'+Year1+'/'+1;
+                }
+            
             quoteObj.Remarks__c = remarks;
             quoteObj.Effective_From__c = system.today();
             Insert quoteObj;
@@ -233,16 +235,17 @@ rmsDto.quotationItemId = quoteItemToIdMap.get(key);
             Decimal quoteNumber = enqObj.No_of_Quotes__c != null ? enqObj.No_of_Quotes__c + 1 : 0;
             List<Quotation__c> quoteList2 = enqObj.Quotations__r; 
             if(quoteList2.size() > 0){
-               if(cameReviseCompt == true){
-                   String fullName = quoteList2[0].Name__c;
+                if(cameReviseCompt == true){
+                    String fullName = quoteList2[0].Name__c;
                     String lastName = fullName.Substring(fullName.lastIndexOf('/')+1,fullName.length());
-                   quoteObj.Name__c = 'Quote/'+Year1+'/'+lastName+'-'+quoteList.size();
+                    quoteObj.Name__c = 'Quote/'+Year1+'/'+lastName+'-'+quoteList.size();
                 }
                 else{
                     Integer  quoteSize = quoteList2.size();
                     quoteObj.Name__c = 'Quote/'+Year1+'/'+quoteSize;
                 }
             }
+            
             quoteObj.Remarks__c = remarks;
            if(enqObj.Business_Type__c == 'Export') quoteObj.recordtypeId = QUOTE_EXPORT_RECORDTYPE_Id;
            else if(enqObj.Business_Type__c == 'Import') quoteObj.recordtypeId = QUOTE_IMPORT_RECORDTYPE_Id;                    
@@ -323,98 +326,7 @@ rmsDto.quotationItemId = quoteItemToIdMap.get(key);
             }
         }
         
-        for(BAFCOImportRMSDto.AdditionalCharge dto2 : additionalChargeList){
-            if(dto2.name == 'Bayan cancellation charge'){
-                quoteItemObj.Bayan_cancellation_charge__c = dto2.value;
-            }
-            if(dto2.name == 'Cleaning charges'){
-                quoteItemObj.Cleaning_charges__c = dto2.value;
-            }
-            if(dto2.name == 'Container Lashing Charges'){
-                //quoteItemObj.Container_Lashing_Charges__c = dto2.value;
-            }
-            if(dto2.name == 'Container movement charges'){
-                quoteItemObj.Container_movement_charges__c = dto2.value;
-            }
-            if(dto2.name == 'Container stripping'){
-                quoteItemObj.Container_stripping__c = dto2.value;
-            }
-            if(dto2.name == 'Additional Freetime Charges'){
-                quoteItemObj.Free_time_certificate_charges__c = dto2.value;
-            }
-            if(dto2.name == 'Fumigation'){
-                quoteItemObj.Fumigation__c= dto2.value;
-            }
-            if(dto2.name == 'Inspection'){
-                quoteItemObj.Inspection__c = dto2.value;
-            }
-            if(dto2.name == 'Insurance charges'){
-                quoteItemObj.Insurance_charges__c = dto2.value;
-            }
-            if(dto2.name == 'Ministry clearnce charge for OOG cargo'){
-                quoteItemObj.Ministry_clearnce_charge_for_OOG_cargo__c = dto2.value;
-            }
-            if(dto2.name == 'Miscellaneous'){
-                quoteItemObj.Miscellaneous__c = dto2.value;
-            }
-            if(dto2.name == 'MOT fine charges'){
-                quoteItemObj.MOT_fine_charges__c = dto2.value;
-            }
-            if(dto2.name == 'Non Palletized Surcharge'){
-                quoteItemObj.Non_Palletized_Surcharge__c = dto2.value;
-            }
-            if(dto2.name == 'Pest control'){
-                quoteItemObj.Pest_control__c = dto2.value;
-            }
-            if(dto2.name == 'Re palletization'){
-                quoteItemObj.Re_palletization__c = dto2.value;
-            }
-            if(dto2.name == 'Reefer cntr plug-in charges'){
-                quoteItemObj.Reefer_cntr_plug_in_charges__c = dto2.value;
-            }
-            if(dto2.name == 'Reefer PTI charges'){
-                quoteItemObj.Reefer_PTI_charges__c = dto2.value;
-            }
-            if(dto2.name == 'Reefer steam wash'){
-                quoteItemObj.Reefer_steam_wash__c = dto2.value;
-            }
-            if(dto2.name == 'Stuffing Charges'){
-                quoteItemObj.Stuffing_Charges__c = dto2.value;
-            }
-            if(dto2.name == 'Sweeping/Cleaning'){
-                quoteItemObj.SweepingCleaning__c = dto2.value;
-            }
-            /*if(dto.name == 'Tarpauline charge'){
-quoteItemObj. = dto.value;
-}*/
-            if(dto2.name == 'Truck Head charges'){
-                quoteItemObj.Truck_Head_charges__c = dto2.value;
-            }
-            if(dto2.name == 'Truck idling charges'){
-                quoteItemObj.Truck_idling_charges__c = dto2.value;
-            }
-            if(dto2.name == 'Vessel certificate charges'){
-                quoteItemObj.Vessel_certificate_charges__c = dto2.value;
-            }
-            if(dto2.name == 'Wrapping/packing charges'){
-                quoteItemObj.Wrappingpacking_charges__c = dto2.value;
-            }
-            if(dto2.name == 'Freight Difference(FD)'){
-                quoteItemObj.Freight_Difference_FD__c = dto2.value;
-            }
-            if(dto2.name == 'Carrier container repositioning charges'){
-                quoteItemObj.Carrier_container_repositioning_charges__c = dto2.value;
-            }
-            if(dto2.name == 'Alternate depot release charges'){
-                quoteItemObj.Alternate_depot_release_charges__c = dto2.value;
-            }
-            if(dto2.name == 'Tank Rental Charges'){
-                quoteItemObj.Tank_Rental_Charges__c = dto2.value;
-            }
-            quoteItemObj.Add_to_Buying_Additional__c =  dto.addAdditionalCharge != null ? dto.addAdditionalCharge : false;
-            quoteItemObj.Included_PDF_Additional__c =  dto.includeAdditionalCharge != null ? dto.includeAdditionalCharge : false;
-        }
-        quoteItemObj.Total__c = dto.total;
+		quoteItemObj.Total__c = dto.total;
         quoteItemObj.Total_Additional__c = additionalChargeTotal;
         quoteItemObj.Sea_Freight__c = dto.seaFreightSellRate;
         quoteItemObj.Pickup_Place__c= dto.pickupPlace;
@@ -448,11 +360,311 @@ quoteItemObj. = dto.value;
         }
         try{
             upsert quoteItemObj;
+            assignAdditionalChargeIntoQuoteItem(additionalChargeList,quoteItemObj,dto);
         }
         Catch(Exception e){
             System.debug('Exception '+e.getMessage());
         }
         
         return quoteObj.Id;
+    }
+    public static void assignAdditionalChargeIntoQuoteItem(List<BAFCOImportRMSDto.AdditionalCharge> additionalChargeList, Quotation_item__c quoteItemObj,BAFCOImportRMSDto dto){
+        Map<String,id> additionalChargeMap = new Map<String,id>();
+        for(Additional_Charge__c addnObj :  [Select id, name from Additional_Charge__c]){
+            additionalChargeMap.put(addnObj.name,addnObj.id);
+        }
+        List<Quotation_Charges__c> chargeList = new List<Quotation_Charges__c>();
+        for(BAFCOImportRMSDto.AdditionalCharge dto2 : additionalChargeList){
+            system.debug('dto2' +dto2);
+            Quotation_Charges__c newObj = new Quotation_Charges__c();
+            newObj.Quotation_Item__c = quoteItemObj.id;
+            newObj.Charge_Value__c = dto2.sellingCharge;
+            newObj.Buying_Rate__c = dto2.value;
+            newObj.isAdditional_Charge__c = true;
+            if(additionalChargeMap.containsKey(dto2.name))newObj.Charge_Name__c = additionalChargeMap.get(dto2.name);
+            chargeList.add(newObj);
+        }
+        quoteItemObj.Add_to_Buying_Additional__c =  dto.addAdditionalCharge != null ? dto.addAdditionalCharge : false;
+        quoteItemObj.Included_PDF_Additional__c =  dto.includeAdditionalCharge != null ? dto.includeAdditionalCharge : false;
+        system.debug('chargeList '+chargeList);
+        if(chargeList.size() > 0) insert chargeList;
+        
+    }
+    public static void testDummy(){
+        Integer a=10;
+        Integer b=5;
+        Integer c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+         c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+         c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+         c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+         c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+         c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+         c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
     }
 }

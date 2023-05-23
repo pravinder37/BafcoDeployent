@@ -48,6 +48,7 @@ public class BAFCOImportRMSDto {
         public String name { get; set; }
         @AuraEnabled
         public Decimal value { get; set; }
+        @AuraEnabled public decimal sellingCharge {get;set;}
     }
     public class serviceChargeList{
         @AuraEnabled

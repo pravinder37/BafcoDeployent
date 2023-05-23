@@ -35,6 +35,10 @@ export default class BAFCOAirImportReviseDetail extends LightningElement {
     @api equipmentType =''
     @track currencyCode='USD';
     @api isAir;
+    @api cargoDetails ='';
+    @track buyingRateKg = 0.00;
+    @track sellingRatekg ;
+    @track displayCargoDetails = false;
     connectedCallback(){
         this.getQuoteLineItemDetails();
     }
@@ -83,6 +87,8 @@ export default class BAFCOAirImportReviseDetail extends LightningElement {
         this.sellingRate = totalSelling;
         this.quotationDate = data[elem].quotationDate;
         this.currencyCode = data[elem].currencyCode;
+        this.buyingRateKg = data[elem].buyingRatekg;
+        this.sellingRatekg = data[elem].sellingRatekg;
         this.handleUpdateCalculation();
     }
     handleshippingLineActive(e){
@@ -104,7 +110,9 @@ export default class BAFCOAirImportReviseDetail extends LightningElement {
         if(data[elem].totalSellingRate > 0) totalSelling=totalSelling+data[elem].totalSellingRate;
         this.buyingRate = data[elem].totalBuyingRate;
         this.quotationDate = data[elem].quotationDate;
-        this.currencyCode = data[elem].currencyCode
+        this.currencyCode = data[elem].currencyCode;
+        this.buyingRateKg = data[elem].buyingRatekg;
+        this.sellingRatekg = data[elem].sellingRatekg;
         this.sellingRate = totalSelling;
         this.handleUpdateCalculation();
     }
@@ -126,6 +134,7 @@ export default class BAFCOAirImportReviseDetail extends LightningElement {
                 data= elem.data
             }
         })
+        console.log('data '+JSON.stringify(data,null,2))
         let equipIndex = data.findIndex(x=>x.equipmentName == this.shippingEquipTabSelected)
         if(equipIndex != -1){
             let totalSelling = 0;
@@ -134,6 +143,8 @@ export default class BAFCOAirImportReviseDetail extends LightningElement {
             this.quotationDate = data[equipIndex].quotationDate;
             this.sellingRate =totalSelling;
             this.rmsId = data[equipIndex].rmsId;
+            this.buyingRateKg = data[equipIndex].buyingRatekg;
+            this.sellingRatekg = data[equipIndex].sellingRatekg;
             this.currencyCode = data[equipIndex].currencyCode;
         }
         this.handleUpdateCalculation();
@@ -163,5 +174,17 @@ export default class BAFCOAirImportReviseDetail extends LightningElement {
                 }
             }
         }, 100);
+    }
+    handleShowServiceCharge(){
+        this.showServiceChargeModal = true; 
+    }
+    handleCloseModal(){
+        this.showServiceChargeModal = false; 
+    }
+    handleCloseCargoDetailsPopUp(){
+        this.displayCargoDetails = false;
+    }
+    handleShowCargoDetails(){
+        this.displayCargoDetails = true;
     }
 }

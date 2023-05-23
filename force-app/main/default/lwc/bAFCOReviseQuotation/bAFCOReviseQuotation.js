@@ -25,6 +25,9 @@ export default class BAFCOReviseQuotation extends NavigationMixin(LightningEleme
     @track recordtypeName = '';
     @track validityDate = '';
     minTodaysDate ='';
+    @track routeCustomerAvgMargin = 0;
+    @track routeAvgMargin = 0;
+	@track accountAvgMargin = 0;
     connectedCallback(){
         console.log('quotation id '+this.quoteID);
         console.log('leadId id '+this.leadId);
@@ -127,6 +130,9 @@ export default class BAFCOReviseQuotation extends NavigationMixin(LightningEleme
         let index = -1;
         index = this.routingDetailsList.findIndex(x=>x.routeName == this.section);
         if(index != -1){
+            this.accountAvgMargin = this.routingDetailsList[index].accountAvgMargin;
+            this.routeCustomerAvgMargin = this.routingDetailsList[index].routeCustomerAvgMargin;
+            this.routeAvgMargin = this.routingDetailsList[index].routeAvgMargin;
             setTimeout(() => {
                 this.template.querySelectorAll("c-b-a-f-c-o-quote-line-item-revise-detail")[index].handleUpdateCalculation();
             }, 200);

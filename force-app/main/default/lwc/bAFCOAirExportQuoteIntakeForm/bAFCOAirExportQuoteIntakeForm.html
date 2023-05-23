@@ -1,9 +1,9 @@
 <template>
     <lightning-layout multiple-rows class="slds-gutters narrow-form" style="background-color: #f7f7f7;" >
-        <lightning-layout-item size="2" class="slds-col slds-m-vertical_medium">
+        <!--lightning-layout-item size="2" class="slds-col slds-m-vertical_medium">
             <p class="slds-m-top_small leadLabel">Kind of Shipment</p>
             <span class=leadDetails>{shipmentKind}</span>
-        </lightning-layout-item>
+        </lightning-layout-item-->
         <lightning-layout-item size="2" class="slds-col slds-m-vertical_medium">
             <p class="slds-m-top_small leadLabel">Service of Type</p>
             <span class=leadDetails>{serviceType}</span>
@@ -41,7 +41,10 @@
             <span class=leadDetails>{remarks}</span>
         </lightning-layout-item>
         <lightning-layout-item size="2" title={cargoDetails} style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" class="slds-col slds-m-vertical_medium">
-            <p class="slds-m-top_small leadLabel">cargoDetails</p>
+            <p class="slds-m-top_small leadLabel">cargoDetails
+                <lightning-button variant="base"
+                icon-name="utility:info" 
+                onclick={handleShowCargoDetails}></lightning-button></p>
             <span class=leadDetails>{cargoDetails}</span>
         </lightning-layout-item>
     </lightning-layout>
@@ -903,6 +906,9 @@
         </template>
         <template if:true={displayExWorksModal}>
             <c-b-a-f-c-o-select-ex-works onaddselected={handleAddExWorks} onclose={handleCloseExworks}></c-b-a-f-c-o-select-ex-works>
+        </template>
+        <template if:true={displayCargoDetails}>
+            <c-b-a-f-c-o-display-cargo-details route-id={routeId} onclose={handleCloseCargoDetailsPopUp}></c-b-a-f-c-o-display-cargo-details>
         </template>
     </template>  
 </template>

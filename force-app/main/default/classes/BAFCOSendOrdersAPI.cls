@@ -1,9 +1,9 @@
 public class BAFCOSendOrdersAPI {
     @Future(callout=true)
     public static void sendOrderData(List<ID> orderIDList) {
-        List<Order__c> orderList = [Select Order__c.Integration__c, Operations_Executive__r.BSLS_ID__c,Id,Account_Order__r.BSLS_ID__c,Account_Order__r.name,Account_Order__r.Branch__c,
-                                    Account_Order__r.Owner.BSLS_ID__c	,Account_Order__r.BillingAddress,Name,Quotation__r.Name,
-                                    Quotation__r.Quotation_Validity__c,Order_Validity__c,(Select Order__r.Opportunity_Order__r.Commercial_User__r.Name,Total_Order__c,Quantity__c,id,Order__r.Name,Name,Route_Order__r.Kind_Of_Shipment__c,Route_Order__r.Service_Type__c,
+        List<Order__c> orderList = [Select Id,Order__c.Integration__c, Operations_Executive__r.BSLS_ID__c,Account_Order__r.BSLS_ID__c,Account_Order__r.name,Account_Order__r.Branch__c,
+                                    Account_Order__r.Owner.BSLS_ID__c,Account_Order__r.BillingAddress,Name,Quotation__r.Name,Quotation__c,
+                                    Quotation__r.Quotation_Validity__c,Order_Validity__c,(Select Order__r.Opportunity_Order__r.Commercial_User__r.BSLS_ID__c,Order__r.Opportunity_Order__r.Commercial_User__r.Name,Total_Order__c,Quantity__c,id,Order__r.Name,Name,Route_Order__r.Kind_Of_Shipment__c,Route_Order__r.Service_Type__c,
                                     Shipping_Line__r.BSLS_ID__c,Pickup_Place__c,Discharge_Place__c,Port_of_Loading_Order__r.BSLS_ID__c,Port_of_Discharge_Order__r.BSLS_ID__c,
                                     Place_of_Pickup__r.BSLS_ID__c,Place_of_Discharge__r.BSLS_ID__c,Equipment_Type_Order__r.BSLS_ID__c,Agent__r.Name,Agent__r.BSLS_ID__c from Order_Items__r)  
                                     from Order__c where ID IN: orderIDList];
@@ -63,6 +63,8 @@ public class BAFCOSendOrdersAPI {
                     orderDto.QuotationNumber = ordrObj.Quotation__r.Name;
                     orderDto.QuotationValidity = ordrObj.Quotation__r.Quotation_Validity__c;
                     orderDto.OrderValidity = ordrObj.Order_Validity__c;
+                    orderDto.OrderSFID = ordrObj.Id;
+                    orderDto.QuotationSFID = ordrObj.Quotation__c;                 
                     if(ordrObj.Order_Items__r.size() > 0){
                         List<Order_Item__c> orderItemList = ordrObj.Order_Items__r;
                         List<OrderItemList> orderItemDtoList = new List<OrderItemList>();
@@ -103,7 +105,7 @@ public class BAFCOSendOrdersAPI {
                             itemDto.equipmentType = item.Equipment_Type_Order__r.BSLS_ID__c ;
                             itemDto.quantity = String.valueOf(item.Quantity__c);
                             itemDto.SellingRate = String.valueOf(item.Total_Order__c);
-                            itemDto.CommercialUser = item.Order__r.Opportunity_Order__r.Commercial_User__r.Name;
+                            itemDto.CommercialUser = item.Order__r.Opportunity_Order__r.Commercial_User__r.BSLS_ID__c;
                             if(item.Agent__c != null){
                                 Agent agentObj = new Agent();
                                 agentObj.AgentName = item.Agent__r.Name;
@@ -175,7 +177,7 @@ public class BAFCOSendOrdersAPI {
     public static void doCallOut(OrderList orderRecord) {
         HttpRequest req = new HttpRequest();
         req.setHeader('Content-Type', 'application/json');
-        req.setEndpoint('http://223.31.190.170:52293/Import/Orders');
+        req.setEndpoint('https://bsls.bafcointl.com:52293/Import/Orders');
         req.setHeader('Content-Length', '0');
         req.setMethod('POST');
         system.debug('Order BODY--'+JSON.serialize(orderRecord));
@@ -242,6 +244,8 @@ public class BAFCOSendOrdersAPI {
         @AuraEnabled public String QuotationNumber {get;Set;}
         @AuraEnabled public Date QuotationValidity {get;Set;}
         @AuraEnabled public Date OrderValidity {get;Set;}
+        @AuraEnabled public String OrderSFID {get;Set;}
+        @AuraEnabled public String QuotationSFID {get;Set;}
         @AuraEnabled public List<OrderItemList> orderItemList {get;Set;}
     }
     public class OrderItemList{

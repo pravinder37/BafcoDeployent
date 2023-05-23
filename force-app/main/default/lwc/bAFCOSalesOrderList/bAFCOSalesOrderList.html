@@ -42,17 +42,35 @@
             </lightning-layout-item>
         </lightning-layout>
             <lightning-layout multiple-rows>
-                <lightning-layout-item size="8">
+                <lightning-layout-item size="8" style="padding: 0px 20px 0px 20px;">
                     <lightning-input 
                                 label="Customer Refrence Number"
                                 value={custRefNumber}
                                 onchange={handleCustomerNumberChange}></lightning-input>
                 </lightning-layout-item>
-                <lightning-layout-item size="8">
+                <lightning-layout-item size="8" style="padding: 0px 20px 0px 20px;">
                     <lightning-input 
                                 label="Booking Refrence Number"
                                 value={bookRefNumber}
                                 onchange={handleBookingNumberChange}></lightning-input>
+                </lightning-layout-item>
+                <lightning-layout-item size="8" style="padding: 0px 20px 0px 20px;">
+                    <lightning-input 
+                                label="BBMS Job Number"
+                                value={bbmsJobNumber}
+                                onchange={handleBBMSChange}></lightning-input>
+                </lightning-layout-item>
+                <lightning-layout-item size="8" if:true={displayShipConsignee}>
+                    <!---    -->
+                    <label class="slds-form-element__label">
+                        <p style="padding: 0px 20px 0px 20px;" class="labelStyle">Operation Executive</p>
+                    </label>
+                    <c-b-a-f-c-o-custom-look-up-component
+                                    obj-name="Operations_Executive__c"
+                                    search-placeholder="Search operation executive" 
+                                    icon-name="standard:account"
+                                    onlookupselected={handleOperationExecSelection}
+                                    onlookupremoved={handleOperationExecRemoved}></c-b-a-f-c-o-custom-look-up-component>
                 </lightning-layout-item>
                 <lightning-layout-item size="6">
                     <lightning-input name="Validity"

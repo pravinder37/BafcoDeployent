@@ -1,7 +1,4 @@
 import { LightningElement,api,track } from 'lwc';
-import getClassification from '@salesforce/apex/BAFCOshippingLineChargesController.getShippingCharges';
-import getIncoCharges from '@salesforce/apex/BAFCOshippingLineChargesController.getIncoCharges';
-import getDestintionCharges from '@salesforce/apex/BAFCOshippingLineChargesController.getDestintionCharges';
 import getRMSDetail from '@salesforce/apex/BAFCOshippingLineChargesController.getRMSDetail';
 import { NavigationMixin } from 'lightning/navigation';
 export default class BAFCOServiceChargesHelpComponent extends NavigationMixin(LightningElement) {

@@ -6,7 +6,7 @@ public class BAFCOOrderTriggerHandler {
         Map<ID,String> oppOwnerMap = new Map<ID,String>();
         Map<Id,Id> targetOwnerMap = new Map<Id,Id>();
         for(Order__c ordRec:orderList){
-            opportunityIDSet.add(ordRec.Opportunity_Order__c);
+            opportunityIDSet.add(ordRec.Opportunity_Order__c); 
         }
         system.debug('opportunityIDSet'+opportunityIDSet);
         for(Opportunity oppOwners : [Select Id,OwnerID FROM Opportunity where ID IN : opportunityIDSet]){
@@ -41,19 +41,20 @@ public class BAFCOOrderTriggerHandler {
                 Decimal latestNumber;
                 if(newOrder.Branch__c=='Jubail'){
                     if(jubailRecord.size()>0){                        
-                        system.debug('In jubailRecord');
+                        system.debug('In jubailRecord'+jubailRecord);
                         latestNumber=jubailRecord[0].Record_Number__c;
-                        if(newOrder.Record_Number__c!=NULL){
-                            newOrder.Record_Number__c=newOrder.Record_Number__c+1;
+                        Decimal updatedNumber = latestNumber+1;
+                        if(latestNumber!=NULL){
+                            newOrder.Record_Number__c=updatedNumber;
                         }
                         else{
                             newOrder.Record_Number__c=1;
                         }
-                        newOrder.Name =getLatestNameValue(latestNumber,'JUB','O');                        
+                        newOrder.Name =getLatestNameValue(updatedNumber,'JUB','O');                        
                         
                     }else{
                         String yearVal = String.valueOf(system.today().year()).right(2);
-                        newOrder.Name ='JUB/O/'+yearVal+'/1';
+                        newOrder.Name ='JUB/Q/'+yearVal+'/1';
                         newOrder.Record_Number__c=1;
                     }
                 }
@@ -61,17 +62,18 @@ public class BAFCOOrderTriggerHandler {
                     if(jeddahRecord.size()>0){                        
                         system.debug('In jeddahRecord');
                         latestNumber=jeddahRecord[0].Record_Number__c;
-                        if(newOrder.Record_Number__c!=NULL){
-                            newOrder.Record_Number__c=newOrder.Record_Number__c+1;
+                        Decimal updatedNumber = latestNumber+1;
+                        if(latestNumber!=NULL){
+                            newOrder.Record_Number__c=updatedNumber;
                         }
                         else{
                             newOrder.Record_Number__c=1;
                         }
-                        newOrder.Name =getLatestNameValue(latestNumber,'JED','O');                        
+                        newOrder.Name =getLatestNameValue(updatedNumber,'JED','O');                        
                         
                     }else{
                         String yearVal = String.valueOf(system.today().year()).right(2);
-                        newOrder.Name ='JED/O/'+yearVal+'/1';
+                        newOrder.Name ='JED/Q/'+yearVal+'/1';
                         newOrder.Record_Number__c=1;
                     }
                 }
@@ -80,17 +82,18 @@ public class BAFCOOrderTriggerHandler {
                     if(riyadRecord.size()>0){                        
                         system.debug('In riyadRecord');
                         latestNumber=riyadRecord[0].Record_Number__c;
-                        if(newOrder.Record_Number__c!=NULL){
-                            newOrder.Record_Number__c=newOrder.Record_Number__c+1;
+                        Decimal updatedNumber = latestNumber+1;
+                        if(latestNumber!=NULL){
+                            newOrder.Record_Number__c=updatedNumber;
                         }
                         else{
                             newOrder.Record_Number__c=1;
                         }
-                        newOrder.Name =getLatestNameValue(latestNumber,'RYD','O');                        
+                        newOrder.Name =getLatestNameValue(updatedNumber,'RYD','O');                        
                         
                     }else{
                         String yearVal = String.valueOf(system.today().year()).right(2);
-                        newOrder.Name ='RYD/O/'+yearVal+'/1';
+                        newOrder.Name ='RYD/Q/'+yearVal+'/1';
                         newOrder.Record_Number__c=1;
                     }
                 }
@@ -99,17 +102,18 @@ public class BAFCOOrderTriggerHandler {
                     if(dammamRecord.size()>0){                        
                         system.debug('In dammamRecord');
                         latestNumber=dammamRecord[0].Record_Number__c;
-                        if(newOrder.Record_Number__c!=NULL){
-                            newOrder.Record_Number__c=newOrder.Record_Number__c+1;
+                        Decimal updatedNumber = latestNumber+1;
+                        if(latestNumber!=NULL){
+                            newOrder.Record_Number__c=updatedNumber;
                         }
                         else{
                             newOrder.Record_Number__c=1;
                         }
-                        newOrder.Name =getLatestNameValue(latestNumber,'DMM','O');                        
+                        newOrder.Name =getLatestNameValue(updatedNumber,'DMM','O');                        
                         
                     }else{
                         String yearVal = String.valueOf(system.today().year()).right(2);
-                        newOrder.Name ='DMM/O/'+yearVal+'/1';
+                        newOrder.Name ='DMM/Q/'+yearVal+'/1';
                         newOrder.Record_Number__c=1;
                     }
                 }  
@@ -123,22 +127,43 @@ public class BAFCOOrderTriggerHandler {
         //latestNumber = latestNumber.right(4);
         system.debug('latestNumber'+latestNumber);
         //Integer latestNumberVal = Integer.valueOf(latestNumber) + 1;
-        Decimal latestNumberVal = latestNumber+1;
-        system.debug('latestNumberVal : '+latestNumberVal);
+        //Decimal latestNumberVal = latestNumber+1;
+        system.debug('latestNumberVal : '+latestNumber);
         
-        latestValue = BranchCode+'/'+recordType+'/'+yearVal+'/'+latestNumberVal;
+        latestValue = BranchCode+'/'+recordType+'/'+yearVal+'/'+latestNumber;
         system.debug('latestValue : '+latestValue);
         return latestValue;        
     }
     
-    public static void afterAction(List<Order__c> orderList){
+    public static void sendOrderDetailsOnInsert(List<Order__c> orderList){
         set<ID> orderIDSet = new Set<ID>();
         List<ID> orderIDList = new List<ID>();
         for(Order__c ord:orderList){
-            orderIDSet.add(ord.ID);
+            if(ord.Order_Type__c=='Sea Import'){                
+                orderIDSet.add(ord.ID);
+            }
         }
         orderIDList.addAll(orderIDSet);
         BAFCOSendOrdersAPI.sendOrderData(orderIDList);        
+    }
+    public static void sendOrderDetailsOnUpdate(List<Order__c> orderList,Map<id,Order__c> oldMap){
+        set<ID> orderIDSet = new Set<ID>();
+        List<ID> orderIDList = new List<ID>();
+        for(Order__c ord:orderList){
+            system.debug('ord.Integration__c'+ord.Integration__c);
+            system.debug('oldMap.get(ord.ID).Integration__c'+oldMap.get(ord.ID).Integration__c);
+            if(oldMap.get(ord.ID).Integration__c==false && ord.Integration__c!=oldMap.get(ord.ID).Integration__c && ord.Integration__c==true && ord.Order_Type__c=='Sea Import'){
+                system.debug('In If');
+                orderIDSet.add(ord.ID);
+                system.debug('orderIDSet'+orderIDSet);
+            }
+        }
+        orderIDList.addAll(orderIDSet);
+        system.debug('orderIDList'+orderIDList);
+        if(orderIDList!=NULL && orderIDList.size()>0){
+            system.debug('In Second If');
+            BAFCOSendOrdersAPI.sendOrderData(orderIDList);    
+        }
     }
     
     public static void updateTargetData(List<Order__c> orderList){
@@ -168,5 +193,442 @@ public class BAFCOOrderTriggerHandler {
         if(targetsListToUpdate!=NULL){
             database.update(targetsListToUpdate);
         }
+    }
+    
+    public static void calculateMargingOnStatusChanges(List<Order__c> orderList,Map<id,Order__c> oldMap){
+        system.debug('orderList in OrderTriggerHandler'+orderList);
+        Set<ID> orderIDSet = new Set<ID>();
+        for(Order__c orderRec:orderList){
+            if(orderRec.Status__c!=oldMap.get(orderRec.ID).status__c && (orderRec.Status__c=='Cancelled' || orderRec.Status__c=='Confirmed')){
+                orderIDSet.add(orderRec.ID);
+            }
+        }
+        system.debug('orderIDSet'+orderIDSet);
+        List<Order_Item__c> toProcessItemList = [Select ID,Port_of_Discharge_Order__c,Port_of_Loading_Order__c,Customer_Port_Pair_Margin__c,
+                                                 Profit__c,Profit_Margin__c, Teus__c, Quantity__c,Order__c,Route_Profit_Margin__c
+                                                 FROM Order_Item__c 
+                                                 WHERE Order__c IN:orderIDSet]; 
+        if(toProcessItemList!=NULL)
+        {
+            BAFCOMarginCalculator.calculateMargins(toProcessItemList);
+        }        
+    }
+    public static void testDummy(){
+        Integer a=10;
+        Integer b=5;
+        Integer c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+         c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+         c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
     }
 }

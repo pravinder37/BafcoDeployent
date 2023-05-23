@@ -1,4 +1,4 @@
-public class BAFCOMarginCalculator {
+public class BAFCOMarginCalculator { 
     public static void calculateMargins(List<Order_Item__c> orderItemList){
         system.debug('=orderItemList '+orderItemList.size());
         for(Order_Item__c ordItem:orderItemList){
@@ -20,17 +20,20 @@ public class BAFCOMarginCalculator {
         
         Account customerRec = [Select id,Average_Margin__c from Account Where Id=:customerID];
         
-        List<Order_Item__c> toProcessItemList = [Select ID,Order__r.Account_Order__c,Profit__c,Order__r.Account_Order__r.Average_Margin__c,BSLS_ID__c,Teus__c
+        List<Order_Item__c> toProcessItemList = [Select ID,Order__r.Account_Order__c,Profit__c,
+                                                 Order__r.Account_Order__r.Average_Margin__c,BSLS_ID__c,Teus__c,
+                                                 Profit_Margin__c,Quantity__c
                                                  FROM Order_Item__c 
-                                                 WHERE Order__r.Account_Order__c =:customerID];
+                                                 WHERE Order__r.Account_Order__c =:customerID
+                                                 AND Order__r.Status__c='Confirmed'];
         
         system.debug('toProcessItemList'+toProcessItemList);
         system.debug('toProcessItemList Size'+toProcessItemList.size());
         Decimal finalMarginValue;
         for(Order_Item__c ordItem:toProcessItemList){            
-            if(ordItem.Profit__c!=NULL && ordItem.Teus__c!=NULL){
-                profitTeusSum=profitTeusSum+(ordItem.Profit__c*ordItem.Teus__c);
-                TeusSum=TeusSum+ordItem.Teus__c;
+            if(ordItem.Profit_Margin__c !=NULL && ordItem.Quantity__c!=NULL){
+                profitTeusSum=profitTeusSum+(ordItem.Profit_Margin__c * ordItem.Quantity__c);
+                TeusSum=TeusSum+ordItem.Quantity__c;
             }
         }
         
@@ -48,7 +51,7 @@ public class BAFCOMarginCalculator {
                 }
             }
             system.debug('=finalMarginValue'+finalMarginValue);
-            customerRec.Average_Margin__c = finalMarginValue;
+            customerRec.Average_Margin__c = (finalMarginValue).setScale(2);
             
             if(customerRec!=NULL){
                 database.update(customerRec);
@@ -60,12 +63,18 @@ public class BAFCOMarginCalculator {
         RecordType RouteMarginRecordType = [SELECT Id, SobjectType, DeveloperName, Name FROM RecordType Where SobjectType='Route_Profit_Margin__c' And DeveloperName = 'Port_Pair' Limit 1];
         Decimal profitTeusSum=0;
         Decimal TeusSum=0;
-        Order_Item__c orderItemDetails = [SELECT id,Order__r.Account_Order__r.Name,Order__r.Account_Order__r.id,Port_of_Loading_Order__r.Name,Port_of_Discharge_Order__r.Name
+        Order_Item__c orderItemDetails = [SELECT id,Order__r.Account_Order__r.Name,Order__r.Account_Order__r.id,
+                                          Port_of_Loading_Order__r.Name,Port_of_Discharge_Order__r.Name,
+                                          Profit_Margin__c,Quantity__c
                                           FROM Order_Item__c 
                                           WHERE id=:ordItemValue.ID];
+                                          //AND Order__r.Status__c='Confirmed'];
         
         
-        List<Route_Profit_Margin__c> routeMargingList = [Select id,Margin__c from Route_Profit_Margin__c Where Port_of_Loading__c=:ordItemValue.Port_of_Loading_Order__c AND Port_of_Discharge__c=:ordItemValue.Port_of_Discharge_Order__c Limit 1];
+        List<Route_Profit_Margin__c> routeMargingList = [Select id,Margin__c 
+                                                         from Route_Profit_Margin__c 
+                                                         Where Port_of_Loading__c=:ordItemValue.Port_of_Loading_Order__c 
+                                                         AND Port_of_Discharge__c=:ordItemValue.Port_of_Discharge_Order__c Limit 1];
         Route_Profit_Margin__c routeRecordToUpdate;
         
         if(routeMargingList==NULL || routeMargingList.size()<1){
@@ -89,18 +98,20 @@ public class BAFCOMarginCalculator {
         }
         
         
-        List<Order_Item__c> toProcessItemList = [Select ID,Port_of_Discharge_Order__c,Port_of_Loading_Order__c,Profit__c,Teus__c
+        List<Order_Item__c> toProcessItemList = [Select ID,Port_of_Discharge_Order__c,Port_of_Loading_Order__c,Profit__c,Profit_Margin__c, Teus__c, Quantity__c
                                                  FROM Order_Item__c 
-                                                 WHERE Port_of_Loading_Order__c=:ordItemValue.Port_of_Loading_Order__c AND Port_of_Discharge_Order__c=:ordItemValue.Port_of_Discharge_Order__c];
+                                                 WHERE Port_of_Loading_Order__c=:ordItemValue.Port_of_Loading_Order__c 
+                                                 AND Port_of_Discharge_Order__c=:ordItemValue.Port_of_Discharge_Order__c
+                                                 AND Order__r.Status__c='Confirmed'];
         
         system.debug('toProcessItemList'+toProcessItemList);
         system.debug('toProcessItemList Size'+toProcessItemList.size());
         Decimal finalMarginValue;
         
         for(Order_Item__c ordItem:toProcessItemList){            
-            if(ordItem.Profit__c!=NULL && ordItem.Teus__c!=NULL){
-                profitTeusSum=profitTeusSum+(ordItem.Profit__c*ordItem.Teus__c);
-                TeusSum=TeusSum+ordItem.Teus__c;
+            if(ordItem.Profit_Margin__c !=NULL && ordItem.Quantity__c!=NULL){
+                profitTeusSum=profitTeusSum+(ordItem.Profit_Margin__c *ordItem.Quantity__c);
+                TeusSum=TeusSum+ordItem.Quantity__c;
             }
         }
         
@@ -114,7 +125,7 @@ public class BAFCOMarginCalculator {
             }
             else{
                 if(routeRecordToUpdate.Margin__c!=finalMarginValue){
-                    finalMarginValue = averageMargin;
+                    finalMarginValue = (averageMargin).setScale(2);
                 }
             }
             system.debug('=finalMarginValue'+finalMarginValue);
@@ -130,7 +141,7 @@ public class BAFCOMarginCalculator {
         RecordType RouteCustomerMarginRecordType = [SELECT Id, SobjectType, DeveloperName, Name FROM RecordType Where SobjectType='Route_Profit_Margin__c' And DeveloperName = 'Customer_Port_Pair' Limit 1];
         Decimal profitTeusSum=0;
         Decimal TeusSum=0;
-        Order_Item__c orderItemDetails = [SELECT id,Order__r.Account_Order__r.Name,Order__r.Account_Order__r.id,Port_of_Loading_Order__r.Name,Port_of_Discharge_Order__r.Name
+        Order_Item__c orderItemDetails = [SELECT id,Order__r.Account_Order__r.Name,Order__r.Account_Order__r.id,Port_of_Loading_Order__r.Name,Port_of_Discharge_Order__r.Name,Profit_Margin__c,Quantity__c
                                           FROM Order_Item__c 
                                           WHERE id=:ordItemValue.ID];
         
@@ -161,20 +172,21 @@ public class BAFCOMarginCalculator {
         }
         
         
-        List<Order_Item__c> toProcessItemList = [Select ID,Port_of_Discharge_Order__c,Port_of_Loading_Order__c,Profit__c,Teus__c
+        List<Order_Item__c> toProcessItemList = [Select ID,Port_of_Discharge_Order__c,Port_of_Loading_Order__c,Profit__c,Teus__c,Profit_Margin__c,Quantity__c
                                                  FROM Order_Item__c 
                                                  WHERE Port_of_Loading_Order__c=:ordItemValue.Port_of_Loading_Order__c 
                                                  AND Port_of_Discharge_Order__c=:ordItemValue.Port_of_Discharge_Order__c
-                                                 AND Order__r.Account_Order__c=:orderItemDetails.Order__r.Account_Order__c ];
+                                                 AND Order__r.Account_Order__c=:orderItemDetails.Order__r.Account_Order__c
+                                                 AND Order__r.Status__c='Confirmed'];
         
         system.debug('toProcessItemList'+toProcessItemList);
         system.debug('toProcessItemList Size'+toProcessItemList.size());
         Decimal finalMarginValue;
         
         for(Order_Item__c ordItem:toProcessItemList){            
-            if(ordItem.Profit__c!=NULL && ordItem.Teus__c!=NULL){
-                profitTeusSum=profitTeusSum+(ordItem.Profit__c*ordItem.Teus__c);
-                TeusSum=TeusSum+ordItem.Teus__c;
+            if(ordItem.Profit_Margin__c !=NULL && ordItem.Quantity__c!=NULL){
+                profitTeusSum=profitTeusSum+(ordItem.Profit_Margin__c *ordItem.Quantity__c);
+                TeusSum=TeusSum+ordItem.Quantity__c;
             }
         }
         
@@ -188,7 +200,7 @@ public class BAFCOMarginCalculator {
             }
             else{
                 if(routeRecordToUpdate.Margin__c!=finalMarginValue){
-                    finalMarginValue = averageMargin;
+                    finalMarginValue = (averageMargin).setScale(2);
                 }
             }
             system.debug('=finalMarginValue'+finalMarginValue);
@@ -202,7 +214,7 @@ public class BAFCOMarginCalculator {
     
     @future
     public static void updateRouteOnItem(ID orderItemID,ID routeMargingID,Boolean isCustomerRoutePair){
-        system.debug('');
+        system.debug('In updateRouteOnItem'+orderItemID);
         Order_Item__c updateItemValue= new Order_Item__c();
         if(isCustomerRoutePair){
             updateItemValue = new Order_Item__c(id=orderItemID,Customer_Port_Pair_Margin__c=routeMargingID);
@@ -211,5 +223,27 @@ public class BAFCOMarginCalculator {
             updateItemValue = new Order_Item__c(id=orderItemID,Route_Profit_Margin__c=routeMargingID);
         }
         if(!test.isRunningTest()) database.update(updateItemValue);        
+    } 
+    
+    public static void deleteOrderCharges(List<ID> orderIdSet){
+        system.debug('orderIdSet'+orderIdSet);
+        List<String> routeCustomerString = new List<String>();
+        List<String> routePortPairString = new List<String>();
+        List<Order_Item__c> orderItemList = [Select id,Port_of_Discharge_Order__r.Name,Port_of_Loading_Order__r.Name,
+                                             Order__r.Account_Order__r.Name 
+                                             from Order_Item__c
+                                             where Order__c IN :orderIdSet];
+        for(Order_Item__c ordItem:orderItemList){
+            routeCustomerString.add(ordItem.Order__r.Account_Order__r.Name+' || '+ordItem.Port_of_Loading_Order__r.Name+' || '+ordItem.Port_of_Discharge_Order__r.Name);
+            routePortPairString.add(ordItem.Port_of_Loading_Order__r.Name+' || '+ordItem.Port_of_Discharge_Order__r.Name);            
+        }
+        List<Route_Profit_Margin__c> routeMargingList = [Select ID,Margin__c 
+                                                         from Route_Profit_Margin__c 
+                                                         Where Name IN : routeCustomerString OR Name IN : routePortPairString];
+        if(routeMargingList!=NULL){
+            //database.delete(routeMargingList);
+        }
+        
+        
     }
 }

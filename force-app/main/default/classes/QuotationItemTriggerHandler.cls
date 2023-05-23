@@ -619,172 +619,74 @@ chargesIncluded +='Place of Discharge : '+quote.Place_of_Discharge__c +' '+ quot
                 if(additionalChargeMap.containsKey(keyToNameMap.get('lolo_charges__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('lolo_charges__c'));
                 chargeList.add(newObj);
             }
-            if(item.Bayan_cancellation_charge__c > 0 ){
-                Quotation_Charges__c newObj = new Quotation_Charges__c();
-                newObj.Quotation_Item__c = item.id;
-                newObj.Charge_Value__c = item.Bayan_cancellation_charge__c;
-                if(additionalChargeMap.containsKey(keyToNameMap.get('bayan_cancellation_charge__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('bayan_cancellation_charge__c'));
-                chargeList.add(newObj);
-            } 
-            if(item.Container_Lashing_Charges__c > 0 ){
-                Quotation_Charges__c newObj = new Quotation_Charges__c();
-                newObj.Quotation_Item__c = item.id;
-                newObj.Charge_Value__c = item.Container_Lashing_Charges__c;
-                if(additionalChargeMap.containsKey(keyToNameMap.get('container_lashing_charges__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('container_lashing_charges__c'));
-                chargeList.add(newObj);
-            }
-            if(item.Container_movement_charges__c > 0 ){
-                Quotation_Charges__c newObj = new Quotation_Charges__c();
-                newObj.Quotation_Item__c = item.id;
-                newObj.Charge_Value__c = item.Container_movement_charges__c;
-                if(additionalChargeMap.containsKey(keyToNameMap.get('container_movement_charges__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('container_movement_charges__c'));
-                chargeList.add(newObj);
-            } 
-            if(item.Container_stripping__c > 0 ){
-                Quotation_Charges__c newObj = new Quotation_Charges__c();
-                newObj.Quotation_Item__c = item.id;
-                newObj.Charge_Value__c = item.Container_stripping__c;
-                if(additionalChargeMap.containsKey(keyToNameMap.get('container_stripping__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('container_stripping__c'));
-                chargeList.add(newObj);
-            } 
-            if(item.Free_time_certificate_charges__c > 0 ){
-                Quotation_Charges__c newObj = new Quotation_Charges__c();
-                newObj.Quotation_Item__c = item.id;
-                newObj.Charge_Value__c = item.Free_time_certificate_charges__c;
-                if(additionalChargeMap.containsKey(keyToNameMap.get('free_time_certificate_charges__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('free_time_certificate_charges__c'));
-                chargeList.add(newObj);
-            } 
-            if( item.Fumigation__c > 0 ){
-                Quotation_Charges__c newObj = new Quotation_Charges__c();
-                newObj.Quotation_Item__c = item.id;
-                newObj.Charge_Value__c = item.Fumigation__c;
-                if(additionalChargeMap.containsKey(keyToNameMap.get('fumigation__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('fumigation__c'));
-                chargeList.add(newObj);
-            }  
-            if(  item.Ministry_clearnce_charge_for_OOG_cargo__c  > 0 ){
-                Quotation_Charges__c newObj = new Quotation_Charges__c();
-                newObj.Quotation_Item__c = item.id;
-                newObj.Charge_Value__c = item.Ministry_clearnce_charge_for_OOG_cargo__c;
-                if(additionalChargeMap.containsKey(keyToNameMap.get('ministry_clearnce_charge_for_OOG_cargo__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('ministry_clearnce_charge_for_OOG_cargo__c'));
-                chargeList.add(newObj);
-            }  
-            if(  item.Miscellaneous__c > 0 ){
-                Quotation_Charges__c newObj = new Quotation_Charges__c();
-                newObj.Quotation_Item__c = item.id;
-                newObj.Charge_Value__c = item.Miscellaneous__c;
-                if(additionalChargeMap.containsKey(keyToNameMap.get('miscellaneous__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('miscellaneous__c'));
-                chargeList.add(newObj);
-            }  
-            if(  item.MOT_fine_charges__c  > 0 ){
-                Quotation_Charges__c newObj = new Quotation_Charges__c();
-                newObj.Quotation_Item__c = item.id;
-                newObj.Charge_Value__c = item.MOT_fine_charges__c;
-                if(additionalChargeMap.containsKey(keyToNameMap.get('mot_fine_charges__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('mot_fine_charges__c'));
-                chargeList.add(newObj);
-            }  
-            if(  item.Non_Palletized_Surcharge__c > 0 ){
-                Quotation_Charges__c newObj = new Quotation_Charges__c();
-                newObj.Quotation_Item__c = item.id;
-                newObj.Charge_Value__c = item.Non_Palletized_Surcharge__c;
-                if(additionalChargeMap.containsKey(keyToNameMap.get('non_palletized_surcharge__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('non_palletized_surcharge__c'));
-                chargeList.add(newObj);
-            } 
-            if(  item.Pest_control__c > 0 ){
-                Quotation_Charges__c newObj = new Quotation_Charges__c();
-                newObj.Quotation_Item__c = item.id;
-                newObj.Charge_Value__c = item.Pest_control__c;
-                if(additionalChargeMap.containsKey(keyToNameMap.get('pest_control__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('pest_control__c'));
-                chargeList.add(newObj);
-            }  
-            if(  item.Re_palletization__c > 0 ){
-                Quotation_Charges__c newObj = new Quotation_Charges__c();
-                newObj.Quotation_Item__c = item.id;
-                newObj.Charge_Value__c = item.Re_palletization__c;
-                if(additionalChargeMap.containsKey(keyToNameMap.get('re_palletization__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('re_palletization__c'));
-                chargeList.add(newObj);
-            }  
-            if(  item.Reefer_PTI_charges__c > 0 ){
-                Quotation_Charges__c newObj = new Quotation_Charges__c();
-                newObj.Quotation_Item__c = item.id;
-                newObj.Charge_Value__c = item.Reefer_PTI_charges__c;
-                if(additionalChargeMap.containsKey(keyToNameMap.get('reefer_PTI_charges__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('reefer_PTI_charges__c'));
-                chargeList.add(newObj);
-            } 
-            if(  item.Reefer_steam_wash__c  > 0 ){
-                Quotation_Charges__c newObj = new Quotation_Charges__c();
-                newObj.Quotation_Item__c = item.id;
-                newObj.Charge_Value__c = item.Reefer_steam_wash__c;
-                if(additionalChargeMap.containsKey(keyToNameMap.get('reefer_steam_wash__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('reefer_steam_wash__c'));
-                chargeList.add(newObj);
-            } 
-            if(  item.Stuffing_Charges__c  > 0 ){
-                Quotation_Charges__c newObj = new Quotation_Charges__c();
-                newObj.Quotation_Item__c = item.id;
-                newObj.Charge_Value__c = item.Stuffing_Charges__c;
-                if(additionalChargeMap.containsKey(keyToNameMap.get('stuffing_Charges__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('stuffing_Charges__c'));
-                chargeList.add(newObj);
-            } 
-            if(  item.SweepingCleaning__c  > 0 ){
-                Quotation_Charges__c newObj = new Quotation_Charges__c();
-                newObj.Quotation_Item__c = item.id;
-                newObj.Charge_Value__c = item.SweepingCleaning__c;
-                if(additionalChargeMap.containsKey(keyToNameMap.get('sweepingCleaning__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('sweepingCleaning__c'));
-                chargeList.add(newObj);
-            } 
-            if(  item.Truck_Head_charges__c  > 0 ){
-                Quotation_Charges__c newObj = new Quotation_Charges__c();
-                newObj.Quotation_Item__c = item.id;
-                newObj.Charge_Value__c = item.Truck_Head_charges__c;
-                if(additionalChargeMap.containsKey(keyToNameMap.get('truck_Head_charges__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('truck_Head_charges__c'));
-                chargeList.add(newObj);
-            } 
-            if(  item.Vessel_certificate_charges__c  > 0 ){
-                Quotation_Charges__c newObj = new Quotation_Charges__c();
-                newObj.Quotation_Item__c = item.id;
-                newObj.Charge_Value__c = item.Vessel_certificate_charges__c;
-                if(additionalChargeMap.containsKey(keyToNameMap.get('vessel_certificate_charges__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('vessel_certificate_charges__c'));
-                chargeList.add(newObj);
-            }  
-            if(  item.Wrappingpacking_charges__c  > 0 ){
-                Quotation_Charges__c newObj = new Quotation_Charges__c();
-                newObj.Quotation_Item__c = item.id;
-                newObj.Charge_Value__c = item.Wrappingpacking_charges__c;
-                if(additionalChargeMap.containsKey(keyToNameMap.get('wrappingpacking_charges__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('wrappingpacking_charges__c'));
-                chargeList.add(newObj);
-            }  
-            
-            if(  item.Alternate_depot_release_charges__c  > 0 ){
-                Quotation_Charges__c newObj = new Quotation_Charges__c();
-                newObj.Quotation_Item__c = item.id;
-                newObj.Charge_Value__c = item.Alternate_depot_release_charges__c;
-                if(additionalChargeMap.containsKey(keyToNameMap.get('alternate_depot_release_charges__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('alternate_depot_release_charges__c'));
-                chargeList.add(newObj);
-            }  
-            if(  item.Freight_Difference_FD__c  > 0 ){
-                Quotation_Charges__c newObj = new Quotation_Charges__c();
-                newObj.Quotation_Item__c = item.id;
-                newObj.Charge_Value__c = item.Freight_Difference_FD__c;
-                if(additionalChargeMap.containsKey(keyToNameMap.get('freight_difference_fd__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('freight_difference_fd__c'));
-                chargeList.add(newObj);
-            } 
-            if(  item.Carrier_container_repositioning_charges__c  > 0 ){
-                Quotation_Charges__c newObj = new Quotation_Charges__c();
-                newObj.Quotation_Item__c = item.id;
-                newObj.Charge_Value__c = item.Carrier_container_repositioning_charges__c;
-                if(additionalChargeMap.containsKey(keyToNameMap.get('carrier_container_repositioning_charges__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('carrier_container_repositioning_charges__c'));
-                chargeList.add(newObj);
-            }  
-            if(  item.Tank_Rental_Charges__c  > 0 ){
-                Quotation_Charges__c newObj = new Quotation_Charges__c();
-                newObj.Quotation_Item__c = item.id;
-                newObj.Charge_Value__c = item.Tank_Rental_Charges__c;
-                if(additionalChargeMap.containsKey(keyToNameMap.get('tank_rental_charges__c')))newObj.Charge_Name__c = additionalChargeMap.get(keyToNameMap.get('tank_rental_charges__c'));
-                chargeList.add(newObj);
-            } 
         }
         if(chargeList.size() > 0 ) {
             system.debug('chargeList '+chargeList);
             if(!test.isRunningTest()) insert chargeList;
+        }
+    }
+    public static void updateTeusValue(List<Quotation_Item__c> quoteItemList){
+        List<Id> quoteIds = new List<Id>();
+        List<Id> equipIds = new List<Id>();
+        List<Id> routeIds = new List<Id>();
+        Map<Id,String> quoteIdMap = new Map<Id,String>();
+        Map<String,Decimal> routeEquipIdMap = new Map<string,Decimal>();
+        Map<String,Decimal> routeIdMap = new Map<string,Decimal>();
+        Map<Id,String> equipIdMap = new Map<Id,String>();
+        for(Quotation_Item__c item : quoteItemList){
+            quoteIds.add(item.Quotation__c);
+            if(item.Equipment_Type__c != null) equipIds.add(item.Equipment_Type__c);
+            if(item.Route__c != null ) routeIds.add(item.Route__c);
+        }
+        for(Equipment_Type__c equipObj : [Select id,name from Equipment_Type__c where id  in : equipIds]){
+            equipIdMap.put(equipObj.id, equipObj.Name);
+        }
+        system.debug('routeIds '+routeIds);
+        for(Route_Equipment__c routeEquipObj : [Select id,Tab_View__c,CBM__c,Weight_Kgs__c from Route_Equipment__c where Route__c in : routeIds]){
+            if(routeEquipObj.CBM__c != null && routeEquipObj.Weight_Kgs__c !=null){
+            Decimal chargeableWeight = (routeEquipObj.CBM__c  * 167 ) > routeEquipObj.Weight_Kgs__c ? routeEquipObj.CBM__c  * 167  :  routeEquipObj.Weight_Kgs__c;
+            routeEquipIdMap.put(routeEquipObj.Tab_View__c,chargeableWeight);
+            }
+        }
+        for(Quotation__c quoteObj : [Select id,Quotation_Type__c from Quotation__c where id  in : quoteIds]){
+            quoteIdMap.put(quoteObj.id, quoteObj.Quotation_Type__c );
+        }
+        for(Route__c routeObj : [Select id, Chargeable_Weight__c from Route__c where id in : routeIds ]){
+            routeIdMap.put(routeObj.id,routeObj.Chargeable_Weight__c);
+        }
+        for(Quotation_Item__c item : quoteItemList){
+            if(quoteIdMap.get(item.Quotation__c) == 'Sea Export' || quoteIdMap.get(item.Quotation__c) == 'Sea Import' ||quoteIdMap.get(item.Quotation__c) == 'ISO Export' ||quoteIdMap.get(item.Quotation__c) == 'ISO Import'){
+                if(item.Equipment_Type__c != null && equipIdMap.get(item.Equipment_Type__c).contains('40') == true){
+                    item.Teusnew__c = 2 * (item.Quantity__c != null ? item.Quantity__c : 1);
+                }
+                if(item.Equipment_Type__c != null && equipIdMap.get(item.Equipment_Type__c).contains('20') == true){
+                    item.Teusnew__c = 1 * (item.Quantity__c != null ? item.Quantity__c : 1);
+                }
+                if(item.Equipment_Type__c != null && equipIdMap.get(item.Equipment_Type__c).contains('45') == true){
+                    item.Teusnew__c = 2 * (item.Quantity__c != null ? item.Quantity__c : 1);
+                }
+            }
+            else if(quoteIdMap.get(item.Quotation__c) == 'Local Operation Export' || quoteIdMap.get(item.Quotation__c) == 'Local Operation Import'){
+                if(item.Equipment_Type__c != null && equipIdMap.get(item.Equipment_Type__c).contains('40') == true){
+                    item.Teusnew__c = item.Quantity__c != null ? item.Quantity__c/2 : 0;
+                }
+                if(item.Equipment_Type__c != null && equipIdMap.get(item.Equipment_Type__c).contains('20') == true){
+                    item.Teusnew__c = item.Quantity__c != null ? item.Quantity__c/4 : 0;
+                }
+                if(item.Equipment_Type__c != null && equipIdMap.get(item.Equipment_Type__c).contains('45') == true){
+                    item.Teusnew__c = 2 * (item.Quantity__c != null ? item.Quantity__c : 1);
+                }
+            }
+            else if(quoteIdMap.get(item.Quotation__c) == 'LCL Export' || quoteIdMap.get(item.Quotation__c) == 'LCL Import'){
+                if(routeEquipIdMap.containsKey(item.Tab_View__c)){
+                    item.Teusnew__c = routeEquipIdMap.get(item.Tab_View__c) / 250;
+                }
+            }
+            else if(quoteIdMap.get(item.Quotation__c) == 'Air Export' || quoteIdMap.get(item.Quotation__c) == 'Air Import'){
+                if(routeIdMap.containsKey(item.Route__c)){
+                    item.Teusnew__c = routeIdMap.get(item.Route__c)/250;
+                }
+            }
         }
     }
 }

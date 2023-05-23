@@ -24,6 +24,9 @@ export default class BAFCOLocalOperationReviseParent extends LightningElement {
     @track recordtypeName = '';
     @track validityDate = '';
     minTodaysDate = '';
+    @track routeCustomerAvgMargin = 0;
+    @track routeAvgMargin = 0;
+	@track accountAvgMargin = 0;
     connectedCallback(){        
         this.getquoteDetails();
         let d = new Date().toISOString();  
@@ -92,7 +95,20 @@ export default class BAFCOLocalOperationReviseParent extends LightningElement {
             console.log('getQuoteLineItemRoute error: ', JSON.stringify(error));
         });
     }
-    handleSectionToggle01(){}
+    handleSectionToggle01(event){
+        let section = event.detail.openSections;
+        this.section = section
+        let index = -1;
+        for(let i = 0 ; i< this.routingDetailsList.length ; i++){
+            if(this.routingDetailsList[i].routeName == section)
+            index = i;
+        }
+        if(index != -1){
+            this.accountAvgMargin = this.routingDetailsList[index].accountAvgMargin;
+            this.routeCustomerAvgMargin = this.routingDetailsList[index].routeCustomerAvgMargin;
+            this.routeAvgMargin = this.routingDetailsList[index].routeAvgMargin;
+        }
+    }
     getEnqueryDetails(){
 
         getEnqueryDetails({enquiryID : this.enquiryId})

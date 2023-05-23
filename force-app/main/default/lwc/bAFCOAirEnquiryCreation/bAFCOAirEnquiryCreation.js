@@ -34,6 +34,10 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
     @track closeDate = '';
     @track disableAddRoute = false
     @track isLoading = false;
+    @track totalGross = null;
+    @track totalCBM = null;
+    @track totalVolumeWeight = null;
+    @track airEnquiry = false;
     @wire(getPicklistValues, {
         recordTypeId : '012000000000000AAA',
         fieldApiName : BUSINESS_TYPE_FIELD
@@ -69,6 +73,10 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
             this.getCommercialUserOnLoad();
             this.addRouteEnquiry();            
             this.getDefaultBusinessType();
+        }
+        if(this.isAir == 'true') {
+            this.dontShowAddNewRoute = true;
+            this.airEnquiry = true;
         }
     }
     formatDate(date) {
@@ -125,9 +133,12 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
             'width':null,
             'height':null,
             'CBM':null,
-            'Weight':null,            
+            'Weight':null,
+            "volumeWeight":null,            
             'index' : this.entryIntVar +'.'+ this.contractVar,
             'id':'',
+            'uomValue':'CM',
+            'UOMErrorClass':'',
             'lengthErrorClass':'',
             'widthErrorClass':'',
             'heightErrorClass':'',
@@ -136,9 +147,11 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
             'unitsErrorClass':'',
             'stackable':false,
             'palletized':false,
-            'units':'',
+            'units':1,
             'cargoDetails':'',
-            'cargoDetailsError':''
+            'cargoDetailsError':'',
+            'disableCBM':false,
+            'CBMChanged':false
         }
         let contrTempList  = [];
         contrTempList.push(containerRecord);
@@ -182,6 +195,8 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
             'disableAddRoute':false,
             'isAir':this.isAir,
             'cargoReadiness':'',
+            'stackableParent':false,
+            'palletizedParent':false,
             'routeId':''
         }
         this.entryIntVar++;
@@ -194,7 +209,7 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
         if(this.leadEnquiryList.length == 5){
             this.dontShowAddNewRoute = true;
         }
-        console.log('Lead List '+JSON.stringify(this.leadEnquiryList,null,2));
+        //console.log('Lead List '+JSON.stringify(this.leadEnquiryList,null,2));
     }
     getEditOptyDetail(){
         getEditOptyDetail({optyId:this.optyId})
@@ -249,6 +264,8 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
                             'cargoweightClass':'',
                             'dischargePlaceClass':'',
                             'pickupPlaceClass':'',
+                            'stackableParent':elem.stackableParent,
+                            'palletizedParent':elem.palletizedParent,
                             'disableAddRoute':false,
                             'routeId':elem.routeId,
                         }
@@ -270,18 +287,62 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
         this.quoteTypeErrorClass ='';
         this.quoteTypeErrorMsg ='';
         this.disableAddRoute = false;
+        if(this.businessTypeSelected == 'Import' ) {
+            if(this.isAir == 'true') {
+                let templist1 = this.leadEnquiryList;
+                this.leadEnquiryList.forEach(elem=>{
+                    elem.containerRecord = [];
+                })
+                let tempList = []
+                let containerRecord = {
+                    'length':null,
+                    'width':null,
+                    'height':null,
+                    'CBM':null,
+                    'Weight':null,
+                    'volumeWeight':null,
+                    'index' : '1.1',
+                    'id':'',
+                    'lengthErrorClass':'',
+                    'widthErrorClass':'',
+                    'heightErrorClass':'',
+                    'CBMErrorClass':'',
+                    'WeightErrorClass':'',
+                    'unitsErrorClass':'',
+                    'stackable':false,
+                    'palletized':false,
+                    'units':1,
+                    'cargoDetails':'',
+                    'cargoDetailsError':'',
+                    'uomValue':'CM',
+                    'UOMErrorClass':'',
+                    'disableCBM':false,
+                    'CBMChanged':false
+                }
+                tempList.push(containerRecord)
+                templist1[0].containerRecord = tempList;
+                this.leadEnquiryList = JSON.parse( JSON.stringify( templist1 ) );
+            }
+        }
         let ChildList = this.template.querySelectorAll('c-b-a-f-c-o-air-freight-enquiry-intake');
         if(ChildList.length > 0){
             ChildList.forEach(elem=>{
-                console.log('came 1')
-                if(this.businessTypeSelected == 'Import' )elem.removeDefaultOnImport();
-                else if(this.businessTypeSelected == 'Export')elem.getDefualtValueForEnquiry();
-                console.log('came 2')
+                if(this.businessTypeSelected == 'Import' ) {
+                    elem.removeDefaultOnImport();
+                }
+                else if(this.businessTypeSelected == 'Export'){
+                    this.dontShowAddNewRoute= true;
+                    elem.getDefualtValueForEnquiry();
+                }
             })
         }
+        this.totalCBM = null;
+        this.totalGross = null;
+        this.totalVolumeWeight = null;
     }
     handleEnquiryListUpdate(event){
         let prdDto = JSON.parse(JSON.stringify(event.detail.dto));
+        console.log('prdDto '+JSON.stringify(prdDto,null,2))
         this.leadEnquiryList.forEach(elem => {
             if(elem.leadIndex == prdDto.leadIndex) {
                 elem.serviceType = prdDto.serviceType;
@@ -317,17 +378,16 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
                 elem.pickupPlaceClass = prdDto.pickupPlaceClass
                 elem.disableAddRoute = prdDto.disableAddRoute
                 elem.cargoReadiness = prdDto.cargoReadiness
+                elem.stackableParent = prdDto.stackableParent
+                elem.palletizedParent = prdDto.palletizedParent
                 if(elem.disableAddRoute == true) this.disableAddRoute = true
             }
         })
-        
     }
     handleSubmit(){
-        console.log('leadEnquiryList '+ JSON.stringify(this.leadEnquiryList,null,2))
-        console.log('busines '+ JSON.stringify(this.businessTypeSelected,null,2))
-        console.log('commer '+ JSON.stringify(this.commercialUserName,null,2))
         let allValid = true;
         let errorList = [];
+        console.log('dto '+JSON.stringify(this.leadEnquiryList,null,2))
         if(this.businessTypeSelected == '' || this.businessTypeSelected == undefined){
             this.quoteTypeErrorClass = 'slds-has-error';
             this.quoteTypeErrorMsg  = 'Complete this field.';
@@ -383,18 +443,24 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
                 elem.dischargePlaceClass = 'slds-has-error';
             }
             elem.containerRecord.forEach(elem2=>{
-                /*if(elem2.length <= 0){
-                    elem2.lengthErrorClass = 'slds-has-error';
-                    allValid = false
+                if(this.isAir == 'true'){
+                    if(elem2.length <= 0 && elem2.CBMChanged == false){
+                        elem2.lengthErrorClass = 'slds-has-error';
+                        allValid = false
+                    }
+                    if(elem2.width <= 0 && elem2.CBMChanged == false){
+                        elem2.widthErrorClass = 'slds-has-error';
+                        allValid = false
+                    }
+                    if(elem2.height <= 0 && elem2.CBMChanged == false){
+                        elem2.heightErrorClass = 'slds-has-error';
+                        allValid = false
+                    }
+                    if(elem2.uomValue == ''){
+                        elem2.UOMErrorClass = 'slds-has-error';
+                        allValid = false
+                    }
                 }
-                if(elem2.width <= 0){
-                    elem2.widthErrorClass = 'slds-has-error';
-                    allValid = false
-                }
-                if(elem2.height <= 0){
-                    elem2.heightErrorClass = 'slds-has-error';
-                    allValid = false
-                }*/
                 if(elem2.CBM <= 0){
                     elem2.CBMErrorClass = 'slds-has-error';
                     allValid = false
@@ -407,19 +473,16 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
                     elem2.unitsErrorClass = 'slds-has-error';
                     allValid = false
                 }
-                if(elem2.cargoDetails == ''){
+                /*if(elem2.cargoDetails == ''){
                     elem2.cargoDetailsError = 'slds-has-error';
                     allValid = false
-                }
-                console.log('tempErrorList '+JSON.stringify(tempErrorList,null,2))
+                }*/
             })
             if(tempErrorList.length > 0){
                allValid  = false;
                errorList.push(elem.routeName);
             }
-            console.log('tempErrorList '+JSON.stringify(tempErrorList,null,2))
         })
-        console.log('errorList '+JSON.stringify(errorList,null,2))
         if(allValid){
             this.isLoading = true
             submitRoutingList({ 
@@ -431,7 +494,10 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
                 isEdit:this.isEdit,
                 containerRemoveList:this.containerRemoveList,
                 routeRemoveList:this.routeRemoveList,
-                optyId:this.optyId
+                optyId:this.optyId,
+                totalCBM : this.totalCBM,
+                totalGross : this.totalGross,
+                totalVolumeWeight : this.totalVolumeWeight,
             })
             .then(result =>{
                 this.isLoading = false
@@ -493,7 +559,11 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
         let indexOfLeadEnquiry = this.leadEnquiryList.findIndex(x => x.leadIndex == splitIndex[0] );
         let childContainerIndex = this.leadEnquiryList[indexOfLeadEnquiry].containerRecord.findIndex(x => x.index == index );
         this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].length = prdDto.length;
+        this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].disableCBM = true;
         this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].lengthErrorClass = '';
+        if(this.isAir == 'true'){
+            this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].CBMErrorClass = '';
+        }
     }
     handleWidthUpdate(e){
         let prdDto = JSON.parse(JSON.stringify(e.detail.dto));
@@ -502,7 +572,11 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
         let indexOfLeadEnquiry = this.leadEnquiryList.findIndex(x => x.leadIndex == splitIndex[0] );
         let childContainerIndex = this.leadEnquiryList[indexOfLeadEnquiry].containerRecord.findIndex(x => x.index == index );
         this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].width = prdDto.width;
+        this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].disableCBM = true;
         this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].widthErrorClass = '';
+        if(this.isAir == 'true'){
+            this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].CBMErrorClass = '';
+        }
     }
     handleheightupdate(e){
         let prdDto = JSON.parse(JSON.stringify(e.detail.dto));
@@ -511,16 +585,51 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
         let indexOfLeadEnquiry = this.leadEnquiryList.findIndex(x => x.leadIndex == splitIndex[0] );
         let childContainerIndex = this.leadEnquiryList[indexOfLeadEnquiry].containerRecord.findIndex(x => x.index == index );
         this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].height = prdDto.height;
+        this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].disableCBM = true;
         this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].heightErrorClass = '';
+        if(this.isAir == 'true'){
+            this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].CBMErrorClass = '';
+        }
     }
     handlecbmupdate(e){
         let prdDto = JSON.parse(JSON.stringify(e.detail.dto));
+        console.log('prdDto '+JSON.stringify(prdDto,null,2))
         let index = prdDto.index;
         let splitIndex = index.split('.');
         let indexOfLeadEnquiry = this.leadEnquiryList.findIndex(x => x.leadIndex == splitIndex[0] );
         let childContainerIndex = this.leadEnquiryList[indexOfLeadEnquiry].containerRecord.findIndex(x => x.index == index );
         this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].CBM = prdDto.cbm;
+        if(prdDto.userChanged == true)
+        this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].CBMChanged = true;
         this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].CBMErrorClass = '';
+        if(this.isAir == 'true'){
+            this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].heightErrorClass = '';
+            this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].widthErrorClass = '';
+            this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].lengthErrorClass = '';
+        }
+        if(prdDto.allNull == true)
+        this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].disableCBM = false;
+        if(!prdDto.cbm > 0)
+        this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].CBMChanged = false;
+        this.handleTotalField();
+    }
+    handlevolumeWeightupdate(e){
+        let prdDto = JSON.parse(JSON.stringify(e.detail.dto));
+        let index = prdDto.index;
+        let splitIndex = index.split('.');
+        let indexOfLeadEnquiry = this.leadEnquiryList.findIndex(x => x.leadIndex == splitIndex[0] );
+        let childContainerIndex = this.leadEnquiryList[indexOfLeadEnquiry].containerRecord.findIndex(x => x.index == index );
+        this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].volumeWeight = prdDto.volumeWeight;
+        this.handleTotalField();
+    }
+    handleUOMUpdate(e){
+        let prdDto = JSON.parse(JSON.stringify(e.detail.dto));
+        let index = prdDto.index;
+        let splitIndex = index.split('.');
+        let indexOfLeadEnquiry = this.leadEnquiryList.findIndex(x => x.leadIndex == splitIndex[0] );
+        let childContainerIndex = this.leadEnquiryList[indexOfLeadEnquiry].containerRecord.findIndex(x => x.index == index );
+        this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].uomValue = prdDto.uom;
+        this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].UOMErrorClass = '';
     }
     handleweightupdate(e){
         let prdDto = JSON.parse(JSON.stringify(e.detail.dto));
@@ -530,6 +639,7 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
         let childContainerIndex = this.leadEnquiryList[indexOfLeadEnquiry].containerRecord.findIndex(x => x.index == index );
         this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].Weight = prdDto.weight;
         this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].WeightErrorClass = '';
+        this.handleTotalField();
     }
     handleStackableUpdate(e){
         let prdDto = JSON.parse(JSON.stringify(e.detail.dto));
@@ -555,18 +665,16 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
         let childContainerIndex = this.leadEnquiryList[indexOfLeadEnquiry].containerRecord.findIndex(x => x.index == index );
         this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].units = prdDto.units;
         this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].unitsErrorClass = '';
+        this.handleTotalField();
     }
     handleCargoDetailsUpdate(e){
-        console.log('came ')
         let prdDto = JSON.parse(JSON.stringify(e.detail.dto));
-        console.log('prdDto '+JSON.stringify(prdDto,null,2))
         let index = prdDto.index;
         let splitIndex = index.split('.');
         let indexOfLeadEnquiry = this.leadEnquiryList.findIndex(x => x.leadIndex == splitIndex[0] );
         let childContainerIndex = this.leadEnquiryList[indexOfLeadEnquiry].containerRecord.findIndex(x => x.index == index );
         this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].cargoDetails = prdDto.cargoDetails;
         this.leadEnquiryList[indexOfLeadEnquiry].containerRecord[childContainerIndex].cargoDetailsError = '';
-        console.log('prdDto '+JSON.stringify(this.leadEnquiryList,null,2))
     }
     handleAddContainer(e){
         let strIndex = e.detail;
@@ -576,7 +684,6 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
         let newContainerIndex = indexOfPreviousRecord[1];
         newContainerIndex++;
         let lastContainerRecord = tempList[strIndex - 1].containerRecord;
-        console.log('lastContainerRecord ',JSON.stringify(lastContainerRecord,null,2));
         let previousRecord = lastContainerRecord[0];
         let containerRecord = {
             'length':previousRecord.length,
@@ -584,6 +691,7 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
             'height':previousRecord.height,
             'CBM':previousRecord.CBM,
             'Weight':previousRecord.Weight,
+            'volumeWeight':previousRecord.volumeWeight,
             'index' : strIndex +'.'+ newContainerIndex,
             'id':'',
             'lengthErrorClass':'',
@@ -596,11 +704,16 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
             'palletized':previousRecord.palletized,
             'units':previousRecord.units,
             'cargoDetails':previousRecord.cargoDetails,
-            'cargoDetailsError':''
+            'cargoDetailsError':'',
+            'UOMErrorClass':'',
+            'uomValue':previousRecord.uomValue,
+            'disableCBM':previousRecord.disableCBM,
+            'CBMChanged':previousRecord.CBMChanged
         }
         lastContainerRecord.push(containerRecord);
         tempList[strIndex - 1].containerRecord = lastContainerRecord;
         this.leadEnquiryList = JSON.parse( JSON.stringify( tempList ) );
+        this.handleTotalField();
     }
     handleEmptyContainer(e){
         let cData = e.detail;
@@ -619,6 +732,7 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
                 'height':null,
                 'CBM':null,
                 'Weight':null,
+                'volumeWeight':null,
                 'index' : cameIndex +'.'+ newContainerIndex,
                 'id':'',
                 'lengthErrorClass':'',
@@ -629,9 +743,13 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
                 'unitsErrorClass':'',
                 'stackable':false,
                 'palletized':false,
-                'units':'',
+                'units':1,
                 'cargoDetails':'',
-                'cargoDetailsError':''
+                'cargoDetailsError':'',
+                'uomValue':'CM',
+                'UOMErrorClass':'',
+                'disableCBM':false,
+                'CBMChanged':false
             }
             lastContainerRecord.push(containerRecord);
             tempList[strIndex].containerRecord = lastContainerRecord;
@@ -652,5 +770,27 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
                 containerRecords.splice( remIndex, 1 );
             }
         }
+    }
+    handleTotalField(){
+        let totalCBM = 0;
+        let totalGross = 0;
+        let totalVolumeWeight = 0;
+        this.leadEnquiryList.forEach(elem=>{
+            elem.containerRecord.forEach(elem2=>{
+                let units = elem2.units > 0 ? elem2.units : 1;
+                if(elem2.Weight > 0){
+                    totalGross = parseFloat(parseFloat(totalGross) + (parseFloat(elem2.Weight) * units))
+                }
+                if(elem2.CBM > 0){
+                    totalCBM = parseFloat(parseFloat(totalCBM) + (parseFloat(elem2.CBM)* units))
+                }
+                if(elem2.volumeWeight > 0){
+                    totalVolumeWeight = parseFloat(parseFloat(totalVolumeWeight) + (parseFloat(elem2.volumeWeight)* units))
+                }
+            })
+        })
+        this.totalCBM = totalCBM > 0 ? totalCBM.toFixed(2) : null;
+        this.totalGross = totalGross > 0 ? totalGross.toFixed(2) : null;
+        this.totalVolumeWeight = totalVolumeWeight > 0 ? totalVolumeWeight.toFixed(2) : null;
     }
 }

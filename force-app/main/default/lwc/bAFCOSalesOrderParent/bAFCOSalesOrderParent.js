@@ -15,12 +15,20 @@ export default class BAFCOSalesOrderParent extends LightningElement {
     @track quantityDatalist = [];
     @track displayShip_consignee = false;
     @track customerAccount ;
+    @track currency = '';
+    displayCargoDetailsPopUP = false
+    @track routeId='';
+    @track isOrder=true;
     //@track quantityData = [];
 
     @track selectedRouteId ='';
     containerPng = CONTAINER;
     @track selectedDatalist =[];
+    displayCargoDetails = false;
+    cargoDatails = '';
+    @track isAirFreight = false;
     connectedCallback(){
+        document.title = 'Create Order';
         console.log('quotes ',this.quoteID)
         this.getquoteDetails();
     }
@@ -30,6 +38,7 @@ export default class BAFCOSalesOrderParent extends LightningElement {
             console.log('getquoteDetails  result : ', JSON.stringify(result,null,2));
             if(result != null){
                 this.quoteObj= result;
+                this.currency = result.currencyString;
                 this.accountAvgCreditDays = this.quoteObj.accountAvgCreditDays
                 this.accountBestMargin = this.quoteObj.accountBestMargin
                 this.accountAvgMargin = this.quoteObj.accountAvgMargin
@@ -52,7 +61,7 @@ export default class BAFCOSalesOrderParent extends LightningElement {
         console.log('quotes '+this.quoteID)
         getRouteItem({quoteId : this.quoteID})
         .then(result =>{
-            //console.log('getRouteItem  result : ', JSON.stringify(result,null,2));
+            console.log('getRouteItem  result : ', JSON.stringify(result,null,2));
             let conts = result;
             for(let key in conts){
                 this.salesOrderList.push({value:conts[key], key:key});
@@ -60,6 +69,7 @@ export default class BAFCOSalesOrderParent extends LightningElement {
             console.log('salesOrderList '+JSON.stringify(this.salesOrderList,null,2));
             let tempList = [];
             this.salesOrderList.forEach(elem=>{
+                if(elem.value.Opportunity_Enquiry__r.RecordType.Name == 'Air Freight') this.isAirFreight = true;
                 tempList.push({
                     routeName : elem.key,
                     routeId: elem.value.Id,
@@ -100,6 +110,8 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                                 if(elem4.shipName == elem5.shipName){
                                                     elem5.checkBoxSelected = elem4.checkBoxSelected
                                                     elem5.Qty = elem4.Qty
+                                                    elem5.agentShare = elem4.agentShare
+                                                    elem5.PODFreeTime = elem4.PODFreeTime
                                                 }
                                             })
                                         })
@@ -119,11 +131,24 @@ export default class BAFCOSalesOrderParent extends LightningElement {
         this.equipList = [];
         let routeName = e.target.value;
         this.activeTab = routeName;
+        let cargoDatails = '';
         this.salesOrderList.forEach(elem=>{
             if(elem.key == routeName){
                 this.selectedRouteId = elem.value.Id;
+                if(elem.value.Opportunity_Enquiry__r.RecordType.Name == 'Air Freight'){
+                    this.displayCargoDetails = true;
+                    if(elem.value.Route_Equipments__r != undefined){
+                        let tempList = elem.value.Route_Equipments__r;
+                        for (let x in tempList) {
+                            if(tempList[x].Cargo_Details__c != undefined) cargoDatails = cargoDatails + tempList[x].Cargo_Details__c;
+                            cargoDatails+=', ';
+                        }
+                        if(cargoDatails != '') cargoDatails.slice(0, -1);
+                    }
+                }
             }
         })
+        this.cargoDatails = cargoDatails
         this.getQuoteLineItem();
     }
         handleItemQuantitychange(e){
@@ -196,18 +221,15 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                         tempList.push({
                             shipName: shipline,
                             Qty:shipValue.Qty,
+                            agentShare:shipValue.agentShare,
                             sellingTotal: sellingTotal,
                             checkBoxSelected: true,
                             accountId: shipValue.accountId,
                             baf: shipValue.baf,
                             bayan: shipValue.baf,
-                            bayanCancellation: shipValue.bayanCancellation,
                             bunkerSurcharge: shipValue.bunkerSurcharge,
                             cleaningCharges: shipValue.cleaningCharges,
-                            containerLashing: shipValue.containerLashing,
                             containerMaintenance: shipValue.containerMaintenance,
-                            containerMovement: shipValue.containerMovement,
-                            containerStripping: shipValue.containerStripping,
                             destinationCustomClearnace: shipValue.destinationCustomClearnace,
                             destinationLoading: shipValue.destinationLoading,
                             dthc: shipValue.dthc,
@@ -215,45 +237,30 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                             enquiryId: shipValue.enquiryId,
                             equipmentType: shipValue.equipmentType,
                             fasahFee: shipValue.fasahFee,
-                            freeTimeCertification: shipValue.freeTimeCertification,
-                            fumigation: shipValue.fumigation,
                             inspection: shipValue.inspection,
                             insurance: shipValue.insurance,
                             isps: shipValue.isps,
                             leadId: shipValue.leadId,
                             liftOnOff: shipValue.liftOnOff,
                             loadingCharges: shipValue.loadingCharges,
-                            ministryClearance: shipValue.ministryClearance,
-                            miscallenous: shipValue.miscallenous,
-                            mot: shipValue.mot,
-                            nonPatellized: shipValue.nonPatellized,
                             originCustomClearance: shipValue.originCustomClearance,
                             originloadingCharges: shipValue.originloadingCharges,
                             othc: shipValue.othc,
-                            pestController: shipValue.pestController,
                             portShuttling: shipValue.portShuttling,
                             postOfDischarge: shipValue.postOfDischarge,
                             postOfLoading: shipValue.postOfLoading,
                             quotationId: shipValue.quotationId,
                             refeerCentr: shipValue.refeerCentr,
-                            refeerPTI: shipValue.refeerPTI,
-                            refeerSteamWash: shipValue.refeerSteamWash,
-                            rePalletization: shipValue.rePalletization,
                             rmsID: shipValue.rmsID,
                             routeID: shipValue.routeID,
                             seaFreight: shipValue.seaFreight,
                             sealCharges: shipValue.sealCharges,
                             sellingRate: shipValue.sellingRate,
-                            stuffingCharges: shipValue.stuffingCharges,
-                            sweepingCleaning: shipValue.sweepingCleaning,
                             tabadul: shipValue.tabadul,
                             tarapulin: shipValue.tarapulin,
                             totalInco: shipValue.totalInco,
                             totalSL: shipValue.totalSL,
-                            truckHead: shipValue.truckHead,
                             truckIdealing: shipValue.truckIdealing,
-                            vesselCertificate: shipValue.vesselCertificate,
-                            wrappingPacking: shipValue.wrappingPacking,
                             xRay: shipValue.xRay,
                             bayanCharges : shipValue.bayanCharges,
                             blFees : shipValue.blFees,
@@ -280,7 +287,6 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                             remarksDesinationCharges : shipValue.remarksDesinationCharges,
                             remarksoriginCharges : shipValue.remarksoriginCharges,
                             remarksSLCharges : shipValue.remarksSLCharges,
-                            containerLashingCharges : shipValue.containerLashingCharges,
                             dOcharges : shipValue.dOcharges,
                             lOLOCharges : shipValue.lOLOCharges,
                             carrierSecurityFees : shipValue.carrierSecurityFees,
@@ -299,14 +305,10 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                             includeExWorksCharge:shipValue.includeExWorksCharge,
                             exWorksId:shipValue.exWorksId,
                             exWorksCharge:shipValue.exWorksCharge,
-                            AlternateDepotReleaseCharges:shipValue.AlternateDepotReleaseCharges,
-                            FreightDifference:shipValue.FreightDifference,
-                            CarrierContainerRepositioningCharges:shipValue.CarrierContainerRepositioningCharges,
                             orderBuyingRate:shipValue.orderBuyingRate,
                             shippLine:shipValue.shippLine,
                             quoteItemId:shipValue.quoteItemId,
                             agentId:shipValue.agentId,
-                            tankRentalCharge:shipValue.tankRentalCharge,
                             incoTermId:shipValue.incoTermId,
                             isLCL:shipValue.isLCL,
                             tabView:equip,
@@ -314,7 +316,12 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                             chargesIncluded:shipValue.chargesIncluded,
                             quotationType:shipValue.quotationType,
                             sellingChargesIncluded:shipValue.sellingChargesIncluded,
+                            containerLashing:shipValue.containerLashing,
                             QtyErrorClass:'',
+                            currency:this.currency,
+                            PODFreeTime : shipValue.PODFreeTime,
+                            sellingRateKg : shipValue.sellingRateKg,
+                            airLineId : shipValue.airLineId,
                         })
                         elem.equipment.push({
                             key:equip,
@@ -330,17 +337,14 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 shipName: shipline,
                                 sellingTotal: sellingTotal,
                                 Qty:shipValue.Qty,
+                                agentShare:shipValue.agentShare,
                                 checkBoxSelected: true,
                                 baf: shipValue.baf,
                                 bayan: shipValue.baf,
                                 accountId: shipValue.accountId,
-                                bayanCancellation: shipValue.bayanCancellation,
                                 bunkerSurcharge: shipValue.bunkerSurcharge,
                                 cleaningCharges: shipValue.cleaningCharges,
-                                containerLashing: shipValue.containerLashing,
                                 containerMaintenance: shipValue.containerMaintenance,
-                                containerMovement: shipValue.containerMovement,
-                                containerStripping: shipValue.containerStripping,
                                 destinationCustomClearnace: shipValue.destinationCustomClearnace,
                                 destinationLoading: shipValue.destinationLoading,
                                 dthc: shipValue.dthc,
@@ -348,45 +352,30 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 enquiryId: shipValue.enquiryId,
                                 equipmentType: shipValue.equipmentType,
                                 fasahFee: shipValue.fasahFee,
-                                freeTimeCertification: shipValue.freeTimeCertification,
-                                fumigation: shipValue.fumigation,
                                 inspection: shipValue.inspection,
                                 insurance: shipValue.insurance,
                                 isps: shipValue.isps,
                                 leadId: shipValue.leadId,
                                 liftOnOff: shipValue.liftOnOff,
                                 loadingCharges: shipValue.loadingCharges,
-                                ministryClearance: shipValue.ministryClearance,
-                                miscallenous: shipValue.miscallenous,
-                                mot: shipValue.mot,
-                                nonPatellized: shipValue.nonPatellized,
                                 originCustomClearance: shipValue.originCustomClearance,
                                 originloadingCharges: shipValue.originloadingCharges,
                                 othc: shipValue.othc,
-                                pestController: shipValue.pestController,
                                 portShuttling: shipValue.portShuttling,
                                 postOfDischarge: shipValue.postOfDischarge,
                                 postOfLoading: shipValue.postOfLoading,
                                 quotationId: shipValue.quotationId,
                                 refeerCentr: shipValue.refeerCentr,
-                                refeerPTI: shipValue.refeerPTI,
-                                refeerSteamWash: shipValue.refeerSteamWash,
-                                rePalletization: shipValue.rePalletization,
                                 rmsID: shipValue.rmsID,
                                 routeID: shipValue.routeID,
                                 seaFreight: shipValue.seaFreight,
                                 sealCharges: shipValue.sealCharges,
                                 sellingRate: shipValue.sellingRate,
-                                stuffingCharges: shipValue.stuffingCharges,
-                                sweepingCleaning: shipValue.sweepingCleaning,
                                 tabadul: shipValue.tabadul,
                                 tarapulin: shipValue.tarapulin,
                                 totalInco: shipValue.totalInco,
                                 totalSL: shipValue.totalSL,
-                                truckHead: shipValue.truckHead,
                                 truckIdealing: shipValue.truckIdealing,
-                                vesselCertificate: shipValue.vesselCertificate,
-                                wrappingPacking: shipValue.wrappingPacking,
                                 xRay: shipValue.xRay,
                                 bayanCharges : shipValue.bayanCharges,
                                 blFees : shipValue.blFees,
@@ -413,7 +402,6 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 remarksDesinationCharges : shipValue.remarksDesinationCharges,
                                 remarksoriginCharges : shipValue.remarksoriginCharges,
                                 remarksSLCharges : shipValue.remarksSLCharges,
-                                containerLashingCharges : shipValue.containerLashingCharges,
                                 dOcharges : shipValue.dOcharges,
                                 lOLOCharges : shipValue.lOLOCharges,
                                 carrierSecurityFees : shipValue.carrierSecurityFees,
@@ -432,22 +420,23 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 includeExWorksCharge:shipValue.includeExWorksCharge,
                                 exWorksId:shipValue.exWorksId,
                                 exWorksCharge:shipValue.exWorksCharge,
-                                AlternateDepotReleaseCharges:shipValue.AlternateDepotReleaseCharges,
-                                FreightDifference:shipValue.FreightDifference,
-                                CarrierContainerRepositioningCharges:shipValue.CarrierContainerRepositioningCharges,
                                 orderBuyingRate:shipValue.orderBuyingRate,
                                 shippLine:shipValue.shippLine,
                                 quoteItemId:shipValue.quoteItemId,
                                 agentId:shipValue.agentId,
-                                tankRentalCharge:shipValue.tankRentalCharge,
                                 incoTermId:shipValue.incoTermId,
                                 isLCL:shipValue.isLCL,
                                 tabView:equip,
                                 isAir:shipValue.isAir,
                                 chargesIncluded:shipValue.chargesIncluded,
+                                containerLashing:shipValue.containerLashing,
                                 quotationType:shipValue.quotationType,
                                 sellingChargesIncluded:shipValue.sellingChargesIncluded,
                                 QtyErrorClass:'',
+                                currency:this.currency,
+                                PODFreeTime : shipValue.PODFreeTime,
+                                sellingRateKg : shipValue.sellingRateKg,
+                                airLineId : shipValue.airLineId,
                             })
                             elem.equipment.push({
                                 key:equip,
@@ -460,18 +449,15 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                             let shipIndex = tempList.findIndex(e => e.shipName === shipline);
                             if(shipIndex != -1){
                                 tempList[shipIndex].shipName = shipline;
+                                tempList[shipIndex].agentShare=shipValue.agentShare,
                                 tempList[shipIndex].sellingTotal = sellingTotal
                                 tempList[shipIndex].checkBoxSelected = true
                                 tempList[shipIndex].baf =  shipValue.baf
                                 tempList[shipIndex].bayan =  shipValue.bayan
                                 tempList[shipIndex].accountId =  shipValue.accountId
-                                tempList[shipIndex].bayanCancellation =  shipValue.bayanCancellation
                                 tempList[shipIndex].bunkerSurcharge =  shipValue.bunkerSurcharge
                                 tempList[shipIndex].cleaningCharges =  shipValue.cleaningCharges
-                                tempList[shipIndex].containerLashing =  shipValue.containerLashing
                                 tempList[shipIndex].containerMaintenance =  shipValue.containerMaintenance
-                                tempList[shipIndex].containerMovement =  shipValue.containerMovement
-                                tempList[shipIndex].containerStripping =  shipValue.containerStripping
                                 tempList[shipIndex].destinationCustomClearnace =  shipValue.destinationCustomClearnace
                                 tempList[shipIndex].destinationLoading =  shipValue.destinationLoading
                                 tempList[shipIndex].dthc =  shipValue.dthc
@@ -479,45 +465,30 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 tempList[shipIndex].enquiryId =  shipValue.enquiryId
                                 tempList[shipIndex].equipmentType =  shipValue.equipmentType
                                 tempList[shipIndex].fasahFee =  shipValue.fasahFee
-                                tempList[shipIndex].freeTimeCertification =  shipValue.freeTimeCertification
-                                tempList[shipIndex].fumigation =  shipValue.fumigation
                                 tempList[shipIndex].inspection =  shipValue.inspection
                                 tempList[shipIndex].insurance =  shipValue.insurance
                                 tempList[shipIndex].isps =  shipValue.isps
                                 tempList[shipIndex].leadId =  shipValue.leadId
                                 tempList[shipIndex].liftOnOff =  shipValue.liftOnOff
                                 tempList[shipIndex].loadingCharges =  shipValue.loadingCharges
-                                tempList[shipIndex].ministryClearance =  shipValue.ministryClearance
-                                tempList[shipIndex].miscallenous =  shipValue.miscallenous
-                                tempList[shipIndex].mot =  shipValue.mot
-                                tempList[shipIndex].nonPatellized =  shipValue.nonPatellized
                                 tempList[shipIndex].originCustomClearance =  shipValue.originCustomClearance
                                 tempList[shipIndex].originloadingCharges =  shipValue.originloadingCharges
                                 tempList[shipIndex].othc =  shipValue.othc
-                                tempList[shipIndex].pestController =  shipValue.pestController
                                 tempList[shipIndex].portShuttling =  shipValue.portShuttling
                                 tempList[shipIndex].postOfDischarge =  shipValue.postOfDischarge
                                 tempList[shipIndex].postOfLoading =  shipValue.postOfLoading
                                 tempList[shipIndex].quotationId =  shipValue.quotationId
                                 tempList[shipIndex].refeerCentr =  shipValue.refeerCentr
-                                tempList[shipIndex].refeerPTI =  shipValue.refeerPTI
-                                tempList[shipIndex].refeerSteamWash =  shipValue.refeerSteamWash
-                                tempList[shipIndex].rePalletization =  shipValue.rePalletization
                                 tempList[shipIndex].rmsID =  shipValue.rmsID
                                 tempList[shipIndex].routeID =  shipValue.routeID
                                 tempList[shipIndex].seaFreight =  shipValue.seaFreight
                                 tempList[shipIndex].sealCharges =  shipValue.sealCharges
                                 tempList[shipIndex].sellingRate =  shipValue.sellingRate
-                                tempList[shipIndex].stuffingCharges = shipValue.stuffingCharges
-                                tempList[shipIndex].sweepingCleaning =  shipValue.sweepingCleaning
                                 tempList[shipIndex].tabadul =  shipValue.tabadul
                                 tempList[shipIndex].tarapulin =  shipValue.tarapulin
                                 tempList[shipIndex].totalInco =  shipValue.totalInco
                                 tempList[shipIndex].totalSL =  shipValue.totalSL
-                                tempList[shipIndex].truckHead = shipValue.truckHead
                                 tempList[shipIndex].truckIdealing = shipValue.truckIdealing
-                                tempList[shipIndex].vesselCertificate =  shipValue.vesselCertificate
-                                tempList[shipIndex].wrappingPacking =  shipValue.wrappingPacking
                                 tempList[shipIndex].xRay =  shipValue.xRay
                                 tempList[shipIndex].bayanCharges = shipValue.bayanCharges
                                 tempList[shipIndex].blFees = shipValue.blFees
@@ -544,7 +515,7 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 tempList[shipIndex].remarksDesinationCharges = shipValue.remarksDesinationCharges
                                 tempList[shipIndex].remarksoriginCharges = shipValue.remarksoriginCharges
                                 tempList[shipIndex].remarksSLCharges = shipValue.remarksSLCharges
-                                tempList[shipIndex].containerLashingCharges = shipValue.containerLashingCharges
+                                tempList[shipIndex].containerLashing = shipValue.containerLashing;
                                 tempList[shipIndex].dOcharges= shipValue.dOcharges
                                 tempList[shipIndex].lOLOCharges = shipValue.lOLOCharges
                                 tempList[shipIndex].carrierSecurityFees = shipValue.carrierSecurityFees
@@ -563,14 +534,10 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 tempList[shipIndex].includeExWorksCharge=shipValue.includeExWorksCharge
                                 tempList[shipIndex].exWorksId=shipValue.exWorksId
                                 tempList[shipIndex].exWorksCharge=shipValue.exWorksCharge
-                                tempList[shipIndex].AlternateDepotReleaseCharges=shipValue.AlternateDepotReleaseCharges
-                                tempList[shipIndex].FreightDifference=shipValue.FreightDifference
-                                tempList[shipIndex].CarrierContainerRepositioningCharges=shipValue.CarrierContainerRepositioningCharges
                                 tempList[shipIndex].orderBuyingRate=shipValue.orderBuyingRate;
                                 tempList[shipIndex].shippLine = shipValue.shippLine;
                                 tempList[shipIndex].quoteItemId = shipValue.quoteItemId;
                                 tempList[shipIndex].agentId = shipValue.agentId;
-                                tempList[shipIndex].tankRentalCharge=shipValue.tankRentalCharge;
                                 tempList[shipIndex].incoTermId = shipValue.incoTermId;
                                 tempList[shipIndex].isLCL=shipValue.isLCL;
                                 tempList[shipIndex].tabView = equip
@@ -579,23 +546,24 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 tempList[shipIndex].quotationType=shipValue.quotationType;
                                 tempList[shipIndex].sellingChargesIncluded = shipValue.sellingChargesIncluded;
                                 tempList[shipIndex].QtyErrorClass='';
+                                tempList[shipIndex].currency = this.currency;
+                                tempList[shipIndex].PODFreeTime = shipValue.PODFreeTime;
+                                tempList[shipIndex].sellingRateKg = shipValue.sellingRateKg;
+                                tempList[shipIndex].airLineId = shipValue.airLineId;
                             }
                             else{
                                 tempList.push({
                                     shipName: shipline,
                                     sellingTotal: sellingTotal,
                                     Qty:shipValue.Qty,
+                                    agentShare:shipValue.agentShare,
                                     checkBoxSelected: true,
                                     baf: shipValue.baf,
                                     bayan: shipValue.baf,
                                     accountId: shipValue.accountId,
-                                    bayanCancellation: shipValue.bayanCancellation,
                                     bunkerSurcharge: shipValue.bunkerSurcharge,
                                     cleaningCharges: shipValue.cleaningCharges,
-                                    containerLashing: shipValue.containerLashing,
                                     containerMaintenance: shipValue.containerMaintenance,
-                                    containerMovement: shipValue.containerMovement,
-                                    containerStripping: shipValue.containerStripping,
                                     destinationCustomClearnace: shipValue.destinationCustomClearnace,
                                     destinationLoading: shipValue.destinationLoading,
                                     dthc: shipValue.dthc,
@@ -603,45 +571,30 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                     enquiryId: shipValue.enquiryId,
                                     equipmentType: shipValue.equipmentType,
                                     fasahFee: shipValue.fasahFee,
-                                    freeTimeCertification: shipValue.freeTimeCertification,
-                                    fumigation: shipValue.fumigation,
                                     inspection: shipValue.inspection,
                                     insurance: shipValue.insurance,
                                     isps: shipValue.isps,
                                     leadId: shipValue.leadId,
                                     liftOnOff: shipValue.liftOnOff,
                                     loadingCharges: shipValue.loadingCharges,
-                                    ministryClearance: shipValue.ministryClearance,
-                                    miscallenous: shipValue.miscallenous,
-                                    mot: shipValue.mot,
-                                    nonPatellized: shipValue.nonPatellized,
                                     originCustomClearance: shipValue.originCustomClearance,
                                     originloadingCharges: shipValue.originloadingCharges,
                                     othc: shipValue.othc,
-                                    pestController: shipValue.pestController,
                                     portShuttling: shipValue.portShuttling,
                                     postOfDischarge: shipValue.postOfDischarge,
                                     postOfLoading: shipValue.postOfLoading,
                                     quotationId: shipValue.quotationId,
                                     refeerCentr: shipValue.refeerCentr,
-                                    refeerPTI: shipValue.refeerPTI,
-                                    refeerSteamWash: shipValue.refeerSteamWash,
-                                    rePalletization: shipValue.rePalletization,
                                     rmsID: shipValue.rmsID,
                                     routeID: shipValue.routeID,
                                     seaFreight: shipValue.seaFreight,
                                     sealCharges: shipValue.sealCharges,
                                     sellingRate: shipValue.sellingRate,
-                                    stuffingCharges: shipValue.stuffingCharges,
-                                    sweepingCleaning: shipValue.sweepingCleaning,
                                     tabadul: shipValue.tabadul,
                                     tarapulin: shipValue.tarapulin,
                                     totalInco: shipValue.totalInco,
                                     totalSL: shipValue.totalSL,
-                                    truckHead: shipValue.truckHead,
                                     truckIdealing: shipValue.truckIdealing,
-                                    vesselCertificate: shipValue.vesselCertificate,
-                                    wrappingPacking: shipValue.wrappingPacking,
                                     xRay: shipValue.xRay,
                                     bayanCharges : shipValue.bayanCharges,
                                     blFees : shipValue.blFees,
@@ -668,7 +621,6 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                     remarksDesinationCharges : shipValue.remarksDesinationCharges,
                                     remarksoriginCharges : shipValue.remarksoriginCharges,
                                     remarksSLCharges : shipValue.remarksSLCharges,
-                                    containerLashingCharges : shipValue.containerLashingCharges,
                                     dOcharges : shipValue.dOcharges,
                                     lOLOCharges : shipValue.lOLOCharges,
                                     carrierSecurityFees : shipValue.carrierSecurityFees,
@@ -687,14 +639,10 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                     includeExWorksCharge:shipValue.includeExWorksCharge,
                                     exWorksId:shipValue.exWorksId,
                                     exWorksCharge:shipValue.exWorksCharge,
-                                    AlternateDepotReleaseCharges:shipValue.AlternateDepotReleaseCharges,
-                                    FreightDifference:shipValue.FreightDifference,
-                                    CarrierContainerRepositioningCharges:shipValue.CarrierContainerRepositioningCharges,
                                     orderBuyingRate:shipValue.orderBuyingRate,
                                     shippLine:shipValue.shippLine,
                                     quoteItemId:shipValue.quoteItemId,
                                     agentId:shipValue.agentId,
-                                    tankRentalCharge:shipValue.tankRentalCharge,
                                     incoTermId:shipValue.incoTermId,
                                     isLCL:shipValue.isLCL,
                                     tabView:equip,
@@ -702,7 +650,12 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                     chargesIncluded:shipValue.chargesIncluded,
                                     quotationType:shipValue.quotationType,
                                     sellingChargesIncluded:shipValue.sellingChargesIncluded,
+                                    containerLashing:shipValue.containerLashing,
                                     QtyErrorClass:'',
+                                    currency:this.currency,
+                                    PODFreeTime : shipValue.PODFreeTime,
+                                    sellingRateKg : shipValue.sellingRateKg,
+                                    airLineId : shipValue.airLineId,
                                 })
                             }
                             elem.equipment[index].value = tempList
@@ -732,8 +685,108 @@ export default class BAFCOSalesOrderParent extends LightningElement {
         this.template.querySelector('c-b-a-f-c-o-sales-order-list').handlecheckBoxSelected();
 
     }
-    assignData(){
-        
+    handleCloseCargoDetailsPopUp(){
+        this.displayCargoDetailsPopUP = false;
     }
-    
+    handleShowCargoDetails(){
+        this.displayCargoDetailsPopUP = true;
+    }
+    handleAgentSharechange(e){
+        let agentShare = e.target.value;
+        if(agentShare == ''){
+            agentShare = 0;
+        }
+        let equip = e.target.dataset.equip;
+        let shipline = e.target.dataset.shipline;
+        this.selectedDatalist.forEach(elem=>{
+            if(elem.routeId == this.selectedRouteId){
+                if(elem.equipment.length == 0){
+                    let tempList = [];
+                    tempList.push({
+                        shipName: shipline,
+                        agentShare:agentShare,
+                        
+                    })
+                    elem.equipment.push({
+                        key:equip,
+                        value:tempList
+                    });
+                }else{
+                    let index = elem.equipment.findIndex(e => e.key === equip);
+                    if(index == -1){
+                        let tempList = [];
+                        tempList.push({
+                             shipName: shipline,
+                             agentShare:agentShare,
+                        })
+                        elem.equipment.push({
+                            key:equip,
+                            value:tempList
+                        });
+                    }
+                    else{
+                        let tempList = elem.equipment[index].value;
+                        let shipIndex = tempList.findIndex(e => e.shipName === shipline); 
+                        if(shipIndex != -1) tempList[shipIndex].agentShare = agentShare;
+                        else{
+                            tempList.push({
+                                shipName: shipline,
+                                agentShare:agentShare,
+                           })
+                        }
+                        elem.equipment[index].value  = tempList;
+                    }
+                }
+            }
+        })
+    }
+    handlePODFreeTimechange(e){
+        let PODFreeTime = e.target.value;
+        if(PODFreeTime == ''){
+            PODFreeTime = 0;
+        }
+        let equip = e.target.dataset.equip;
+        let shipline = e.target.dataset.shipline;
+        this.selectedDatalist.forEach(elem=>{
+            if(elem.routeId == this.selectedRouteId){
+                if(elem.equipment.length == 0){
+                    let tempList = [];
+                    tempList.push({
+                        shipName: shipline,
+                        PODFreeTime:PODFreeTime,
+                        
+                    })
+                    elem.equipment.push({
+                        key:equip,
+                        value:tempList
+                    });
+                }else{
+                    let index = elem.equipment.findIndex(e => e.key === equip);
+                    if(index == -1){
+                        let tempList = [];
+                        tempList.push({
+                             shipName: shipline,
+                             PODFreeTime:PODFreeTime,
+                        })
+                        elem.equipment.push({
+                            key:equip,
+                            value:tempList
+                        });
+                    }
+                    else{
+                        let tempList = elem.equipment[index].value;
+                        let shipIndex = tempList.findIndex(e => e.shipName === shipline); 
+                        if(shipIndex != -1) tempList[shipIndex].PODFreeTime = PODFreeTime;
+                        else{
+                            tempList.push({
+                                shipName: shipline,
+                                PODFreeTime:PODFreeTime,
+                           })
+                        }
+                        elem.equipment[index].value  = tempList;
+                    }
+                }
+            }
+        })
+    }
 }

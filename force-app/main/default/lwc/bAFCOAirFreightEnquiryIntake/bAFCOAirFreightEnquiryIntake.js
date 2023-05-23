@@ -1,5 +1,6 @@
 import { LightningElement,api,track,wire } from 'lwc';
 import ROUTE_OBJECT from '@salesforce/schema/Route__c';
+import ROUTE_EQUIPMENT_OBJECT from '@salesforce/schema/Route_Equipment__c';
 import { getPicklistValuesByRecordType } from 'lightning/uiObjectInfoApi';
 import CONTAINER_PNG from '@salesforce/resourceUrl/AddContainer';
 import getAllRegularRoute from '@salesforce/apex/BAFCOLRoutingDetailsController.getAllRegularRoute';
@@ -71,6 +72,13 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
     @track shippLinePlaceHolder = 'Search Shipping Line';
     @track shippLinePlaceLabel = 'Shipping Line';
     @track displayAddPackage = true;
+    @api palletized = false;
+    @api stackable = false;
+    @track isLCL = false;
+    @track UOMOption = [];
+    @track isAirEnquiry = false;
+    @api palletizedParent = false;
+    @api stackableParent = false;
 
 
     @track width;
@@ -78,6 +86,7 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
     @wire(getPicklistValuesByRecordType, { objectApiName: ROUTE_OBJECT, recordTypeId: '012000000000000AAA' })
     routeObjectData({ data, error }) {
         if(data){
+            console.log('****** '+JSON.stringify(data.picklistFieldValues,null,2))
             this.kindOfShipmentOption = data.picklistFieldValues.Kind_Of_Shipment__c.values;
             this.serviceTypeOption = data.picklistFieldValues.Service_Type__c.values;
             this.dgClassOption = data.picklistFieldValues.DG_Class__c.values;
@@ -85,6 +94,16 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
         }
         else if(error){
             console.log(' Route Object data error', JSON.stringify(error, null, 2));
+        }
+    }
+    @wire(getPicklistValuesByRecordType, { objectApiName: ROUTE_EQUIPMENT_OBJECT, recordTypeId: '012000000000000AAA' })
+    routeEQuipObjectData({ data, error }) {
+        if(data){
+            //console.log('data.picklistFieldValues '+JSON.stringify(data.picklistFieldValues,null,2))
+            this.UOMOption = data.picklistFieldValues.UOM__c.values;
+        }
+        else if(error){
+            console.log(' Route Equipment Object data error', JSON.stringify(error, null, 2));
         }
     }
 
@@ -98,6 +117,7 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
             this.shippLinePlaceHolder = 'Search Airline Line';
             this.shippLinePlaceLabel = 'Airline';
            if(this.businessType == 'Import') this.displayAddPackage = false;
+           this.isAirEnquiry  = true;
         }
         else{
             this.portObject = 'Port__c';
@@ -107,6 +127,8 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
             this.shippLinePlaceHolder = 'Search Shipping Line';
             this.shippLinePlaceLabel = 'Shipping Line';
             this.displayAddPackage = true;
+            this.isLCL = true;
+            this.isAirEnquiry  = false;
         }
         if(this.accountId.startsWith('001')){
             this.isAccountObject = true;
@@ -120,33 +142,57 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
         }
     }
     routeDefaultValueAssignment(){
-        console.log('hidePOL '+this.hidePOL,this.portLoading)
+        console.log('lewelew '+this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component').length)
         setTimeout(() => {
-            if(this.commodity != ''){
-                let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[4];
-                let Obj={Id:this.commodity,Name:this.commodityName}
-                if(field != null || field != undefined) field.handleDefaultSelected(Obj);
-            }
             if(this.incoTerm!= undefined){
                 let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[0];
                 let Obj={Id:this.incoTerm,Name:this.incoTermName}
                 if(field != null || field != undefined) field.handleDefaultSelected(Obj);
             }
             //if(this.incoTermName == 'Local Operation') this.handleLocalInco();
-            if(this.hidePOL == false && this.portLoading != ''){
-                let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[1];
-                let Obj={Id:this.portLoading,Name:this.portLoadingName,index:this.leadIndex}
-                field.handleDefaultSelected(Obj);
+            if(this.isAirEnquiry == true){
+                if(this.hidePOL == false && this.portLoading != ''){
+                    let field = this.template.querySelectorAll('c-b-a-f-c-o-airport-custom-lookup')[0];
+                    let Obj={Id:this.portLoading,Name:this.portLoadingName,index:this.leadIndex}
+                    field.handleDefaultSelected(Obj);
+                }
+                if(this.hidePOD == false && this.portDestination != ''){
+                    let field = this.template.querySelectorAll('c-b-a-f-c-o-airport-custom-lookup')[1];
+                    let Obj={Id:this.portDestination,Name:this.portDestinationName,index:this.leadIndex}
+                    field.handleDefaultSelected(Obj);
+                }
+                if(this.hideShippingLine == false && this.shippingLine != ''){
+                    let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[1];
+                    let Obj={Id:this.shippingLine,Name:this.shippingLineName,index:this.leadIndex}
+                    field.handleDefaultSelected(Obj);
+                }
+                if(this.commodity != ''){
+                    let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[2];
+                    let Obj={Id:this.commodity,Name:this.commodityName}
+                    if(field != null || field != undefined) field.handleDefaultSelected(Obj);
+                }
             }
-            if(this.hidePOD == false && this.portDestination != ''){
-                let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[2];
-                let Obj={Id:this.portDestination,Name:this.portDestinationName,index:this.leadIndex}
-                field.handleDefaultSelected(Obj);
-            }
-            if(this.hideShippingLine == false && this.shippingLine != ''){
-                let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[3];
-                let Obj={Id:this.shippingLine,Name:this.shippingLineName,index:this.leadIndex}
-                field.handleDefaultSelected(Obj);
+            else{
+                if(this.hidePOL == false && this.portLoading != ''){
+                    let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[1];
+                    let Obj={Id:this.portLoading,Name:this.portLoadingName,index:this.leadIndex}
+                    field.handleDefaultSelected(Obj);
+                }
+                if(this.hidePOD == false && this.portDestination != ''){
+                    let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[2];
+                    let Obj={Id:this.portDestination,Name:this.portDestinationName,index:this.leadIndex}
+                    field.handleDefaultSelected(Obj);
+                }
+                if(this.hideShippingLine == false && this.shippingLine != ''){
+                    let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[3];
+                    let Obj={Id:this.shippingLine,Name:this.shippingLineName,index:this.leadIndex}
+                    field.handleDefaultSelected(Obj);
+                }
+                if(this.commodity != ''){
+                    let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[4];
+                    let Obj={Id:this.commodity,Name:this.commodityName}
+                    if(field != null || field != undefined) field.handleDefaultSelected(Obj);
+                }
             }
             if(this.serviceType != ''){
                 if(this.serviceType == 'Ex-Works'){
@@ -192,11 +238,11 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
                         let Obj={Id:result.commodityId,Name:result.commodityName}
                         if(field != null || field != undefined) field.handleDefaultSelected(Obj);
                     }
-                    if(result.incoTermId != undefined){
+                    /*if(result.incoTermId != undefined){
                         let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[0];
                         let Obj={Id:result.incoTermId,Name:result.incoTermName}
                         if(field != null || field != undefined) field.handleDefaultSelected(Obj);
-                    }
+                    }*/
                     //if(this.incoTermName == 'Clearance and Delivery' || this.incoTermName == 'Local Operation') this.handleLocalInco();
                 }, 200);
                 this.disableAddRoute = false;
@@ -360,8 +406,11 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
              'pickupPlaceClass':this.pickupPlaceClass,
              'disableAddRoute':this.disableAddRoute,
              'cargoReadiness':this.cargoReadiness,
+             'stackableParent':this.stackableParent,
+             'palletizedParent':this.palletizedParent
          }
          let updateleadEntryDto = JSON.parse(JSON.stringify(leadEntryDto));
+         console.log('updateleadEntryDto '+JSON.stringify(updateleadEntryDto,null,2))
          this.dispatchEvent(new CustomEvent('update', { detail: { dto: updateleadEntryDto } }));
      }
      handleIncoTermSelection(e){
@@ -486,6 +535,7 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
             "height": null,
             "CBM": null,
             "Weight": null,
+            "volumeWeight":null,
             "index": index,
             "id": "",
             "lengthErrorClass": "",
@@ -494,14 +544,17 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
             "CBMErrorClass": "",
             "WeightErrorClass": "",
             "unitsErrorClass": "",
-            "stackable": false,
-            "palletized": false,
             "units": "",
             "cargoDetails": "",
-            "cargoDetailsError": ""
+            "cargoDetailsError": "",
+            'uomValue':'CM',
+            'UOMErrorClass':'',
+            'disableCBM':false,
+            'CBMChanged':false
           }
           this.containerRecord = [];
-          this.containerRecord.push(obj)
+          this.containerRecord.push(obj);
+          //console.log('this.containerRecord '+JSON.stringify(this.containerRecord,null,2))
         setTimeout(() => {
             if(this.incoTermName != 'Clearance and Delivery' && this.incoTermName != 'Local Operation'){   
                 let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[4];
@@ -603,7 +656,7 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
         }, 2000);
     }
     handleCopyData(containerRecord,i){
-        console.log('# containerRecord' +JSON.stringify(containerRecord,null,2))
+        //console.log('# containerRecord' +JSON.stringify(containerRecord,null,2))
         let initalIndex = containerRecord.index;
         let spitInitalIndex = initalIndex.split('.');
         let cameIndex = i;
@@ -638,18 +691,6 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
         }
         let containerDto5 = JSON.parse(JSON.stringify(obj5));
         this.dispatchEvent(new CustomEvent('weightupdate', { detail: { dto: containerDto5 } })); 
-        let obj6={
-            'index':finalIndex,
-            'stackable':containerRecord.stackable,
-        }
-        let containerDto6 = JSON.parse(JSON.stringify(obj6));
-        this.dispatchEvent(new CustomEvent('stackableupdate', { detail: { dto: containerDto6 } })); 
-        let obj7={
-            'index':finalIndex,
-            'palletized':containerRecord.palletized,
-        }
-        let containerDto7 = JSON.parse(JSON.stringify(obj7));
-        this.dispatchEvent(new CustomEvent('palletizedupdate', { detail: { dto: containerDto7 } }));
         let obj8={
             'index':finalIndex,
             'units':containerRecord.units,
@@ -662,6 +703,18 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
         }
         let containerDto9 = JSON.parse(JSON.stringify(obj9));
         this.dispatchEvent(new CustomEvent('cargodetailsupdate', { detail: { dto: containerDto9 } })); 
+        let obj10={
+            'index':finalIndex,
+            'uom':containerRecord.uomValue,
+        }
+        let containerDto10 = JSON.parse(JSON.stringify(obj10));
+        this.dispatchEvent(new CustomEvent('uomupdate', { detail: { dto: containerDto10 } }));
+        let obj11={
+            'index':finalIndex,
+            'uom':containerRecord.volumeWeight,
+        }
+        let containerDto11 = JSON.parse(JSON.stringify(obj11));
+        this.dispatchEvent(new CustomEvent('volumeweightupdate', { detail: { dto: containerDto11 } }));
     }
     handlelengthChange(e){
         let index = e.target.dataset.recordId;
@@ -671,7 +724,8 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
             'length':value,
         }
         let containerDto = JSON.parse(JSON.stringify(obj));
-        this.dispatchEvent(new CustomEvent('lengthupdate', { detail: { dto: containerDto } }));      
+        this.dispatchEvent(new CustomEvent('lengthupdate', { detail: { dto: containerDto } }));     
+        this.handleCBMUpdate(index); 
     }
     handleWidthChange(e){
         let index = e.target.dataset.recordId;
@@ -682,6 +736,7 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
         }
         let containerDto = JSON.parse(JSON.stringify(obj));
         this.dispatchEvent(new CustomEvent('widthupdate', { detail: { dto: containerDto } })); 
+        this.handleCBMUpdate(index);
     }
     handleHeightChange(e){
         let index = e.target.dataset.recordId;
@@ -692,6 +747,7 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
         }
         let containerDto = JSON.parse(JSON.stringify(obj));
         this.dispatchEvent(new CustomEvent('heightupdate', { detail: { dto: containerDto } })); 
+        this.handleCBMUpdate(index);
     }
     handleCBMChange(e){
         let index = e.target.dataset.recordId;
@@ -699,9 +755,63 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
         let obj={
             'index':index,
             'cbm':value,
+            'userChanged':true
         }
         let containerDto = JSON.parse(JSON.stringify(obj));
         this.dispatchEvent(new CustomEvent('cbmupdate', { detail: { dto: containerDto } })); 
+        this.handleVolumeWeight(index,value);
+    }
+    handleUOMChange(e){
+        let index = e.target.dataset.recordId;
+        let value = e.target.value;
+        let obj={
+            'index':index,
+            'uom':value,
+        }
+        let containerDto = JSON.parse(JSON.stringify(obj));
+        this.dispatchEvent(new CustomEvent('uomupdate', { detail: { dto: containerDto } })); 
+        this.handleCBMUpdate(index);
+    }
+    handleCBMUpdate(index){
+        let containerIndex = this.containerRecord.findIndex(elem=>elem.index == index);
+        let ccRecord = this.containerRecord[containerIndex];
+        let lenght = null;
+        let width = null;
+        let height = null;
+        let cbm = null;
+        if(ccRecord.length > 0 || ccRecord.width > 0 || ccRecord.height){
+            console.log('came here 1')
+            lenght  = ccRecord.length > 0 ? ccRecord.length : 1;
+            width  = ccRecord.width > 0 ? ccRecord.width : 1;
+            height  = ccRecord.height > 0 ? ccRecord.height : 1;
+        }
+        cbm =  lenght * width * height;
+        if(ccRecord.uomValue == 'CM')  cbm = cbm/1000000;
+        else if(ccRecord.uomValue == 'Inch') cbm = cbm/61023;
+        cbm = cbm.toFixed(2);
+        let allNull = false;
+        console.log('lenght'+lenght)
+        console.log('width'+width)
+        console.log('height'+height)
+
+        if(lenght == null && width == null && height == null){allNull = true}
+        let obj={
+            'index':index,
+            'cbm':cbm,
+            'allNull':allNull
+        }
+        let containerDto = JSON.parse(JSON.stringify(obj));
+        this.dispatchEvent(new CustomEvent('cbmupdate', { detail: { dto: containerDto } })); 
+        this.handleVolumeWeight(index,cbm);
+    }
+    handleVolumeWeight(index,cbm){
+        let volumeWeight = cbm * 167;
+        let obj={
+            'index':index,
+            'volumeWeight':volumeWeight,
+        }
+        let containerDto = JSON.parse(JSON.stringify(obj));
+        this.dispatchEvent(new CustomEvent('volumeweightupdate', { detail: { dto: containerDto } })); 
     }
     handleWeightChange(e){
         let index = e.target.dataset.recordId;
@@ -721,7 +831,7 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
             'stackable':value,
         }
         let containerDto = JSON.parse(JSON.stringify(obj));
-        this.dispatchEvent(new CustomEvent('stackableupdate', { detail: { dto: containerDto } })); 
+        this.dispatchEvent(new CustomEvent('stackableupdate', { detail: { dto: containerDto } }));
     }
     handlePalletizedChange(e){
         let index = e.target.dataset.recordId;
@@ -731,7 +841,7 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
             'palletized':value,
         }
         let containerDto = JSON.parse(JSON.stringify(obj));
-        this.dispatchEvent(new CustomEvent('palletizedupdate', { detail: { dto: containerDto } })); 
+        this.dispatchEvent(new CustomEvent('palletizedupdate', { detail: { dto: containerDto } }));
     }
     handleUnitsChange(e){
         let index = e.target.dataset.recordId;
@@ -744,8 +854,6 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
         this.dispatchEvent(new CustomEvent('unitsupdate', { detail: { dto: containerDto } })); 
     }
     handleCargoDetailsChange(e){
-        console.log('ccme '+JSON.stringify(e.target.dataset.recordId,null,2))
-        console.log('ccme '+JSON.stringify(e.target.value,null,2))
         let index = e.target.dataset.recordId;
         let value = e.target.value;
         let obj={
@@ -753,9 +861,7 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
             'cargoDetails':value,
         }
         let containerDto = JSON.parse(JSON.stringify(obj));
-        console.log('ccme '+JSON.stringify(containerDto,null,2))
         this.dispatchEvent(new CustomEvent('cargodetailsupdate', { detail: { dto: containerDto } }));
-        console.log('ccme deployed'+JSON.stringify(obj,null,2))
     }
     handleAddContainer(e){
         let strIndex = e.target.dataset.recordId;
@@ -767,6 +873,18 @@ export default class BAFCOAirFreightEnquiryIntake extends LightningElement {
     }
     handelCargoReadinessDate(e){
         this.cargoReadiness = e.target.value;
+        this.updateEnquiryList();
+    }
+    handleStackableParentChange(e){
+        console.log('came  '+e.target.checked)
+        this.stackableParent = e.target.checked;
+        console.log('this.stackable  '+this.stackableParent)
+        this.updateEnquiryList();
+    }
+    handlePalletizedParentChange(e){
+        console.log('came  '+e.target.checked)
+        this.palletizedParent = e.target.checked;
+        console.log('this.palletized  '+this.palletizedParent)
         this.updateEnquiryList();
     }
 }

@@ -11,6 +11,7 @@ export default class BAFCOAirExportQuoteIntakeForm extends NavigationMixin(Light
     @api serviceType;
     @api portLoading;
     @api portDestination;
+    @api portDestinationId;
     @api shippingLine;
     @api commodity;
     @api cargoWeights;
@@ -126,6 +127,7 @@ export default class BAFCOAirExportQuoteIntakeForm extends NavigationMixin(Light
     @track loadingChargeId;
     @track originTotalChanged = false;
     @track loadingChargeName;
+    @track displayCargoDetails = false;
 
 
 
@@ -540,7 +542,10 @@ export default class BAFCOAirExportQuoteIntakeForm extends NavigationMixin(Light
                         'incoTermId':this.incoTermId,
                         'transitTime':0,
                         'chargeableWeight':chargeableWeight,
-                        'buyingRateInput':buyingRateInput
+                        'buyingRateInput':buyingRateInput,
+                        'portLoadingId':this.portLoadingId,
+                        'portDestination':this.portDestination,
+                        'portDestinationId':this.portDestinationId,
                     })
                     elem.value = tempList;
                 }
@@ -1584,5 +1589,11 @@ export default class BAFCOAirExportQuoteIntakeForm extends NavigationMixin(Light
                 console.log('generate quote error', JSON.stringify(error));
             })
         }
+    }
+    handleCloseCargoDetailsPopUp(){
+        this.displayCargoDetails = false;
+    }
+    handleShowCargoDetails(){
+        this.displayCargoDetails = true;
     }
 }

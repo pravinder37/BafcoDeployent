@@ -3,11 +3,11 @@
         <!--lightning-layout-item size="2" class="slds-col slds-m-vertical_medium">
             <p class="slds-m-top_small leadLabel">Regular Routing</p>
             <span class=leadDetails>{routingRegular}</span>
-        </lightning-layout-item-->
+        </lightning-layout-item>
         <lightning-layout-item size="2" class="slds-col slds-m-vertical_medium">
             <p class="slds-m-top_small leadLabel">Kind of Shipment</p>
             <span class=leadDetails>{shipmentKind}</span>
-        </lightning-layout-item>
+        </lightning-layout-item-->
         <lightning-layout-item size="2" class="slds-col slds-m-vertical_medium">
             <p class="slds-m-top_small leadLabel">Service of Type</p>
             <span class=leadDetails>{serviceType}</span>
@@ -593,10 +593,13 @@
                                                                         <template for:each={equiptab.additionalChargeList} for:item="addC">
                                                                             <lightning-layout-item size="12" key={addC}>
                                                                                 <lightning-layout multiple-rows style="padding-left: 8%;">
-                                                                                    <lightning-layout-item size="6"  style="padding-top:30px">
+                                                                                    <lightning-layout-item size="4"  style="padding-top:30px">
                                                                                         {addC.Name}
                                                                                     </lightning-layout-item>
-                                                                                    <lightning-layout-item size="6" >
+                                                                                    <lightning-layout-item size="4" >
+                                                                                        <lightning-input style="padding-right: 10px;" disabled value={addC.buyingCharge} ></lightning-input>
+                                                                                    </lightning-layout-item>
+                                                                                    <lightning-layout-item size="4" >
                                                                                         <lightning-input style="padding-right: 10px;" disabled value={addC.value} ></lightning-input>
                                                                                     </lightning-layout-item>
                                                                                 </lightning-layout>

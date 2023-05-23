@@ -164,7 +164,7 @@ export default class BAFCOAirImportReviseParent extends LightningElement {
                     this.dispatchEvent(evt);
                 }
                 if(allValid){
-                    //this.template.querySelectorAll("c-b-a-f-c-o-air-quote-intake-form")[index].handleGotoQuotation(this.validityDate);
+                    this.template.querySelectorAll("c-b-a-f-c-o-air-import-quote-intake-form")[index].handleGotoQuotation(this.validityDate);
                 }
             }
         }

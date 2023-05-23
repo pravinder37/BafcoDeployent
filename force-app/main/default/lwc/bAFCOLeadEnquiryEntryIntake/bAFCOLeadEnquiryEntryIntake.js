@@ -63,6 +63,7 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
     @api cargoReadiness = '';
     @track isImport = false;
     @api minDate = '';
+    @track regularRouteSelected = false;
 
     @wire(getPicklistValuesByRecordType, { objectApiName: ROUTE_OBJECT, recordTypeId: '012000000000000AAA' })
     routeObjectData({ data, error }) {
@@ -255,6 +256,7 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
     }
 
     handleRegularRouteChange(event){
+        this.regularRouteSelected = true; // just to prvent service type change on selection overiding from incoterm
         let index = event.target.dataset.recordId;
         let regularValue = event.target.value;
         this.routingRegular = regularValue;
@@ -306,7 +308,7 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
         this.incoTerm = incoTermID;
         this.incoTermName = e.detail.Name
         if(this.incoTermName == 'Clearance and Delivery' || this.incoTermName == 'Local Operation') this.handleLocalInco();
-        else if((this.incoTermName != 'Clearance and Delivery' && this.incoTermName != 'Local Operation') && this.isEdit != 'true'){
+        else if((this.incoTermName != 'Clearance and Delivery' && this.incoTermName != 'Local Operation') && this.isEdit != 'true' && this.regularRouteSelected == false){
             this.serviceType = '';
             this.disableServiceType = false
         }
@@ -466,6 +468,7 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
         .then(result=>{
             console.log('rsult ',JSON.stringify(result,null,2))
             this.serviceType = result.Service_Type__c != undefined ? result.Service_Type__c : '';
+            console.log('*****1 '+this.serviceType)
             this.incoTerm = result.INCO_Term__c != undefined ? result.INCO_Term__c : '';
             this.portLoading = result.Port_of_Loading__c != undefined ? result.Port_of_Loading__c : '';
             this.portDestination = result.Port_of_Destination__c != undefined ? result.Port_of_Destination__c : '';
@@ -475,6 +478,7 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
             this.shipmentKind = 'FCL';
             this.placeOfPickup = result.Pickup_Place__c != undefined ? result.Pickup_Place__c : '';
             this.placeOfDischarge = result.Discharge_Place__c != undefined ? result.Discharge_Place__c : '';
+            console.log('*****2 '+this.serviceType)
             if(result.Dangerous_Goods__c == true){
                 this.showDGClassField = true;
                 this.dgClass = result.DG_Class__c != undefined ? result.DG_Class__c : '';
@@ -512,27 +516,14 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
                 let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[4];
                 field.handleRemovePill();
             }
+            console.log('*****3 '+this.serviceType)
             if(this.serviceType  == 'D2P' || this.serviceType  == 'D2D'){
                 this.showPickupPlaceField = true;                
-                /*setTimeout(() => {
-                    if(result.Place_of_Pickup__c != undefined){
-                        let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[5];
-                        let Obj={Id:result.Place_of_Pickup__c,Name:result.Place_of_Pickup__r.Name,index:index}
-                        if(field != null) field.handleDefaultSelected(Obj);
-                    }
-                }, 100);*/
             }
             if(this.serviceType  == 'P2D' || this.serviceType  == 'D2D'){
                 this.showDischargePlaceField = true;
-                /*setTimeout(() => {
-                    if(result.Place_of_Discharge__c != undefined){                    
-                        let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[5];
-                        let Obj={Id:result.Place_of_Discharge__c,Name:result.Place_of_Discharge__r.Name,index:index}
-                        if(field != null) field.handleDefaultSelected(Obj);
-                    }
-                }, 100);*/
             }
-
+            console.log('*****4 '+this.serviceType)
             setTimeout(() => {
                 this.shipmentKindClass = '';
                 this.serviceTypeClass = '';
@@ -544,6 +535,7 @@ export default class BAFCOLeadEnquiryEntryIntake extends LightningElement {
                 this.pickupPlaceClass = '';
                 this.updateEnquiryList();
             }, 500);
+            console.log('*****5 '+this.serviceType)
         
         })
         .catch(error=>{

@@ -96,6 +96,8 @@
                             cargoweight-class={lead.cargoweightClass}
                             discharge-place-class={lead.dischargePlaceClass}
                             pickup-place-class={lead.pickupPlaceClass}
+                            stackable-parent={lead.stackableParent}
+                            palletized-parent={lead.palletizedParent}
                             min-date={minDate}
                             cargo-readiness={lead.cargoReadiness}
                             disable-add-route ={lead.disableAddRoute}
@@ -104,6 +106,8 @@
                             onwidthupdate={handleWidthUpdate}
                             onheightupdate={handleheightupdate}
                             oncbmupdate={handlecbmupdate}
+                            onuomupdate={handleUOMUpdate}
+                            onvolumeweightupdate={handlevolumeWeightupdate}
                             onweightupdate={handleweightupdate}
                             onstackableupdate={handleStackableUpdate}
                             onpalletizedupdate={handlePalletizedUpdate}
@@ -125,6 +129,15 @@
                                 title="Add new Route" 
                                 disabled={disableAddRoute}                                   
                                 onclick={addRouteEnquiry}></lightning-button>
+            </lightning-layout-item>
+            <lightning-layout-item size="6" if:true={airEnquiry} large-device-size="6" medium-device-size="6" small-device-size="12">
+                <lightning-input label="Total CBM (Kgs) " value={totalCBM} disabled></lightning-input>
+            </lightning-layout-item>
+            <lightning-layout-item style="padding-left: 20px;" if:true={airEnquiry} size="6" large-device-size="6" medium-device-size="6" small-device-size="12">
+                <lightning-input label="Total Gross Weight (KGs)" value={totalGross} disabled></lightning-input>
+            </lightning-layout-item>
+            <lightning-layout-item size="6" if:true={airEnquiry} large-device-size="6" medium-device-size="6" small-device-size="12">
+                <lightning-input label="Total Volumetric Weight(Kgs) " value={totalVolumeWeight} disabled></lightning-input>
             </lightning-layout-item>
         </lightning-layout>
     </div>

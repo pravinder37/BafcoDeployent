@@ -94,5 +94,6 @@ public class BAFCOAllQuotationItemDto {
         public String Name { get; set; }
         @AuraEnabled
         public Decimal value { get; set; }
+        @AuraEnabled public Decimal buyingCharge {get;set;}
     }
 }

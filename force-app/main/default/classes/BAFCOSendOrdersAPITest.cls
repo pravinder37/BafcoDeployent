@@ -6,12 +6,13 @@ public class BAFCOSendOrdersAPITest {
         comd.Name = 'CommodityName';
         comd.DG_Class__c = 'test';
         insert comd;
+        Decimal accInt = Math.random();
         account acc = new Account();
         acc.Branch__c = 'Jeddah';
         acc.Average_Credit_Days__c = 2;
         acc.Average_Margin__c =2;
         acc.Best_Margin__c = 1;
-        acc.name = 'test';
+        acc.name = 'test'+accInt;
         insert acc;
         
          Port__c port = new Port__c();
@@ -30,7 +31,6 @@ public class BAFCOSendOrdersAPITest {
         insert con;
         
         
-       
         
         opportunity opty = new Opportunity();
         opty.AccountId = acc.id;
@@ -38,6 +38,7 @@ public class BAFCOSendOrdersAPITest {
         opty.CloseDate = system.today();
         opty.Name ='testopty';
         opty.Business_Type__c = 'Export';
+        //opty.Commercial_User__c = userInfo.getUserId();
         insert opty;
         
         Task tsk = new Task();
@@ -69,18 +70,52 @@ public class BAFCOSendOrdersAPITest {
         quoteObj.Inclusions__c = 'Test Data ;;test data ;';
         quoteObj.Exclusions__c = 'Test Data ;;test data ;';
         quoteObj.Effective_From__c = system.today();
+        quoteObj.Quotation_Validity__c = system.today()-50;
         Insert quoteObj;
         
-        
-        
     }
-    /*testmethod static void getOrderTest(){
-        List<Order__c> orderList = [Select Operations_Executive__r.BSLS_ID__c, (Select Agent__r.BSLS_ID__c,Agent__r.Name,Agent__c, Equipment_Type_Order__r.BSLS_ID__c, Place_of_Discharge__r.BSLS_ID__c,Place_of_Pickup__r.BSLS_ID__c,Port_of_Discharge_Order__r.BSLS_ID__c,Port_of_Loading_Order__r.BSLS_ID__c,Shipping_Line__r.BSLS_ID__c, Route_Order__r.Service_Type__c,Route_Order__r.Kind_Of_Shipment__c,Name,id,Order__r.Name from Order_Items__r),Order_Validity__c,Quotation__r.Quotation_Validity__c,Quotation__r.Name, Name,Account_Order__r.BSLS_ID__c,Account_Order__r.BillingAddress, id,Account_Order__c,Account_Order__r.Name,Account_Order__r.Branch__c,Account_Order__r.Owner.Name from Order__c ];
+    testmethod static void getOrderTest(){
+        //List<Order__c> orderList = [Select Operations_Executive__r.BSLS_ID__c, (Select Agent__r.BSLS_ID__c,Agent__r.Name,Agent__c, Equipment_Type_Order__r.BSLS_ID__c, Place_of_Discharge__r.BSLS_ID__c,Place_of_Pickup__r.BSLS_ID__c,Port_of_Discharge_Order__r.BSLS_ID__c,Port_of_Loading_Order__r.BSLS_ID__c,Shipping_Line__r.BSLS_ID__c, Route_Order__r.Service_Type__c,Route_Order__r.Kind_Of_Shipment__c,Name,id,Order__r.Name from Order_Items__r),Order_Validity__c,Quotation__r.Quotation_Validity__c,Quotation__r.Name, Name,Account_Order__r.BSLS_ID__c,Account_Order__r.BillingAddress, id,Account_Order__c,Account_Order__r.Name,Account_Order__r.Branch__c,Account_Order__r.Owner.Name from Order__c ];
+        Quotation__c quoteObj = [Select id,Account__c,Opportunity__c from Quotation__c limit 1];
+        Order__c orderObj = new Order__c();
+        orderObj.Account_Order__c = quoteObj.Account__c;
+        orderObj.Quotation__c = quoteObj.id;
+        orderObj.Opportunity_Order__c= quoteObj.Opportunity__c;
+        orderObj.Integration__c = true;
+        insert orderObj;
+        Order_item__c item = new Order_item__c();
+        item.Order__c = orderObj.id;
+        item.Quantity__c =1;
+        item.Buying_Rate__c= 3;
+        item.Total_Order__c =2;
+		insert  item;
+        Additional_Charge__c addin = new Additional_Charge__c();
+        addin.name ='test';
+        insert addin;
+        Order_Charges__c orderCharge = new Order_Charges__c();
+        orderCharge.Buying_Rate__c = 1;
+        orderCharge.Charge_Name__c = addin.id;
+        orderCharge.Order_Item__c = item.id;
+        insert orderCharge;
+        
+        Consignee__c consignee = new Consignee__c();
+        consignee.Consignee__c = quoteObj.Account__c;
+        consignee.Order_Item__c = item.id;
+        insert consignee;
+        
+        Shipper__c shipper = new Shipper__c();
+        shipper.Shipper__c = quoteObj.Account__c;
+        shipper.Order_Item__c = item.id;
+        insert shipper;
+        List<Id> orderIds = new List<Id>{orderObj.id};
+        /*for(Order__c orderOb : orderList){
+            orderIds.add(orderOb.Id);
+        }*/
         test.startTest();
         Test.setMock(HttpCalloutMock.class, new BAFCOExchangeRateMockTest());
-        BAFCOSendOrdersAPI.getOrderData(orderList);
+        BAFCOSendOrdersAPI.sendOrderData(orderIds);
         test.stopTest();
-    }*/
+    }
     testmethod static void postOrderTest(){
         Test.setMock(HttpCalloutMock.class, new BAFCOOrderCalloutMockTest());
         Agent__c agentObj = new Agent__c();
@@ -181,4 +216,5 @@ public class BAFCOSendOrdersAPITest {
         BAFCOUpdatETDOnOrderAPI.doPost();
         test.stopTest();
     }*/
+   
 }

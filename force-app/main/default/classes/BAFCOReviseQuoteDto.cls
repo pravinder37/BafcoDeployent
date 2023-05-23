@@ -33,4 +33,5 @@ public class BAFCOReviseQuoteDto {
     public Boolean isLCL {get; set;}
     @AuraEnabled
     public Boolean isAir {get; set;}
+    @AuraEnabled public String currencyString{get;set;}
 }

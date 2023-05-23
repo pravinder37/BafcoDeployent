@@ -13,12 +13,16 @@ public class BAFCOOrderCreationDto {
         public List<value> value { get; set; }
     }
     public class value{
+        @AuraEnabled public String airLineId { get; set; }
+        @AuraEnabled public Decimal sellingRateKg { get; set; }
+        @AuraEnabled public Decimal PODFreeTime { get; set; }
         @AuraEnabled public String sellingChargesIncluded { get; set; }
         @AuraEnabled public String quotationType { get; set; }
         @AuraEnabled public Boolean isLCL { get; set; }
         @AuraEnabled public Boolean isAir { get; set; }
         @AuraEnabled public String incoTermId { get; set; }
         @AuraEnabled public String tabView { get; set; }
+        @AuraEnabled public Decimal agentShare { get; set; }
         @AuraEnabled
         public String recordtypeId { get; set; }
         @AuraEnabled
@@ -34,19 +38,11 @@ public class BAFCOOrderCreationDto {
         @AuraEnabled
         public Decimal bayan { get; set; }
         @AuraEnabled
-        public Decimal bayanCancellation { get; set; }
-        @AuraEnabled
         public Decimal bunkerSurcharge { get; set; }
         @AuraEnabled
         public Decimal cleaningCharges { get; set; }
         @AuraEnabled
-        public Decimal containerLashing { get; set; }
-        @AuraEnabled
         public Decimal containerMaintenance { get; set; }
-        @AuraEnabled
-        public Decimal containerMovement { get; set; }
-        @AuraEnabled
-        public Decimal containerStripping { get; set; }
         @AuraEnabled
         public Decimal destinationCustomClearnace { get; set; }
         @AuraEnabled
@@ -62,10 +58,6 @@ public class BAFCOOrderCreationDto {
         @AuraEnabled
         public Decimal fasahFee { get; set; }
         @AuraEnabled
-        public Decimal freeTimeCertification { get; set; }
-        @AuraEnabled
-        public Decimal fumigation { get; set; }
-        @AuraEnabled
         public Decimal inspection { get; set; }
         @AuraEnabled
         public Decimal insurance { get; set; }
@@ -78,21 +70,11 @@ public class BAFCOOrderCreationDto {
         @AuraEnabled
         public Decimal loadingCharges { get; set; }
         @AuraEnabled
-        public Decimal ministryClearance { get; set; }
-        @AuraEnabled
-        public Decimal miscallenous { get; set; }
-        @AuraEnabled
-        public Decimal mot { get; set; }
-        @AuraEnabled
-        public Decimal nonPatellized { get; set; }
-        @AuraEnabled
         public Decimal originCustomClearance { get; set; }
         @AuraEnabled
         public Decimal originloadingCharges { get; set; }
         @AuraEnabled
         public Decimal othc { get; set; }
-        @AuraEnabled
-        public Decimal pestController { get; set; }
         @AuraEnabled
         public Decimal portShuttling { get; set; }
         @AuraEnabled
@@ -106,12 +88,6 @@ public class BAFCOOrderCreationDto {
         @AuraEnabled
         public Decimal refeerCentr { get; set; }
         @AuraEnabled
-        public Decimal refeerPTI { get; set; }
-        @AuraEnabled
-        public Decimal refeerSteamWash { get; set; }
-        @AuraEnabled
-        public Decimal rePalletization { get; set; }
-        @AuraEnabled
         public String rmsID { get; set; }
         @AuraEnabled
         public String routeID { get; set; }
@@ -122,10 +98,6 @@ public class BAFCOOrderCreationDto {
         @AuraEnabled
         public Decimal sellingRate { get; set; }
         @AuraEnabled
-        public Decimal stuffingCharges { get; set; }
-        @AuraEnabled
-        public Decimal sweepingCleaning { get; set; }
-        @AuraEnabled
         public Decimal tabadul { get; set; }
         @AuraEnabled
         public Decimal tarapulin { get; set; }
@@ -134,13 +106,7 @@ public class BAFCOOrderCreationDto {
         @AuraEnabled
         public Decimal totalSL { get; set; }
         @AuraEnabled
-        public Decimal truckHead { get; set; }
-        @AuraEnabled
         public Decimal truckIdealing { get; set; }
-        @AuraEnabled
-        public Decimal vesselCertificate { get; set; }
-        @AuraEnabled
-        public Decimal wrappingPacking { get; set; }
         @AuraEnabled
         public Decimal xRay { get; set; }
         @AuraEnabled
@@ -190,14 +156,11 @@ public class BAFCOOrderCreationDto {
         @AuraEnabled public boolean includeExWorksCharge {get;set;}
         @AuraEnabled public String exWorksId {get;set;}
         @AuraEnabled public Decimal exWorksCharge {get;set;}
-        @AuraEnabled public decimal AlternateDepotReleaseCharges {get; set;}
-        @AuraEnabled public decimal FreightDifference {get; set;}
-        @AuraEnabled public decimal CarrierContainerRepositioningCharges {get; set;}
         @AuraEnabled public decimal orderBuyingRate {get; set;}
-        @AuraEnabled public decimal tankRentalCharge {get; set;}
         @AuraEnabled public String shippLine {get;set;}
         @AuraEnabled public String quoteItemId {get; set;}
         @AuraEnabled public String agentId {get; set;}
+        @AuraEnabled public Decimal containerLashing {get; set;}
     }
    
 }

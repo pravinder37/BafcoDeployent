@@ -7,7 +7,7 @@ public class BAFCOGenerateOrderPDFController {
         .getRecordTypeId();
     public Boolean showShippLine {get;set;}
     public Boolean showPickupPlace {get;set;}
-    public Boolean showPickupDischarge {get;set;}
+    public Boolean showPickupDischarge {get;set;} 
     public Boolean showCharges {get;set;}
     public String recordId {get;set;}
     public Boolean isLCL {get;set;}
@@ -15,7 +15,10 @@ public class BAFCOGenerateOrderPDFController {
     public String destinationPortLabel { get; set; }
     public Boolean isImport {get;set;}
     public Boolean isExport {get;set;}
+    public String title{get;set;}
+    public boolean displayShipperlist {get;set;}
     public BAFCOGeneratePDFDto dto {get;set;}
+    public String header { get; set; }
     public BAFCOGenerateOrderPDFController(ApexPages.StandardController controller){
         Map<String, String> pageParameters = ApexPages.currentPage().getParameters();
         String showShippLine = pageParameters.get('showShippLine');
@@ -26,6 +29,8 @@ public class BAFCOGenerateOrderPDFController {
         if(showCharges == 'true') this.showCharges = true; 
         else this.showCharges = false;
         this.recordId = recordId;
+        this.isImport = false;
+        this.displayShipperlist = false;
         dto =new BAFCOGeneratePDFDto();
     }
     public void getQuoteData(){
@@ -51,10 +56,12 @@ public class BAFCOGenerateOrderPDFController {
                 this.destinationPortLabel = 'Port of Destination :';
             }
             this.dto.quoteIssued =orderObj.Quotation__r.NAme+' | '+ orderObj.createdDate.day()+'-'+ BAFCOLeadDetailsController.getMonthName(orderObj.createdDate.month()) +'-'+orderObj.createdDate.year();
+            this.header = 'AGENT COPY - '+orderObj.Account_Order__r.Name;
             this.dto.preparedBy = orderObj.CreatedBy.Name;
             this.dto.paymentTerm = orderObj.Quotation__r.Payment_Terms__c;
             this.dto.recordTypeName = orderObj.RecordType.Name;
             if(orderObj.recordtypeId == EXPORT_RECORDTYPE_Id){
+                this.title = 'Create Order';
                 this.isImport = false;
                 this.isExport = true;
                 List<String> inclusionList =orderObj.Quotation__r.Inclusions__c != null ? orderObj.Quotation__r.Inclusions__c.split(';;') : null; 
@@ -73,6 +80,7 @@ public class BAFCOGenerateOrderPDFController {
                 }
             }
             else if(orderObj.recordtypeId == IMPORT_RECORDTYPE_Id){
+                this.title = 'Agent Copy';
                 this.isImport = true;
                 this.isExport = false;
                 List<String> termsList =orderObj.Quotation__r.Terms_and_Conditions__c != null ? orderObj.Quotation__r.Terms_and_Conditions__c.split(';;') : null; 
@@ -119,7 +127,7 @@ public class BAFCOGenerateOrderPDFController {
                 this.dto.phone = '-';
                 this.dto.email ='-';
             }
-            List<Order_Item__c> quoteItem = [SELECT Quotation_Item__r.Quotation__r.Name,Commodity__c,Route__r.Commodity__r.name,Airport_of_Destination__r.name,Airport_of_Loading__r.Name,Order__r.isAir__c,Tab_View__c,Order__r.isLCL__c,Tank_Rental_Charges__c,Shipping_Line__r.name,Ex_Works_Charge_Name__r.name,Route_Order__r.Service_Type__c,Id,Route_Order__r.Name, Name, Order__c, Agent__c, BAF_Order__c, BL_Fees__c, Bayan_Charges__c,
+            List<Order_Item__c> quoteItem = [SELECT Airline__r.name,Selling_Rate_Kg__c,POD_freetime__c,RMS_Order__r.Free_time_POD__c,Agent_Profit_Share__c,Order__r.Order_Type__c,Order__r.recordtypeId,CurrencyIsoCode, (Select Charge_NAme__r.Name,Charge_value__c,Buying_Rate__c from Order_Charges__r where isAdditionalCharge__c = true), Quotation_Item__r.Quotation__r.Name,Commodity__c,Route__r.Commodity__r.name,Airport_of_Destination__r.name,Airport_of_Loading__r.Name,Order__r.isAir__c,Tab_View__c,Order__r.isLCL__c,Tank_Rental_Charges__c,Shipping_Line__r.name,Ex_Works_Charge_Name__r.name,Route_Order__r.Service_Type__c,Id,Route_Order__r.Name, Name, Order__c, Agent__c, BAF_Order__c, BL_Fees__c, Bayan_Charges__c,
                                              Bayan_Order__c, Bayan_cancellation_charge_Order__c, Bunker_surcharge_Order__c,
                                              CMC_Order__c, Carriage_Congestion_Surcharge__c, Carrier_Security_Fees__c,
                                              Cleaning_charges_Order__c, Container_Lashing_Charges_Order__c, Container_movement_charges_Order__c,
@@ -143,32 +151,52 @@ public class BAFCOGenerateOrderPDFController {
                                              Add_to_Buying_Origin__c, Included_PDF_Additional__c, Included_PDF_Destination__c, Included_PDF_Ex_works__c, 
                                              Included_PDF_Origin__c, Freight_Difference_FD__c, Included_PDF_ShippingLine__c, Carrier_container_repositioning_charges__c,
                                              Vessel_ETD__c, Alternate_depot_release_charges__c, Buying_Rate__c, Shipping_Line__c, Quotation_Item__c,
-                                             Pickup_Place__c,Port_of_Loading_Order__r.name,Port_of_Discharge_Order__r.name, Discharge_Place__c,Equipment_Type_Order__r.Name FROM Order_Item__c 
+                                             Pickup_Place__c,Port_of_Loading_Order__r.name,Port_of_Discharge_Order__r.name, Discharge_Place__c,Equipment_Type_Order__r.Name,
+                                             Total_Volumetric_Weight__c,Total_Gross_Weight__c,Total_CBM__c
+                                             FROM Order_Item__c 
                                              where Order__c =: this.recordId];
             if(quoteItem.size() > 0){
+                List<Id> routeId = new List<Id>();
+                Map<Id,List<Route_Equipment__c>> rIdtoEquipMap = new Map<Id,List<Route_Equipment__c>>();
+                for(Order_Item__c item : quoteItem){
+                    routeId.add(item.Route__c);
+                }
+                if(routeId.size() > 0){
+                    for(Route_Equipment__c rEquip : [SELECT Volumetric_weight_Kgs__c,Route__r.Total_Volumetric_Weight__c,Weight_Kgs__c,CBM__c ,Route__r.Total_CBM__c,Route__r.Total_Gross_Weight_KGs__c,Id, Length__c, Width__c, Height__c, Units__c, UOM__c, Name FROM Route_Equipment__c where Route__c in : routeId]){
+                        if(!rIdtoEquipMap.containsKey(rEquip.Route__c)){
+                            rIdtoEquipMap.put(rEquip.Route__c,new list<Route_Equipment__c>());
+                        }
+                        rIdtoEquipMap.get(rEquip.Route__c).add(rEquip);
+                    }
+                }
+                
                 List<BAFCOGeneratePDFDto.serviceChargeList> quoteItemDto = new List<BAFCOGeneratePDFDto.serviceChargeList>();
                 List<BAFCOGeneratePDFDto.ContainerList> containerDtoList = new List<BAFCOGeneratePDFDto.ContainerList>();
                 List<BAFCOGeneratePDFDto.ContainerExportList> containerExportDtoList = new List<BAFCOGeneratePDFDto.ContainerExportList>();
+                List<Route_Equipment__c> routeEquipList= new List<Route_Equipment__c>();
                 for(Order_Item__c item : quoteItem){                    
                     BAFCOGeneratePDFDto.ContainerList contDto = new BAFCOGeneratePDFDto.ContainerList();
                     contDto.quoteNo = item.Quotation_Item__r.Quotation__r.Name;
                     contDto.qty = item.Quantity__c;
                     contDto.equipmentType = item.Equipment_Type_Order__r.name;
-                    contDto.BuyingRate = item.Buying_Rate__c;
-                    contDto.exWorks = 0;
-                    contDto.perShipment = item.Buying_Rate__c;
-                    contDto.total = (item.Quantity__c > 0 ? item.Quantity__c : 0) * (item.Buying_Rate__c  > 0 ? item.Buying_Rate__c : 0);
+                    contDto.BuyingRate = item.CurrencyIsoCode+' '+String.valueOF(item.Buying_Rate__c);
+                    contDto.perShipment = item.CurrencyIsoCode+' '+String.valueOF(item.Buying_Rate__c);
+                    contDto.podFreeTime = item.POD_freetime__c;
+                    contDto.exWorks = item.CurrencyIsoCode +' 0';
+                    contDto.total = item.CurrencyIsoCode+' '+(item.Quantity__c > 0 ? item.Quantity__c : 0) * (item.Buying_Rate__c  > 0 ? item.Buying_Rate__c : 0);
+                    system.debug('contDto '+contDto);
                     containerDtoList.add(contDto);
                     
                     BAFCOGeneratePDFDto.ContainerExportList conExportDto = new BAFCOGeneratePDFDto.ContainerExportList();
                     conExportDto.quoteNo = item.Quotation_Item__r.Quotation__r.Name;
                     conExportDto.qty = item.Quantity__c;
-                    conExportDto.equipmentType = item.Equipment_Type_Order__r.name;
-                    conExportDto.unitPrice = item.Total_Order__c;
-                    conExportDto.freight = (item.Quantity__c > 0 ? item.Quantity__c : 0) * (item.Total_Order__c  > 0 ? item.Total_Order__c : 0);
+                    conExportDto.equipmentType = item.Order__r.isAir__c == true ? 'CBM:'+item.Total_CBM__c+' Gross:'+item.Total_Gross_Weight__c :item.Equipment_Type_Order__r.name;
+                    conExportDto.unitPrice = item.CurrencyIsoCode +' '+ item.Total_Order__c;
+                    conExportDto.freight =item.CurrencyIsoCode +' '+( (item.Quantity__c > 0 ? item.Quantity__c : 0) * (item.Total_Order__c  > 0 ? item.Total_Order__c : 0));
                     conExportDto.commodity = item.Commodity__c;
+                    conExportDto.airline = item.Airline__c != null ? item.Airline__r.name : '-';
                     containerExportDtoList.add(conExportDto);
-                    
+                    if(rIdtoEquipMap.size() > 0 && rIdtoEquipMap.containsKey(item.Route__c))routeEquipList.addAll(rIdtoEquipMap.get(item.Route__c));
                     BAFCOGeneratePDFDto.serviceChargeList itemDto = new BAFCOGeneratePDFDto.serviceChargeList();                       
                     itemDto.shippingLine = item.Shipping_Line__r.name != null ? item.Shipping_Line__r.name  : '-';
                     system.debug('item.Pickup_Place__c '+item.Pickup_Place__c);
@@ -176,19 +204,29 @@ public class BAFCOGenerateOrderPDFController {
                     if(item.Discharge_Place__c != null ) this.showPickupDischarge = true;
                     itemDto.placeOfPickup = item.Pickup_Place__c;
                     itemDto.placeOfDischarge = item.Discharge_Place__c;
+                    itemDto.airLine = item.Airline__c != null ? item.Airline__r.name : '-';
+                    itemDto.currencyCode = item.CurrencyIsoCode;
+                    itemDto.isImport = item.Order__r.recordtypeId == EXPORT_RECORDTYPE_Id ? false : true;
                     if(item.Order__r.isAir__c == true){
                         itemDto.portOfLoading = item.Airport_of_Loading__r.name;
                         itemDto.portOfDestination = item.Airport_of_Destination__r.name;
                         itemDto.equipmentType = item.Tab_View__c;
+                        itemDto.totalCBM = item.Total_CBM__c;
+                        itemDto.totalGrossWeight = item.Total_Gross_Weight__c;
+                        itemDto.totalVolumetricWeight = item.Total_Volumetric_Weight__c;
+                        itemDto.shippingLine = '-';
                     }
                     else{
                         
                         itemDto.portOfLoading = item.Port_of_Loading_Order__r.name;
                         itemDto.portOfDestination = item.Port_of_Discharge_Order__r.name;
                         itemDto.equipmentType = item.Equipment_Type_Order__r.name;
+                        itemDto.shippingLine = item.Shipping_Line__r.name;
                     }
-                    itemDto.shippingLine = item.Shipping_Line__r.name;
-                    itemDto.total = item.Total_Order__c;
+                    
+                    itemDto.total = item.currencyIsoCode+' '+ item.Total_Order__c;
+                    itemDto.rateKg =item.Selling_Rate_Kg__c > 0 ? item.Selling_Rate_Kg__c.setScale(2) : 0;
+                    itemDto.agentShare = item.currencyIsoCode+' '+ (item.Agent_Profit_Share__c != null ? item.Agent_Profit_Share__c : 0);
                     //ServiceCharges
                     BAFCOImportRMSDto.servichargesObj serviceChargeObj = new BAFCOImportRMSDto.servichargesObj();
                     serviceChargeObj.BAF = item.BAF_Order__c > 0 ? item.BAF_Order__c : null;
@@ -287,38 +325,17 @@ public class BAFCOGenerateOrderPDFController {
                     itemDto.destinChargeObj = destinObj;
                     
                     //Additional Charges
-                    BAFCOImportRMSDto.additionalChargesObj addnObj = new BAFCOImportRMSDto.additionalChargesObj();
-                    addnObj.Bayancancellationcharge = item.Bayan_cancellation_charge_Order__c > 0 ? item.Bayan_cancellation_charge_Order__c : null;
-                    addnObj.Cleaningcharges = item.Cleaning_charges_Order__c > 0 ? item.Cleaning_charges_Order__c : null;
-                    addnObj.ContainerLashingCharges = item.Container_Lashing_Charges_Order__c > 0 ? item.Container_Lashing_Charges_Order__c : null;
-                    addnObj.Containermovementcharges = item.Container_movement_charges_Order__c > 0 ? item.Container_movement_charges_Order__c : null;
-                    addnObj.Containerstripping = item.Container_stripping_Order__c > 0 ? item.Container_stripping_Order__c : null;
-                    addnObj.Freetimecertificatecharges = item.Free_time_certificate_charges_Order__c > 0 ? item.Free_time_certificate_charges_Order__c : null;
-                    addnObj.Fumigation = item.Fumigation_Order__c > 0 ? item.Fumigation_Order__c : null;
-                    addnObj.Inspection = item.Inspection_Order__c > 0 ? item.Inspection_Order__c : null;
-                    addnObj.Insurancecharges = item.Insurance_charges_Order__c > 0 ? item.Insurance_charges_Order__c : null;
-                    addnObj.MinistryclearncechargeforOOGcargo = item.MCCFOOGC_Order__c > 0 ? item.MCCFOOGC_Order__c : null;
-                    addnObj.Miscellaneous = item.Miscellaneous_Order__c > 0 ? item.Miscellaneous_Order__c : null;
-                    addnObj.MOTfinecharges = item.MOT_fine_charges_Order__c > 0 ? item.MOT_fine_charges_Order__c : null;
-                    addnObj.NonPalletizedSurcharge = item.Non_Palletized_Surcharge_Order__c > 0 ? item.Non_Palletized_Surcharge_Order__c : null;
-                    addnObj.Pestcontrol = item.Pest_control_Order__c > 0 ? item.Pest_control_Order__c : null;
-                    addnObj.Repalletization = item.Re_palletization_Order__c > 0 ? item.Re_palletization_Order__c : null;
-                    addnObj.Reefercntrplugincharges = item.Reefer_cntr_plug_in_charges_Order__c > 0 ? item.Reefer_cntr_plug_in_charges_Order__c : null;
-                    addnObj.ReeferPTIcharges = item.Reefer_PTI_charges_Order__c > 0 ? item.Reefer_PTI_charges_Order__c : null;
-                    addnObj.Reefersteamwash = item.Reefer_steam_wash_Order__c > 0 ? item.Reefer_steam_wash_Order__c : null;
-                    addnObj.StuffingCharges = item.Stuffing_Charges_Order__c > 0 ? item.Stuffing_Charges_Order__c : null;
-                    addnObj.SweepingCleaning = item.Sweeping_Cleaning_Order__c > 0 ? item.Sweeping_Cleaning_Order__c : null;
-                    addnObj.TruckHeadcharges = item.Truck_Head_charges_Order__c > 0 ? item.Truck_Head_charges_Order__c : null;
-                    addnObj.Truckidlingcharges = item.Truck_idling_charges_Order__c > 0 ? item.Truck_idling_charges_Order__c : null;
-                    addnObj.Vesselcertificatecharges = item.Vessel_certificate_charges_Order__c > 0 ? item.Vessel_certificate_charges_Order__c : null;
-                    addnObj.Wrappingpackingcharges = item.Wrapping_packing_charges_Order__c > 0 ? item.Wrapping_packing_charges_Order__c : null;
-                    addnObj.totalAdditional = item.Total_Additional__c > 0 ? item.Total_Additional__c : null;
-                    addnObj.includeAdditionalCharge =item.Included_PDF_Additional__c;
-                    addnObj.AlternateDepotReleaseCharges = item.Alternate_depot_release_charges__c > 0 ? item.Alternate_depot_release_charges__c : null;
-                    addnObj.FreightDifference = item.Freight_Difference_FD__c > 0 ? item.Freight_Difference_FD__c : null;
-                    addnObj.CarrierContainerRepositioningCharges = item.Carrier_container_repositioning_charges__c > 0 ? item.Carrier_container_repositioning_charges__c : null;
-                    addnObj.tankRentalCharge = item.Tank_Rental_Charges__c > 0 ? item.Tank_Rental_Charges__c : null;
-                    itemDto.additionalChargesObj = addnObj;
+                    List<BAFCOGenerteQuoteDto.AdditionalCharge> addtionalChargeList = new List<BAFCOGenerteQuoteDto.AdditionalCharge>();
+                    if(item.Order_Charges__r != null && item.Order_Charges__r.size() > 0){
+                        for(Order_Charges__c chargeObj : item.Order_Charges__r){
+                            BAFCOGenerteQuoteDto.AdditionalCharge dtoObj = new BAFCOGenerteQuoteDto.AdditionalCharge();
+                            dtoObj.name = chargeObj.Charge_Name__r.Name;
+                            dtoObj.value = (item.Order__r.Order_Type__c == 'Sea Import') ? chargeObj.Buying_Rate__c : chargeObj.Charge_Value__c;
+                            dtoObj.includeAdditionalCharge = item.Included_PDF_Additional__c;
+                            addtionalChargeList.add(dtoObj);
+                        }
+                    }
+                    itemDto.addtionalChargeList = addtionalChargeList;
                     
                     //ExWorks Charges
                     BAFCOImportRMSDto.exWorksObj xWorksObj = new BAFCOImportRMSDto.exWorksObj();
@@ -331,6 +348,7 @@ public class BAFCOGenerateOrderPDFController {
                 this.dto.serviceChargeList = quoteItemDto; 
                 this.dto.ContainerList = containerDtoList;
                 this.dto.ContainerExportList = containerExportDtoList;
+                this.dto.routeEquipList = routeEquipList;
                 
                 //ConsigneeList
                 List<BAFCOGeneratePDFDto.consigneeList> consigneeList = new List<BAFCOGeneratePDFDto.consigneeList>();
@@ -383,7 +401,10 @@ public class BAFCOGenerateOrderPDFController {
                     }
                     shipperList.add(consDto);
                 }
-                if(shipperList.size() > 0) this.dto.shipperList = shipperList;
+                if(shipperList.size() > 0) {
+                    this.dto.shipperList = shipperList;
+                    this.displayShipperlist = true;
+                }
             }
         }
     }

@@ -15,4 +15,5 @@ public class BAFCOLeadDetailsDto {
     public String contactEmail { get; set; }
     @AuraEnabled
     public String contactMobile { get; set; }
+    @AuraEnabled public String contactName { get; set; }
 }

@@ -81,6 +81,7 @@ public class BAFCOQuoteCopyContentControllerTest {
         exWorks.Loading_Charge__c = 100;
         exWorks.Port_of_Loading__c = port.id;
         exWorks.Direction__c = 'One Way';
+        exWorks.Pickup_Place__c = 'test';
         insert exWorks;
         List<Quotation_Item__c> quoteItemList = new List<Quotation_Item__c>();
       

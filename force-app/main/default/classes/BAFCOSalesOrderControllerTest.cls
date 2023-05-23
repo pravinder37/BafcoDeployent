@@ -57,7 +57,7 @@ public class BAFCOSalesOrderControllerTest {
         rEquip.Route__c = route.id;
         rEquip.Equipment_Type__c = equip.id;
         rEquip.Length__c = 1;
-        rEquip.Width__c =1;
+        rEquip.Width__c =1; 
         rEquip.Height__c = 1;
         rEquip.CBM__c = 1;
         rEquip.Weight_Kgs__c =1;
@@ -98,6 +98,7 @@ public class BAFCOSalesOrderControllerTest {
         quoteItem.Quotation__c = quoteObj.Id;
         quoteItem.Equipment_Type__c = equip.id;
         quoteItem.Sea_freight__c =12;
+        quoteItem.currencyISOCode = 'USD';
         quoteItem.Tab_View__c = '1x1x1| CBM : 1 | Weight : 1';
         quoteItem.Airport_of_Destination__c = airObj.id;
         quoteItem.Airport_of_Loading__c = airObj.id;
@@ -145,7 +146,7 @@ public class BAFCOSalesOrderControllerTest {
         obj2.shipperName = 'test';
         shipperList.add(obj2);
         
-        BAFCOSalesOrderController.createOrder(dtoList,dd,'test','test2',consigneeList,shipperList);
+        BAFCOSalesOrderController.createOrder(dtoList,dd,'test','test2','test',consigneeList,shipperList,null);
         List<Order__c> orderList = [Select id from Order__c];
         Order_item__c item = [Select id from Order_item__c limit 1];
         delete item;
@@ -157,7 +158,7 @@ public class BAFCOSalesOrderControllerTest {
         valueObj.accountId = getAccountId();
         valueObj.baf = 0;
         valueObj.bayan = 0;
-        valueObj.bayanCancellation = 0;
+        //valueObj.bayanCancellation = 0;
         valueObj.quotationId = getQuoteId();
         valueObj.shipName = 'COSCO';
         valueObj.sellingTotal = 1100;
@@ -188,7 +189,7 @@ public class BAFCOSalesOrderControllerTest {
         dtoObj.equipment = equipList;
         dtoList.add(dtoObj);
         return dtoList;
-    }
+    } 
     static string getRouteId(){
         return [Select id from Route__c limit 1].Id;
     }

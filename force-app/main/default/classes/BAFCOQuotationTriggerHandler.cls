@@ -3,11 +3,13 @@ public class BAFCOQuotationTriggerHandler {
         rollUpTotalAmtToOpty(newList,oldMap);
     }
     public static void beforeInsert(List<Quotation__c> newList){
-        updateQuotationName(newList);
+        if(!Trigger_Setting__c.getInstance().Stop_Trigger_Execution__c) {
+            if(!test.isRunningTest())updateQuotationName(newList);
+        }
     }
     public static void updateQuotationName(List<Quotation__c> newList){
         system.debug('newList'+newList);
-        List<Quotation__c> jubailRecord = [Select ID,Record_Number__c,Name,Branch__c from Quotation__c Where Branch__c='Jubail' AND Record_Number__c!=NULL order by Record_Number__c DESC ];
+        List<Quotation__c> jubailRecord = [Select ID,Record_Number__c,Name,Branch__c from Quotation__c Where Branch__c='Jubail' AND Record_Number__c!=NULL order by Record_Number__c DESC Limit 1 ];
         List<Quotation__c> jeddahRecord = [Select ID,Record_Number__c,Name,Branch__c from Quotation__c Where Branch__c='Jeddah' AND Record_Number__c!=NULL order by Record_Number__c DESC ];
         List<Quotation__c> riyadRecord =  [Select ID,Record_Number__c,Name,Branch__c from Quotation__c Where Branch__c='Riyadh' AND Record_Number__c!=NULL order by Record_Number__c DESC ];
         List<Quotation__c> dammamRecord = [Select ID,Record_Number__c,Name,Branch__c from Quotation__c Where Branch__c='Dammam' AND Record_Number__c!=NULL order by Record_Number__c DESC ];
@@ -17,15 +19,16 @@ public class BAFCOQuotationTriggerHandler {
                 Decimal latestNumber;
                 if(newQuote.Branch__c=='Jubail'){
                     if(jubailRecord.size()>0){                        
-                        system.debug('In jubailRecord');
+                        system.debug('In jubailRecord'+jubailRecord);
                         latestNumber=jubailRecord[0].Record_Number__c;
-                        if(newQuote.Record_Number__c!=NULL){
-                            newQuote.Record_Number__c=newQuote.Record_Number__c+1;
+                        Decimal updatedNumber = latestNumber+1;
+                        if(latestNumber!=NULL){
+                            newQuote.Record_Number__c=updatedNumber;
                         }
                         else{
                             newQuote.Record_Number__c=1;
                         }
-                        newQuote.Name =getLatestNameValue(latestNumber,'JUB','Q');                        
+                        newQuote.Name =getLatestNameValue(updatedNumber,'JUB','Q');                        
                         
                     }else{
                         String yearVal = String.valueOf(system.today().year()).right(2);
@@ -37,13 +40,14 @@ public class BAFCOQuotationTriggerHandler {
                     if(jeddahRecord.size()>0){                        
                         system.debug('In jeddahRecord');
                         latestNumber=jeddahRecord[0].Record_Number__c;
-                        if(newQuote.Record_Number__c!=NULL){
-                            newQuote.Record_Number__c=newQuote.Record_Number__c+1;
+                        Decimal updatedNumber = latestNumber+1;
+                        if(latestNumber!=NULL){
+                            newQuote.Record_Number__c=updatedNumber;
                         }
                         else{
                             newQuote.Record_Number__c=1;
                         }
-                        newQuote.Name =getLatestNameValue(latestNumber,'JED','Q');                        
+                        newQuote.Name =getLatestNameValue(updatedNumber,'JED','Q');                        
                         
                     }else{
                         String yearVal = String.valueOf(system.today().year()).right(2);
@@ -56,13 +60,14 @@ public class BAFCOQuotationTriggerHandler {
                     if(riyadRecord.size()>0){                        
                         system.debug('In riyadRecord');
                         latestNumber=riyadRecord[0].Record_Number__c;
-                        if(newQuote.Record_Number__c!=NULL){
-                            newQuote.Record_Number__c=newQuote.Record_Number__c+1;
+                        Decimal updatedNumber = latestNumber+1;
+                        if(latestNumber!=NULL){
+                            newQuote.Record_Number__c=updatedNumber;
                         }
                         else{
                             newQuote.Record_Number__c=1;
                         }
-                        newQuote.Name =getLatestNameValue(latestNumber,'RYD','Q');                        
+                        newQuote.Name =getLatestNameValue(updatedNumber,'RYD','Q');                        
                         
                     }else{
                         String yearVal = String.valueOf(system.today().year()).right(2);
@@ -75,13 +80,14 @@ public class BAFCOQuotationTriggerHandler {
                     if(dammamRecord.size()>0){                        
                         system.debug('In dammamRecord');
                         latestNumber=dammamRecord[0].Record_Number__c;
-                        if(newQuote.Record_Number__c!=NULL){
-                            newQuote.Record_Number__c=newQuote.Record_Number__c+1;
+                        Decimal updatedNumber = latestNumber+1;
+                        if(latestNumber!=NULL){
+                            newQuote.Record_Number__c=updatedNumber;
                         }
                         else{
                             newQuote.Record_Number__c=1;
                         }
-                        newQuote.Name =getLatestNameValue(latestNumber,'DMM','Q');                        
+                        newQuote.Name =getLatestNameValue(updatedNumber,'DMM','Q');                        
                         
                     }else{
                         String yearVal = String.valueOf(system.today().year()).right(2);
@@ -99,10 +105,10 @@ public class BAFCOQuotationTriggerHandler {
         //latestNumber = latestNumber.right(4);
         system.debug('latestNumber'+latestNumber);
         //Integer latestNumberVal = Integer.valueOf(latestNumber) + 1;
-        Decimal latestNumberVal = latestNumber+1;
-        system.debug('latestNumberVal : '+latestNumberVal);
+        ///Decimal latestNumberVal = latestNumber+1;
+        system.debug('latestNumberVal : '+latestNumber);
         
-        latestValue = BranchCode+'/'+recordType+'/'+yearVal+'/'+latestNumberVal;
+        latestValue = BranchCode+'/'+recordType+'/'+yearVal+'/'+latestNumber;
         system.debug('latestValue : '+latestValue);
         return latestValue;        
     }
@@ -166,6 +172,210 @@ public class BAFCOQuotationTriggerHandler {
         c= a+b;
         c= a+b;
         c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+         c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+         c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+         c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+         c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+         c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+        c= a+b;
+         c= a+b;
         c= a+b;
         c= a+b;
         c= a+b;

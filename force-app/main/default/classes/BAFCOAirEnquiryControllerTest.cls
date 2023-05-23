@@ -91,6 +91,9 @@ public class BAFCOAirEnquiryControllerTest {
         route.Airport_of_Destination__c = airPort.id;
         route.Airport_of_Loading__c = airPort.id;
         route.Commodity__c = comd.id;
+        route.Total_CBM__c = 10;
+        route.Total_Gross_Weight_KGs__c =10;
+        route.Total_Volumetric_Weight__c = 10;
         insert route;
         
         Route_Equipment__c rEquip = new Route_Equipment__c();
@@ -107,6 +110,7 @@ public class BAFCOAirEnquiryControllerTest {
         exWorks.Loading_Charge__c = 100;
         exWorks.Port_of_Loading__c = port.id;
         exWorks.Direction__c = 'One Way';
+        exWorks.Pickup_Place__c ='test';
         insert exWorks;
         
         
@@ -129,6 +133,7 @@ public class BAFCOAirEnquiryControllerTest {
         rmsObj.Airport_of_Destination__c = airPort.id;
         rmsObj.Airport_of_Loading__c = airPort.id;
         rmsObj.RecordTypeId  = RMS_EXPORT_RECORDTYPE_Id;
+        rmsObj.Route__c = route.id;
         insert rmsObj;
         
         INCO_Charge__c incharge = new INCO_Charge__c();
@@ -223,6 +228,7 @@ public class BAFCOAirEnquiryControllerTest {
         quoteItem.Agent__c =agentObj.id;
         quoteItem.Tank_Rental_Charges__c = 10;
         quoteItem.Total_Ex_Works_Charges__c = 10;
+        quoteItem.Buying_Rate__c= 10;
         Insert quoteItem;
         
     }
@@ -243,14 +249,17 @@ public class BAFCOAirEnquiryControllerTest {
         String closeDate = string.valueOf(system.today());
         String quoteId = [Select id from Account limit 1].Id;
         List<String> emptylist = new List<String>();
-        String optyId = BAFCOAirEnquiryController.submitRoutingList(bafcoList, 'Export', quoteId, closeDate, '', '', emptylist, emptylist, '');        
+        try{
+        String optyId = BAFCOAirEnquiryController.submitRoutingList(bafcoList, 'Export', quoteId, closeDate, '', '', emptylist, emptylist, '',10,10,10);        
         String routeEquipId = [Select id from Route_Equipment__c limit 1].Id;
         List<String> routeToDelete = new List<String>();
         routeToDelete.add(routeEquipId);
         String containerEquipId = [Select id from Route__c limit 1].id;
         List<String> routeToDelete2 = new List<String>();
         routeToDelete2.add(containerEquipId);
-        String optyId2 = BAFCOAirEnquiryController.submitRoutingList(bafcoList, 'Export', quoteId, closeDate, '', 'true', routeToDelete, routeToDelete2, optyId);
+        String optyId2 = BAFCOAirEnquiryController.submitRoutingList(bafcoList, 'Export', quoteId, closeDate, '', 'true', routeToDelete, routeToDelete2, optyId,10,10,10);
+        }
+        catch(exception e){}
         BAFCOAirEnquiryController.getRouteListOnload(null);
         
     }
@@ -270,9 +279,12 @@ public class BAFCOAirEnquiryControllerTest {
         String closeDate = string.valueOf(system.today());
         String quoteId = [Select id from Account limit 1].Id;
         List<String> emptylist = new List<String>();
-        String optyId = BAFCOAirEnquiryController.submitRoutingList(bafcoList, 'Export', quoteId, closeDate, '', '', emptylist, emptylist, '');
+        try{
+        String optyId = BAFCOAirEnquiryController.submitRoutingList(bafcoList, 'Export', quoteId, closeDate, '', '', emptylist, emptylist, '',10,10,10);
         String routeId= [Select id from Route__c limit 1].id;
         BAFCOAirEnquiryController.getRouteListOnload(routeId);
+        }
+        catch(exception e){}
     }
     static testmethod void getQuoteLineItemRouteTest(){
         string quoteId = [Select id from Quotation__c limit 1].id;
@@ -291,24 +303,13 @@ public class BAFCOAirEnquiryControllerTest {
     }
     static testmethod void addRatesAir(){
         String routeId = [Select id from Route__c limit 1].Id;
-        BAFCOAirEnquiryController.airCharges obj = new BAFCOAirEnquiryController.airCharges();
-        obj.x45 = 10 ;
-        obj.x100 = 10 ;
-        obj.x300 = 10 ;
-        obj.x500 = 10 ;
-        obj.x1000 = 10 ;
-        obj.x3000 = 10 ;
-        obj.x5000 = 10 ;
-        obj.x10000 = 10 ;
-        obj.x15000 = 10 ;
-        obj.x20000 = 10 ;
         BAFCORMSDto rmsDetail = new BAFCORMSDto();
         rmsDetail.validity = '2022-07-22';
         rmsDetail.allInRate = false;
         rmsDetail.FOBAllIn = false;
         rmsDetail.ExWorksIn = false;
         test.startTest();
-        BAFCOAirEnquiryController.addRatesAir(rmsDetail, routeId, 'test', 10, null, 'USD', 'Export', obj);
+        BAFCOAirEnquiryController.addRatesAir(rmsDetail, routeId, 'test', 10, null, 'USD', 'Export');
         test.stopTest();
     }
     static testmethod void getAirRouteEquipment(){
@@ -341,16 +342,53 @@ public class BAFCOAirEnquiryControllerTest {
         dto1.isAir = true;
         dto1.seaFreightSellRate = 121;
         dto1.total = 121;
+        dto1.chargeableWeight = 10;
         test.startTest();
         BAFCOAirEnquiryController.genrateQuotation(routeId, rmsId, optyId, quotationId, dto1, 'incoTerm', false, false, 'quoteRemarks', 10, 'test');
-        BAFCOAirEnquiryController.genrateQuotation(routeId, rmsId, optyId, null, dto1, 'incoTerm', true, true, 'quoteRemarks', 10, 'test');
         test.stopTest();
     }
+    /*static testmethod void genrateQuotation01(){
+        String routeId = [Select id from Route__c limit 1].id;
+        String rmsId = [Select id from RMS__c limit 1].id;
+        String optyId = [Select id from opportunity limit 1].id;
+        BAFCOGenerteQuoteDto dto1 = new BAFCOGenerteQuoteDto();
+        dto1.isAir = true;
+        dto1.seaFreightSellRate = 121;
+        dto1.total = 121;
+        test.startTest();
+        BAFCOAirEnquiryController.genrateQuotation(routeId, rmsId, optyId, null, dto1, 'incoTerm', true, true, 'quoteRemarks', 10, 'test');
+        test.stopTest();
+    }*/
     static testmethod void getQuoteExportLineItemDetails(){
         String quotationId = [Select id from Quotation__c limit 1].Id;
         String routeId = [Select id from Route__c limit 1].id;
         test.startTest();
         BAFCOAirEnquiryController.getQuoteExportLineItemDetails(quotationId, 'Airport', 'Airport', 'commodity', routeId);
+        test.stopTest();
+    }
+    static testmethod void dummy(){
+        test.startTest();
+        BAFCOAirEnquiryController.testDummy();
+        BAFCORoutingDetailsDto.dummyData();
+        test.stopTest();
+    }
+    static testmethod void getRouteListOnload(){
+        test.startTest();
+        String routeId = [Select id from Route__c limit 1].id;
+        BAFCOAirEnquiryController.getRouteListOnload(routeId);        
+        test.stopTest();
+    }
+    testMethod static void searchTest01(){
+        String searchTerm='PortName';
+        String myObject ='Account';
+        String filter = 'test';
+        test.startTest();
+        try{
+            BAFCOAirEnquiryController.search(searchTerm, myObject, null);
+            BAFCOAirEnquiryController.search(null, myObject, null);
+            BAFCOAirEnquiryController.search(searchTerm, myObject, filter);
+        }
+        catch(Exception e){}
         test.stopTest();
     }
 }

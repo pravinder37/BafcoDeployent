@@ -16,6 +16,9 @@ export default class BAFCOAirQuoteParent extends LightningElement {
     @track quoteId = '';
     vectorPng = VECTOR;
     minTodaysDate = '';
+    @track routeCustomerAvgMargin = 0;
+    @track routeAvgMargin = 0;
+	@track accountAvgMargin = 0;
     connectedCallback(){
         this.getEnqueryDetailsOnInit();
         let d = new Date().toISOString();  
@@ -76,6 +79,9 @@ export default class BAFCOAirQuoteParent extends LightningElement {
             index = i;
         }
         if(index != -1){
+            this.accountAvgMargin = this.routingDetailsList[index].accountAvgMargin;
+            this.routeCustomerAvgMargin = this.routingDetailsList[index].routeCustomerAvgMargin;
+            this.routeAvgMargin = this.routingDetailsList[index].routeAvgMargin;
             setTimeout(() => {
                 this.template.querySelectorAll("c-b-a-f-c-o-air-quote-intake-form")[index].handleUpdateCalculation();
             }, 200);

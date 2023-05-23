@@ -14,13 +14,14 @@ public class BAFCOGeneratePDFMobileController {
         pdf.getParameters().put('showCharges','true');
         pdf.getParameters().put('nooverride', '1');
         pdf.setRedirect(true);
+        Quotation__c QuoteObj = [Select id,name,Account__r.name from Quotation__c where id=: this.recordId];
         Blob b = null;
         if(test.isRunningTest())  b = blob.valueOf('Unit.Test');
         else b = pdf.getContentAsPdf();
         ContentVersion conVer = new ContentVersion();
         conVer.ContentLocation = 'S';
-        conVer.PathOnClient = 'Quotation.pdf';
-        conVer.Title = 'Quotation.pdf';
+        conVer.PathOnClient = QuoteObj.Account__r.name+' - '+QuoteObj.Name+'.pdf';
+        conVer.Title = QuoteObj.Account__r.name+' - '+QuoteObj.Name+'.pdf';
         conVer.VersionData = b;
         insert conVer;
         List<ContentDocumentLink> toDelete = [Select id from ContentDocumentLink where LinkedEntityId =: this.recordId];

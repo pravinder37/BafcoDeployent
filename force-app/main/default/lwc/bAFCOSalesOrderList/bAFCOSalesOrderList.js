@@ -14,9 +14,12 @@ export default class BAFCOSalesOrderList extends NavigationMixin(LightningElemen
     errorMsg = '';
     minDate = '';
     bookRefNumber ='';
+    bbmsJobNumber = null;
     displayAddConsigneeModal = false;
     @track consigneeList = [];
     @track shipperList = [];
+    @track OperationExec = null;
+    //@track agentProfitShare = null;
     connectedCallback(){
         let todaysDate = new Date();
         this.minDate = this.formatDate(todaysDate);
@@ -24,7 +27,7 @@ export default class BAFCOSalesOrderList extends NavigationMixin(LightningElemen
         let year = ddd.getFullYear();
         let month = ddd.getMonth();
         let lastdate = new Date(year, month +1, 0);
-        this.validityDate = this.formatDate(lastdate)
+        //this.validityDate = this.formatDate(lastdate)
         setTimeout(() => {
             if(this.customerAccount != null){
                 let consigneeObj = {
@@ -38,7 +41,7 @@ export default class BAFCOSalesOrderList extends NavigationMixin(LightningElemen
                     'shipperName':this.customerAccount.accountName,
                     'index':0
                 }
-                this.shipperList.push(shipperObj);
+                //this.shipperList.push(shipperObj);
             }
         }, 1000);
         
@@ -116,14 +119,17 @@ export default class BAFCOSalesOrderList extends NavigationMixin(LightningElemen
                 this.isLoading = true;
                 let saveDto = [];
                 saveDto = JSON.parse(JSON.stringify(this.displaySelectedQuoteItem))   
-                console.log('saveDto ',JSON.stringify(saveDto,null,2))             
+                console.log('saveDto ',JSON.stringify(saveDto,null,2))      
+                console.log('shipperList '+JSON.stringify(this.shipperList,null,2));       
                 createOrder({
                         orderCreationList : saveDto,
                         validityDate : this.validityDate,
                         custRefNumber : this.custRefNumber,
                         bookRefNumber : this.bookRefNumber,
+                        bbmsJobNumber : this.bbmsJobNumber,
                         consigneeList : this.consigneeList,
-                        shipperList : this.shipperList
+                        shipperList : this.shipperList,
+                        OperationExec : this.OperationExec
                     })
                 .then(result=>{
                     console.log('createOrder result',JSON.stringify(result,null,2))
@@ -189,5 +195,18 @@ export default class BAFCOSalesOrderList extends NavigationMixin(LightningElemen
     }
     handleShipperUpdate(e){
         this.shipperList = e.detail
+        console.log('shipperList '+JSON.stringify(this.shipperList,null,2));
+    }
+    handleBBMSChange(e){
+        this.bbmsJobNumber = e.detail.value
+    }
+    /*handleAgentProfitShareChange(e){
+        this.agentProfitShare = e.detail.value;
+    }*/
+    handleOperationExecSelection(e){
+        this.OperationExec = e.detail.Id
+    }
+    handleOperationExecRemoved(e){
+        this.OperationExec = null
     }
 }
