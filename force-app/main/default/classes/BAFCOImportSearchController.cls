@@ -59,14 +59,28 @@ public class BAFCOImportSearchController {
         quoteLI.Buying_Rate__c=buyingRate;
         //quoteLI.Total_Order__c = sellingRate;
         quoteLI.Shipping_Linee__c = shippingLineId;
-        update quoteLI;        
+        update quoteLI;    
         
+        List<Task> taskListToUpdate = new List<Task>();
+        for(Task taskRec : [Select id, WhatId from Task Where WhatId =:ordItem.Id]){
+            system.debug('taskListToUpdate'+taskListToUpdate);
+            taskRec.Status='Completed';
+            taskListToUpdate.add(taskRec);
+        }
+        if(taskListToUpdate!=NULL){
+            update taskListToUpdate;
+        }             
+        if(quotationValidity != null){
         Quotation__c quoteRec = new Quotation__c(id=ordItem.Order__r.Quotation__c, Quotation_Validity__c=Date.ValueOf(quotationValidity));
         update quoteRec;
+        }
+        String shipLineBSLSID = null;
+        if(shippingLineId != null){
+            Shipping_Line__c shipLine = [Select id,BSLS_ID__c from Shipping_Line__c Where id=:shippingLineId];
+            shipLineBSLSID = shipLine.BSLS_ID__c;
+        }
         
-        Shipping_Line__c shipLine = [Select id,BSLS_ID__c from Shipping_Line__c Where id=:shippingLineId];
-        system.debug('ShippingLineBSLSID '+shipLine.BSLS_ID__c);
-        sendUpdatedSellingRates(ordItem.Order__r.Name,ordItem.Name,sellingRate,shipLine.BSLS_ID__c,quotationValidity);
+        sendUpdatedSellingRates(ordItem.Order__r.Name,ordItem.Name,sellingRate,shipLineBSLSID,quotationValidity);
                 
         Order_item__c obj = new Order_item__c();
         obj.id = orderItemID;

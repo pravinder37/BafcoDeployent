@@ -245,6 +245,15 @@ chargesIncluded +='Place of Discharge : '+quote.Place_of_Discharge__c +' '+ quot
         }
         
     }
+    public static void onBeforeUpdate(Map<Id,Quotation_Item__c> oldMap , List<Quotation_Item__c> quoteItemList){
+        List<Quotation_Item__c> newItemList = new List<Quotation_Item__c>();
+        for(Quotation_Item__c item  : quoteItemList){
+            if(item.Quantity__c != oldMap.get(item.id).Quantity__c || item.Equipment_Type__c != oldMap.get(item.id).Equipment_Type__c){
+                newItemList.add(item);
+            }
+        }
+        if(newItemList.size() > 0) updateTeusValue(newItemList);
+    }
     public static void afterUpdate(Map<Id,Quotation_Item__c> oldMap , List<Quotation_Item__c> quoteItemList){
         List<Quotation_Item__c> newItemList = new List<Quotation_Item__c>();
         for(Quotation_Item__c item : quoteItemList){

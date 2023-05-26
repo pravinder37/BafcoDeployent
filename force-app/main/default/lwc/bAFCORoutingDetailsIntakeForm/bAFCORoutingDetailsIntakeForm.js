@@ -172,7 +172,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
     @track exWorksObj;
     @track exWorksTotal = 0;
     @track displayExworks = false;
-    @track currencyCode = 'USD';
+    @track currencyCode = '';
     connectedCallback(){
         this.margin = 0;
         if(this.routeId){
@@ -220,7 +220,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                         'validity':conts[key][equip].validity,
                         'quantity':conts[key][equip].quantity,
                         'uniqueEquip':conts[key][equip].uniqueEquip,
-                        'currencyCode':'USD',
+                        'currencyCode':conts[key][equip].currencyCode,
                         'cssClass':'',
                         savedClicked:false
 
@@ -365,7 +365,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
         this.includeDestinCharge=false
         this.includeAdditionalCharge=false
         this.includeExWorksCharge=false
-        this.currencyCode = 'USD';
+        this.currencyCode = '';
     }
     handleshippingLineActive(e){
         this.margin = 0;        
@@ -922,7 +922,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                     elem.value[0].serviceChargeList = dto;
                     elem.value[0].currencyCode = dto.currencyCode;
                     elem.value[0].offSet = dto.offset;
-                    this.currencyCode = dto.currencyCode;
+                    //this.currencyCode = dto.currencyCode;
                 }
             }
         });
@@ -993,9 +993,12 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
         let isFDAccount = false;
         let dedicatedRoutingObj1 = this.routingListMap[this.shippingTabSelected];
         let elemIndex = dedicatedRoutingObj1.findIndex(x=>x.uniqueEquip == this.shippingEquipTabSelected);
+        let currencyCode = '';
         if(elemIndex != -1){
             seletedEquipName1 = dedicatedRoutingObj1[elemIndex].equipmentName;
             isFDAccount = dedicatedRoutingObj1[elemIndex].fdAccount;
+            currencyCode = dedicatedRoutingObj1[elemIndex].currencyCode;
+            this.currencyCode = dedicatedRoutingObj1[elemIndex].currencyCode
         }
         if(seletedEquipName1 == '20ISO'){
             tempList3.push({
@@ -1049,7 +1052,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                         'similarEquipSubmitted':false,
                         'selectedShippLine':this.shippingTabSelected,
                         'selectedEquipment':this.shippingEquipTabSelected,
-                        'currencyCode':'USD',
+                        'currencyCode':currencyCode,
                         'incoTermId':this.incoTermId
                     })
                     elem.value = tempList;
@@ -1078,8 +1081,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
                     this.includeDestinCharge = elem.value[0].includeDestinCharge;
                     this.includeAdditionalCharge = elem.value[0].includeAdditionalCharge;
                     this.includeExWorksCharge = elem.value[0].includeExWorksCharge;
-                    let allData = this.serviceChargeList;
-                    if(allData.currencyCode != undefined) this.currencyCode = allData.currencyCode;
+                    this.currencyCode =  elem.value[0].currencyCode;
                 }
             }
         });
@@ -1090,7 +1092,7 @@ export default class BAFCORoutingDetailsIntakeForm extends NavigationMixin(Light
     assignServiceChargesData(){
         if(Object.keys(this.serviceChargeList).length > 0){
             let allData = this.serviceChargeList;
-            if(allData.currencyCode != undefined) this.currencyCode = allData.currencyCode;
+            //if(allData.currencyCode != undefined) this.currencyCode = allData.currencyCode;
             if(allData.offset != undefined) this.offSet = allData.offset;           
             if(allData.servichargesObj != undefined){
                 let serviceChargeObj = allData.servichargesObj;

@@ -789,7 +789,7 @@ export default class BAFCOAirEnquiryCreation extends NavigationMixin(LightningEl
                 }
             })
         })
-        this.totalCBM = totalCBM > 0 ? totalCBM.toFixed(2) : null;
+        this.totalCBM = totalCBM > 0 ? totalCBM.toFixed(3) : null;
         this.totalGross = totalGross > 0 ? totalGross.toFixed(2) : null;
         this.totalVolumeWeight = totalVolumeWeight > 0 ? totalVolumeWeight.toFixed(2) : null;
     }

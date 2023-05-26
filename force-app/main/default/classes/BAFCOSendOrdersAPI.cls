@@ -1,7 +1,7 @@
 public class BAFCOSendOrdersAPI {
     @Future(callout=true)
     public static void sendOrderData(List<ID> orderIDList) {
-        List<Order__c> orderList = [Select Id,Order__c.Integration__c, Operations_Executive__r.BSLS_ID__c,Account_Order__r.BSLS_ID__c,Account_Order__r.name,Account_Order__r.Branch__c,
+        List<Order__c> orderList = [Select Id,Order__c.Integration__c, Operations_Executive__r.BSLS_ID__c,Account_Order__r.BSLS_ID__c,Account_Order__r.name,Account_Order__r.Branch1__c,
                                     Account_Order__r.Owner.BSLS_ID__c,Account_Order__r.BillingAddress,Name,Quotation__r.Name,Quotation__c,
                                     Quotation__r.Quotation_Validity__c,Order_Validity__c,(Select Order__r.Opportunity_Order__r.Commercial_User__r.BSLS_ID__c,Order__r.Opportunity_Order__r.Commercial_User__r.Name,Total_Order__c,Quantity__c,id,Order__r.Name,Name,Route_Order__r.Kind_Of_Shipment__c,Route_Order__r.Service_Type__c,
                                     Shipping_Line__r.BSLS_ID__c,Pickup_Place__c,Discharge_Place__c,Port_of_Loading_Order__r.BSLS_ID__c,Port_of_Discharge_Order__r.BSLS_ID__c,
@@ -25,7 +25,7 @@ public class BAFCOSendOrdersAPI {
             for(Order__c ordRec : [Select id,Account_Order__r.Owner.BSLS_ID__c from Order__c Where ID IN : orderIDList]){
                 accountOwnerMap.put(ordRec.ID,ordRec.Account_Order__r.Owner.BSLS_ID__c);
             }
-            for(Consignee__c conObj : [Select id,Consignee__r.BSLS_ID__c,Order_Item__c,Consignee__r.Name,Consignee__r.Branch__c,Consignee__r.Owner.BSLS_ID__c,Consignee__r.Owner.name,Consignee__r.BillingAddress from Consignee__c where Order_Item__c in : orderItemIds]){
+            for(Consignee__c conObj : [Select id,Consignee__r.BSLS_ID__c,Order_Item__c,Consignee__r.Name,Consignee__r.Branch1__c,Consignee__r.Owner.BSLS_ID__c,Consignee__r.Owner.name,Consignee__r.BillingAddress from Consignee__c where Order_Item__c in : orderItemIds]){
                 if(!itemIdToConsigneeId.containskey(conObj.Order_Item__c)){
                     itemIdToConsigneeId.put(conObj.Order_Item__c,new List<Consignee__c>());
                 }
@@ -39,7 +39,7 @@ public class BAFCOSendOrdersAPI {
                 itemIdToOrderChargeId.get(chargeObj.Order_Item__c).add(chargeObj);
             }
             
-            for(Shipper__c shipObj : [Select id,Shipper__r.BSLS_ID__c,Shipper__r.Name,Shipper__r.Branch__c,Order_Item__c,Shipper__r.Owner.BSLS_ID__c,Shipper__r.Owner.name,Shipper__r.BillingAddress from Shipper__c where Order_Item__c in : orderItemIds ]){
+            for(Shipper__c shipObj : [Select id,Shipper__r.BSLS_ID__c,Shipper__r.Name,Shipper__r.Branch1__c,Order_Item__c,Shipper__r.Owner.BSLS_ID__c,Shipper__r.Owner.name,Shipper__r.BillingAddress from Shipper__c where Order_Item__c in : orderItemIds ]){
                 if(!itemIdToShipperId.containskey(shipObj.Order_Item__c)){
                     itemIdToShipperId.put(shipObj.Order_Item__c,new List<Shipper__c>());
                 }
@@ -51,7 +51,7 @@ public class BAFCOSendOrdersAPI {
                     if(ordrObj.Account_Order__c != null){
                         AccountObj accObj = new AccountObj();
                         accobj.AccountName = ordrObj.Account_Order__r.Name;
-                        accobj.Branch = ordrObj.Account_Order__r.Branch__c;
+                        accobj.Branch = ordrObj.Account_Order__r.Branch1__c;
                         accobj.AccountOwner = accountOwnerMap.get(ordrObj.ID);
                         accobj.BillingAddress = String.valueOf(ordrObj.Account_Order__r.BillingAddress);
                         accobj.SFID = ordrObj.Account_Order__c;
@@ -118,8 +118,7 @@ public class BAFCOSendOrdersAPI {
                                 for(Consignee__c consObj : itemIdToConsigneeId.get(item.id)){
                                     Consignee dtoObj = new Consignee();
                                     dtoObj.AccountName = consObj.Consignee__r.Name;
-                                    system.debug('consObj.Consignee__r.Branch__c : ' +consObj.Consignee__r.Branch__c );
-                                    dtoObj.Branch  = consObj.Consignee__r.Branch__c;
+                                    dtoObj.Branch  = consObj.Consignee__r.Branch1__c;
                                     dtoObj.AccountOwner  = consObj.Consignee__r.Owner.BSLS_ID__c;
                                     dtoObj.BillingAddress  = String.valueOf(consObj.Consignee__r.BillingAddress);
                                     dtoObj.SFID  = consObj.id;
@@ -133,7 +132,7 @@ public class BAFCOSendOrdersAPI {
                                 for(Shipper__c shipObj : itemIdToShipperId.get(item.Id)){
                                     Shipper dtoObj = new Shipper();
                                     dtoObj.AccountName = shipObj.Shipper__r.Name;
-                                    dtoObj.Branch  = shipObj.Shipper__r.Branch__c;
+                                    dtoObj.Branch  = shipObj.Shipper__r.Branch1__c;
                                     dtoObj.AccountOwner  = shipObj.Shipper__r.Owner.BSLS_ID__c;
                                     dtoObj.BillingAddress  = String.valueOf(shipObj.Shipper__r.BillingAddress);
                                     dtoObj.SFID  = shipObj.id;

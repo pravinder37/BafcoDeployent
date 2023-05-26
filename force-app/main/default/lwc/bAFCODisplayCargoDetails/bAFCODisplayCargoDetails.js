@@ -54,7 +54,7 @@ export default class BAFCODisplayCargoDetails extends LightningElement {
                 WeightErrorClass:'',
                 unitsErrorClass:'',
                }));
-               this.totalCBM = this.routeEquipList[0].Route__r.Total_CBM__c > 0 ? this.routeEquipList[0].Route__r.Total_CBM__c : 0;
+               this.totalCBM = this.routeEquipList[0].Route__r.Total_CBM__c > 0 ? this.routeEquipList[0].Route__r.Total_CBM__c.toFixed(3) : 0;
                this.totalGross = this.routeEquipList[0].Route__r.Total_Gross_Weight_KGs__c > 0 ? this.routeEquipList[0].Route__r.Total_Gross_Weight_KGs__c : 0;
                this.totalVolumeWeight = this.routeEquipList[0].Route__r.Total_Volumetric_Weight__c > 0 ? this.routeEquipList[0].Route__r.Total_Volumetric_Weight__c : 0;
                this.handleTotalField();
@@ -227,7 +227,7 @@ export default class BAFCODisplayCargoDetails extends LightningElement {
                 totalVolumeWeight = parseFloat(parseFloat(totalVolumeWeight) + (parseFloat(elem2.Volumetric_weight_Kgs__c)* units))
             }
         })
-        this.totalCBMUpdate = totalCBM > 0 ? totalCBM.toFixed(2) : null;
+        this.totalCBMUpdate = totalCBM > 0 ? totalCBM.toFixed(3) : null;
         this.totalGrossUpdate = totalGross > 0 ? totalGross.toFixed(2) : null;
         this.totalVolumeWeightUpdate = totalVolumeWeight > 0 ? totalVolumeWeight.toFixed(2) : null;
     }

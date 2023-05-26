@@ -56,6 +56,18 @@ public class BAFCORouteEquipmentTriggerController {
         if(ratePocumentList.size()>0) update ratePocumentList;
     }
     public static void onbeforeInsert(List<Route_Equipment__c> newList){
+        updateTeus(newList);
+    }
+    public static void onbeforeUpdate(Map<Id,Route_Equipment__c> oldMap,List<Route_Equipment__c> newList){
+        List<Route_Equipment__c> routeEquipMentList = new List<Route_Equipment__c>();
+        for(Route_Equipment__c rEquip : newList){
+            if(rEquip.Name != oldMap.get(rEquip.id).Name || rEquip.Quantity__c != oldMap.get(rEquip.id).Quantity__c ){
+                routeEquipMentList.add(rEquip);
+            }
+        }
+        if(routeEquipMentList.size() > 0 ) updateTeus(routeEquipMentList);
+    }
+    public static void updateTeus(List<Route_Equipment__c> newList){
         List<Id> routeIds = new List<Id>();
         Map<Id,Route__c> routeIdMap = new Map<Id,Route__c>();
         for(Route_Equipment__c rEquip : newList){

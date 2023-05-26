@@ -27,7 +27,7 @@ export default class BAFCOSalesOrderList extends NavigationMixin(LightningElemen
         let year = ddd.getFullYear();
         let month = ddd.getMonth();
         let lastdate = new Date(year, month +1, 0);
-        //this.validityDate = this.formatDate(lastdate)
+        this.validityDate = this.formatDate(lastdate)
         setTimeout(() => {
             if(this.customerAccount != null){
                 let consigneeObj = {

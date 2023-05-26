@@ -47,7 +47,7 @@ public class BAFCOSalesOrderController {
         system.debug('mapequipNameToQty '+mapequipNameToQty);
         system.debug('mapDimensionToQty '+mapequipNameToQty);
         Integer index = 1;
-        for(Quotation_Item__c item : [Select Selling_Rate_Kg__c,Airline__r.name,RMS__r.Free_time_POD__c, (Select id,Charge_Name__c,Charge_Value__c from Quotation_Charges__r where isAdditional_Charge__c = true), Selling_Charges_Include__c,Quotation__r.Quotation_type__c,Charges_Included__c,Airport_of_Loading__c,Airport_of_Destination__c,Quotation__r.isAir__c,Quotation__r.isLCL__c,Tab_View__c,INCO_Term__c,Tank_Rental_Charges__c,Agent__c,Id,Shipping_Linee__c,Buying_Rate__c,Alternate_depot_release_charges__c,Freight_Difference_FD__c,Carrier_container_repositioning_charges__c,Ex_Works_Charge__c,Ex_Works_Charge_Name__c,Included_PDF_Ex_works__c,Included_PDF_Additional__c,Included_PDF_Destination__c,Included_PDF_Origin__c,Included_PDF_ShippingLine__c,Add_to_Buying_Ex_works__c,Add_to_Buying_Additional__c,Add_to_Buying_Destination__c,Add_to_Buying_Origin__c,Add_to_Buying_ShippingLine__c,BAF__c,Bayan__c,Bayan_cancellation_charge__c,Bunker_surcharge__c,Cleaning_charges__c,
+        for(Quotation_Item__c item : [Select Chargeable_Weight__c,CurrencyIsoCode,Selling_Rate_Kg__c,Airline__r.name,RMS__r.Free_time_POD__c, (Select id,Charge_Name__c,Charge_Value__c from Quotation_Charges__r where isAdditional_Charge__c = true), Selling_Charges_Include__c,Quotation__r.Quotation_type__c,Charges_Included__c,Airport_of_Loading__c,Airport_of_Destination__c,Quotation__r.isAir__c,Quotation__r.isLCL__c,Tab_View__c,INCO_Term__c,Tank_Rental_Charges__c,Agent__c,Id,Shipping_Linee__c,Buying_Rate__c,Alternate_depot_release_charges__c,Freight_Difference_FD__c,Carrier_container_repositioning_charges__c,Ex_Works_Charge__c,Ex_Works_Charge_Name__c,Included_PDF_Ex_works__c,Included_PDF_Additional__c,Included_PDF_Destination__c,Included_PDF_Origin__c,Included_PDF_ShippingLine__c,Add_to_Buying_Ex_works__c,Add_to_Buying_Additional__c,Add_to_Buying_Destination__c,Add_to_Buying_Origin__c,Add_to_Buying_ShippingLine__c,BAF__c,Bayan__c,Bayan_cancellation_charge__c,Bunker_surcharge__c,Cleaning_charges__c,
                                       CMC__c,Container_movement_charges__c,Container_stripping__c,
                                       Destination_Customs_Clearance__c,Destination_Loading_Charges__c,DTHC__c,EIC__c,Equipment_Type__c,
                                       Fasah_fee__c,Free_time_certificate_charges__c,Fumigation__c,Inspection__c,Insurance_charges__c,
@@ -120,6 +120,8 @@ public class BAFCOSalesOrderController {
         return equipLineToShipData;
     }
     private static EquipData assignquoteItemToDto(EquipData dto,Quotation_Item__c item){
+        dto.chargeableWeight = item.Chargeable_Weight__c;
+        dto.currencyCode = item.CurrencyIsoCode;
         dto.sellingRateKg = item.Selling_Rate_Kg__c;
         dto.sellingChargesIncluded = item.Selling_Charges_Include__c;
         dto.quotationType = item.Quotation__r.Quotation_Type__c;
@@ -245,9 +247,8 @@ public class BAFCOSalesOrderController {
             List<BAFCOOrderCreationDto.value> valueList = routeIdToValueMap.get(key);
             if(valueList.size() > 0){
                 BAFCOOrderCreationDto.value orderData =valueList[0];
-                Quotation__c quoteCurrecny = [Select id,currencyISOCode from Quotation__c Where id=:orderData.quotationId Limit 1];                                
                 Order__c orderObj = new Order__c();
-                orderObj.CurrencyIsoCode = quoteCurrecny.CurrencyIsoCode;
+                //orderObj.CurrencyIsoCode = orderData.currencyCode;
                 orderObj.Account_Order__c = orderData.accountId;
                 orderObj.Opportunity_Order__c = orderData.enquiryId;
                 orderObj.Leadc_Order__c = orderData.leadId;
@@ -275,12 +276,9 @@ public class BAFCOSalesOrderController {
                     for(BAFCOOrderCreationDto.equipment equipData : routeDto.equipment){
                         for(BAFCOOrderCreationDto.value orderDto : equipData.value){
                             Order_Item__c orderItem =  new Order_Item__c();
-                            if(!test.isRunningTest()){
-                                Quotation_Item__c quoteCurrecny = [Select id,currencyISOCode from Quotation_Item__c Where id=:orderDto.quoteItemId Limit 1];
-                                orderItem.CurrencyIsoCode = quoteCurrecny.CurrencyIsoCode; 
-                            }
                             if(orderDto.isLCL == true || orderDto.isAir == true) orderItem.Tab_View__c = orderDto.tabView;
                             orderItem.BAF_Order__c = orderDto.baf;
+                            orderItem.CurrencyIsoCode = orderDto.currencyCode;
                             orderItem.POD_freetime__c = orderDto.PODFreeTime;
                             orderItem.Selling_Rate_Kg__c = orderDto.sellingRateKg;
                             orderItem.Bayan_Order__c = orderDto.bayan;
@@ -383,6 +381,7 @@ public class BAFCOSalesOrderController {
                             orderItem.INCO_Term__c = orderDto.incoTermId;
                             orderItem.Charges_Included__c = orderDto.chargesIncluded;
                             orderItem.Selling_Charges_Included__c = orderDto.sellingChargesIncluded;
+                            orderItem.Chargeable_Weight__c = orderDto.chargeableWeight;
                             if(orderDto.checkBoxSelected == true) orderItemList.add(orderItem);
                         }
                     }
@@ -390,8 +389,10 @@ public class BAFCOSalesOrderController {
             }
             ////
             system.debug('orderItemList '+orderItemList.size());
+            system.debug('orderItemList '+orderItemList);
             if(orderItemList.size()>0){
                 insert orderItemList;
+                system.debug(' after insert orderItemList '+orderItemList);
                 List<Consignee__c> conList = new List<Consignee__c>();
                 List<Shipper__c> shipList = new List<Shipper__c>();
                 for(Order_Item__c item : orderItemList){
@@ -453,7 +454,85 @@ public class BAFCOSalesOrderController {
     public static Order__c getOrderRecordType(String recordId) {
         return [Select recordtype.name,Order_Type__c from Order__c where id =: recordId limit 1];
     }
+    @AuraEnabled
+    public static string cloneOrder(String recordId) {
+        List<String> orderItemId = new List<String>();
+        Map<Id, List<Order_Charges__c>> itemIdtoOrderChargeMap = new Map<Id, List<Order_Charges__c>>();
+        Map<Id, List<Shipper__c>> itemIdtoShipperMap = new Map<Id, List<Shipper__c>>();
+        Map<Id, List<Consignee__c>> itemIdtoConsigneeMap = new Map<Id, List<Consignee__c>>();
+        Order__c orderObj = [SELECT BBMS_Job_Number__c, autonumber__c, Record_Number__c, Order_Type__c, isAir__c, isLCL__c, Amendment_Remarks__c, Total_Teus__c, Status__c, BSLS_ID__c, Order_Item_Link__c, Booking_Reference_Number__c, Customer_Reference_Number__c, Amount__c, Target__c, Opportunity_Order__c, Branch__c, Operations_Executive__c, Integration__c, Customer_Name__c, Quotation__c, Order_Validity__c, Leadc_Order__c, Account_Order__c, Booking_Party__c, CurrencyIsoCode, Name FROM Order__c where id =: recordId];
+        Order__c orderObjCloneCopy  = orderObj.clone(false, false, false, false);
+        insert orderObjCloneCopy;
+        List<Order_Item__c> itemList = new List<Order_Item__c>();
+        for(Order_Item__c item : [SELECT Id, Name, Agent__c, BAF_Order__c, BL_Fees__c, Bayan_Charges__c, Bayan_Order__c, Bayan_cancellation_charge_Order__c, Bunker_surcharge_Order__c, CMC_Order__c, Carriage_Congestion_Surcharge__c, Carrier_Security_Fees__c, Cleaning_charges_Order__c, Container_Lashing_Charges_Order__c, Container_movement_charges_Order__c, Container_stripping_Order__c, DG_Surcharge__c, DO_charges__c, DTHC_Order__c, Destination_Customs_Clearance_Order__c, Destination_Loading_Charges_Order__c, EIC_Order__c, Equipment_Type_Order__c, Export_Service_Fees__c, Fasah_Charges__c, Fasah_fee_Order__c, Free_time_certificate_charges_Order__c, Fuel_Surcharge__c, Fumigation_Order__c, Gate_pass_charges__c, ISPS_Order__c, Inland_Fuel_Surcharge__c, Inland_Handling_Fees__c, Inland_haulage__c, Inspection_Order__c, Insurance_charges_Order__c, LOLO_Charges__c, Lashing_Charges__c, Lift_on_Lift_off_Order__c, Low_Sulphur_Surcharge__c, MCCFOOGC_Order__c, Loading_Charges_Order__c, MOT_fine_charges_Order__c, Non_Palletized_Surcharge_Order__c, Miscellaneous_Order__c, OTHC_Order__c, Operational_Recovery_Surcharge__c, Origin_Customs_clearance_Order__c, Origin_Detention_Demurrage_Charges__c, Origin_Loading_Charges_Order__c, Overweight_Overheight_surcharge__c, Pest_control_Order__c, Pickup_Charges__c, Port_Shuttling_Order__c, Port_of_Discharge_Order__c, Port_of_Loading_Order__c, Quantity__c, RMS_Order__c, Re_palletization_Order__c, Reefer_PTI_charges_Order__c, Reefer_cntr_plug_in_charges_Order__c, Reefer_steam_wash_Order__c, Remarks_Additional_Charges__c, Remarks_Destination_Charges__c, Remarks_Origin_Charges__c, Remarks_SL_Charges__c, Route_Order__c, Sea_Freight_Order__c, Seal_Charges_Order__c, Stuffing_Charges_Order__c, Sweeping_Cleaning_Order__c, Tabadul_Order__c, Tarpauline_charge_Order__c, Total_Additional__c, Total_Destination_c__c, Total_INCO_Order__c, Total_Order__c, Total_SL_Order__c, Truck_Head_charges_Order__c, Truck_idling_charges_Order__c, VGM__c, Vessel_certificate_charges_Order__c, War_Risk_Surcharge__c, Wrapping_packing_charges_Order__c, Xray_Order__c, Shipping_Line_Order__c, Teus__c, Place_of_Pickup__c, Place_of_Discharge__c, Ex_Works_Charge__c, Ex_Works_Charge_Name__c, Add_to_Buying_Additional__c, Add_to_Buying_Destination__c, Add_to_Buying_Ex_works__c, Add_to_Buying_Origin__c, Add_to_Buying_ShippingLine__c, Included_PDF_Additional__c, Included_PDF_Destination__c, Included_PDF_Ex_works__c, Included_PDF_Origin__c, Included_PDF_ShippingLine__c, Freight_Difference_FD__c, Alternate_depot_release_charges__c, Carrier_container_repositioning_charges__c, Vessel_ETD__c, Buying_Rate__c, Shipping_Line__c, Quotation_Item__c, Pickup_Place__c, Discharge_Place__c, Tank_Rental_Charges__c, BSLS_ID__c, Profit_Margin__c, Greater_Vessel_ETD__c, Teus_FB__c, Buying_Rate_Type__c, INCO_Term__c, Route__c, Route_Profit_Margin__c, Profit__c, Customer_Port_Pair_Margin__c, Tab_View__c, Airport_of_Destination__c, Airport_of_Loading__c, Commodity__c, Charges_Included__c, Transit_Time__c, Agent_Profit_Share__c, Selling_Charges_Included__c, Operational_Charges_buying__c, Operational_Charges_selling__c, POD_freetime__c, autonumber__c, Order_Cancelled__c, Selling_Rate_Kg__c, Total_CBM__c, Total_Volumetric_Weight__c, Total_Gross_Weight__c, Airline__c FROM Order_Item__c where Order__c =: recordId]){
+            orderItemId.add(item.id);
+            Order_Item__c obj = new Order_Item__c();
+            obj = item;
+            obj.id = null;
+            obj.Order__c = orderObjCloneCopy.id;
+            obj.BSLS_ID__c = null;
+            obj.Parent_OrderItem__c = item.id;
+            itemList.add(obj);
+        }
+        if(itemList.size() >0 ) {
+            insert itemList;
+            for(Order_Charges__c orderChargeObj : [SELECT Id, Name, Charge_Name_Text__c, isAdditionalCharge__c, Buying_Rate__c, Order_Item__c, Charge_Value__c, Charge_Type__c, Charge_Name__c FROM Order_Charges__c where Order_Item__c in :orderItemId ]){
+                if(!itemIdtoOrderChargeMap.containskey(orderChargeObj.Order_Item__c)){
+                    itemIdtoOrderChargeMap.put(orderChargeObj.Order_Item__c,new List<Order_Charges__c>());
+                }
+                itemIdtoOrderChargeMap.get(orderChargeObj.Order_Item__c).add(orderChargeObj);
+            }
+            for(Shipper__c shipperObj : [SELECT Id, Order_Item__c, Shipper__c, Name FROM Shipper__c where Order_Item__c in : orderItemId]){
+                if(!itemIdtoShipperMap.containskey(shipperObj.Order_Item__c)){
+                    itemIdtoShipperMap.put(shipperObj.Order_Item__c,new List<Shipper__c>());
+                }
+                itemIdtoShipperMap.get(shipperObj.Order_Item__c).add(shipperObj);
+            }
+            for(Consignee__c consigneeObj : [SELECT Order_Item__c, Consignee__c, Name, Id FROM Consignee__c where Order_Item__c in : orderItemId]){
+                if(!itemIdtoConsigneeMap.containskey(consigneeObj.Order_Item__c)){
+                    itemIdtoConsigneeMap.put(consigneeObj.Order_Item__c,new List<Consignee__c>());
+                }
+                itemIdtoConsigneeMap.get(consigneeObj.Order_Item__c).add(consigneeObj);
+            }
+            List<Order_Charges__c> newChargeList = new list<Order_Charges__c>();
+            List<Shipper__c> newShipperList = new list<Shipper__c>();
+            List<Consignee__c> newConsigneeList = new list<Consignee__c>();
+            for(Order_Item__c item : itemList){
+                if(itemIdtoOrderChargeMap.containsKey(item.Parent_OrderItem__c)){
+                    for(Order_Charges__c orderChargeObj : itemIdtoOrderChargeMap.get(item.Parent_OrderItem__c)){
+                        Order_Charges__c obj = new Order_Charges__c();
+                        obj = orderChargeObj;
+                        obj.Order_Item__c = item.id;
+                        newChargeList.add(obj);
+                    }
+                }
+                if(itemIdtoShipperMap.containsKey(item.Parent_OrderItem__c)){
+                    for(Shipper__c ShipperObj : itemIdtoShipperMap.get(item.Parent_OrderItem__c)){
+                        Shipper__c obj = new Shipper__c();
+                        obj = ShipperObj;
+                        obj.Order_Item__c = item.id;
+                        newShipperList.add(obj);
+                    }
+                }
+                if(itemIdtoConsigneeMap.containsKey(item.Parent_OrderItem__c)){
+                    for(Consignee__c ConsigneeObj : itemIdtoConsigneeMap.get(item.Parent_OrderItem__c)){
+                        Consignee__c obj = new Consignee__c();
+                        obj = ConsigneeObj;
+                        obj.Order_Item__c = item.id;
+                        newConsigneeList.add(obj);
+                    }
+                }
+            }
+            if(newConsigneeList.size() > 0) Insert newConsigneeList;
+            if(newShipperList.size() > 0) Insert newShipperList;
+            if(newChargeList.size() > 0) Insert newChargeList;
+        }
+        system.debug('orderObjCloneCopy '+orderObjCloneCopy.id);
+        return orderObjCloneCopy.id;
+    }
     public class EquipData{
+        @AuraEnabled public Decimal chargeableWeight { get; set; }
+        @AuraEnabled public string currencyCode{get;set;}
         @AuraEnabled public string airLineId{get;set;}
         @AuraEnabled
         public Decimal PODFreeTime { get; set; }

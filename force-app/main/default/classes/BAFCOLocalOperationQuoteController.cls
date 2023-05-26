@@ -320,7 +320,10 @@ public class BAFCOLocalOperationQuoteController {
         quoteItemObj.Quantity__c = dto.quantity;
         quoteItemObj.INCO_Term__c = dto.incoTermId;
         system.debug('chargeableWeight '+dto.chargeableWeight);
-        if(dto.chargeableWeight > 0 ) quoteItemObj.Selling_Rate_Kg__c =  dto.totalRate/dto.chargeableWeight;
+        if(dto.chargeableWeight > 0 ) {
+            quoteItemObj.Selling_Rate_Kg__c =  dto.totalRate/dto.chargeableWeight;
+            quoteItemObj.Chargeable_Weight__c = dto.chargeableWeight;
+        }
         if(dto.exWorksObj != null){
             quoteItemObj.Ex_Works_Charge_Name__c = dto.exWorksObj.Id;
             quoteItemObj.Ex_Works_Charge__c = dto.exWorksObj.LoadCharge;

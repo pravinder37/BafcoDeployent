@@ -4,6 +4,7 @@ import updateValidityDate from '@salesforce/apex/BAFCOLRoutingDetailsController.
 import genrateQuotation from '@salesforce/apex/BAFCOLocalOperationQuoteController.genrateQuotation';
 import { NavigationMixin } from 'lightning/navigation';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import getExchangeRate from '@salesforce/apex/BAFCOLRoutingDetailsController.getExchangeRate';
 export default class BAFCOAirQuoteIntakeForm extends NavigationMixin(LightningElement) {
     @api routeName;
     @api routingRegular;
@@ -62,6 +63,7 @@ export default class BAFCOAirQuoteIntakeForm extends NavigationMixin(LightningEl
     @track daysLeft = 0;
     @track quotationItemId = '';
     @track buyingRateInput ;
+    @track curencyCodeOption =[];
 
     @track incoChargList = [];
 
@@ -213,6 +215,7 @@ export default class BAFCOAirQuoteIntakeForm extends NavigationMixin(LightningEl
         console.log('portLoading '+this.portLoading);
         console.log('displayPOL '+this.displayPOL +'-'+this.displayPlOP);
         this.getRouteListOnload();
+        this.getExchangeRate();
     }
     getRouteListOnload(){
         getRouteListOnload({routeId : this.routeId})
@@ -248,6 +251,32 @@ export default class BAFCOAirQuoteIntakeForm extends NavigationMixin(LightningEl
         this.shippingEquipTabSelected = e.target.value;
         this.resetCalculation();
         this.assignTabsData();
+        this.handleUpdateCalculation();
+    }
+    getExchangeRate(){
+        getExchangeRate()
+        .then(result=>{
+            let templist = [];
+            //console.log('getExchangeRate res',JSON.stringify(result,null,2))
+            if(result != null){
+                result.forEach(elem => {
+                    templist.push({
+                        label:elem.Currency_Code__c,
+                        value:elem.Currency_Code__c,
+                        exchangeRate:elem.Final_Rate__c,
+                        offSet:elem.Offset_Value__c != undefined ? elem.Offset_Value__c : 0
+                    })
+                });
+            }
+            this.curencyCodeOption = templist;
+        })
+        .catch(error=>{
+            console.log('getExchangeRate err',JSON.stringify(error,null,2))
+        })
+    }
+    handleCurrencyCodeSelection(e){
+        this.currencyCode = e.target.value;
+        this.updateTabsData();
         this.handleUpdateCalculation();
     }
     resetCalculation(){
@@ -611,7 +640,7 @@ export default class BAFCOAirQuoteIntakeForm extends NavigationMixin(LightningEl
             this.addAdditionalCharge = this.toHoldData[index].value[0].addAdditionalCharge;
             this.addExWorksCharge = this.toHoldData[index].value[0].addExWorksCharge;
             let allData = this.serviceChargeList;
-            if(allData.currencyCode != undefined) this.currencyCode = allData.currencyCode;
+            //if(allData.currencyCode != undefined) this.currencyCode = allData.currencyCode;
             if(this.airShippline != ''){
                 let childObj = this.template.querySelector('c-b-a-f-c-o-custom-look-up-component');
                 let obj={Id:this.airShippline,Name:this.airShipplineName}
@@ -624,7 +653,7 @@ export default class BAFCOAirQuoteIntakeForm extends NavigationMixin(LightningEl
     assignServiceChargesData(){
         if(Object.keys(this.serviceChargeList).length > 0){
             let allData = this.serviceChargeList;
-            if(allData.currencyCode != undefined) this.currencyCode = allData.currencyCode;
+            //if(allData.currencyCode != undefined) this.currencyCode = allData.currencyCode;
             if(allData.offset != undefined) this.offSet = allData.offset;           
             if(allData.servichargesObj != undefined){
                 let serviceChargeObj = allData.servichargesObj;
@@ -1140,7 +1169,7 @@ export default class BAFCOAirQuoteIntakeForm extends NavigationMixin(LightningEl
                     elem.value[0].serviceChargeList = dto;
                     elem.value[0].currencyCode = dto.currencyCode;
                     elem.value[0].offSet = dto.offset;
-                    this.currencyCode = dto.currencyCode;
+                    //this.currencyCode = dto.currencyCode;
                 }
             }
         });

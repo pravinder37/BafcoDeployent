@@ -24,6 +24,9 @@ public class BAFCOGenerateOrderPDFController {
         String showShippLine = pageParameters.get('showShippLine');
         String showCharges = pageParameters.get('showCharges');
         String recordId = pageParameters.get('recordId');
+        Order__c orderObj = [Select id,name,Account_Order__r.name from Order__c where id=: recordId];
+        String orderName = orderObj.Account_Order__r.name+' - '+orderObj.Name+'.pdf';
+        Apexpages.currentPage().getHeaders().put( 'content-disposition', 'inline; filename=' + orderName );
         if(showShippLine == 'true') this.showShippLine = true; 
         else this.showShippLine = false;
         if(showCharges == 'true') this.showCharges = true; 
@@ -41,7 +44,7 @@ public class BAFCOGenerateOrderPDFController {
             Order__c orderObj = [Select Quotation__r.NAme,isAir__c,isLCL__c,id,Recordtype.Name,Quotation__r.Terms_and_Conditions__c,RecordtypeId,
                                  Quotation__r.Effective_From__c,Quotation__r.Payment_Terms__c,Quotation__r.Inclusions__c,
                                  Quotation__r.Exclusions__c,Quotation__r.Remarks__c,Account_Order__r.Name,Name,
-                                 (Select Route_Order__r.Service_Type__c,Route_Order__r.INCO_Term__r.name from Order_Items__r),createdDate,CreatedBy.Name,Quotation__r.Quotation_Validity__c from Order__c where id =: this.recordId];
+                                 (Select Agent__r.name,Route_Order__r.Service_Type__c,Route_Order__r.INCO_Term__r.name from Order_Items__r),createdDate,CreatedBy.Name,Quotation__r.Quotation_Validity__c from Order__c where id =: this.recordId];
             this.dto.quoteNumber = orderObj.Name;
             if(orderObj.Quotation__r.Quotation_Validity__c != null )this.dto.validityTo = orderObj.Quotation__r.Quotation_Validity__c.day()+'-'+ BAFCOLeadDetailsController.getMonthName(orderObj.Quotation__r.Quotation_Validity__c.month()) +'-'+orderObj.Quotation__r.Quotation_Validity__c.year();
             this.dto.customerName = orderObj.Account_Order__r.Name;
@@ -56,7 +59,6 @@ public class BAFCOGenerateOrderPDFController {
                 this.destinationPortLabel = 'Port of Destination :';
             }
             this.dto.quoteIssued =orderObj.Quotation__r.NAme+' | '+ orderObj.createdDate.day()+'-'+ BAFCOLeadDetailsController.getMonthName(orderObj.createdDate.month()) +'-'+orderObj.createdDate.year();
-            this.header = 'AGENT COPY - '+orderObj.Account_Order__r.Name;
             this.dto.preparedBy = orderObj.CreatedBy.Name;
             this.dto.paymentTerm = orderObj.Quotation__r.Payment_Terms__c;
             this.dto.recordTypeName = orderObj.RecordType.Name;
@@ -97,6 +99,9 @@ public class BAFCOGenerateOrderPDFController {
             if(orderObj.Order_Items__r.size() > 0){
                 this.dto.serviceType = orderObj.Order_Items__r[0].Route_Order__r.Service_Type__c;
                 this.dto.shippingTerm =orderObj.Order_Items__r[0].Route_Order__r.INCO_Term__r.name;
+                if(orderObj.Order_Items__r[0].Agent__c != null)
+                this.header = 'AGENT COPY - '+orderObj.Order_Items__r[0].Agent__r.name;
+                else this.header = 'AGENT COPY';
             }
             if(orderObj.Account_Order__c != null){
                 Account acc = [Select id,BillingStreet,BillingCity,BillingState,BillingPostalCode,BillingCountry, Owner.name from Account where id =: orderObj.Account_Order__c];

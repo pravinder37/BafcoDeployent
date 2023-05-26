@@ -86,6 +86,14 @@
                                                     onlookupremoved={handleShipLineRemoved}></c-b-a-f-c-o-custom-look-up-component>
                                                     
                                 </lightning-layout-item>
+                                <lightning-layout-item size="12">
+                                    <lightning-combobox label="Curency Code" 
+                                    variant="label-inline"
+                                                        options={curencyCodeOption}
+                                                        value={currencyCode} 
+                                                        onchange={handleCurrencyCodeSelection}
+                                                        placeholder="Select"></lightning-combobox>
+                                </lightning-layout-item>
                                 <lightning-layout-item size="4" ><!-- so as to make three columns --></lightning-layout-item>
                                 <lightning-layout-item size="4" ><b>Buying Rate</b></lightning-layout-item>
                                  <lightning-layout-item size="4" ><b>Selling Rate</b></lightning-layout-item>

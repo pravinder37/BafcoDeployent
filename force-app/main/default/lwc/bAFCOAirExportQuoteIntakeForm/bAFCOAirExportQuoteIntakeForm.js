@@ -181,6 +181,7 @@ export default class BAFCOAirExportQuoteIntakeForm extends NavigationMixin(Light
     @track buyingRateKg = 0;
     @track sellingRateKg = 0;
     @track rateType = '';
+    @track airExport = true;
     connectedCallback(){
         this.getRMSDetails();
     }
@@ -477,7 +478,7 @@ export default class BAFCOAirExportQuoteIntakeForm extends NavigationMixin(Light
         this.additionalChargeIndex++;
         this.additionalChargeList = tempList3;
         this.displayAdditionalCharge = true
-        let keyName = this.shippingTabSelected+'-'+this.shippingEquipTabSelected;  
+        let keyName = this.shippingTabSelected+'-'+this.shippingEquipTabSelected; 
         let seletedEquipName1 = '';
         let isFDAccount = false;
         let chargeableWeight = 0;

@@ -531,7 +531,7 @@ public class BAFCOLRoutingDetailsControllerTest {
         String leadId = [Select id from Account limit 1].Id;
         
         test.startTest();
-        BAFCOLRoutingDetailsController.addRates(rmsDetail, routeId, shippingChargeDto, incocharges, totalShippChanged, totalIncoChanged, equipmentType, shippingLine, leadId,false,destiObj,selectedEquip);
+        BAFCOLRoutingDetailsController.addRates(rmsDetail, routeId, shippingChargeDto, incocharges, totalShippChanged, totalIncoChanged, equipmentType, shippingLine, leadId,false,destiObj,selectedEquip,'USD');
         test.stopTest();
     }
     testMethod static void getShiplineTest(){

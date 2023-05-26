@@ -32,6 +32,7 @@ export default class BAFCOAddRMSModel
     @track incoTermId = '';
     @api agentObject;
     @api cameFromImport = false;
+    @api airExport = false;
     @track airequipmentTypeError = '';
 
     @track validity = '';
@@ -69,17 +70,6 @@ export default class BAFCOAddRMSModel
     @track selectedRouteEquip = '';
     @track rateKgsError = '';
     @track isAirExport = false;
-    @track x45 = null;
-    @track x100 = null;
-    @track x300 = null;
-    @track x500 = null;
-    @track x1000 = null;
-    @track x3000 = null;
-    @track x5000 = null;
-    @track x10000 = null;
-    @track x15000 = null;
-    @track x20000 = null;
-
     bayan = null;                
     destinationCustomsClearance = null; 
     destinationLoadingCharges = null; 
@@ -168,6 +158,7 @@ export default class BAFCOAddRMSModel
     }
 
     connectedCallback(){
+        console.log('airExport '+this.airExport)
         if(this.isAir == true){
             this.loadigPortLabel = 'Airport of Loading';
             this.destinationPortLabel = 'Airport of Destination';
@@ -269,6 +260,14 @@ export default class BAFCOAddRMSModel
             if(data){
                 //console.log(` Picklist values are `, data.values);
                 this.rateTypeOption = data.values;
+                if(this.airExport) {
+                    this.rateType = 'Spot';
+                    this.rmsDetail.rateType = this.rateType;
+                    this.validity = this.formatDate(this.todaysDate,15);
+                    this.rmsDetail.validity = this.validity;
+                    this.validityError = '';
+                    this.rmscurrencyCode = 'SAR';
+                }
             }
             if(error){
                 console.log(` Error while fetching Picklist values  ${error}`);
@@ -300,10 +299,11 @@ export default class BAFCOAddRMSModel
         this.rmsDetail.validity = this.validity;
         this.validityError = '';
     }    
-    handleShippCurrencyCodeSelection(e){
-        this.shipp.currencyCode = e.target.value;
+    handleShippCurrencyCodeSelection(currency){
+        console.log('handleShippCurrencyCodeSelection came'+currency);
+        this.shipp.currencyCode = currency;
         this.curencyCodeOption.forEach(elem=>{
-            if(elem.value == e.target.value){
+            if(elem.value == currency){
                 this.shippExchangeRate = elem.exchangeRate
                 this.shippOffSet = elem.offSet
                 this.shipp.offSet = elem.offSet
@@ -321,10 +321,11 @@ export default class BAFCOAddRMSModel
     handleShippOffestChange(e){
         this.shipp.offSet = e.target.value;
     }
-    handleINCOCurrencyCodeSelection(e){
-        this.incoCharges.currencyCode = e.target.value;
+    handleINCOCurrencyCodeSelection(currency){
+        console.log('handleINCOCurrencyCodeSelection '+currency)
+        this.incoCharges.currencyCode = currency;
         this.curencyCodeOption.forEach(elem=>{
-            if(elem.value == e.target.value){
+            if(elem.value == currency){
                 this.incoExchangeRate = elem.exchangeRate
                 this.incoOffSet = elem.offSet
                 this.incoCharges.offSet = elem.offSet
@@ -341,10 +342,11 @@ export default class BAFCOAddRMSModel
     handleIncoOffsetChange(e){
         this.incoCharges.offSet = e.target.value;
     }
-    handleDestinCurrencyCodeSelection(e){
-        this.destinCharges.currencyCode = e.target.value;
+    handleDestinCurrencyCodeSelection(currency){
+        console.log('handleDestinCurrencyCodeSelection '+currency)
+        this.destinCharges.currencyCode = currency;
         this.curencyCodeOption.forEach(elem=>{
-            if(elem.value == e.target.value){
+            if(elem.value == currency){
                 this.destinExchangeRate = elem.exchangeRate
                 this.destinOffSet = elem.offSet
                 this.destinCharges.offSet = elem.offSet
@@ -559,19 +561,6 @@ export default class BAFCOAddRMSModel
         console.log('rms '+JSON.stringify(this.rmsDetail,null,2))
         if(allValid){
             if(this.isAir){
-                /*let obj={
-                    x45:this.x45 > 0 ? this.x45 : 0,
-                    x100:this.x100 > 0 ? this.x100 : 0,
-                    x300:this.x300 > 0 ? this.x300 : 0,
-                    x500:this.x500 > 0 ? this.x500 : 0,
-                    x1000:this.x1000 > 0 ? this.x1000 : 0,
-                    x3000:this.x3000 > 0 ? this.x3000 : 0,
-                    x5000:this.x5000 > 0 ? this.x5000 : 0,
-                    x10000:this.x10000 > 0 ? this.x10000 : 0,
-                    x15000:this.x15000 > 0 ? this.x15000 : 0,
-                    x20000:this.x20000 > 0 ? this.x20000 : 0,
-                }
-                console.log('obj '+JSON.stringify(obj,null,2))*/
                 addRatesAir({
                     rmsDetail: this.rmsDetail,
                     routeId : this.routeId,
@@ -1087,10 +1076,18 @@ export default class BAFCOAddRMSModel
                     let Obj={Id:result.commodityId,Name:result.commodityName}
                     field.handleDefaultSelected(Obj);
                 }
-                if(result.incoTermId != undefined && this.cameFromImport != 'true'){
-                    let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[1];
-                    let Obj={Id:result.incoTermId,Name:result.incoTermName}
-                    field.handleDefaultSelected(Obj);
+                if(this.airExport ){
+                    if(result.airIncoId != undefined){
+                        let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[1];
+                        let Obj={Id:result.airIncoId,Name:result.airincoTermName}
+                        field.handleDefaultSelected(Obj);
+                    }
+                }else{
+                    if(result.incoTermId != undefined && this.cameFromImport != 'true'){
+                        let field = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[1];
+                        let Obj={Id:result.incoTermId,Name:result.incoTermName}
+                        field.handleDefaultSelected(Obj);
+                    }
                 }
             }
             this.isLoading = false
@@ -1276,35 +1273,9 @@ export default class BAFCOAddRMSModel
    }
    handleRMSCurrencyCodeSelection(e){
     this.rmscurrencyCode=e.target.value;
-   }
-   handle20000Change(e){
-    this.x20000 = parseInt(e.target.value);
-   }
-   handle15000Change(e){
-    this.x15000 = parseInt(e.target.value);
-   }
-   handle10000Change(e){
-    this.x10000 = parseInt(e.target.value);
-   }
-   handle5000Change(e){
-    this.x5000 = parseInt(e.target.value);
-   }
-   handle3000Change(e){
-    this.x3000 = parseInt(e.target.value);
-   }
-   handle1000Change(e){
-    this.x1000 = parseInt(e.target.value);
-   }
-   handle500Change(e){
-    this.x500 = parseInt(e.target.value);
-   }
-   handle300Change(e){
-    this.x300 = parseInt(e.target.value);
-   }
-   handle100Change(e){
-    this.x100 = parseInt(e.target.value);
-   }
-   handle45Change(e){
-    this.x45 = parseInt(e.target.value);
+    console.log(e.target.value)
+    this.handleShippCurrencyCodeSelection(e.target.value);
+    this.handleINCOCurrencyCodeSelection(e.target.value);
+    this.handleDestinCurrencyCodeSelection(e.target.value)
    }
 }

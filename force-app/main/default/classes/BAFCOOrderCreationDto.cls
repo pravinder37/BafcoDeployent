@@ -13,6 +13,8 @@ public class BAFCOOrderCreationDto {
         public List<value> value { get; set; }
     }
     public class value{
+        @AuraEnabled public Decimal chargeableWeight { get; set; }
+        @AuraEnabled public String currencyCode { get; set; }
         @AuraEnabled public String airLineId { get; set; }
         @AuraEnabled public Decimal sellingRateKg { get; set; }
         @AuraEnabled public Decimal PODFreeTime { get; set; }

@@ -137,7 +137,7 @@
                                                         data-sellingtotal={shipLine.sellingRate}                                                
                                                         checked={shipLine.checkBoxSelected}
                                                         onchange={handleCheckBoxClicked}></lightning-input></span>
-                                                    <p><span>Selling : </span><span style="background: white;color: #4CAF50; padding: 4px 2px 4px 2px">${shipLine.sellingRate}</span></p>
+                                                    <p><span>Selling : </span><span style="background: white;color: #4CAF50; padding: 4px 2px 4px 2px">{shipLine.currencyCode} {shipLine.sellingRate}</span></p>
                                                 </lightning-layout-item>
                                                 <lightning-layout-item size="6" class={shipLine.QtyErrorClass} style="padding-left: 10%;">
                                                     <lightning-input type="number" 

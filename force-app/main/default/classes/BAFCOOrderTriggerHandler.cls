@@ -138,10 +138,13 @@ public class BAFCOOrderTriggerHandler {
     public static void sendOrderDetailsOnInsert(List<Order__c> orderList){
         set<ID> orderIDSet = new Set<ID>();
         List<ID> orderIDList = new List<ID>();
+        List<String> orderTypes = (Label.Send_Order_API_OrderTypes).split(',');
         for(Order__c ord:orderList){
-            if(ord.Order_Type__c=='Sea Import'){                
-                orderIDSet.add(ord.ID);
-            }
+            for(String orderType : orderTypes){
+                if(ord.Order_Type__c==orderType){                
+                    orderIDSet.add(ord.ID);
+                }
+            }            
         }
         orderIDList.addAll(orderIDSet);
         BAFCOSendOrdersAPI.sendOrderData(orderIDList);        
@@ -149,15 +152,14 @@ public class BAFCOOrderTriggerHandler {
     public static void sendOrderDetailsOnUpdate(List<Order__c> orderList,Map<id,Order__c> oldMap){
         set<ID> orderIDSet = new Set<ID>();
         List<ID> orderIDList = new List<ID>();
+        List<String> orderTypes = (Label.Send_Order_API_OrderTypes).split(',');
         for(Order__c ord:orderList){
-            system.debug('ord.Integration__c'+ord.Integration__c);
-            system.debug('oldMap.get(ord.ID).Integration__c'+oldMap.get(ord.ID).Integration__c);
-            if(oldMap.get(ord.ID).Integration__c==false && ord.Integration__c!=oldMap.get(ord.ID).Integration__c && ord.Integration__c==true && ord.Order_Type__c=='Sea Import'){
-                system.debug('In If');
-                orderIDSet.add(ord.ID);
-                system.debug('orderIDSet'+orderIDSet);
+            for(String orderType : orderTypes){
+                if(oldMap.get(ord.ID).Integration__c==false && ord.Integration__c!=oldMap.get(ord.ID).Integration__c && ord.Integration__c==true && ord.Order_Type__c==orderType){                
+                    orderIDSet.add(ord.ID);
+                }
             }
-        }
+        }           
         orderIDList.addAll(orderIDSet);
         system.debug('orderIDList'+orderIDList);
         if(orderIDList!=NULL && orderIDList.size()>0){
@@ -176,7 +178,9 @@ public class BAFCOOrderTriggerHandler {
             targetIdSet.add(ord.Target__c);
         }
         AggregateResult[] groupedResult = [Select Target__c, Sum(Total_Teus__c) FROM Order__c 
-                                           WHERE Target__c!=NULL AND Target__c IN: targetIdSet AND Status__c!='Cancelled' 
+                                           WHERE Target__c!=NULL 
+                                           AND Target__c IN: targetIdSet 
+                                           AND Status__c!='Cancelled'
                                            Group by Target__c];
         for(AggregateResult ar:groupedResult){
             targetValueMap.put((Id)ar.get('Target__c'),(decimal)ar.get('expr0'));
@@ -186,7 +190,7 @@ public class BAFCOOrderTriggerHandler {
                            FROM Target__c 
                            Where Id IN:targetValueMap.Keyset()]){
                                if(targetValueMap.get(trg.Id)!=NULL){
-                                   trg.Achieved_Value_In_Teus__c = targetValueMap.get(trg.Id);
+                                   trg.Achieved_Value_In_Teus__c += targetValueMap.get(trg.Id);
                                    targetsListToUpdate.add(trg);
                                }
                            }
@@ -212,6 +216,56 @@ public class BAFCOOrderTriggerHandler {
         {
             BAFCOMarginCalculator.calculateMargins(toProcessItemList);
         }        
+    }
+    public static void onAfterUpdate(List<Order__c> orderList,Map<id,Order__c> oldMap){
+        updateTargetTeusOnStatusChange(orderList,oldMap);
+    }
+    public static void updateTargetTeusOnStatusChange(List<Order__c> orderList,Map<id,Order__c> oldMap){
+        List<Id> orderIDs = new List<Id>();
+        Map<Id,String> orderIdToOwnerMap = new Map<Id,String>();
+        Map<Id,List<Target__c>> OwnerIdTotargetMap = new Map<Id,List<Target__c>>();
+        List<Id> orderOwnerIds = new List<Id>();
+        List<Target__c> targetList = new List<Target__c>();
+        Map<Id,Decimal> teusSumMap = new Map<Id,Decimal>();
+        for(Order__c orderObj : orderList){
+            if(orderObj.Status__c !=  oldMap.get(orderObj.id).Status__c && orderObj.Status__c == 'Cancelled'){
+                orderIDs.add(orderObj.id);
+            }
+        }
+        List<Order_Item__c> itemList = [Select id , Order__c from Order_Item__c where Order__c in : orderIDs];
+        if(itemList.size() > 0) {
+            for(Order__c orderObj : [Select Opportunity_Order__r.OwnerId from Order__c where id in :orderIds ]){
+                orderIdToOwnerMap.put(orderObj.id,orderObj.Opportunity_Order__r.OwnerId);
+                orderOwnerIds.add(orderObj.Opportunity_Order__r.OwnerId);
+            }
+            for(Target__c targetObj : [Select id,OwnerId,Achieved_Value_In_Teus__c from Target__c where OwnerId in :orderOwnerIds]){
+                if(!OwnerIdTotargetMap.containsKey(targetObj.OwnerId))
+                    OwnerIdTotargetMap.put(targetObj.OwnerId, new List<Target__c>());
+                OwnerIdTotargetMap.get(targetObj.OwnerId).add(targetObj);
+            }
+            List<Order_Item__c> queriedItemList = [Select id,Order__c,Teus_FB__c from Order_Item__c where Order__c in : orderIdToOwnerMap.keySet() and createdDate = THIS_MONTH];
+            for(Order_Item__c item : queriedItemList){
+                if(!teusSumMap.containsKey(item.Order__c))
+                    teusSumMap.put(item.Order__c,0);
+                Decimal sum = teusSumMap.get(item.Order__c);
+                sum = sum+item.Teus_FB__c;
+                teusSumMap.put(item.Order__c,sum);
+            }
+            if(OwnerIdTotargetMap.size() > 0 ){
+                for(Order_Item__c item : queriedItemList){
+                    List<Target__c> targetList3 = OwnerIdTotargetMap.get(orderIdToOwnerMap.get(item.Order__c));
+                    if(targetList3.size() == 1){
+                        Target__c targetObj = new Target__c();
+                        targetObj.id = targetList3[0].id;
+                        targetObj.Achieved_Value_In_Teus__c = targetList3[0].Achieved_Value_In_Teus__c - teusSumMap.get(item.Order__c);
+                        targetList.add(targetObj);
+                    }
+                }
+                if(targetList.size() > 0 ) {
+                    update targetList;
+                }
+            }
+        }
     }
     public static void testDummy(){
         Integer a=10;

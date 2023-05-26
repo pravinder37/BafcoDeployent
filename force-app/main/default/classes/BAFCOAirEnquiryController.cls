@@ -356,16 +356,12 @@ public class BAFCOAirEnquiryController {
         Set<Id> rrId = new Set<Id>();
         system.debug('equipIdtoObjMapid '+routeId);
         Map<String,Map<String,List<BAFCOAllQuotationItemDto>>> agentToEquipMap = new Map<String,Map<String,List<BAFCOAllQuotationItemDto>>>();
-        /*for(Route_Equipment__c routeEQuip : [Select CBM__c, Weight_Kgs__c,Units__c,id,Name,Tab_View__c,Quantity__c,Route__r.Opportunity_Enquiry__r.Account.FD__c from Route_Equipment__c where Route__c =: routeId]){
-            equipIdtoObjMap.put(routeEQuip.Tab_View__c,routeEQuip);
-            rrId.add(routeEQuip.id);
-        }*/
         system.debug('equipIdtoObjMap '+equipIdtoObjMap);
         for(RMS__c rmsObj : [Select Route__r.Total_Volumetric_Weight__c,Route__r.Total_Gross_Weight_KGs__c,Route__r.Total_CBM__c,Agent__c,Airline__c,Rate_Kg__c, Route_Equipment__c FROM RMS__c where Route__c =: routeId]){
             String uniqueKey = rmsObj.Agent__c+'-'+rmsObj.Airline__c+'-'+rmsObj.Route__c;
             equipIdtoRMSMap.put(uniqueKey,rmsObj);
         }
-        for(Quotation_Item__c item : [SELECT Transit_Time__c,Total_Ex_Works_Charges__c,Buying_Rate__c,Agent__r.name,Tab_View__c,Airline__r.name,Selling_Charges_Include__c,Buying_Charges_Include__c,Total_Selling_Service_Charge__c,Total_Selling_Origin_Charge__c,Total_Selling_ExWorks_Charge__c,Total_Selling_Destin_Charge__c,Total_Selling_Additional_Charge__c,Tank_Rental_Charges__c,Included_PDF_ShippingLine__c,Included_PDF_Origin__c,Included_PDF_Destination__c,Included_PDF_Additional__c,Included_PDF_Ex_works__c, Alternate_depot_release_charges__c,Carrier_container_repositioning_charges__c,Freight_Difference_FD__c,Ex_Works_Charge_Name__r.name,Id,Ex_Works_Charge__c,Add_to_Buying_ShippingLine__c,Add_to_Buying_Origin__c,Add_to_Buying_Ex_works__c,Add_to_Buying_Destination__c,Add_to_Buying_Additional__c, Quotation__r.CreatedDate,Name,Agent_Name__c,Equipment_Type__r.name, CurrencyIsoCode, Quotation__c, BAF__c, Bayan__c, Bayan_cancellation_charge__c, Bunker_surcharge__c, CMC__c, Cleaning_charges__c, Container_movement_charges__c, Container_Lashing_Charges__c, Container_stripping__c, DTHC__c, Destination_Customs_Clearance__c, Destination_Loading_Charges__c, EIC__c, Equipment_Type__c, Fasah_fee__c, Free_time_certificate_charges__c, Fumigation__c, ISPS__c, Inspection__c, Insurance_charges__c, Lift_on_Lift_off__c, MOT_fine_charges__c, Ministry_clearnce_charge_for_OOG_cargo__c, Miscellaneous__c, Non_Palletized_Surcharge__c, OTHC__c, Origin_Customs_clearance__c, Origin_Loading_Charges__c, Pest_control__c, Port_Shuttling__c, Port_of_Discharge__c, Port_of_Loading__c, RMS__c, Re_palletization__c, Reefer_PTI_charges__c, Reefer_cntr_plug_in_charges__c, Reefer_steam_wash__c, Route__c, Sea_Freight__c, Seal_Charges__c, Stuffing_Charges__c, SweepingCleaning__c, Tabadul__c, Tarpauline_charge__c, Total_INCO__c, Total_SL__c, Total__c, Truck_Head_charges__c, Truck_idling_charges__c, Vessel_certificate_charges__c, Wrappingpacking_charges__c, Xray__c, Shipping_Line__c, Loading_Charges__c, Carriage_Congestion_Surcharge__c, Carrier_Security_Fees__c, Bayan_Charges__c, BL_Fees__c, DG_Surcharge__c, DO_charges__c, Export_Service_Fees__c, Fasah_Charges__c, Fuel_Surcharge__c, Gate_pass_charges__c, Inland_Fuel_Surcharge__c, Inland_Handling_Fees__c, Inland_haulage__c, Low_Sulphur_Surcharge__c, Operational_Recovery_Surcharge__c, Lashing_Charges__c, LOLO_Charges__c, Origin_Detention_Demurrage_Charges__c, Overweight_surcharge__c, Pickup_Charges__c, Total_Dest__c, War_Risk_Surcharge__c, VGM__c, Total_Additional__c, Charges_Included__c FROM Quotation_Item__c where Quotation__c =: quoteId And Route__c =:routeId ]){
+        for(Quotation_Item__c item : [SELECT Chargeable_Weight__c,Transit_Time__c,Total_Ex_Works_Charges__c,Buying_Rate__c,Agent__r.name,Tab_View__c,Airline__r.name,Selling_Charges_Include__c,Buying_Charges_Include__c,Total_Selling_Service_Charge__c,Total_Selling_Origin_Charge__c,Total_Selling_ExWorks_Charge__c,Total_Selling_Destin_Charge__c,Total_Selling_Additional_Charge__c,Tank_Rental_Charges__c,Included_PDF_ShippingLine__c,Included_PDF_Origin__c,Included_PDF_Destination__c,Included_PDF_Additional__c,Included_PDF_Ex_works__c, Alternate_depot_release_charges__c,Carrier_container_repositioning_charges__c,Freight_Difference_FD__c,Ex_Works_Charge_Name__r.name,Id,Ex_Works_Charge__c,Add_to_Buying_ShippingLine__c,Add_to_Buying_Origin__c,Add_to_Buying_Ex_works__c,Add_to_Buying_Destination__c,Add_to_Buying_Additional__c, Quotation__r.CreatedDate,Name,Agent_Name__c,Equipment_Type__r.name, CurrencyIsoCode, Quotation__c, BAF__c, Bayan__c, Bayan_cancellation_charge__c, Bunker_surcharge__c, CMC__c, Cleaning_charges__c, Container_movement_charges__c, Container_Lashing_Charges__c, Container_stripping__c, DTHC__c, Destination_Customs_Clearance__c, Destination_Loading_Charges__c, EIC__c, Equipment_Type__c, Fasah_fee__c, Free_time_certificate_charges__c, Fumigation__c, ISPS__c, Inspection__c, Insurance_charges__c, Lift_on_Lift_off__c, MOT_fine_charges__c, Ministry_clearnce_charge_for_OOG_cargo__c, Miscellaneous__c, Non_Palletized_Surcharge__c, OTHC__c, Origin_Customs_clearance__c, Origin_Loading_Charges__c, Pest_control__c, Port_Shuttling__c, Port_of_Discharge__c, Port_of_Loading__c, RMS__c, Re_palletization__c, Reefer_PTI_charges__c, Reefer_cntr_plug_in_charges__c, Reefer_steam_wash__c, Route__c, Sea_Freight__c, Seal_Charges__c, Stuffing_Charges__c, SweepingCleaning__c, Tabadul__c, Tarpauline_charge__c, Total_INCO__c, Total_SL__c, Total__c, Truck_Head_charges__c, Truck_idling_charges__c, Vessel_certificate_charges__c, Wrappingpacking_charges__c, Xray__c, Shipping_Line__c, Loading_Charges__c, Carriage_Congestion_Surcharge__c, Carrier_Security_Fees__c, Bayan_Charges__c, BL_Fees__c, DG_Surcharge__c, DO_charges__c, Export_Service_Fees__c, Fasah_Charges__c, Fuel_Surcharge__c, Gate_pass_charges__c, Inland_Fuel_Surcharge__c, Inland_Handling_Fees__c, Inland_haulage__c, Low_Sulphur_Surcharge__c, Operational_Recovery_Surcharge__c, Lashing_Charges__c, LOLO_Charges__c, Origin_Detention_Demurrage_Charges__c, Overweight_surcharge__c, Pickup_Charges__c, Total_Dest__c, War_Risk_Surcharge__c, VGM__c, Total_Additional__c, Charges_Included__c FROM Quotation_Item__c where Quotation__c =: quoteId And Route__c =:routeId ]){
             if(!agentToEquipMap.ContainsKey(item.Agent__r.name)){
                 agentToEquipMap.put(item.Agent__r.name,new Map<String,List<BAFCOAllQuotationItemDto>>());
             }
@@ -377,30 +373,16 @@ public class BAFCOAirEnquiryController {
             string uniqueObj= item.Agent_Name__c+'-'+item.Airline__r.name+'-'+item.Tab_View__c	;
             String uniqueKey = item.Agent__c+'-'+item.Airline__c+'-'+item.Route__c;
             RMS__c rmsObj = equipIdtoRMSMap.get(uniqueKey);
-            //Route_Equipment__c routeEquipObj = equipIdtoObjMap.get(item.Tab_View__c);
-            //Decimal chargeableWeight = rmsObj.Route__r.Total_CBM__c > rmsObj.Route__r.Total_Gross_Weight_KGs__c ? rmsObj.Route__r.Total_CBM__c:  rmsObj.Route__r.Total_Gross_Weight_KGs__c;
-            Decimal largest = 0;
-            if(rmsObj.Route__r.Total_CBM__c >= rmsObj.Route__r.Total_Gross_Weight_KGs__c && rmsObj.Route__r.Total_CBM__c >= rmsObj.Route__r.Total_Volumetric_Weight__c){
-                largest = rmsObj.Route__r.Total_CBM__c ;
-            }
-            else if(rmsObj.Route__r.Total_Gross_Weight_KGs__c >= rmsObj.Route__r.Total_CBM__c && rmsObj.Route__r.Total_Gross_Weight_KGs__c >= rmsObj.Route__r.Total_Volumetric_Weight__c){
-                largest = rmsObj.Route__r.Total_Gross_Weight_KGs__c ;
-            }
-            else{
-                largest =  rmsObj.Route__r.Total_Volumetric_Weight__c;
-            }
-            itemDto.buyingRate = largest  * (rmsObj != null ? rmsObj.Rate_Kg__c : 1);
-            //itemDto.totalBuyingRate = (itemDto.totalBuyingRate != null ? itemDto.totalBuyingRate : 0) + itemDto.buyingRate;
-            //if(rmsObjectToSeaFreightMap.containsKey(uniqueObj)){
+            itemDto.buyingRate = item.Chargeable_Weight__c  * (rmsObj != null ? rmsObj.Rate_Kg__c : 1);
             itemDto.itemId = item.id;
-            itemDto.chargeableWeight =largest;
+            itemDto.chargeableWeight = item.Chargeable_Weight__c;
             itemDto.seaFreight = item.Sea_Freight__c;
             itemDto.transitTime = item.Transit_Time__c;
             itemDto.quotationDate = item.Quotation__r.createdDate.day()+'-'+ BAFCOLeadDetailsController.getMonthName(item.Quotation__r.createdDate.month()) +'-'+item.Quotation__r.createdDate.year();
             itemDto.currencyCode = item.CurrencyIsoCode;
             itemDto.rmsId = item.RMS__c;
-            itemDto.buyingRatekg = (item.Buying_Rate__c /largest).setScale(2);
-            itemDto.sellingRatekg = (item.Total__c/largest).setScale(2);
+            itemDto.buyingRatekg = (item.Buying_Rate__c /item.Chargeable_Weight__c).setScale(2);
+            itemDto.sellingRatekg = (item.Total__c/item.Chargeable_Weight__c).setScale(2);
             // Destin Charges
             itemdto.destinBayanCharges= item.Bayan_Charges__c > 0 ? item.Bayan_Charges__c : null;
             itemdto.destinCustomClearanceCharges= item.Destination_Customs_Clearance__c > 0 ? item.Destination_Customs_Clearance__c : null;
@@ -524,12 +506,10 @@ public class BAFCOAirEnquiryController {
             routeEquipmentList.add(routeEQuip.Tab_View__c);
         }*/
         for(RMS__c rmsObj : [Select Route__r.Total_Volumetric_Weight__c, Route__r.Total_CBM__c,Route__r.Total_Gross_Weight_KGs__c,Validity__c,CurrencyIsoCode,Rate_Type__c, Rate_Kg__c, Route_Equipment__c,Id,Airline__r.Name,Agent__r.Name FROM RMS__c where Route__c =: routeId]){
-            //Route_Equipment__c routeEquipObj = equipIdtoObjMap.get(rmsObj.Route_Equipment__c);
             if(!shipLineToEquipMap.containsKey(rmsObj.Airline__r.Name)){
                 shipLineToEquipMap.put(rmsObj.Airline__r.Name, new List<BAFCORMSDto>());
             }
             Decimal seaFreight = 0;
-            //Decimal chargeableWeight = rmsObj.Route__r.Total_CBM__c  > rmsObj.Route__r.Total_Gross_Weight_KGs__c ? rmsObj.Route__r.Total_CBM__c  :  rmsObj.Route__r.Total_Gross_Weight_KGs__c;
             Decimal largest = 0;
             if(rmsObj.Route__r.Total_CBM__c >= rmsObj.Route__r.Total_Gross_Weight_KGs__c && rmsObj.Route__r.Total_CBM__c >= rmsObj.Route__r.Total_Volumetric_Weight__c){
                 largest = rmsObj.Route__r.Total_CBM__c ;
@@ -707,6 +687,7 @@ public class BAFCOAirEnquiryController {
         quoteItemObj.Airport_of_Loading__c = dto.portLoadingId;
         quoteItemObj.Airport_of_Destination__c = dto.portDestinationId;
         quoteItemObj.Buying_Rate__c = dto.quoteBuyingRate > 0 ? dto.quoteBuyingRate : null;
+        quoteItemObj.Chargeable_Weight__c = dto.chargeableWeight;
         if(dto.selectedShippLine != '' ){
             List<Shipping_Line__c> shipLine = [Select id from Shipping_Line__c where name =:dto.selectedShippLine limit 1];
             if(shipLine.size() > 0) quoteItemObj.Shipping_Linee__c = shipLine[0].id;
@@ -741,34 +722,19 @@ public class BAFCOAirEnquiryController {
         for(Quotation_Item__c item : [SELECT RMS__c from Quotation_Item__c where Quotation__c =: quoteId And Route__c =:routeId]){
             quoteRmsId.add(item.RMS__c);
         }
-        /*for(Route_Equipment__c routeEQuip : [Select CBM__c, Weight_Kgs__c,Units__c,id,Name,Tab_View__c,Quantity__c,Route__r.Opportunity_Enquiry__r.Account.FD__c from Route_Equipment__c where Route__c =: routeId]){
-            equipIdtoObjMap.put(routeEQuip.Tab_View__c,routeEQuip);
-        }*/
         for(RMS__c rmsObj : [Select Airport_of_Destination__c,Airport_of_Loading__c,X15000__c, X5000__c,X500__c,X45__c,X3000__c,X300__c,X20000__c,X10000__c,X1000__c,X100__c,Rate_Kg__c,CurrencyIsoCode,Route_Equipment__c,Airline__r.Name,Rate_Type__c,Validity__c,Remarks__c, Id,Sea_Freight__c, Equipment_Type__c FROM RMS__c where id in : quoteRmsId]){
             rmsMap.put(rmsObj.id,rmsObj);
         }
-        for(Quotation_Item__c item : [SELECT Route__r.Total_Volumetric_Weight__c, Route__r.Total_CBM__c,Route__r.Total_Gross_Weight_KGs__c,Buying_Rate__c,Transit_Time__c,Total_Ex_Works_Charges__c,Tab_View__c,Airline__r.Name,Quotation__r.isLCL__c,Tank_Rental_Charges__c,Included_PDF_ShippingLine__c,Included_PDF_Origin__c,Included_PDF_Destination__c,Included_PDF_Additional__c,Included_PDF_Ex_works__c,Id, Alternate_depot_release_charges__c,Carrier_container_repositioning_charges__c,Freight_Difference_FD__c,Ex_Works_Charge_Name__r.name,Ex_Works_Charge__c,Add_to_Buying_ShippingLine__c,Add_to_Buying_Origin__c,Add_to_Buying_Ex_works__c,Add_to_Buying_Destination__c,Add_to_Buying_Additional__c,Quotation__r.CreatedDate,Name,Agent_Name__c,Equipment_Type__r.name, CurrencyIsoCode, Quotation__c, BAF__c, Bayan__c, Bayan_cancellation_charge__c, Bunker_surcharge__c, CMC__c, Cleaning_charges__c, Container_movement_charges__c, Container_Lashing_Charges__c, Container_stripping__c, DTHC__c, Destination_Customs_Clearance__c, Destination_Loading_Charges__c, EIC__c, Equipment_Type__c, Fasah_fee__c, Free_time_certificate_charges__c, Fumigation__c, ISPS__c, Inspection__c, Insurance_charges__c, Lift_on_Lift_off__c, MOT_fine_charges__c, Ministry_clearnce_charge_for_OOG_cargo__c, Miscellaneous__c, Non_Palletized_Surcharge__c, OTHC__c, Origin_Customs_clearance__c, Origin_Loading_Charges__c, Pest_control__c, Port_Shuttling__c, Port_of_Discharge__c, Port_of_Loading__c, RMS__c, Re_palletization__c, Reefer_PTI_charges__c, Reefer_cntr_plug_in_charges__c, Reefer_steam_wash__c, Route__c, Sea_Freight__c, Seal_Charges__c, Stuffing_Charges__c, SweepingCleaning__c, Tabadul__c, Tarpauline_charge__c, Total_INCO__c, Total_SL__c, Total__c, Truck_Head_charges__c, Truck_idling_charges__c, Vessel_certificate_charges__c, Wrappingpacking_charges__c, Xray__c, Shipping_Line__c, Loading_Charges__c, Carriage_Congestion_Surcharge__c, Carrier_Security_Fees__c, Bayan_Charges__c, BL_Fees__c, DG_Surcharge__c, DO_charges__c, Export_Service_Fees__c, Fasah_Charges__c, Fuel_Surcharge__c, Gate_pass_charges__c, Inland_Fuel_Surcharge__c, Inland_Handling_Fees__c, Inland_haulage__c, Low_Sulphur_Surcharge__c, Operational_Recovery_Surcharge__c, Lashing_Charges__c, LOLO_Charges__c, Origin_Detention_Demurrage_Charges__c, Overweight_surcharge__c, Pickup_Charges__c, Total_Dest__c, War_Risk_Surcharge__c, VGM__c, Total_Additional__c, Charges_Included__c FROM Quotation_Item__c where Quotation__c =: quoteId And Route__c =:routeId ]){
+        for(Quotation_Item__c item : [SELECT Chargeable_Weight__c,Route__r.Total_Volumetric_Weight__c, Route__r.Total_CBM__c,Route__r.Total_Gross_Weight_KGs__c,Buying_Rate__c,Transit_Time__c,Total_Ex_Works_Charges__c,Tab_View__c,Airline__r.Name,Quotation__r.isLCL__c,Tank_Rental_Charges__c,Included_PDF_ShippingLine__c,Included_PDF_Origin__c,Included_PDF_Destination__c,Included_PDF_Additional__c,Included_PDF_Ex_works__c,Id, Alternate_depot_release_charges__c,Carrier_container_repositioning_charges__c,Freight_Difference_FD__c,Ex_Works_Charge_Name__r.name,Ex_Works_Charge__c,Add_to_Buying_ShippingLine__c,Add_to_Buying_Origin__c,Add_to_Buying_Ex_works__c,Add_to_Buying_Destination__c,Add_to_Buying_Additional__c,Quotation__r.CreatedDate,Name,Agent_Name__c,Equipment_Type__r.name, CurrencyIsoCode, Quotation__c, BAF__c, Bayan__c, Bayan_cancellation_charge__c, Bunker_surcharge__c, CMC__c, Cleaning_charges__c, Container_movement_charges__c, Container_Lashing_Charges__c, Container_stripping__c, DTHC__c, Destination_Customs_Clearance__c, Destination_Loading_Charges__c, EIC__c, Equipment_Type__c, Fasah_fee__c, Free_time_certificate_charges__c, Fumigation__c, ISPS__c, Inspection__c, Insurance_charges__c, Lift_on_Lift_off__c, MOT_fine_charges__c, Ministry_clearnce_charge_for_OOG_cargo__c, Miscellaneous__c, Non_Palletized_Surcharge__c, OTHC__c, Origin_Customs_clearance__c, Origin_Loading_Charges__c, Pest_control__c, Port_Shuttling__c, Port_of_Discharge__c, Port_of_Loading__c, RMS__c, Re_palletization__c, Reefer_PTI_charges__c, Reefer_cntr_plug_in_charges__c, Reefer_steam_wash__c, Route__c, Sea_Freight__c, Seal_Charges__c, Stuffing_Charges__c, SweepingCleaning__c, Tabadul__c, Tarpauline_charge__c, Total_INCO__c, Total_SL__c, Total__c, Truck_Head_charges__c, Truck_idling_charges__c, Vessel_certificate_charges__c, Wrappingpacking_charges__c, Xray__c, Shipping_Line__c, Loading_Charges__c, Carriage_Congestion_Surcharge__c, Carrier_Security_Fees__c, Bayan_Charges__c, BL_Fees__c, DG_Surcharge__c, DO_charges__c, Export_Service_Fees__c, Fasah_Charges__c, Fuel_Surcharge__c, Gate_pass_charges__c, Inland_Fuel_Surcharge__c, Inland_Handling_Fees__c, Inland_haulage__c, Low_Sulphur_Surcharge__c, Operational_Recovery_Surcharge__c, Lashing_Charges__c, LOLO_Charges__c, Origin_Detention_Demurrage_Charges__c, Overweight_surcharge__c, Pickup_Charges__c, Total_Dest__c, War_Risk_Surcharge__c, VGM__c, Total_Additional__c, Charges_Included__c FROM Quotation_Item__c where Quotation__c =: quoteId And Route__c =:routeId ]){
             if(!shipLineToEquipMap.containsKey(item.Airline__r.Name)){
                 shipLineToEquipMap.put(item.Airline__r.Name,new List<BAFCOAllQuotationItemDto>());
             }
             BAFCOAllQuotationItemDto itemDto = new BAFCOAllQuotationItemDto();
-            //RMS__c rmsObj = rmsMap.get(item.RMS__c);
-            Decimal largest = 0;
-            if(item.Route__r.Total_CBM__c >= item.Route__r.Total_Gross_Weight_KGs__c && item.Route__r.Total_CBM__c >= item.Route__r.Total_Volumetric_Weight__c){
-                largest = item.Route__r.Total_CBM__c ;
-            }
-            else if(item.Route__r.Total_Gross_Weight_KGs__c >= item.Route__r.Total_CBM__c && item.Route__r.Total_Gross_Weight_KGs__c >= item.Route__r.Total_Volumetric_Weight__c){
-                largest = item.Route__r.Total_Gross_Weight_KGs__c ;
-            }
-            else{
-                largest =  item.Route__r.Total_Volumetric_Weight__c;
-            }
-            //Decimal chargeableWeight = item.Route__r.Total_CBM__c > item.Route__r.Total_Gross_Weight_KGs__c ? item.Route__r.Total_CBM__c:  item.Route__r.Total_Gross_Weight_KGs__c;
-            itemDto.chargeableWeight = largest;
+            itemDto.chargeableWeight = item.Chargeable_Weight__c;
             RMS__c rmsObj =  rmsMap.get(item.RMS__c);
             itemDto.itemId = item.id;
             itemDto.seaFreight = item.Sea_Freight__c;
-            itemDto.buyingRate = largest * rmsObj.Rate_Kg__c;
+            itemDto.buyingRate = item.Chargeable_Weight__c * rmsObj.Rate_Kg__c;
             itemDto.quotationDate = item.Quotation__r.createdDate.day()+'-'+ BAFCOLeadDetailsController.getMonthName(item.Quotation__r.createdDate.month()) +'-'+item.Quotation__r.createdDate.year();
             itemDto.currencyCode = item.CurrencyIsoCode;
             itemDto.transitTime = item.Transit_Time__c;

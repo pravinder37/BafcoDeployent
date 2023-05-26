@@ -322,6 +322,8 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                             PODFreeTime : shipValue.PODFreeTime,
                             sellingRateKg : shipValue.sellingRateKg,
                             airLineId : shipValue.airLineId,
+                            currencyCode : shipValue.currencyCode,
+                            chargeableWeight : shipValue.chargeableWeight,
                         })
                         elem.equipment.push({
                             key:equip,
@@ -437,6 +439,8 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 PODFreeTime : shipValue.PODFreeTime,
                                 sellingRateKg : shipValue.sellingRateKg,
                                 airLineId : shipValue.airLineId,
+                                currencyCode : shipValue.currencyCode,
+                                chargeableWeight : shipValue.chargeableWeight,
                             })
                             elem.equipment.push({
                                 key:equip,
@@ -449,7 +453,6 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                             let shipIndex = tempList.findIndex(e => e.shipName === shipline);
                             if(shipIndex != -1){
                                 tempList[shipIndex].shipName = shipline;
-                                tempList[shipIndex].agentShare=shipValue.agentShare,
                                 tempList[shipIndex].sellingTotal = sellingTotal
                                 tempList[shipIndex].checkBoxSelected = true
                                 tempList[shipIndex].baf =  shipValue.baf
@@ -550,6 +553,8 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 tempList[shipIndex].PODFreeTime = shipValue.PODFreeTime;
                                 tempList[shipIndex].sellingRateKg = shipValue.sellingRateKg;
                                 tempList[shipIndex].airLineId = shipValue.airLineId;
+                                tempList[shipIndex].currencyCode = shipValue.currencyCode;
+                                tempList[shipIndex].chargeableWeight = shipValue.chargeableWeight;
                             }
                             else{
                                 tempList.push({
@@ -656,6 +661,8 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                     PODFreeTime : shipValue.PODFreeTime,
                                     sellingRateKg : shipValue.sellingRateKg,
                                     airLineId : shipValue.airLineId,
+                                    currencyCode : shipValue.currencyCode,
+                                    chargeableWeight : shipValue.chargeableWeight,
                                 })
                             }
                             elem.equipment[index].value = tempList
