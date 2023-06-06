@@ -13,11 +13,11 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>Place_of_Pickup__c</field>
+                <field>Port_of_Loading__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Port_of_Loading__c</field>
+                <behavior>Required</behavior>
+                <field>Pickup_Place__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>

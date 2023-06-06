@@ -25,6 +25,7 @@ public class BAFCOGenerateOrderPDFController {
         String showCharges = pageParameters.get('showCharges');
         String recordId = pageParameters.get('recordId');
         Order__c orderObj = [Select id,name,Account_Order__r.name from Order__c where id=: recordId];
+        system.debug('orderObj '+orderObj);
         String orderName = orderObj.Account_Order__r.name+' - '+orderObj.Name+'.pdf';
         Apexpages.currentPage().getHeaders().put( 'content-disposition', 'inline; filename=' + orderName );
         if(showShippLine == 'true') this.showShippLine = true; 
@@ -41,7 +42,7 @@ public class BAFCOGenerateOrderPDFController {
         Boolean has40HCEquip = false;
         Boolean DC20Added = false;
         if(this.recordId != null ){
-            Order__c orderObj = [Select Quotation__r.NAme,isAir__c,isLCL__c,id,Recordtype.Name,Quotation__r.Terms_and_Conditions__c,RecordtypeId,
+            Order__c orderObj = [Select Remarks__c,Quotation__r.NAme,isAir__c,isLCL__c,id,Recordtype.Name,Quotation__r.Terms_and_Conditions__c,RecordtypeId,
                                  Quotation__r.Effective_From__c,Quotation__r.Payment_Terms__c,Quotation__r.Inclusions__c,
                                  Quotation__r.Exclusions__c,Quotation__r.Remarks__c,Account_Order__r.Name,Name,
                                  (Select Agent__r.name,Route_Order__r.Service_Type__c,Route_Order__r.INCO_Term__r.name from Order_Items__r),createdDate,CreatedBy.Name,Quotation__r.Quotation_Validity__c from Order__c where id =: this.recordId];
@@ -93,7 +94,7 @@ public class BAFCOGenerateOrderPDFController {
                     }
                 }
             }
-            this.dto.remarks = orderObj.Quotation__r.Remarks__c != null ? orderObj.Quotation__r.Remarks__c : null;
+            this.dto.remarks = orderObj.Remarks__c != null ? orderObj.Remarks__c : null;
             if(orderObj.Quotation__r.Effective_From__c != null)
                 this.dto.effectiveFrom = orderObj.Quotation__r.Effective_From__c.day()+'-'+ BAFCOLeadDetailsController.getMonthName(orderObj.Quotation__r.Effective_From__c.month()) +'-'+orderObj.Quotation__r.Effective_From__c.year();
             if(orderObj.Order_Items__r.size() > 0){
@@ -132,7 +133,8 @@ public class BAFCOGenerateOrderPDFController {
                 this.dto.phone = '-';
                 this.dto.email ='-';
             }
-            List<Order_Item__c> quoteItem = [SELECT Airline__r.name,Selling_Rate_Kg__c,POD_freetime__c,RMS_Order__r.Free_time_POD__c,Agent_Profit_Share__c,Order__r.Order_Type__c,Order__r.recordtypeId,CurrencyIsoCode, (Select Charge_NAme__r.Name,Charge_value__c,Buying_Rate__c from Order_Charges__r where isAdditionalCharge__c = true), Quotation_Item__r.Quotation__r.Name,Commodity__c,Route__r.Commodity__r.name,Airport_of_Destination__r.name,Airport_of_Loading__r.Name,Order__r.isAir__c,Tab_View__c,Order__r.isLCL__c,Tank_Rental_Charges__c,Shipping_Line__r.name,Ex_Works_Charge_Name__r.name,Route_Order__r.Service_Type__c,Id,Route_Order__r.Name, Name, Order__c, Agent__c, BAF_Order__c, BL_Fees__c, Bayan_Charges__c,
+            system.debug('dto '+this.dto);
+            List<Order_Item__c> quoteItem = [SELECT Airline__r.name,Selling_Rate_Kg__c,POD_freetime__c,RMS_Order__r.Free_time_POD__c,Agent_Profit_Share__c,Order__r.Order_Type__c,Order__r.recordtypeId,CurrencyIsoCode, (Select Charge_Name_Text__c,Charge_value__c,Buying_Rate__c from Order_Charges__r where isAdditionalCharge__c = true and isExWorks__c = false), Quotation_Item__r.Quotation__r.Name,Commodity__c,Route__r.Commodity__r.name,Airport_of_Destination__r.name,Airport_of_Loading__r.Name,Order__r.isAir__c,Tab_View__c,Order__r.isLCL__c,Tank_Rental_Charges__c,Shipping_Line__r.name,Ex_Works_Charge_Name__r.name,Route_Order__r.Service_Type__c,Id,Route_Order__r.Name, Name, Order__c, Agent__c, BAF_Order__c, BL_Fees__c, Bayan_Charges__c,
                                              Bayan_Order__c, Bayan_cancellation_charge_Order__c, Bunker_surcharge_Order__c,
                                              CMC_Order__c, Carriage_Congestion_Surcharge__c, Carrier_Security_Fees__c,
                                              Cleaning_charges_Order__c, Container_Lashing_Charges_Order__c, Container_movement_charges_Order__c,
@@ -160,6 +162,7 @@ public class BAFCOGenerateOrderPDFController {
                                              Total_Volumetric_Weight__c,Total_Gross_Weight__c,Total_CBM__c
                                              FROM Order_Item__c 
                                              where Order__c =: this.recordId];
+            system.debug('quoteItem' +quoteItem);
             if(quoteItem.size() > 0){
                 List<Id> routeId = new List<Id>();
                 Map<Id,List<Route_Equipment__c>> rIdtoEquipMap = new Map<Id,List<Route_Equipment__c>>();
@@ -174,7 +177,7 @@ public class BAFCOGenerateOrderPDFController {
                         rIdtoEquipMap.get(rEquip.Route__c).add(rEquip);
                     }
                 }
-                
+                system.debug('rIdtoEquipMap '+rIdtoEquipMap);
                 List<BAFCOGeneratePDFDto.serviceChargeList> quoteItemDto = new List<BAFCOGeneratePDFDto.serviceChargeList>();
                 List<BAFCOGeneratePDFDto.ContainerList> containerDtoList = new List<BAFCOGeneratePDFDto.ContainerList>();
                 List<BAFCOGeneratePDFDto.ContainerExportList> containerExportDtoList = new List<BAFCOGeneratePDFDto.ContainerExportList>();
@@ -232,110 +235,15 @@ public class BAFCOGenerateOrderPDFController {
                     itemDto.total = item.currencyIsoCode+' '+ item.Total_Order__c;
                     itemDto.rateKg =item.Selling_Rate_Kg__c > 0 ? item.Selling_Rate_Kg__c.setScale(2) : 0;
                     itemDto.agentShare = item.currencyIsoCode+' '+ (item.Agent_Profit_Share__c != null ? item.Agent_Profit_Share__c : 0);
-                    //ServiceCharges
-                    BAFCOImportRMSDto.servichargesObj serviceChargeObj = new BAFCOImportRMSDto.servichargesObj();
-                    serviceChargeObj.BAF = item.BAF_Order__c > 0 ? item.BAF_Order__c : null;
-                    serviceChargeObj.bunkerCharges = item.Bunker_surcharge_Order__c > 0 ? item.Bunker_surcharge_Order__c : null;
-                    serviceChargeObj.cleaningCharges = item.Cleaning_charges_Order__c > 0 ? item.Cleaning_charges_Order__c : null;
-                    serviceChargeObj.CMC = item.CMC_Order__c > 0 ? item.CMC_Order__c : null;
-                    serviceChargeObj.carriageCongestionSurcharge = item.Carriage_Congestion_Surcharge__c > 0 ? item.Carriage_Congestion_Surcharge__c : null;
-                    serviceChargeObj.carrierSecurityFees = item.Carrier_Security_Fees__c > 0 ? item.Carrier_Security_Fees__c : null;
-                    serviceChargeObj.dgSurcharge = item.DG_Surcharge__c > 0 ? item.DG_Surcharge__c : null;
-                    serviceChargeObj.DTHC = item.DTHC_Order__c > 0 ? item.DTHC_Order__c : null;
-                    serviceChargeObj.equipmentImbalance = item.EIC_Order__c > 0 ? item.EIC_Order__c : null;
-                    serviceChargeObj.inlandFuelCharges = item.Inland_Fuel_Surcharge__c > 0 ? item.Inland_Fuel_Surcharge__c : null;
-                    serviceChargeObj.inlandHandlingfees = item.Inland_Handling_Fees__c > 0 ? item.Inland_Handling_Fees__c : null;
-                    serviceChargeObj.inlandHaulage = item.Inland_haulage__c > 0 ? item.Inland_haulage__c : null;
-                    serviceChargeObj.ISPS = item.ISPS_Order__c > 0 ? item.ISPS_Order__c : null;
-                    serviceChargeObj.lowerSulphurSurcharge = item.Low_Sulphur_Surcharge__c > 0 ? item.Low_Sulphur_Surcharge__c : null;
-                    serviceChargeObj.operationalRecovery = item.Operational_Recovery_Surcharge__c > 0 ? item.Operational_Recovery_Surcharge__c : null;
-                    serviceChargeObj.OTHC = item.OTHC_Order__c > 0 ? item.OTHC_Order__c : null;
-                    serviceChargeObj.overWeightCharge = item.Overweight_Overheight_surcharge__c > 0 ? item.Overweight_Overheight_surcharge__c : null;
-                    serviceChargeObj.sealCharges = item.Seal_Charges_Order__c > 0 ? item.Seal_Charges_Order__c : null;
-                    serviceChargeObj.warRiskSurcharges = item.War_Risk_Surcharge__c > 0 ? item.War_Risk_Surcharge__c : null;
-                    serviceChargeObj.totalSl = item.Total_SL_Order__c > 0 ? item.Total_SL_Order__c : null;
-                    serviceChargeObj.includeServiceCharge = item.Included_PDF_ShippingLine__c;
-                    if(item.BAF_Order__c > 0 || item.Bunker_surcharge_Order__c  > 0 || 
-                       item.Cleaning_charges_Order__c > 0 || item.CMC_Order__c > 0 || 
-                       item.Carriage_Congestion_Surcharge__c > 0 || item.Carrier_Security_Fees__c > 0 || 
-                       item.DG_Surcharge__c > 0 || item.DTHC_Order__c > 0 || item.EIC_Order__c > 0 || 
-                       item.Inland_Fuel_Surcharge__c > 0 || item.Inland_Handling_Fees__c > 0 || 
-                       item.Inland_haulage__c > 0 || item.ISPS_Order__c > 0 || 
-                       item.Low_Sulphur_Surcharge__c > 0 || item.Operational_Recovery_Surcharge__c > 0 || 
-                       item.OTHC_Order__c > 0 || item.Overweight_Overheight_surcharge__c > 0 || item.Seal_Charges_Order__c > 0 || 
-                       item.War_Risk_Surcharge__c > 0 ){
-                           serviceChargeObj.shippTotalChanged = false;
-                       }
-                    else{
-                        serviceChargeObj.shippTotalChanged = true;
-                    }
-                    itemDto.servichargesObj = serviceChargeObj;
-                    
-                    // origin Charges 
-                    BAFCOImportRMSDto.originChargesObj orgnChargeObj = new BAFCOImportRMSDto.originChargesObj();
-                    orgnChargeObj.bayan = item.Bayan_Order__c > 0 ? item.Bayan_Order__c : null; 
-                    orgnChargeObj.blFees = item.BL_Fees__c > 0 ? item.BL_Fees__c : null; 
-                    orgnChargeObj.originCustomClearance = item.Origin_Customs_clearance_Order__c > 0 ? item.Origin_Customs_clearance_Order__c : null; 
-                    orgnChargeObj.exportServiceFees = item.Export_Service_Fees__c > 0 ? item.Export_Service_Fees__c : null; 
-                    orgnChargeObj.fasahFees = item.Fasah_fee_Order__c > 0 ? item.Fasah_fee_Order__c : null; 
-                    orgnChargeObj.inspection = item.Inspection_Order__c > 0 ? item.Inspection_Order__c : null; 
-                    orgnChargeObj.insuranceCharges = item.Insurance_charges_Order__c > 0 ? item.Insurance_charges_Order__c : null; 
-                    orgnChargeObj.liftOnLiftOff = item.Lift_on_Lift_off_Order__c > 0 ? item.Lift_on_Lift_off_Order__c : null; 
-                    orgnChargeObj.OriginDetention = item.Origin_Detention_Demurrage_Charges__c > 0 ? item.Origin_Detention_Demurrage_Charges__c : null; 
-                    orgnChargeObj.OriginLoadingCharges = item.Origin_Loading_Charges_Order__c > 0 ? item.Origin_Loading_Charges_Order__c : null; 
-                    orgnChargeObj.pickUpCharges = item.Pickup_Charges__c > 0 ? item.Pickup_Charges__c : null; 
-                    orgnChargeObj.ReeferControlPlugInCharge = item.Reefer_cntr_plug_in_charges_Order__c > 0 ? item.Reefer_cntr_plug_in_charges_Order__c : null; 
-                    orgnChargeObj.tabadul = item.Tabadul_Order__c > 0 ? item.Tabadul_Order__c : null; 
-                    orgnChargeObj.trapulinCharges = item.Tarpauline_charge_Order__c > 0 ? item.Tarpauline_charge_Order__c : null; 
-                    orgnChargeObj.truckIdlingCharges = item.Truck_idling_charges_Order__c > 0 ? item.Truck_idling_charges_Order__c : null;
-                    orgnChargeObj.vgm = item.VGM__c > 0 ? item.VGM__c : null; 
-                    orgnChargeObj.xray = item.Xray_Order__c > 0 ? item.Xray_Order__c : null; 
-                    orgnChargeObj.lashingCharges = item.Lashing_Charges__c > 0 ? item.Lashing_Charges__c : null; 
-                    orgnChargeObj.fuelSurcharge = item.Fuel_Surcharge__c > 0 ? item.Fuel_Surcharge__c : null; 
-                    orgnChargeObj.TotalOrigincharges = item.Total_INCO_Order__c > 0 ? item.Total_INCO_Order__c : null; 
-                    orgnChargeObj.includeOriginCharge = item.Included_PDF_Origin__c;
-                    if(item.Bayan_Order__c > 0 || item.BL_Fees__c > 0 ||  
-                       item.Origin_Customs_clearance_Order__c > 0 ||   item.Export_Service_Fees__c > 0 ||   
-                       item.Fasah_fee_Order__c > 0 ||   item.Inspection_Order__c > 0 ||  
-                       item.Insurance_charges_Order__c > 0 ||   item.Lift_on_Lift_off_Order__c > 0 ||   
-                       item.Origin_Detention_Demurrage_Charges__c > 0 ||  
-                       item.Origin_Loading_Charges_Order__c > 0 ||   item.Reefer_cntr_plug_in_charges_Order__c > 0 || 
-                       item.Tarpauline_charge_Order__c > 0 ||   item.Truck_idling_charges_Order__c > 0 ||   
-                       item.Lashing_Charges__c > 0 ||   item.Fuel_Surcharge__c  > 0 ){
-                           orgnChargeObj.originTotalChanged = false;
-                       }
-                    else{
-                        orgnChargeObj.originTotalChanged = true;
-                    }
-                    itemDto.originChargesObj = orgnChargeObj;
-                    
-                    //Destination Charges 
-                    BAFCOImportRMSDto.destinChargeObj destinObj = new BAFCOImportRMSDto.destinChargeObj();
-                    destinObj.destinBayanCharges = item.Bayan_Charges__c > 0 ? item.Bayan_Charges__c : null ;        
-                    destinObj.destinCustomClearanceCharges = item.Destination_Customs_Clearance_Order__c > 0 ? item.Destination_Customs_Clearance_Order__c : null ;        
-                    destinObj.destinDOCharges = item.DO_charges__c > 0 ? item.DO_charges__c : null ;  
-                    destinObj.destinFasahCharges = item.Fasah_Charges__c > 0 ? item.Fasah_Charges__c : null ;        
-                    destinObj.destinGatePassCharges = item.Gate_pass_charges__c > 0 ? item.Gate_pass_charges__c : null ;        
-                    destinObj.destinLOLOCharges = item.LOLO_Charges__c > 0 ? item.LOLO_Charges__c : null ;        
-                    destinObj.includeDestinCharge = item.Included_PDF_Destination__c ;           
-                    destinObj.destinTotalCharges = item.Total_Destination_c__c > 0 ? item.Total_Destination_c__c : null ;
-                    if(item.Bayan_Charges__c > 0 ||  item.Destination_Customs_Clearance_Order__c  > 0 ||  
-                       item.DO_charges__c > 0 || item.Fasah_Charges__c  > 0 ||  
-                       item.Gate_pass_charges__c  > 0 ||  item.LOLO_Charges__c > 0 ){
-                           destinObj.DestinTotalChanged = false;
-                       }
-                    else{
-                        destinObj.DestinTotalChanged = true;
-                    }
-                    itemDto.destinChargeObj = destinObj;
                     
                     //Additional Charges
                     List<BAFCOGenerteQuoteDto.AdditionalCharge> addtionalChargeList = new List<BAFCOGenerteQuoteDto.AdditionalCharge>();
                     if(item.Order_Charges__r != null && item.Order_Charges__r.size() > 0){
                         for(Order_Charges__c chargeObj : item.Order_Charges__r){
                             BAFCOGenerteQuoteDto.AdditionalCharge dtoObj = new BAFCOGenerteQuoteDto.AdditionalCharge();
-                            dtoObj.name = chargeObj.Charge_Name__r.Name;
-                            dtoObj.value = (item.Order__r.Order_Type__c == 'Sea Import') ? chargeObj.Buying_Rate__c : chargeObj.Charge_Value__c;
+                            dtoObj.name = chargeObj.Charge_Name_Text__c;
+                            if(item.Add_to_Buying_Additional__c == true) dtoObj.value = chargeObj.Buying_Rate__c;
+                            else dtoObj.value = chargeObj.Charge_Value__c;
                             dtoObj.includeAdditionalCharge = item.Included_PDF_Additional__c;
                             addtionalChargeList.add(dtoObj);
                         }
@@ -354,7 +262,7 @@ public class BAFCOGenerateOrderPDFController {
                 this.dto.ContainerList = containerDtoList;
                 this.dto.ContainerExportList = containerExportDtoList;
                 this.dto.routeEquipList = routeEquipList;
-                
+                system.debug('dto 2 '+this.dto);
                 //ConsigneeList
                 List<BAFCOGeneratePDFDto.consigneeList> consigneeList = new List<BAFCOGeneratePDFDto.consigneeList>();
                 List<Id> ConsigneeAcctIds = new List<Id>();
@@ -367,6 +275,7 @@ public class BAFCOGenerateOrderPDFController {
                 for(Contact con : [Select Name,Email,phone,MobilePhone,Account.name from contact where AccountId in : ConsigneeAcctIds order by createddate desc limit 1]){
                     acctidToContactMap.put(con.Accountid,con);
                 }
+                system.debug('acctidToContactMap '+acctidToContactMap);
                 for(Consignee__c consigneeObj : consigneeRecords ){
                     BAFCOGeneratePDFDto.consigneeList consDto = new BAFCOGeneratePDFDto.consigneeList();
                     consDto.consignee = consigneeObj.Consignee__r.Name;
@@ -410,6 +319,7 @@ public class BAFCOGenerateOrderPDFController {
                     this.dto.shipperList = shipperList;
                     this.displayShipperlist = true;
                 }
+                system.debug('this.dto. '+this.dto);
             }
         }
     }

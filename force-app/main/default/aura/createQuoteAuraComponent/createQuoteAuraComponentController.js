@@ -4,7 +4,6 @@
         var device = $A.get("$Browser.formFactor");
         let refId = component.get("v.recordId");
         let isOpportunity = refId.startsWith("006");
-        console.log('isOpportunity '+isOpportunity);
         if(isOpportunity == true){
             var action = component.get("c.getAccountId");
             action.setParams({ optyId : refId });

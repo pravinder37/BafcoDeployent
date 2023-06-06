@@ -14,6 +14,14 @@
             <default>false</default>
         </values>
         <values>
+            <fullName>ISO Export</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>ISO Import</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>LCL Export</fullName>
             <default>false</default>
         </values>

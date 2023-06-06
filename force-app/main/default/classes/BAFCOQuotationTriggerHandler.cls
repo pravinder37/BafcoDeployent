@@ -13,7 +13,24 @@ public class BAFCOQuotationTriggerHandler {
         List<Quotation__c> jeddahRecord = [Select ID,Record_Number__c,Name,Branch__c from Quotation__c Where Branch__c='Jeddah' AND Record_Number__c!=NULL order by Record_Number__c DESC ];
         List<Quotation__c> riyadRecord =  [Select ID,Record_Number__c,Name,Branch__c from Quotation__c Where Branch__c='Riyadh' AND Record_Number__c!=NULL order by Record_Number__c DESC ];
         List<Quotation__c> dammamRecord = [Select ID,Record_Number__c,Name,Branch__c from Quotation__c Where Branch__c='Dammam' AND Record_Number__c!=NULL order by Record_Number__c DESC ];
-        
+        List<String> optyIds = new list<String>();
+        Map<String,List<Quotation__c>> quoteRevisemap = new Map<String,List<Quotation__c>>();
+        Map<String,List<Quotation__c>> quotemap = new Map<String,List<Quotation__c>>();
+        for(Quotation__c newQuote : newList){
+            optyIds.add(newQuote.Opportunity__c);
+        }
+        for(Quotation__c quoteObj : [Select id,Opportunity__c,isRevise__c,name from Quotation__c where Opportunity__c in : optyIds order by createddate desc ]){
+            if(quoteObj.isRevise__c == true){
+                if(!quoteRevisemap.containskey(quoteObj.Opportunity__c))
+                    quoteRevisemap.put(quoteObj.Opportunity__c,new List<Quotation__c>());
+                quoteRevisemap.get(quoteObj.Opportunity__c).add(quoteObj);
+            }
+            else{
+                if(!quotemap.containskey(quoteObj.Opportunity__c))
+                    quotemap.put(quoteObj.Opportunity__c,new List<Quotation__c>());
+                quotemap.get(quoteObj.Opportunity__c).add(quoteObj);
+            }
+        }
         for(Quotation__c newQuote : newList){
             if(newQuote.Branch__c!=NULL){
                 Decimal latestNumber;
@@ -23,12 +40,25 @@ public class BAFCOQuotationTriggerHandler {
                         latestNumber=jubailRecord[0].Record_Number__c;
                         Decimal updatedNumber = latestNumber+1;
                         if(latestNumber!=NULL){
-                            newQuote.Record_Number__c=updatedNumber;
+                            if(newQuote.isRevise__c == true)  newQuote.Record_Number__c=latestNumber;
+                            else newQuote.Record_Number__c=updatedNumber;
                         }
                         else{
                             newQuote.Record_Number__c=1;
                         }
-                        newQuote.Name =getLatestNameValue(updatedNumber,'JUB','Q');                        
+                        Integer size = null;
+                        String previousOne = null;
+                        if(quoteRevisemap.size() > 0){
+                            if(quoteRevisemap.containsKey(newQuote.Opportunity__c)){
+                                size =  quoteRevisemap.get(newQuote.Opportunity__c).size();
+                            }
+                        }
+                        if(quotemap.size() > 0){
+                            if(quotemap.containsKey(newQuote.Opportunity__c)){
+                                previousOne =  quotemap.get(newQuote.Opportunity__c)[0].Name;
+                            }
+                        }
+                        newQuote.Name =getLatestNameValue(updatedNumber,'JUB','Q',size,newQuote.isRevise__c,previousOne);                        
                         
                     }else{
                         String yearVal = String.valueOf(system.today().year()).right(2);
@@ -42,12 +72,25 @@ public class BAFCOQuotationTriggerHandler {
                         latestNumber=jeddahRecord[0].Record_Number__c;
                         Decimal updatedNumber = latestNumber+1;
                         if(latestNumber!=NULL){
-                            newQuote.Record_Number__c=updatedNumber;
+                            if(newQuote.isRevise__c == true)  newQuote.Record_Number__c=latestNumber;
+                            else newQuote.Record_Number__c=updatedNumber;
                         }
                         else{
                             newQuote.Record_Number__c=1;
                         }
-                        newQuote.Name =getLatestNameValue(updatedNumber,'JED','Q');                        
+                        Integer size = null;
+                        String previousOne = null;
+                        if(quoteRevisemap.size() > 0){
+                            if(quoteRevisemap.containsKey(newQuote.Opportunity__c)){
+                                size =  quoteRevisemap.get(newQuote.Opportunity__c).size();
+                            }
+                        }
+                        if(quotemap.size() > 0){
+                            if(quotemap.containsKey(newQuote.Opportunity__c)){
+                                previousOne =  quotemap.get(newQuote.Opportunity__c)[0].Name;
+                            }
+                        }
+                        newQuote.Name =getLatestNameValue(updatedNumber,'JED','Q',size,newQuote.isRevise__c,previousOne);                        
                         
                     }else{
                         String yearVal = String.valueOf(system.today().year()).right(2);
@@ -62,12 +105,25 @@ public class BAFCOQuotationTriggerHandler {
                         latestNumber=riyadRecord[0].Record_Number__c;
                         Decimal updatedNumber = latestNumber+1;
                         if(latestNumber!=NULL){
-                            newQuote.Record_Number__c=updatedNumber;
+                            if(newQuote.isRevise__c == true)  newQuote.Record_Number__c=latestNumber;
+                            else newQuote.Record_Number__c=updatedNumber;
                         }
                         else{
                             newQuote.Record_Number__c=1;
                         }
-                        newQuote.Name =getLatestNameValue(updatedNumber,'RYD','Q');                        
+                        Integer size = null;
+                        String previousOne = null;
+                        if(quoteRevisemap.size() > 0){
+                            if(quoteRevisemap.containsKey(newQuote.Opportunity__c)){
+                                size =  quoteRevisemap.get(newQuote.Opportunity__c).size();
+                            }
+                        }
+                        if(quotemap.size() > 0){
+                            if(quotemap.containsKey(newQuote.Opportunity__c)){
+                                previousOne =  quotemap.get(newQuote.Opportunity__c)[0].Name;
+                            }
+                        }
+                        newQuote.Name =getLatestNameValue(updatedNumber,'RYD','Q',size,newQuote.isRevise__c,previousOne);                        
                         
                     }else{
                         String yearVal = String.valueOf(system.today().year()).right(2);
@@ -82,12 +138,25 @@ public class BAFCOQuotationTriggerHandler {
                         latestNumber=dammamRecord[0].Record_Number__c;
                         Decimal updatedNumber = latestNumber+1;
                         if(latestNumber!=NULL){
-                            newQuote.Record_Number__c=updatedNumber;
+                            if(newQuote.isRevise__c == true)  newQuote.Record_Number__c=latestNumber;
+                            else newQuote.Record_Number__c=updatedNumber;
                         }
                         else{
                             newQuote.Record_Number__c=1;
                         }
-                        newQuote.Name =getLatestNameValue(updatedNumber,'DMM','Q');                        
+                        Integer size = null;
+                        String previousOne = null;
+                        if(quoteRevisemap.size() > 0){
+                            if(quoteRevisemap.containsKey(newQuote.Opportunity__c)){
+                                size =  quoteRevisemap.get(newQuote.Opportunity__c).size();
+                            }
+                        }
+                        if(quotemap.size() > 0){
+                            if(quotemap.containsKey(newQuote.Opportunity__c)){
+                                previousOne =  quotemap.get(newQuote.Opportunity__c)[0].Name;
+                            }
+                        }
+                        newQuote.Name =getLatestNameValue(updatedNumber,'DMM','Q',size,newQuote.isRevise__c,previousOne);                        
                         
                     }else{
                         String yearVal = String.valueOf(system.today().year()).right(2);
@@ -99,7 +168,7 @@ public class BAFCOQuotationTriggerHandler {
         }
     }
     
-    public static String getLatestNameValue(Decimal latestNumber,String BranchCode,String recordType){
+    public static String getLatestNameValue(Decimal latestNumber,String BranchCode,String recordType,Integer size,Boolean isRevise,String previousOne){
         String latestValue;
         String yearVal = String.valueOf(system.today().year()).right(2);
         //latestNumber = latestNumber.right(4);
@@ -107,8 +176,14 @@ public class BAFCOQuotationTriggerHandler {
         //Integer latestNumberVal = Integer.valueOf(latestNumber) + 1;
         ///Decimal latestNumberVal = latestNumber+1;
         system.debug('latestNumberVal : '+latestNumber);
-        
+        if(isRevise == false)
         latestValue = BranchCode+'/'+recordType+'/'+yearVal+'/'+latestNumber;
+        else{
+            if(size == null)
+                latestValue = previousOne+' - R1';
+            else
+                latestValue = previousOne+' - R'+ ++size;
+        }
         system.debug('latestValue : '+latestValue);
         return latestValue;        
     }

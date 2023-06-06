@@ -82,6 +82,42 @@
                 <behavior>Edit</behavior>
                 <field>Selling_Charges_Include__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>autonumber__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Selling_Rate_Kg__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Teusnew__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Total_CBM__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Total_Volumetric_Weight__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Total_Gross_Weight__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Chargeable_Weight__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Operational_Charges_Buying__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Operational_Charges_Selling__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
@@ -585,12 +621,14 @@
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>
-        <fields>Charge_Name__c</fields>
+        <fields>Charge_Name_text__c</fields>
+        <fields>Buying_Rate__c</fields>
         <fields>Charge_Value__c</fields>
+        <fields>Charge_Name__c</fields>
         <fields>LAST_UPDATE</fields>
         <relatedList>Quotation_Charges__c.Quotation_Item__c</relatedList>
-        <sortField>NAME</sortField>
-        <sortOrder>Asc</sortOrder>
+        <sortField>LAST_UPDATE</sortField>
+        <sortOrder>Desc</sortOrder>
     </relatedLists>
     <relatedLists>
         <relatedList>RelatedNoteList</relatedList>

@@ -3,10 +3,9 @@
     <fullName>AllOpportunities</fullName>
     <columns>OPPORTUNITY.NAME</columns>
     <columns>ACCOUNT.NAME</columns>
-    <columns>Business_Type__c</columns>
     <columns>routes__c</columns>
+    <columns>Service_Type__c</columns>
     <columns>CORE.USERS.FULL_NAME</columns>
-    <columns>OPPORTUNITY.RECORDTYPE</columns>
     <columns>OPPORTUNITY.STAGE_NAME</columns>
     <columns>OPPORTUNITY.LAST_UPDATE</columns>
     <filterScope>Everything</filterScope>

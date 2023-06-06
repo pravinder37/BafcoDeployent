@@ -445,18 +445,17 @@ public without sharing  class BAFCOLRoutingDetailsController {
         Quotation__c quoteObj = new Quotation__c();
         system.debug('sameRoute '+sameRoute);
         if(quotationId == ''  || quotationId == null || (cameReviseCompt  == true && sameRoute == true)){
-            Opportunity enqObj  = [SELECT Accountid,Business_Type__c,Id,No_of_Quotes__c,(Select id,name,Name__c from Quotations__r order by createdDate)  FROM Opportunity where id =: enquiryId];            
+            Opportunity enqObj  = [SELECT Accountid,Business_Type__c,Service_Type__c,Id,No_of_Quotes__c,(Select id,name,Name__c from Quotations__r order by createdDate)  FROM Opportunity where id =: enquiryId];            
             quoteObj.Opportunity__c = enquiryId;
             //quoteObj.Leadc__c = enqObj.Lead__c;
             quoteObj.Account__c = enqObj.accountid;
             if(enqObj.Business_Type__c == 'Export') {
                 quoteObj.recordtypeId = QUOTE_EXPORT_RECORDTYPE_Id;
-                quoteObj.Quotation_Type__c = 'Sea Export';
             }
             else if(enqObj.Business_Type__c == 'Import') {
                 quoteObj.recordtypeId = QUOTE_IMPORT_RECORDTYPE_Id;
-                quoteObj.Quotation_Type__c = 'Sea Import';
             }
+            quoteObj.Quotation_Type__c = enqObj.Service_Type__c;
             integer year =  Date.Today().Year();
             string s1=string.valueof(year).right(2);
             Integer Year1= Integer.valueof(s1);
@@ -467,6 +466,7 @@ public without sharing  class BAFCOLRoutingDetailsController {
                     String fullName = quoteList[0].Name__c;
                     String lastName = fullName.Substring(fullName.lastIndexOf('/')+1,fullName.length());
                     quoteObj.Name__c = 'Quote/'+Year1+'/'+lastName+'-'+quoteList.size();
+                    quoteObj.isRevise__c = true;
                 }
                 else{
                     Integer  quoteSize = quoteList.size();
@@ -539,7 +539,6 @@ public without sharing  class BAFCOLRoutingDetailsController {
             system.debug('quoteObj '+quoteObj);
         }
         
-        quoteItemObj = assignServiceChargeIntoQuoteItem(quoteItemObj,dto);
         quoteItemObj.Total__c = dto.total;
         quoteItemObj.Pickup_Place__c = dto.pickupPlaceName;
         quoteItemObj.Discharge_Place__c = dto.dischargePlaceName;
@@ -548,6 +547,8 @@ public without sharing  class BAFCOLRoutingDetailsController {
         quoteItemObj.Quantity__c = dto.quantity;
         quoteItemObj.INCO_Term__c = dto.incoTermId;
         quoteItemObj.Buying_Rate__c = dto.quoteBuyingRate > 0 ? dto.quoteBuyingRate : null;
+        quoteItemObj.Add_to_Buying_Additional__c =  dto.addAdditionalCharge != null ? dto.addAdditionalCharge : false;
+        quoteItemObj.Included_PDF_Additional__c =  dto.includeAdditionalCharge != null ? dto.includeAdditionalCharge : false;
         if(dto.selectedShippLine != '' ){
             List<Shipping_Line__c> shipLine = [Select id from Shipping_Line__c where name =:dto.selectedShippLine limit 1];
             if(shipLine.size() > 0) quoteItemObj.Shipping_Linee__c = shipLine[0].id;
@@ -560,11 +561,14 @@ public without sharing  class BAFCOLRoutingDetailsController {
                 quoteItemObj.Included_PDF_Ex_works__c =  dto.includeExWorksCharge != null ? dto.includeExWorksCharge : false;
             }
         }
-        
         try{
+            quoteItemObj = updateOperationalChargeText(additionalChargeList,quoteItemObj,dto);
             upsert quoteItemObj;
             system.debug('quoteItemObj '+quoteItemObj);
             quoteItemObj = assignAdditionalChargeIntoQuoteItem(additionalChargeList,quoteItemObj,dto);
+            if(dto.exWorksObj != null){
+                insertExWorksQuotationCharge(dto.exWorksObj.Name,dto.exWorksObj.LoadCharge,quoteItemObj);
+            }
             
         }
         Catch(Exception e){
@@ -573,99 +577,73 @@ public without sharing  class BAFCOLRoutingDetailsController {
         
         return quoteObj.Id;
     }
-    public static Quotation_item__c assignServiceChargeIntoQuoteItem(Quotation_item__c quoteItemObj,BAFCOGenerteQuoteDto dto){
-        if(dto.serviceChargeList != null){
-            if(dto.serviceChargeList.servichargesObj != null){
-                BAFCOImportRMSDto.servichargesObj servObj = dto.serviceChargeList.servichargesObj;
-                if(servObj.shippTotalChanged == false){
-                    quoteItemObj.BAF__c = servObj.BAF!= null ? servObj.BAF : null;
-                    quoteItemObj.Bunker_surcharge__c = servObj.bunkerCharges!= null ? servObj.bunkerCharges : null;
-                    quoteItemObj.Cleaning_charges__c = servObj.cleaningCharges!= null ? servObj.cleaningCharges : null;
-                    quoteItemObj.CMC__c = servObj.CMC != null ? servObj.CMC : null;
-                    quoteItemObj.Carriage_Congestion_Surcharge__c = servObj.carriageCongestionSurcharge!= null ? servObj.carriageCongestionSurcharge : null;
-                    quoteItemObj.Carrier_Security_Fees__c = servObj.carrierSecurityFees!= null ? servObj.carrierSecurityFees :null;
-                    quoteItemObj.DG_Surcharge__c = servObj.dgSurcharge!= null ? servObj.dgSurcharge : null;
-                    quoteItemObj.DTHC__c = servObj.DTHC!= null ? servObj.DTHC : null;
-                    quoteItemObj.EIC__c = servObj.equipmentImbalance!= null ? servObj.equipmentImbalance : null;
-                    quoteItemObj.Inland_Fuel_Surcharge__c = servObj.inlandFuelCharges!= null ? servObj.inlandFuelCharges :null;
-                    quoteItemObj.Inland_Handling_Fees__c = servObj.inlandHandlingfees!= null ? servObj.inlandHandlingfees :null;
-                    quoteItemObj.Inland_haulage__c = servObj.inlandHaulage!= null ? servObj.inlandHaulage : null;
-                    quoteItemObj.ISPS__c = servObj.ISPS!= null ? servObj.ISPS : null;
-                    quoteItemObj.Low_Sulphur_Surcharge__c = servObj.lowerSulphurSurcharge!= null ? servObj.lowerSulphurSurcharge : null;
-                    quoteItemObj.Operational_Recovery_Surcharge__c = servObj.operationalRecovery!= null ? servObj.operationalRecovery : null;
-                    quoteItemObj.OTHC__c = servObj.OTHC!= null ? servObj.OTHC : null;
-                    quoteItemObj.Overweight_surcharge__c = servObj.overWeightCharge!= null ? servObj.overWeightCharge : null;
-                    quoteItemObj.Seal_Charges__c = servObj.sealCharges!= null ? servObj.sealCharges : null;
-                    quoteItemObj.War_Risk_Surcharge__c = servObj.warRiskSurcharges!= null ? servObj.warRiskSurcharges : null;                  
-                }
-                quoteItemObj.Total_SL__c = servObj.totalSl!= null ? servObj.totalSl : null;
-                quoteItemObj.Add_to_Buying_ShippingLine__c =  dto.addServiceCharge != null ? dto.addServiceCharge : false;
-                quoteItemObj.Included_PDF_ShippingLine__c =  dto.includeServiceCharge != null ? dto.includeServiceCharge : false;
+    public static Quotation_item__c updateOperationalChargeText(List<BAFCOGenerteQuoteDto.AdditionalCharge> additionalChargeList,Quotation_item__c quoteItemObj,BAFCOGenerteQuoteDto dto){
+        String OperationalChargesbuying = '';
+        String OperationalChargeSelling = '';
+        for(BAFCOGenerteQuoteDto.AdditionalCharge dto2 : additionalChargeList){
+            if(quoteItemObj.Add_to_Buying_Additional__c == true ){
+                String nn = dto2.name + ' : '+dto2.value+' '+dto.currencyCode;
+                OperationalChargesbuying = OperationalChargesbuying + nn + '\n ';
             }
-            if(dto.serviceChargeList.originChargesObj != null){
-                BAFCOImportRMSDto.originChargesObj originObj = dto.serviceChargeList.originChargesObj;
-                if(originObj.originTotalChanged == false){
-                    quoteItemObj.Bayan__c = originObj.bayan != null ? originObj.bayan : null;
-                    quoteItemObj.BL_Fees__c = originObj.blFees != null ? originObj.blFees : null;
-                    quoteItemObj.Origin_Customs_clearance__c = originObj.originCustomClearance != null ? originObj.originCustomClearance : null;
-                    quoteItemObj.Export_Service_Fees__c = originObj.exportServiceFees != null ? originObj.exportServiceFees : null;
-                    quoteItemObj.Fasah_fee__c = originObj.fasahFees != null ? originObj.fasahFees : null;
-                    quoteItemObj.Inspection__c = originObj.inspection != null ? originObj.inspection : null;
-                    quoteItemObj.Insurance_charges__c = originObj.insuranceCharges != null ? originObj.insuranceCharges : null;
-                    quoteItemObj.Lift_on_Lift_off__c = originObj.liftOnLiftOff != null ? originObj.liftOnLiftOff : null;
-                    quoteItemObj.Origin_Detention_Demurrage_Charges__c = originObj.OriginDetention != null ? originObj.OriginDetention : null;
-                    quoteItemObj.Origin_Loading_Charges__c = originObj.OriginLoadingCharges != null ? originObj.OriginLoadingCharges : null;
-                    quoteItemObj.Pickup_Charges__c = originObj.pickUpCharges != null ? originObj.pickUpCharges : null;
-                    quoteItemObj.Reefer_cntr_plug_in_charges__c = originObj.ReeferControlPlugInCharge != null ? originObj.ReeferControlPlugInCharge : null;
-                    quoteItemObj.Tabadul__c = originObj.tabadul != null ? originObj.tabadul : null;
-                    quoteItemObj.Tarpauline_charge__c = originObj.trapulinCharges != null ? originObj.trapulinCharges : null;
-                    quoteItemObj.Truck_idling_charges__c = originObj.truckIdlingCharges != null ? originObj.truckIdlingCharges : null;
-                    quoteItemObj.VGM__c = originObj.vgm != null ? originObj.vgm : null;
-                    quoteItemObj.Xray__c = originObj.xray != null ? originObj.xray : null;
-                    quoteItemObj.Fuel_Surcharge__c = originObj.fuelSurcharge != null ? originObj.fuelSurcharge : null;
-                    quoteItemObj.Lashing_Charges__c = originObj.lashingCharges != null ? originObj.lashingCharges : null;
-                }
-                quoteItemObj.Total_INCO__c = originObj.TotalOrigincharges != null ? originObj.TotalOrigincharges : null;
-                quoteItemObj.Add_to_Buying_Origin__c =  dto.addOriginCharge != null ? dto.addOriginCharge : false;
-                quoteItemObj.Included_PDF_Origin__c =  dto.includeOriginCharge != null ? dto.includeOriginCharge : false;
-            }
-            if(dto.serviceChargeList.destinChargeObj != null){
-                BAFCOImportRMSDto.destinChargeObj destinObj = dto.serviceChargeList.destinChargeObj;
-                if(destinObj.DestinTotalChanged == false){
-                    quoteItemObj.Bayan_Charges__c = destinObj.destinBayanCharges != null ? destinObj.destinBayanCharges : null; 
-                    quoteItemObj.Destination_Customs_Clearance__c = destinObj.destinCustomClearanceCharges != null ? destinObj.destinCustomClearanceCharges : null; 
-                    quoteItemObj.DO_charges__c = destinObj.destinDOCharges != null ? destinObj.destinDOCharges : null; 
-                    quoteItemObj.Fasah_Charges__c = destinObj.destinFasahCharges != null ? destinObj.destinFasahCharges : null; 
-                    quoteItemObj.Gate_pass_charges__c = destinObj.destinGatePassCharges != null ? destinObj.destinGatePassCharges : null; 
-                    quoteItemObj.LOLO_Charges__c = destinObj.destinLOLOCharges != null ? destinObj.destinLOLOCharges : null; 
-                }
-                quoteItemObj.Total_Dest__c = destinObj.destinTotalCharges != null ? destinObj.destinTotalCharges : null; 
-                quoteItemObj.Add_to_Buying_Destination__c =  dto.addDestinCharge != null ? dto.addDestinCharge : false;
-                quoteItemObj.Included_PDF_Destination__c =  dto.includeDestinCharge != null ? dto.includeDestinCharge : false;
+            else {
+                String nn = dto2.name + ' : '+dto2.value+' '+dto.currencyCode;
+                OperationalChargeSelling = OperationalChargeSelling + nn + '\n ';
             }
         }
+        if(dto.exWorksObj != null && dto.exWorksObj.Name != null){
+            if(dto.addExWorksCharge == true ){
+                String nn = dto.exWorksObj.Name + ' : '+dto.exWorksObj.LoadCharge+' '+dto.currencyCode;
+                OperationalChargesbuying = OperationalChargesbuying + nn + '\n ';
+            }
+            else{
+                String nn = dto.exWorksObj.Name + ' : '+dto.exWorksObj.LoadCharge+' '+dto.currencyCode;
+                OperationalChargeSelling = OperationalChargeSelling + nn + '\n ';
+            }
+        }
+        quoteItemObj.Operational_Charges_Buying__c = OperationalChargesbuying;
+        quoteItemObj.Operational_Charges_Selling__c = OperationalChargeSelling;
         return quoteItemObj;
+    }
+    public static void insertExWorksQuotationCharge(String exWorksName,Decimal value, Quotation_item__c quoteItemObj){
+        Quotation_Charges__c newObj = new Quotation_Charges__c();
+        newObj.Quotation_Item__c = quoteItemObj.id;
+        if(quoteItemObj.Add_to_Buying_Ex_works__c == true )newObj.Buying_Rate__c = value;
+        else newObj.Charge_Value__c = value;
+        newObj.Charge_Name_text__c = exWorksName;
+        newObj.isExWorks__c = true;
+        Insert newObj;
     }
     public static Quotation_item__c assignAdditionalChargeIntoQuoteItem(List<BAFCOGenerteQuoteDto.AdditionalCharge> additionalChargeList, Quotation_item__c quoteItemObj,BAFCOGenerteQuoteDto dto){
         Map<String,id> additionalChargeMap = new Map<String,id>();
+        String OperationalChargesbuying = '';
+        String OperationalChargeSelling = '';
         for(Additional_Charge__c addnObj :  [Select id, name from Additional_Charge__c]){
             additionalChargeMap.put(addnObj.name,addnObj.id);
         }
         List<Quotation_Charges__c> chargeList = new List<Quotation_Charges__c>();
         for(BAFCOGenerteQuoteDto.AdditionalCharge dto2 : additionalChargeList){
-            system.debug('dto2' +dto2);
             Quotation_Charges__c newObj = new Quotation_Charges__c();
             newObj.Quotation_Item__c = quoteItemObj.id;
-            newObj.Charge_Value__c = dto2.value;
+            if(quoteItemObj.Add_to_Buying_Additional__c == true ){
+                newObj.Buying_Rate__c = dto2.value;
+                String nn = dto2.name + ' : '+dto2.value +' '+dto.currencyCode;
+                OperationalChargesbuying = OperationalChargesbuying + nn + '\n ';
+            }
+            else {
+                newObj.Charge_Value__c = dto2.value;
+                String nn = dto2.name + ' : '+dto2.value+' ' +dto.currencyCode;
+                OperationalChargeSelling = OperationalChargeSelling + nn + '\n ';
+            }
             newObj.isAdditional_Charge__c = true;
-            if(additionalChargeMap.containsKey(dto2.name))newObj.Charge_Name__c = additionalChargeMap.get(dto2.name);
+            if(additionalChargeMap.containsKey(dto2.name)){
+                newObj.Charge_Name__c = additionalChargeMap.get(dto2.name);
+                newObj.Charge_Name_text__c = dto2.name;
+            }
             chargeList.add(newObj);
         }
-        quoteItemObj.Add_to_Buying_Additional__c =  dto.addAdditionalCharge != null ? dto.addAdditionalCharge : false;
-        quoteItemObj.Included_PDF_Additional__c =  dto.includeAdditionalCharge != null ? dto.includeAdditionalCharge : false;
-        system.debug('chargeList '+chargeList);
         if(chargeList.size() > 0) insert chargeList;
         return quoteItemObj;
+        
     }
     @AuraEnabled
     public static string addRates(

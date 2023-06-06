@@ -141,6 +141,7 @@ public class BAFCOImportRMSDto {
     }
     public class exWorksObj{
         @AuraEnabled public String Id {get; set;}
+        @AuraEnabled public String Name {get; set;}
         @AuraEnabled public String pickup {get; set;}
         @AuraEnabled public String LoadingPort {get; set;}
         @AuraEnabled public decimal LoadCharge {get; set;}

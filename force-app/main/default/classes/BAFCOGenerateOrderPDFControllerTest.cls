@@ -77,6 +77,7 @@ public class BAFCOGenerateOrderPDFControllerTest {
         
         Agent__c agentObj = new Agent__c();
         agentObj.name =  'test';
+        agentObj.Type__c = 'Non-WACO';
         insert agentObj;
         
         Port__c port = new Port__c();
@@ -131,6 +132,7 @@ public class BAFCOGenerateOrderPDFControllerTest {
         
         Agent__c agentObj = new Agent__c();
         agentObj.name =  'test';
+        agentObj.Type__c = 'Non-WACO';
         insert agentObj;
         
         Equipment_Type__c equip2 = new Equipment_Type__c();

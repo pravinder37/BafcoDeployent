@@ -19,6 +19,7 @@ export default class BAFCOImportSearchScreen extends NavigationMixin(LightningEl
     @track shippingLineName = '';
     @track selectedShippLineError = '';
     @track isLoading2 = false;
+    @track quotationValidity ='';
     connectedCallback(){
         this.getImportItemOnLoad();
     }
@@ -88,6 +89,9 @@ export default class BAFCOImportSearchScreen extends NavigationMixin(LightningEl
        let item = this.quoteList.filter(x=>x.Id == this.quoteItemId);
        this.buyingRate = item[0].Buying_Rate__c;
        this.totalSellingRate = item[0].Total_Order__c;
+       if(item[0].Order__r.Quotation__r.Quotation_Validity__c != undefined){
+        this.quotationValidity = item[0].Order__r.Quotation__r.Quotation_Validity__c
+       }
        if(item[0].Shipping_Line__c != undefined){        
         setTimeout(() => {
             this.isLoading = true;
@@ -163,7 +167,8 @@ export default class BAFCOImportSearchScreen extends NavigationMixin(LightningEl
                 buyingRate : this.buyingRate,
                 sellingRate: this.totalSellingRate,
                 recordId : this.quoteItemId,
-                shippingLineId : this.shippingLineId
+                shippingLineId : this.shippingLineId,
+                quotationValidity : this.quotationValidity
             }).then(result=>{
                 this.quoteList = [];
                 console.log('result '+result);
@@ -220,5 +225,8 @@ export default class BAFCOImportSearchScreen extends NavigationMixin(LightningEl
         this.shippingLineId = '';
         this.shippingLineName = '';
         this.selectedShippLineError = 'slds-has-error';
+    }
+    handleQuotationValidityChange(e){
+        this.quotationValidity = e.target.value;
     }
 }

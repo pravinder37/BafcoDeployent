@@ -121,6 +121,7 @@ public class BAFCOLRoutingDetailsControllerTest {
         rEquip.Equipment_Type__c = equip.id;
         Insert rEquip;
         Agent__c agentObj = new Agent__c();
+        agentObj.Type__c = 'Non-WACO';
         agentObj.name =  'test';
         insert agentObj;
         List<RMS__c> rmsList = new List<RMS__c>();

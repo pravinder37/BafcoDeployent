@@ -22,7 +22,6 @@
         }
     </aura:html>
 	<div style="background: white;">
-        <!--c:bAFCOLeadCreationParentComponent quoteID="{!v.refRecordId}" optyId="{!v.optyId}" isEdit="{!v.isEdit}"/-->
         <aura:if isTrue="{!AND(v.isLCL == false,v.isAir == false)}">
         	<c:bAFCOLeadCreationParentComponent quoteID="{!v.refRecordId}" optyId="{!v.optyId}" isEdit="{!v.isEdit}"/>
         </aura:if>

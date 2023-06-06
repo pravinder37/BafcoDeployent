@@ -105,7 +105,9 @@ public class BAFCOSendOrdersAPI {
                             itemDto.equipmentType = item.Equipment_Type_Order__r.BSLS_ID__c ;
                             itemDto.quantity = String.valueOf(item.Quantity__c);
                             itemDto.SellingRate = String.valueOf(item.Total_Order__c);
-                            itemDto.CommercialUser = item.Order__r.Opportunity_Order__r.Commercial_User__r.BSLS_ID__c;
+                            if(item.Order__r.Opportunity_Order__r.Commercial_User__r.BSLS_ID__c!=NULL){
+                            itemDto.CommercialUser = Integer.ValueOf(item.Order__r.Opportunity_Order__r.Commercial_User__r.BSLS_ID__c);
+                            }
                             if(item.Agent__c != null){
                                 Agent agentObj = new Agent();
                                 agentObj.AgentName = item.Agent__r.Name;
@@ -265,7 +267,7 @@ public class BAFCOSendOrdersAPI {
         @AuraEnabled public List<Shipper> Shipper {get;Set;}
         @AuraEnabled public String quantity {get;Set;}
         @AuraEnabled public String SellingRate {get;Set;}
-        @AuraEnabled public String CommercialUser {get;Set;}
+        @AuraEnabled public Integer CommercialUser {get;Set;}
     }
     public class Agent{
         @AuraEnabled public String AgentName {get;Set;}

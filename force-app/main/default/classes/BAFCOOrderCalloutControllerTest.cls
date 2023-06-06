@@ -24,6 +24,7 @@ public class BAFCOOrderCalloutControllerTest {
         
         Agent__c agentObj = new Agent__c();
         agentObj.name =  'test';
+        agentObj.Type__c = 'Non-WACO';
         insert agentObj;
         
         Port__c port = new Port__c();
@@ -79,6 +80,7 @@ public class BAFCOOrderCalloutControllerTest {
         Test.setMock(HttpCalloutMock.class, new BAFCOOrderCalloutMockTest());
         Agent__c agentObj = new Agent__c();
         agentObj.name =  'test';
+        agentObj.Type__c = 'Non-WACO';
         insert agentObj;
         
         Port__c port = new Port__c();

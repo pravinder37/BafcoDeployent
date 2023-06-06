@@ -2,29 +2,38 @@ public class BAFCOOrderTriggerHandler {
     public static void beforeAction(List<Order__c> orderList){
         system.debug('orderList'+orderList);
         set<Id> orderIDSet = new set<Id>();
-        set<Id> opportunityIDSet = new set<Id>();
-        Map<ID,String> oppOwnerMap = new Map<ID,String>();
+        set<Id> accIdSet = new set<Id>();
+        Map<ID,String> accOwnerMap = new Map<ID,String>();
         Map<Id,Id> targetOwnerMap = new Map<Id,Id>();
+        Date orderDate = null;
+        Integer orderMonth = null;
+        Integer currentYear = null;
         for(Order__c ordRec:orderList){
-            opportunityIDSet.add(ordRec.Opportunity_Order__c); 
+            accIdSet.add(ordRec.Account_Order__c); 
+            orderDate = Date.valueOf(ordRec.CreatedDate);
         }
-        system.debug('opportunityIDSet'+opportunityIDSet);
-        for(Opportunity oppOwners : [Select Id,OwnerID FROM Opportunity where ID IN : opportunityIDSet]){
-            oppOwnerMap.put(oppOwners.ID,oppOwners.OwnerID);
+        if(orderDate != null){
+            orderMonth = orderDate.Month();
+            currentYear = orderDate.Year();
         }
-        system.debug('oppOwnerMap'+oppOwnerMap);
-        Date dt = System.today();
+        system.debug('accIdSet'+accIdSet);
+        for(Account accOwners : [Select Id,OwnerID FROM Account where ID IN : accIdSet]){
+            accOwnerMap.put(accOwners.ID,accOwners.OwnerID);
+        }
+        system.debug('accOwnerMap'+accOwnerMap);
+        /*Date dt = System.today();
         Integer currentMonth = dt.Month();
-        Integer currentYear = dt.Year();
-        
+        Integer currentYear = dt.Year();*/
+        system.debug('orderMonth'+orderMonth);
+        system.debug('currentYear'+currentYear);
         for(Target__c targetRec : [Select ID,Target_Value_In_Teus__c,Achieved_Value_In_Teus__c,Target_Month__c,OwnerId,Year_Value__c,Month_Value__c FROM Target__c 
-                                   Where OwnerId IN:oppOwnerMap.values()
-                                   AND Month_Value__c=:currentMonth AND Year_Value__c=:currentYear]){
+                                   Where OwnerId IN:accOwnerMap.values()
+                                   AND Month_Value__c=:orderMonth AND Year_Value__c=:currentYear]){
                                        targetOwnerMap.put(targetRec.OwnerId,targetRec.Id);  
                                    }
         system.debug('targetOwnerMap'+targetOwnerMap);
         for(Order__c ordRec:orderList){
-            ordRec.Target__c = targetOwnerMap.get(oppOwnerMap.get(ordRec.Opportunity_Order__c));  
+            ordRec.Target__c = targetOwnerMap.get(accOwnerMap.get(ordRec.Account_Order__c));  
         }
         system.debug('orderList'+orderList);
         
@@ -222,50 +231,12 @@ public class BAFCOOrderTriggerHandler {
     }
     public static void updateTargetTeusOnStatusChange(List<Order__c> orderList,Map<id,Order__c> oldMap){
         List<Id> orderIDs = new List<Id>();
-        Map<Id,String> orderIdToOwnerMap = new Map<Id,String>();
-        Map<Id,List<Target__c>> OwnerIdTotargetMap = new Map<Id,List<Target__c>>();
-        List<Id> orderOwnerIds = new List<Id>();
-        List<Target__c> targetList = new List<Target__c>();
-        Map<Id,Decimal> teusSumMap = new Map<Id,Decimal>();
         for(Order__c orderObj : orderList){
-            if(orderObj.Status__c !=  oldMap.get(orderObj.id).Status__c && orderObj.Status__c == 'Cancelled'){
+            if(orderObj.Status__c !=  oldMap.get(orderObj.id).Status__c){
                 orderIDs.add(orderObj.id);
             }
         }
-        List<Order_Item__c> itemList = [Select id , Order__c from Order_Item__c where Order__c in : orderIDs];
-        if(itemList.size() > 0) {
-            for(Order__c orderObj : [Select Opportunity_Order__r.OwnerId from Order__c where id in :orderIds ]){
-                orderIdToOwnerMap.put(orderObj.id,orderObj.Opportunity_Order__r.OwnerId);
-                orderOwnerIds.add(orderObj.Opportunity_Order__r.OwnerId);
-            }
-            for(Target__c targetObj : [Select id,OwnerId,Achieved_Value_In_Teus__c from Target__c where OwnerId in :orderOwnerIds]){
-                if(!OwnerIdTotargetMap.containsKey(targetObj.OwnerId))
-                    OwnerIdTotargetMap.put(targetObj.OwnerId, new List<Target__c>());
-                OwnerIdTotargetMap.get(targetObj.OwnerId).add(targetObj);
-            }
-            List<Order_Item__c> queriedItemList = [Select id,Order__c,Teus_FB__c from Order_Item__c where Order__c in : orderIdToOwnerMap.keySet() and createdDate = THIS_MONTH];
-            for(Order_Item__c item : queriedItemList){
-                if(!teusSumMap.containsKey(item.Order__c))
-                    teusSumMap.put(item.Order__c,0);
-                Decimal sum = teusSumMap.get(item.Order__c);
-                sum = sum+item.Teus_FB__c;
-                teusSumMap.put(item.Order__c,sum);
-            }
-            if(OwnerIdTotargetMap.size() > 0 ){
-                for(Order_Item__c item : queriedItemList){
-                    List<Target__c> targetList3 = OwnerIdTotargetMap.get(orderIdToOwnerMap.get(item.Order__c));
-                    if(targetList3.size() == 1){
-                        Target__c targetObj = new Target__c();
-                        targetObj.id = targetList3[0].id;
-                        targetObj.Achieved_Value_In_Teus__c = targetList3[0].Achieved_Value_In_Teus__c - teusSumMap.get(item.Order__c);
-                        targetList.add(targetObj);
-                    }
-                }
-                if(targetList.size() > 0 ) {
-                    update targetList;
-                }
-            }
-        }
+        if(orderIDs.size() > 0) BAFCOOrderItemTriggerHandler.updateTargetObj(orderIDs);
     }
     public static void testDummy(){
         Integer a=10;

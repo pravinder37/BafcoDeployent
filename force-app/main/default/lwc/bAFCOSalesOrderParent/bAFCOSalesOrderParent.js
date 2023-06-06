@@ -324,6 +324,9 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                             airLineId : shipValue.airLineId,
                             currencyCode : shipValue.currencyCode,
                             chargeableWeight : shipValue.chargeableWeight,
+                            operationalChargeBuying : shipValue.operationalChargeBuying,
+                            operationalChargeSelling : shipValue.operationalChargeSelling,
+                            quoteRemark : shipValue.quoteRemark,
                         })
                         elem.equipment.push({
                             key:equip,
@@ -441,6 +444,10 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 airLineId : shipValue.airLineId,
                                 currencyCode : shipValue.currencyCode,
                                 chargeableWeight : shipValue.chargeableWeight,
+                                operationalChargeBuying : shipValue.operationalChargeBuying,
+                                operationalChargeSelling : shipValue.operationalChargeSelling,
+                                quoteRemark : shipValue.quoteRemark,
+                                
                             })
                             elem.equipment.push({
                                 key:equip,
@@ -555,6 +562,9 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                 tempList[shipIndex].airLineId = shipValue.airLineId;
                                 tempList[shipIndex].currencyCode = shipValue.currencyCode;
                                 tempList[shipIndex].chargeableWeight = shipValue.chargeableWeight;
+                                tempList[shipIndex].operationalChargeBuying = shipValue.operationalChargeBuying;
+                                tempList[shipIndex].operationalChargeSelling = shipValue.operationalChargeSelling;
+                                tempList[shipIndex].quoteRemark = shipValue.quoteRemark;
                             }
                             else{
                                 tempList.push({
@@ -663,6 +673,9 @@ export default class BAFCOSalesOrderParent extends LightningElement {
                                     airLineId : shipValue.airLineId,
                                     currencyCode : shipValue.currencyCode,
                                     chargeableWeight : shipValue.chargeableWeight,
+                                    operationalChargeBuying : shipValue.operationalChargeBuying,
+                                    operationalChargeSelling : shipValue.operationalChargeSelling,
+                                    quoteRemark : shipValue.quoteRemark,
                                 })
                             }
                             elem.equipment[index].value = tempList

@@ -229,6 +229,7 @@ public class BAFCOAirEnquiryControllerTest {
         quoteItem.Tank_Rental_Charges__c = 10;
         quoteItem.Total_Ex_Works_Charges__c = 10;
         quoteItem.Buying_Rate__c= 10;
+        quoteItem.Chargeable_Weight__c =10;
         Insert quoteItem;
         
     }

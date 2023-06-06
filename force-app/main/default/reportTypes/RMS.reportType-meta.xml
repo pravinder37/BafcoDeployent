@@ -236,6 +236,11 @@
             <field>X20000__c</field>
             <table>RMS__c</table>
         </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Route__c</field>
+            <table>RMS__c</table>
+        </columns>
         <masterLabel>RMS</masterLabel>
     </sections>
 </ReportType>

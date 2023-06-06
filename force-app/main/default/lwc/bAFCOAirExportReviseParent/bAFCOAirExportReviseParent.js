@@ -169,7 +169,7 @@ export default class BAFCOAirExportReviseParent extends NavigationMixin(Lightnin
                 }
                 setTimeout(() => {
                     if(allValid){
-                       // this.template.querySelectorAll("c-b-a-f-c-o-routing-details-intake-form")[index].handleGotoQuotation();
+                        this.template.querySelectorAll("c-b-a-f-c-o-air-export-quote-intake-form")[index].handleGotoQuotation(this.validityDate);
                     }
                 }, 200);
                 

@@ -3,7 +3,7 @@
     <fullName>Tab_View__c</fullName>
     <externalId>false</externalId>
     <label>Tab View</label>
-    <length>50</length>
+    <length>255</length>
     <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>

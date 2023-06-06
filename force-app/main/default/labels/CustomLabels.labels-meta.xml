@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
     <labels>
+        <fullName>BAFCOSendNominationToAddress</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BAFCOSendNominationToAddress</shortDescription>
+        <value>soteam@bafcointl.com</value>
+    </labels>
+    <labels>
         <fullName>Exchange_Rate_Api_Key</fullName>
         <language>en_US</language>
         <protected>false</protected>
@@ -8,10 +15,10 @@
         <value>glNQjeQvh4c9eWz3MAro7YdoxME9nxju</value>
     </labels>
     <labels>
-        <fullName>BAFCOSendNominationToAddress</fullName>
+        <fullName>Send_Order_API_OrderTypes</fullName>
         <language>en_US</language>
         <protected>false</protected>
-        <shortDescription>BAFCOSendNominationToAddress</shortDescription>
-        <value>soteam@bafcointl.com</value>
+        <shortDescription>Send Order API OrderTypes</shortDescription>
+        <value>Local Operation Import,LCL Import,Sea Import,ISO Import</value>
     </labels>
 </CustomLabels>

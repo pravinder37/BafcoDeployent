@@ -166,7 +166,7 @@ export default class BAFCOImportReviseParent extends LightningElement {
                     this.dispatchEvent(evt);
                 }
                 if(allValid){
-                    this.template.querySelectorAll("c-b-a-f-c-o-import-route-details")[index].handleGotoQuotation();
+                    this.template.querySelectorAll("c-b-a-f-c-o-import-route-details")[index].handleGotoQuotation(this.validityDate);
                 }
             }, 200);
             
