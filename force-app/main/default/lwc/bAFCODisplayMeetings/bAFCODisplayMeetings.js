@@ -33,6 +33,7 @@ export default class BAFCODisplayMeetings extends NavigationMixin(LightningEleme
     @track displayInitial = true;
     @track accountObjectChoosed = false;
     @track visitForUpdate = '';
+    @track filter='Recordtype.name =\'Default\'';
     get radioOptions() {
         return [
             { label: 'Lead', value: 'Lead' },

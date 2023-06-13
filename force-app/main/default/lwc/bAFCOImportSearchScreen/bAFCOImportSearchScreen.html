@@ -18,11 +18,38 @@
                     </div>
                 </div>
             </lightning-layout-item>
-            <lightning-layout-item size="12" style="padding-top: 22px;" large-device-size="3" medium-device-size="3" small-device-size="12">
+            <!--lightning-layout-item size="12" style="padding-top: 22px;" large-device-size="3" medium-device-size="3" small-device-size="12">
                 <lightning-input type="date" label="Vessel ETD (From)" data-field="fromVesselETD" value={fromVesselETD} onchange={handleFromVesselETDChange} ></lightning-input>
             </lightning-layout-item>
             <lightning-layout-item size="12" style="padding-top: 22px;padding-left: 12px" large-device-size="3" medium-device-size="3" small-device-size="12">
                 <lightning-input type="date" label="Vessel ETD (To)" data-field="toVesselETD" value={toVesselETD} onchange={handleToVesselETDChange} ></lightning-input>
+            </lightning-layout-item-->
+            <lightning-layout-item size="12" style="padding-top: 22px;" large-device-size="3" medium-device-size="3" small-device-size="12">
+                <lightning-input label="Order Number" data-field="orderNumber" value={orderNumber} onchange={handleOrderNumberChange} ></lightning-input>
+            </lightning-layout-item>
+            <lightning-layout-item size="12" style="padding-top: 22px;" large-device-size="3" medium-device-size="3" small-device-size="12">
+                <label class="slds-form-element__label">
+                    <p style="padding-left: 22px">Port Of Loading</p>
+                </label>
+                <c-b-a-f-c-o-custom-look-up-component
+                                obj-name="Port__c"
+                                search-placeholder="Search loading port" 
+                                icon-name="standard:account"
+                                onlookupselected={handleLoadingPortSelection}
+                                onlookupremoved={handleLoadingPortRemoved}></c-b-a-f-c-o-custom-look-up-component>
+                
+            </lightning-layout-item>
+            <lightning-layout-item size="12" style="padding-top: 22px;" large-device-size="3" medium-device-size="3" small-device-size="12">
+                <label class="slds-form-element__label">
+                    <p style="padding-left: 22px">Port Of Destination</p>
+                </label>
+                <c-b-a-f-c-o-custom-look-up-component
+                                obj-name="Port__c"
+                                search-placeholder="Search destination port" 
+                                icon-name="standard:account"
+                                onlookupselected={handleDestinationPortSelection}
+                                onlookupremoved={handleDestinationPortRemoved}></c-b-a-f-c-o-custom-look-up-component>
+                
             </lightning-layout-item>
             <lightning-layout-item size="12"  style="padding-top: 42px;padding-left: 12px" large-device-size="3" medium-device-size="3" small-device-size="12">
                 <lightning-button label="Search" variant="brand" onclick={handleSearchItem}></lightning-button>
@@ -38,9 +65,11 @@
                         <tr class="slds-line-height_reset">
                             <th>Order Item Name</th>
                             <th>Quotation Name</th>
+                            <th>Customer Name</th>
+                            <th>Order Number</th>
                             <th>Agent Name</th>
-                            <th>Port Of Loading</th>
-                            <th>Port Of Destination</th>
+                            <th>POL</th>
+                            <th>POD</th>
                             <th>Shipping Line</th>
                             <th>Quotation Validity</th>
                             <th>Vessel ETD</th>
@@ -54,7 +83,10 @@
                         <template for:each={quoteList} for:item="item">
                             <tr key={item} class="slds-hint-parent">
                                 <td><a data-value={item.Id} onclick={handleOrderItemClicked}>{item.Name}</a></td>
-                                <td><a data-value={item.Order__r.Quotation__c} onclick={handleQuotationClicked}>{item.Order__r.Quotation__r.Name}</a></td>
+                                <td if:true={item.Order__r.Quotation__c}><a data-value={item.Order__r.Quotation__c} onclick={handleQuotationClicked}>{item.Order__r.Quotation__r.Name}</a></td>
+                                <td if:false={item.Order__r.Quotation__c}>-</td>
+                                <td if:true={item.Order__r.Account_Order__c}>{item.Order__r.Account_Order__r.Name}</td><td if:false={item.Order__r.Account_Order__c}>-</td>
+                                <td if:true={item.Order__c}>{item.Order__r.Name}</td><td if:false={item.Order__c}>-</td>
                                 <td if:true={item.Agent__c}>{item.Agent__r.Name}</td>
                                 <td if:false={item.Agent__c}>-</td>
                                 <td if:true={item.Port_of_Loading_Order__c}>{item.Port_of_Loading_Order__r.Name}</td>
@@ -63,7 +95,8 @@
                                 <td if:false={item.Port_of_Discharge_Order__c}>-</td>
                                 <td if:true={item.Shipping_Line__c}>{item.Shipping_Line__r.Name}</td>
                                 <td if:false={item.Shipping_Line__c}>-</td>
-                                <td><lightning-formatted-date-time value={item.Quotation_Item__r.Quotation__r.Quotation_Validity__c}></lightning-formatted-date-time></td>
+                                <td if:true={item.Order__r.Quotation__c}><lightning-formatted-date-time value={item.Order__r.Quotation__r.Quotation_Validity__c}></lightning-formatted-date-time></td>
+                                <td if:false={item.Order__r.Quotation__c}>-</td>
                                 <td><lightning-formatted-date-time value={item.Vessel_ETD__c}></lightning-formatted-date-time></td>
                                 <td>{item.Buying_Rate__c}</td>
                                 <td>{item.Quantity__c}</td>
@@ -113,7 +146,7 @@
                                 <lightning-input type="number" label="Buying Rate" data-field="buyingRateField" value={buyingRate} onchange={handleBuyingRateChange}></lightning-input>
                             </lightning-layout-item>
                             <lightning-layout-item size="6" style="padding-left: 22px">
-                                <lightning-input type="number" style="padding-left: 4px;" data-field="totalRateField" label="Total" value={totalSellingRate} onchange={handleSellingTotalChange}></lightning-input>
+                                <lightning-input type="number" style="padding-left: 4px;" data-field="totalRateField" label="Selling rate" value={totalSellingRate} onchange={handleSellingTotalChange}></lightning-input>
                             </lightning-layout-item>
                             <lightning-layout-item size="6" style="padding-left: 22px">
                                 <lightning-input type="date" value={quotationValidity} label="Quotation Validity" data-field="quotationValidityField" onchange={handleQuotationValidityChange}></lightning-input>

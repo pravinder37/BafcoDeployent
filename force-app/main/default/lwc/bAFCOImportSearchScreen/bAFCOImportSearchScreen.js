@@ -6,15 +6,18 @@ import { NavigationMixin } from 'lightning/navigation';
 export default class BAFCOImportSearchScreen extends NavigationMixin(LightningElement) {
     isLoading = false;
     selectedAgentError = '';
-    agentId = '';
+    agentId = null;
     noRecord = true;
     @track quoteList = [];
     @track quoteItemId = '';
     @track buyingRate ;
     @track totalSellingRate ;
     displayModal = false;
-    @track fromVesselETD = null;
-    @track toVesselETD = null;
+    //@track fromVesselETD = null;
+    //@track toVesselETD = null;
+    @track orderNumber = null;
+    @track destinationPortId = null;
+    @track loadingPortId = null;
     @track shippingLineId = '';
     @track shippingLineName = '';
     @track selectedShippLineError = '';
@@ -39,18 +42,25 @@ export default class BAFCOImportSearchScreen extends NavigationMixin(LightningEl
         })
     }
     handleAgentSelection(e){
+        console.log('inside')
         this.agentId = e.detail.Id;
         this.selectedAgentError = '';
         this.removeError();
     }
     handleSearchItem(){
         this.isLoading = true;
-        let allValid = false;
+        /*let allValid = false;
         if(this.agentId != '' || (this.fromVesselETD != null && this.toVesselETD != null)){
             allValid = true;
-        }
-        if(allValid){
-            getImportItem({agentId :this.agentId,fromVesselETD:this.fromVesselETD,toVesselETD:this.toVesselETD})
+        }*/
+        //if(allValid){
+            if(this.orderNumber == '') this.orderNumber = null;
+            getImportItem({
+                agentId :this.agentId,
+                orderNumber : this.orderNumber,
+                loadingPortId : this.loadingPortId,
+                destinationPortId : this.destinationPortId,
+            })
             .then(result=>{
                 console.log('result '+JSON.stringify(result,null,2));
                 this.quoteList = result;
@@ -62,8 +72,8 @@ export default class BAFCOImportSearchScreen extends NavigationMixin(LightningEl
                 console.log('error '+JSON.stringify(error,null,2));
                 this.isLoading = false;
             })
-        }
-        else{
+       // }
+        /*else{
             if(this.agentId == ''){
                 this.selectedAgentError = 'slds-has-error'
             }
@@ -78,10 +88,10 @@ export default class BAFCOImportSearchScreen extends NavigationMixin(LightningEl
                 toVesselETD.reportValidity();
             }
             this.isLoading = false;
-        }
+        }*/
     }
     handleAgentRemoved(e){
-        this.agentId = '';
+        this.agentId = null;
     }
     handleEditItem(e){
         this.isLoading = true;
@@ -97,7 +107,7 @@ export default class BAFCOImportSearchScreen extends NavigationMixin(LightningEl
             this.isLoading = true;
             this.shippingLineId = item[0].Shipping_Line__c;
             this.shippingLineName = item[0].Shipping_Line__r.Name;
-            let shippLineField = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[1];
+            let shippLineField = this.template.querySelectorAll('c-b-a-f-c-o-custom-look-up-component')[3];
             if(shippLineField != null){
                 let obj = {Id:this.shippingLineId,Name:this.shippingLineName};
                 shippLineField.handleDefaultSelected(obj);
@@ -199,22 +209,22 @@ export default class BAFCOImportSearchScreen extends NavigationMixin(LightningEl
             },
         }).then(url => { window.open(url,'_blank') });
     }
-    handleFromVesselETDChange(e){
+    /*handleFromVesselETDChange(e){
         this.fromVesselETD = e.target.value
         this.removeError();
     }
     handleToVesselETDChange(e){
         this.toVesselETD = e.target.value
         this.removeError();
-    }
+    }*/
     removeError(){
         this.selectedAgentError = ''
-        let fromVesselETD = this.template.querySelector("[data-field='fromVesselETD']");
+        /*let fromVesselETD = this.template.querySelector("[data-field='fromVesselETD']");
         fromVesselETD.setCustomValidity("");
         fromVesselETD.reportValidity();
         let toVesselETD = this.template.querySelector("[data-field='toVesselETD']");
         toVesselETD.setCustomValidity("");
-        toVesselETD.reportValidity();
+        toVesselETD.reportValidity();*/
     }
     handleShippingLineSelection(e){
         this.shippingLineId = e.detail.Id;
@@ -228,5 +238,21 @@ export default class BAFCOImportSearchScreen extends NavigationMixin(LightningEl
     }
     handleQuotationValidityChange(e){
         this.quotationValidity = e.target.value;
+    }
+    handleOrderNumberChange(e){
+        this.orderNumber = e.target.value;
+    }
+    handleLoadingPortSelection(e){
+        this.loadingPortId = e.detail.Id;
+    }
+    handleLoadingPortRemoved(e){
+        this.loadingPortId = null;
+    }
+    handleDestinationPortSelection(e){
+        this.destinationPortId = e.detail.Id;
+    }
+    handleDestinationPortRemoved(e){
+        this.destinationPortId = null;
+        
     }
 }

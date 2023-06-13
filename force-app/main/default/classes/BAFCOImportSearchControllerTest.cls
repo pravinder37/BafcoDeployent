@@ -1,7 +1,7 @@
 @isTest
 public class BAFCOImportSearchControllerTest {
 	@TestSetup
-    static void setup() {
+    static void setup() { 
         account acc = new Account(); 
         acc.Branch__c = 'Jeddah';
         acc.Average_Credit_Days__c = 2;
@@ -12,6 +12,7 @@ public class BAFCOImportSearchControllerTest {
         
         Agent__c agentObj = new Agent__c();
         agentObj.name =  'test';
+        agentObj.Type__c = 'WACO';
         insert agentObj;
         
         opportunity opty = new Opportunity();
@@ -59,9 +60,7 @@ public class BAFCOImportSearchControllerTest {
         String agentId = [Select id from Agent__c limit 1].id;
         String todaysDate = String.valueOf(System.today());
         test.startTest();
-        BAFCOImportSearchController.getImportItem(agentId,null,null);
-        BAFCOImportSearchController.getImportItem(agentId,todaysDate,todaysDate);
-        BAFCOImportSearchController.getImportItem('',todaysDate,todaysDate);
+        BAFCOImportSearchController.getImportItem(agentId,null,null,null);
         test.stopTest();
     }
      testmethod static void updateQuoteItemTest(){
